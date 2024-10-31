@@ -1,34 +1,63 @@
 package com.rangerscards.ui.theme
 
-import androidx.compose.material3.Typography
-import androidx.compose.ui.text.TextStyle
-import androidx.compose.ui.text.font.FontFamily
-import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.unit.sp
 
-// Set of Material typography styles to start with
-val Typography = Typography(
-    bodyLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 24.sp,
-        letterSpacing = 0.5.sp
-    )
-    /* Other default text styles to override
-    titleLarge = TextStyle(
-        fontFamily = FontFamily.Default,
-        fontWeight = FontWeight.Normal,
+import androidx.compose.runtime.Immutable
+import androidx.compose.runtime.staticCompositionLocalOf
+import androidx.compose.ui.text.TextStyle
+import androidx.compose.ui.text.font.Font
+import androidx.compose.ui.text.font.FontFamily
+import androidx.compose.ui.text.font.FontStyle
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextIndent
+import androidx.compose.ui.unit.sp
+import com.rangerscards.R
+
+@Immutable
+data class CustomTypography(
+    val headline: TextStyle,
+    val cardsAmount: TextStyle,
+    val flavor: TextStyle,
+    val flavorBold: TextStyle,
+)
+
+val Montserrat = FontFamily(
+    Font(R.font.montserrat_regular, FontWeight.Normal),
+    Font(R.font.montserrat_bold, FontWeight.Bold)
+)
+
+val Jost = FontFamily(
+    Font(R.font.jost_regular, FontWeight.Normal),
+    Font(R.font.jost_medium, FontWeight.Medium),
+    Font(R.font.jost_bold, FontWeight.Bold),
+    Font(R.font.jost_italic, FontWeight.Normal, FontStyle.Italic),
+    Font(R.font.jost_mediumitalic, FontWeight.Medium, FontStyle.Italic)
+)
+
+val typography = CustomTypography(
+    headline = TextStyle(
+        fontFamily = Jost,
+        fontWeight = FontWeight.Medium,
         fontSize = 22.sp,
         lineHeight = 28.sp,
-        letterSpacing = 0.sp
     ),
-    labelSmall = TextStyle(
-        fontFamily = FontFamily.Default,
+    cardsAmount = TextStyle(
+        fontFamily = Montserrat,
         fontWeight = FontWeight.Medium,
-        fontSize = 11.sp,
-        lineHeight = 16.sp,
-        letterSpacing = 0.5.sp
+        fontSize = 16.sp,
+        lineHeight = 18.sp,
+    ),
+    flavor = TextStyle(
+        fontFamily = Montserrat,
+        fontWeight = FontWeight.Normal,
+        fontSize = 16.sp,
+        lineHeight = 22.sp,
+    ),
+    flavorBold = TextStyle(
+        fontFamily = Montserrat,
+        fontWeight = FontWeight.Bold,
+        fontSize = 16.sp,
+        lineHeight = 22.sp,
     )
-    */
 )
+
+val LocalCustomTypography = staticCompositionLocalOf { typography }

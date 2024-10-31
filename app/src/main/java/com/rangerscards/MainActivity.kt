@@ -4,25 +4,36 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonColors
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
+import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.RangersCardsTheme
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContent {
-            RangersCardsTheme {
+            // Collecting user's theme from shared preferences via viewmodel - false = light, true = dark
+            // var currentTheme by viewmodel.getTheme().collectAsState(null)
+            var currentTheme by remember { mutableStateOf(false) }
+            RangersCardsTheme(/*currentTheme*/) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
-                    color = MaterialTheme.colorScheme.background
+                    color = CustomTheme.colors.l30
                 ) {
-                    Greeting("Android")
+                    Greeting(name = "Eugene")
                 }
             }
         }
