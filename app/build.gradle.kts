@@ -2,6 +2,7 @@ plugins {
     id("com.android.application")
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
+    id("com.apollographql.apollo") version "4.1.0"
 }
 
 android {
@@ -55,6 +56,12 @@ dependencies {
     implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
     implementation("com.google.firebase:firebase-auth")
 
+    // Import Apollo Kotlin
+    implementation("com.apollographql.apollo:apollo-runtime:4.1.0")
+    implementation("com.apollographql.apollo:apollo-normalized-cache:4.1.0")
+    implementation("com.apollographql.apollo:apollo-normalized-cache-sqlite:4.1.0")
+
+    implementation("io.coil-kt:coil-compose:2.6.0")
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
@@ -75,4 +82,13 @@ dependencies {
 
     debugImplementation("androidx.compose.ui:ui-tooling")
     debugImplementation("androidx.compose.ui:ui-test-manifest")
+}
+
+apollo {
+    service("service") {
+        // The package name for the generated models
+        packageName.set("com.rangerscards")
+        schemaFiles.from("src/main/graphql/schema.graphqls", "src/main/graphql/extra.graphqls")
+        addTypename.set("always")
+    }
 }

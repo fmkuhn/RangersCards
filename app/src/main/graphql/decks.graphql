@@ -1,0 +1,342 @@
+# import Deck from 'fragments.graphql'
+# import SearchDeck from 'fragments.graphql'
+# import DeckWithCampaign from 'fragments.graphql'
+# import DeckDetail from 'fragments.graphql'
+# import DeckComment from 'fragments.graphql'
+
+mutation upgradeDeck(
+  $deckId: Int!
+) {
+  deck: rangers_upgrade_deck(args: {
+    deck_id: $deckId,
+    upgrade_data: {}
+  }) {
+    id
+    next_deck_id
+  }
+}
+
+mutation publishDeck(
+  $deckId: Int!
+) {
+  deck: rangers_publish_deck(args: {
+    deck_id: $deckId
+  }) {
+    id
+  }
+}
+
+mutation setDeckCampaign(
+  $deckId: Int!,
+  $campaignId: Int!
+) {
+  campaign: rangers_set_campaign_deck(args: {
+    deck_id: $deckId,
+    new_campaign_id: $campaignId
+  }) {
+    id
+  }
+}
+
+mutation removeDeckCampaign(
+  $deckId: Int!,
+  $campaignId: Int!
+) {
+  campaign: rangers_remove_campaign_deck(args: {
+    deck_id: $deckId
+    old_campaign_id: $campaignId
+  }) {
+    id
+  }
+}
+
+
+query getMyCampaignDecks(
+  $userId: String!,
+  $limit: Int!,
+  $offset: Int!
+) {
+  decks: rangers_deck(
+    where: {
+      user_id: { _eq: $userId }
+      next_deck_id: { _is_null: true }
+      campaign_id: { _is_null: true }
+    }
+    order_by: { updated_at: desc }
+    limit: $limit
+    offset: $offset
+  ) {
+    ...Deck
+  }
+}
+
+query getMyCampaignDecksTotal(
+  $userId: String!
+) {
+  total: rangers_deck_aggregate(
+    where: {
+      user_id: { _eq: $userId }
+      next_deck_id: { _is_null: true }
+      campaign_id: { _is_null: true }
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+}
+
+query searchDecks(
+  $userId: String,
+  $foc: Int,
+  $spi: Int,
+  $awa: Int,
+  $fit: Int,
+  $background: _text,
+  $specialty: _text,
+  $role: _text,
+  $limit: Int,
+  $offset: Int
+) {
+  decks: rangers_deck_search(args: {
+    user_id_eq: $userId
+    foc_eq: $foc
+    spi_eq: $spi
+    awa_eq: $awa
+    fit_eq: $fit
+    background: $background
+    specialty: $specialty
+    role: $role
+    _limit: $limit
+    _offset: $offset
+  }) {
+    ...SearchDeck
+  }
+}
+
+query getMyDecks(
+  $userId: String!,
+  $limit: Int!,
+  $offset: Int!
+) {
+  decks: rangers_deck(
+    where: {
+      user_id: { _eq: $userId }
+      next_deck_id: { _is_null: true }
+      _or: [
+        {
+          published: { _is_null: true }
+        },
+        {
+          published: { _eq: false }
+        }
+      ]
+    }
+    order_by: { updated_at: desc }
+    limit: $limit
+    offset: $offset
+  ) {
+    ...DeckWithCampaign
+  }
+}
+
+query getMyDecksTotal(
+  $userId: String!
+) {
+  total: rangers_deck_aggregate(
+    where: {
+      user_id: { _eq: $userId }
+      next_deck_id: { _is_null: true }
+      _or: [
+        {
+          published: { _is_null: true }
+        },
+        {
+          published: { _eq: false }
+        }
+      ]
+    }
+  ) {
+    aggregate {
+      count
+    }
+  }
+}
+
+query getDeck(
+  $deckId: Int!
+) {
+  deck: rangers_deck_by_pk(id: $deckId) {
+    ...DeckDetail
+
+  }
+}
+
+query getDeckComments(
+  $deckId: Int!,
+  $limit: Int!
+  $offset: Int!
+) {
+  rangers_comment(
+    where: {
+      deck_id: { _eq: $deckId }
+      comment_id: { _is_null: true }
+    }
+    order_by: {
+      created_at: desc
+    }
+    offset: $offset
+    limit: $limit
+  ) {
+    ...DeckComment
+  }
+}
+
+query getResponseComments(
+  $commentId: uuid!,
+  $limit: Int!
+  $offset: Int!
+) {
+  rangers_comment(
+    where: {
+      comment_id: { _eq: $commentId }
+    }
+    order_by: {
+      created_at: desc
+    }
+    offset: $offset
+    limit: $limit
+  ) {
+    ...DeckComment
+  }
+}
+
+mutation createDeck(
+  $name: String!,
+  $foc: Int!,
+  $fit: Int!,
+  $awa: Int!,
+  $spi: Int!,
+  $meta: jsonb!,
+  $slots: jsonb!,
+  $extraSlots: jsonb!,
+  $description: String
+) {
+  deck: insert_rangers_deck_one(
+    object: {
+      name: $name
+      foc: $foc
+      fit: $fit
+      awa: $awa
+      spi: $spi
+      meta: $meta
+      slots: $slots
+      extra_slots: $extraSlots
+      description: $description
+    }
+  ) {
+    ...Deck
+  }
+}
+
+mutation cloneDeck(
+  $originalDeckId: Int!
+  $newDeckId: Int!
+) {
+  deck: insert_rangers_deck_copy_one(
+    object: {
+      deck_id: $originalDeckId
+      copy_deck_id: $newDeckId
+    }
+  ) {
+    user_id
+    deck_id
+    copy_deck_id
+  }
+}
+
+mutation deleteDeck(
+  $id: Int!
+) {
+  delete_rangers_deck_by_pk(id: $id) {
+    id
+  }
+}
+
+mutation saveDeck(
+  $id: Int!,
+  $name: String!,
+  $foc: Int!,
+  $fit: Int!,
+  $awa: Int!,
+  $spi: Int!,
+  $meta: jsonb!,
+  $slots: jsonb!,
+  $sideSlots: jsonb!,
+  $extraSlots: jsonb!,
+) {
+  update_rangers_deck_by_pk(
+    pk_columns: { id: $id }
+    _set: {
+      name: $name,
+      foc: $foc,
+      fit: $fit,
+      awa: $awa,
+      spi: $spi,
+      meta: $meta,
+      slots: $slots
+      side_slots: $sideSlots,
+      extra_slots: $extraSlots,
+    }
+  ) {
+    ...Deck
+  }
+}
+
+mutation saveDeckDescription(
+  $id: Int!,
+  $description: String!
+) {
+  update_rangers_deck_by_pk(
+    pk_columns: { id: $id }
+    _set: {
+      description: $description
+    }
+  ) {
+    id
+    description
+  }
+}
+
+mutation likeDeck($deckId: Int!) {
+  insert_rangers_deck_like_one(
+    object: {
+      deck_id: $deckId
+      liked: true
+    }
+    on_conflict: {
+      constraint: deck_likes_pkey
+      update_columns: [liked]
+    }
+  ) {
+    user_id
+    deck_id
+    liked
+  }
+}
+
+mutation unlikeDeck(
+  $userId: String!,
+  $deckId: Int!
+) {
+  update_rangers_deck_like_by_pk(
+    pk_columns: { deck_id: $deckId, user_id: $userId }
+    _set: {
+      liked: false
+    }
+  ) {
+    user_id
+    deck_id
+    liked
+  }
+}

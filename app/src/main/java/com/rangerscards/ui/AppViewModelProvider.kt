@@ -15,7 +15,7 @@ object AppViewModelProvider {
     val Factory = viewModelFactory {
         //Initializer for SettingsViewModel
         initializer {
-            SettingsViewModel()
+            SettingsViewModel(rangersApplication().container.apolloClient)
         }
 
         //Initializer for CardsViewModel

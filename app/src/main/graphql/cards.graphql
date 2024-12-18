@@ -1,0 +1,74 @@
+
+fragment Aspect on rangers_aspect_localized {
+  id
+  name
+  short_name
+}
+
+query getAllCards($locale: String!) {
+  cards: rangers_card_localized(
+    where: {
+      locale: { _eq: $locale }
+    }
+  ) {
+    ...Card
+  }
+  all_updated_at: rangers_card_updated(
+    where: { locale: { _eq: $locale }}
+  ) {
+    updated_at
+  }
+}
+
+query getRoleCards($locale: String!) {
+  cards: rangers_card_localized(
+    where: {
+      locale: { _eq: $locale }
+      type_id: { _eq: "role" }
+    }
+  ) {
+    ...Card
+  }
+}
+
+query getCard($locale: String!, $cid: String!) {
+  cards: rangers_card_localized(
+    where: {
+      locale: { _eq: $locale }
+      id: { _eq: $cid }
+    }
+  ) {
+    ...Card
+  }
+}
+
+query getCardsUpdatedAt($locale: String!) {
+  card_updated_at: rangers_card_updated(
+    where: {
+      locale: { _eq: $locale }
+    }
+  ) {
+    updated_at
+  }
+}
+
+fragment SetType on rangers_set_type_localized {
+  id
+  name
+  sets {
+    id
+    name
+  }
+}
+
+query getSetNames($locale: String!) {
+  sets: rangers_set_type_localized(
+    where: {
+      locale: { _eq: $locale }
+
+    }
+    order_by: { id: desc }
+  ) {
+    ...SetType
+  }
+}

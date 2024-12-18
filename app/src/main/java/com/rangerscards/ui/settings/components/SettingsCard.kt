@@ -230,7 +230,6 @@ fun SettingsScreenPreview() {
                         CustomTheme.colors.l20,
                         CustomTheme.shapes.large
                     ),
-                    //verticalArrangement = Arrangement.spacedBy(8.dp)
                 ) {
                     SettingsClickableCard(
                         leadingIcon = Icons.Filled.AccountCircle,

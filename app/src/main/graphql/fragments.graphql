@@ -1,0 +1,207 @@
+fragment UserInfo on rangers_users {
+  id
+  handle
+}
+
+fragment Campaign on rangers_campaign {
+  id
+  user_id
+  name
+  notes
+  day
+  extended_calendar
+  cycle_id
+  current_location
+  current_path_terrain
+  missions
+  events
+  rewards
+  removed
+  history
+  calendar
+  latest_decks {
+    deck {
+      ...Deck
+    }
+    user {
+      ...UserInfo
+    }
+  }
+  access {
+    user {
+      ...UserInfo
+    }
+  }
+}
+
+fragment SearchDeck on rangers_search_deck {
+  id
+  user_id
+  slots
+  side_slots
+  version
+  name
+  description
+  awa
+  spi
+  fit
+  foc
+  created_at
+  updated_at
+  meta
+  user {
+    ...UserInfo
+  }
+  comment_count
+  copy_count
+  like_count
+  liked_by_user
+}
+
+fragment Deck on rangers_deck {
+  id
+  user_id
+  slots
+  side_slots
+  extra_slots
+  version
+  name
+  description
+  awa
+  spi
+  fit
+  foc
+  created_at
+  updated_at
+  meta
+  user {
+    ...UserInfo
+  }
+  published
+  previous_deck {
+    id
+    meta
+    slots
+    side_slots
+    version
+  }
+  next_deck {
+    id
+    meta
+    slots
+    side_slots
+    version
+  }
+}
+
+fragment DeckWithCampaign on rangers_deck {
+  ...Deck
+  comment_count
+  copy_count
+  like_count
+  liked_by_user
+  campaign {
+    id
+    name
+  }
+}
+
+fragment BasicDeckComment on rangers_comment {
+  id
+  user {
+    ...UserInfo
+  }
+  text
+  created_at
+  updated_at
+  response_count
+  comment_id
+}
+
+fragment DeckDetail on rangers_deck {
+  ...Deck
+  copy_count
+  comment_count
+  like_count
+  liked_by_user
+  original_deck {
+    deck {
+      id
+      name
+      user {
+        id
+        handle
+      }
+    }
+  }
+  campaign {
+    id
+    name
+    rewards
+    latest_decks {
+      deck {
+        id
+        slots
+      }
+    }
+  }
+  user {
+    handle
+  }
+  comments(
+    order_by: { created_at: asc }
+    limit: 5
+  ) {
+    ...BasicDeckComment
+  }
+}
+
+fragment DeckComment on rangers_comment {
+  ...BasicDeckComment
+  deck_id
+  responses {
+    ...BasicDeckComment
+  }
+}
+
+fragment Card on rangers_card_localized {
+  id
+  name
+  real_traits
+  traits
+  equip
+  presence
+  token_id
+  token_name
+  token_plurals
+  token_count
+  harm
+  approach_conflict
+  approach_reason
+  approach_exploration
+  approach_connection
+  text
+  set_id
+  set_name
+  set_type_id
+  set_size
+  set_type_name
+  set_position
+  quantity
+  level
+  flavor
+  type_id
+  type_name
+  cost
+  aspect_id
+  aspect_name
+  aspect_short_name
+  progress
+  imagesrc
+  position
+  deck_limit
+  spoiler
+  sun_challenge
+  mountain_challenge
+  crest_challenge
+}
