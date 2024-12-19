@@ -7,7 +7,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.exception.ApolloNetworkException
-import com.apollographql.apollo.network.okHttpClient
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
@@ -17,23 +16,16 @@ import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
-import okhttp3.Interceptor
-import okhttp3.OkHttpClient
-import okhttp3.Response
-import java.io.IOException
+import kotlinx.coroutines.tasks.await
 
 
 /**
  * ViewModel to maintain user's settings.
  */
-class SettingsViewModel(private var apolloClient: ApolloClient) : ViewModel() {
+class SettingsViewModel(private val apolloClient: ApolloClient) : ViewModel() {
 
     private val _currentUser = MutableStateFlow(Firebase.auth.currentUser)
     var currentUser = _currentUser.asStateFlow()
-
-    init {
-        _currentUser.value?.let { createNewApolloClient(it) }
-    }
 
     fun setUser(user: FirebaseUser?) {
         _currentUser.update { user }
@@ -43,11 +35,10 @@ class SettingsViewModel(private var apolloClient: ApolloClient) : ViewModel() {
         if (validateEmail(email)) {
             if (validatePassword(password)) {
                 mainActivity.signIn(email, password)
-                _currentUser.value?.let { createNewApolloClient(it) }
             } else {
                 Toast.makeText(
                     mainActivity.baseContext,
-                    "Invalid password.",
+                    "Invalid password. It must be 6 symbols minimum.",
                     Toast.LENGTH_SHORT,
                 ).show()
             }
@@ -64,11 +55,10 @@ class SettingsViewModel(private var apolloClient: ApolloClient) : ViewModel() {
         if (validateEmail(email)) {
             if (validatePassword(password)) {
                 mainActivity.createAccount(email, password)
-                _currentUser.value?.let { createNewApolloClient(it) }
             } else {
                 Toast.makeText(
                     mainActivity.baseContext,
-                    "Invalid password.",
+                    "Invalid password. It must be 6 symbols minimum.",
                     Toast.LENGTH_SHORT,
                 ).show()
             }
@@ -83,7 +73,7 @@ class SettingsViewModel(private var apolloClient: ApolloClient) : ViewModel() {
 
     fun signOut(mainActivity: MainActivity) {
         mainActivity.signOut()
-        removeInterceptorFromApolloClient()
+        _currentUser.update { null }
     }
 
     private fun validateEmail(email: String): Boolean {
@@ -93,33 +83,13 @@ class SettingsViewModel(private var apolloClient: ApolloClient) : ViewModel() {
         return password.length in 6..4096
     }
 
-    private fun createNewApolloClient(firebaseUser: FirebaseUser) {
-        apolloClient.close()
-        apolloClient = apolloClient.newBuilder()
-            .apply {
-                okHttpClient(
-                    OkHttpClient.Builder()
-                        .addInterceptor(AuthorizationInterceptor(firebaseUser))
-                        .build()
-                )
-            }
-//            .serverUrl("https://gapi.rangersdb.com/v1/graphqlTest")
-//            .okHttpClient(
-//            OkHttpClient.Builder()
-//                .addInterceptor(AuthorizationInterceptor(firebaseUser))
-//                .build()
-//            )
-            .build()
-    }
-
-    private fun removeInterceptorFromApolloClient() {
-        apolloClient.newBuilder().removeInterceptor(apolloClient.interceptors[apolloClient.interceptors.lastIndex])
-    }
-
-    fun getUserInfo(id: String): GetProfileQuery.Data? {
+    suspend fun getUserInfo(id: String): GetProfileQuery.Data? {
         var result: GetProfileQuery.Data? = null
         viewModelScope.launch {
-            val response = apolloClient.query(GetProfileQuery(id)).execute()
+            val token = currentUser.value?.getIdToken(false)?.await()?.token
+            val response = apolloClient.query(GetProfileQuery(id))
+                .addHttpHeader("Authorization", "Bearer $token")
+                .execute()
             when {
                 response.errors.orEmpty().isNotEmpty() -> {
                     // GraphQL error
@@ -139,18 +109,7 @@ class SettingsViewModel(private var apolloClient: ApolloClient) : ViewModel() {
                     Log.d("Another fetch error", "Oh no... An error happened.")
                 }
             }
-        }
+        }.join()
         return result
-    }
-}
-
-private class AuthorizationInterceptor(val user: FirebaseUser) : Interceptor {
-    override fun intercept(chain: Interceptor.Chain): Response {
-        val request = chain.request().newBuilder()
-            .apply {
-                addHeader("Authorization", "Bearer ${user.getIdToken(true)}")
-            }
-            .build()
-        return chain.proceed(request)
     }
 }

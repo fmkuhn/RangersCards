@@ -4,6 +4,7 @@ import android.os.Bundle
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.getValue
@@ -37,7 +38,7 @@ class MainActivity : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = CustomTheme.colors.l30
                 ) {
-                    RangersApp(this)
+                    RangersApp(this, isSystemInDarkTheme())
                 }
             }
         }
@@ -81,6 +82,5 @@ class MainActivity : ComponentActivity() {
 
     fun signOut() {
         auth.signOut()
-        viewModel.setUser(null)
     }
 }

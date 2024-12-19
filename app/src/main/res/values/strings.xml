@@ -7,4 +7,12 @@
     <string name="account_name_header">Account name</string>
     <string name="friends_amount_header">Friends</string>
     <string name="contact_us_button">Contact us</string>
+    <plurals name="friends_amount">
+        <item quantity="zero">%d friends</item>
+        <item quantity="one">%d friend</item>
+        <item quantity="two">%d friends</item>
+        <item quantity="few">%d friends</item>
+        <item quantity="many">%d friends</item>
+        <item quantity="other">%d friends</item>
+    </plurals>
 </resources>

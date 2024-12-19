@@ -3,6 +3,7 @@ package com.rangerscards.ui.settings.components
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -25,10 +26,9 @@ import androidx.compose.material.icons.filled.Settings
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonColors
 import androidx.compose.material3.ButtonDefaults
-import androidx.compose.material3.Card
-import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
@@ -49,40 +49,43 @@ import com.rangerscards.ui.theme.RangersCardsTheme
 
 @Composable
 fun SettingsCard(
+    isDarkTheme: Boolean,
     @StringRes labelIdRes: Int,
-    content: @Composable (ColumnScope.() -> Unit)
+    modifier: Modifier = Modifier,
+    content: @Composable (ColumnScope.() -> Unit),
 ) {
-    Card(
-        modifier = Modifier
+    Surface(
+        modifier = modifier
             .fillMaxWidth()
             .padding(8.dp),
         shape = CustomTheme.shapes.large,
-        colors = CardDefaults.cardColors().copy(containerColor = CustomTheme.colors.l30),
-        border = BorderStroke(1.dp, CustomTheme.colors.d15),
-        elevation = CardDefaults.cardElevation(4.dp)
+        color = CustomTheme.colors.l30,
+        border = BorderStroke(1.dp, if (isDarkTheme) Color.Transparent else CustomTheme.colors.d15),
+        shadowElevation = 4.dp
     ) {
-        Card(
-            colors = CardDefaults.cardColors().copy(containerColor = CustomTheme.colors.d15),
-            shape = RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp),
-        ) {
+        Column {
             Row(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
+                    .background(
+                        if (isDarkTheme) CustomTheme.colors.l15 else CustomTheme.colors.d15,
+                        RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+                    )
                     .fillMaxWidth()
                     .padding(vertical = 4.dp),
             ) {
                 Text(
                     text = stringResource(id = labelIdRes),
-                    color = CustomTheme.colors.l30,
+                    color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
                     style = CustomTheme.typography.headline,
                 )
             }
-        }
-        Column(
-            modifier = Modifier.padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
-        ) {
-            content()
+            Column(
+                modifier = Modifier.padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                content()
+            }
         }
     }
 }
@@ -143,7 +146,7 @@ fun SettingsButton(
 }
 
 @Composable
-fun SettingsClickableCard(
+fun SettingsClickableSurface(
     leadingIcon: Any,
     trailingIcon: Any,
     @StringRes headerId: Int,
@@ -151,11 +154,11 @@ fun SettingsClickableCard(
     onClick: () -> Unit,
     modifier: Modifier = Modifier.fillMaxWidth()
 ) {
-    Card(
-        modifier = modifier,
+    Surface(
         onClick = { onClick() },
+        modifier = modifier,
         shape = CustomTheme.shapes.large,
-        colors = CardDefaults.cardColors().copy(containerColor = CustomTheme.colors.l20),
+        color = Color.Transparent
     ) {
         Row(
             modifier = Modifier.padding(8.dp),
@@ -221,17 +224,18 @@ fun SettingsClickableCard(
 fun SettingsScreenPreview() {
     RangersCardsTheme {
         Column(
-            modifier = Modifier.background(CustomTheme.colors.l10)
+            modifier = Modifier
+                .background(CustomTheme.colors.l10)
                 .fillMaxSize()
         ) {
-            SettingsCard(labelIdRes = R.string.account_title) {
+            SettingsCard(labelIdRes = R.string.account_title, isDarkTheme = false) {
                 Column(
                     modifier = Modifier.background(
                         CustomTheme.colors.l20,
                         CustomTheme.shapes.large
                     ),
                 ) {
-                    SettingsClickableCard(
+                    SettingsClickableSurface(
                         leadingIcon = Icons.Filled.AccountCircle,
                         trailingIcon = Icons.Filled.Edit,
                         headerId = R.string.account_name_header,
@@ -242,7 +246,7 @@ fun SettingsScreenPreview() {
                         modifier = Modifier.padding(horizontal = 8.dp),
                         color = CustomTheme.colors.l10
                     )
-                    SettingsClickableCard(
+                    SettingsClickableSurface(
                         leadingIcon = Icons.Filled.Person,
                         trailingIcon = Icons.Filled.Add,
                         headerId = R.string.friends_amount_header,

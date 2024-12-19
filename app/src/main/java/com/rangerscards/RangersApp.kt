@@ -7,11 +7,11 @@ import com.rangerscards.ui.settings.SettingsScreen
  * Top level composable that represents screens for the application.
  */
 @Composable
-fun RangersApp(mainActivity: MainActivity) {
+fun RangersApp(mainActivity: MainActivity, isDarkTheme: Boolean) {
     //RangersNavHost(navController = navController)
 
     //TODO: Move to NavGraph
-    SettingsScreen(mainActivity)
+    SettingsScreen(mainActivity, isDarkTheme)
 }
 
 /**
