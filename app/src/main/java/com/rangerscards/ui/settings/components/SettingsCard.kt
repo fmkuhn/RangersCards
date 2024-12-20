@@ -3,7 +3,6 @@ package com.rangerscards.ui.settings.components
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
@@ -219,6 +218,19 @@ fun SettingsClickableSurface(
     }
 }
 
+@Composable fun TextWhenNotLoggedIn(modifier: Modifier = Modifier) {
+    Text(
+        text = stringResource(id = R.string.text_when_not_logged_in),
+        color = CustomTheme.colors.d30,
+        fontFamily = Jost,
+        fontWeight = FontWeight.Normal,
+        fontSize = 18.sp,
+        lineHeight = 24.sp,
+        letterSpacing = 0.2.sp,
+        modifier = modifier.padding(horizontal = 4.dp)
+    )
+}
+
 @Preview(showBackground = true, showSystemUi = true)
 @Composable
 fun SettingsScreenPreview() {
@@ -229,6 +241,7 @@ fun SettingsScreenPreview() {
                 .fillMaxSize()
         ) {
             SettingsCard(labelIdRes = R.string.account_title, isDarkTheme = false) {
+                TextWhenNotLoggedIn()
                 Column(
                     modifier = Modifier.background(
                         CustomTheme.colors.l20,
@@ -255,7 +268,7 @@ fun SettingsScreenPreview() {
                     )
                 }
                 SettingsButton(
-                    R.string.exit_account_button,
+                    R.string.sign_out_account_button,
                     Icons.Filled.Settings,
                     {}
                 )

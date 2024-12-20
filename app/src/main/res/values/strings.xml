@@ -2,8 +2,19 @@
     <string name="app_name" translatable="false">RangersCards</string>
 
     //Settings screen strings
-    <string name="account_title">Account</string>
-    <string name="exit_account_button">Exit</string>
+    <string name="account_title">Account RangersDB</string>
+    <string name="text_when_not_logged_in">This app works just fine without an account.\nBut signing in will allow you to sync campaigns and decks between devices and with RangersDB.</string>
+    <string name="sign_in_to_app_account_button">Sign in to app</string>
+    <string name="sign_in_up_to_app_account_title">Sign in/up to app</string>
+    <string name="email_placeholder">Email address</string>
+    <string name="password_placeholder">Password</string>
+    <string name="sign_in_to_account_button">Sign in to your account</string>
+    <string name="sign_up_to_app_account_button">Create a new account</string>
+    <string name="sign_out_account_button">Sign out</string>
+    <string name="sign_out_account_title">Sign out of RangersDB?</string>
+    <string name="sign_out_account_text">Are you sure you want to sign out of RangersDB?\n\nAny campaigns you uploaded or have had shared with you and decks from RangersB will be removed from this device. They can be resynced if you sign in again.\n\nNote: if you have made recent changes while offline, they may be lost.</string>
+    <string name="cancel_button">Cancel</string>
+    <string name="done_button">Done</string>
     <string name="account_name_header">Account name</string>
     <string name="friends_amount_header">Friends</string>
     <string name="contact_us_button">Contact us</string>

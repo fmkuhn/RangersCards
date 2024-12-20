@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.lifecycle.viewModelScope
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -20,6 +21,8 @@ import com.rangerscards.ui.AppViewModelProvider
 import com.rangerscards.ui.settings.SettingsViewModel
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.RangersCardsTheme
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
@@ -49,7 +52,11 @@ class MainActivity : ComponentActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
-                    viewModel.setUser(auth.currentUser)
+                    viewModel.viewModelScope.launch {
+                        delay(3000L)
+                    }.invokeOnCompletion {
+                        viewModel.setUser(auth.currentUser)
+                    }
                 } else {
                     // If sign in fails, display a message to the user.
                     Toast.makeText(

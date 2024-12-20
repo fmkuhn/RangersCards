@@ -25,8 +25,7 @@ class AppDataContainer(private val context: Context) : AppContainer {
         ApolloClient.Builder()
             .serverUrl("https://gapi.rangersdb.com/v1/graphql")
             .normalizedCache(SqlNormalizedCacheFactory("apollo.db"))
-            .fetchPolicy(FetchPolicy.NetworkOnly)
-            //.fetchPolicy(FetchPolicy.CacheAndNetwork)
+            .fetchPolicy(FetchPolicy.CacheAndNetwork)
             .build()
     }
 }
