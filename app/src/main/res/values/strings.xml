@@ -11,7 +11,9 @@
     <string name="sign_in_to_account_button">Sign in to your account</string>
     <string name="sign_up_to_app_account_button">Create a new account</string>
     <string name="sign_out_account_button">Sign out</string>
+    <string name="delete_account_button">Delete your account</string>
     <string name="sign_out_account_title">Sign out of RangersDB?</string>
+    <string name="delete_account_title">Confirm account deletion</string>
     <string name="sign_out_account_text">Are you sure you want to sign out of RangersDB?\n\nAny campaigns you uploaded or have had shared with you and decks from RangersB will be removed from this device. They can be resynced if you sign in again.\n\nNote: if you have made recent changes while offline, they may be lost.</string>
     <string name="cancel_button">Cancel</string>
     <string name="done_button">Done</string>

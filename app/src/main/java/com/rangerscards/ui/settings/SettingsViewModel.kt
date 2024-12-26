@@ -10,13 +10,13 @@ import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.apollographql.apollo.exception.ApolloNetworkException
 import com.google.firebase.Firebase
+import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 import com.rangerscards.GetProfileByHandleQuery
 import com.rangerscards.GetProfileQuery
 import com.rangerscards.MainActivity
 import com.rangerscards.UpdateHandleMutation
-import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
@@ -86,6 +86,46 @@ class SettingsViewModel(private val apolloClient: ApolloClient) : ViewModel() {
         }
     }
 
+    fun deleteUser(mainActivity: MainActivity, email: String, password: String) {
+        if (validateEmail(email)) {
+            if (validatePassword(password)) {
+                val user = userUiState.value.currentUser
+                user?.reauthenticate(EmailAuthProvider.getCredential(email, password))
+                    ?.addOnCompleteListener {
+                        if (it.isSuccessful) user.delete().addOnCompleteListener {
+                            Log.d("AUTH", "User account deleted.")
+                            Toast.makeText(
+                                mainActivity.baseContext,
+                                "Account successfully deleted.",
+                                Toast.LENGTH_SHORT,
+                            ).show()
+                            _userUiState.update { userUiState ->
+                                userUiState.copy(currentUser = null, userInfo = null)
+                            }
+                        } else {
+                            Toast.makeText(
+                                mainActivity.baseContext,
+                                "Invalid credentials.",
+                                Toast.LENGTH_SHORT,
+                            ).show()
+                        }
+                    }
+            } else {
+                Toast.makeText(
+                    mainActivity.baseContext,
+                    "Invalid password. It must be 6 characters minimum.",
+                    Toast.LENGTH_SHORT,
+                ).show()
+            }
+        } else {
+            Toast.makeText(
+                mainActivity.baseContext,
+                "Invalid email.",
+                Toast.LENGTH_SHORT,
+            ).show()
+        }
+    }
+
     private fun validateEmail(email: String): Boolean {
         return email.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()
     }
@@ -99,11 +139,7 @@ class SettingsViewModel(private val apolloClient: ApolloClient) : ViewModel() {
 
     suspend fun getUserInfo(id: String) {
         viewModelScope.launch {
-            var token = userUiState.value.currentUser?.getIdToken(false)?.await()?.token
-            while (token == null) {
-                delay(1500L)
-                token = userUiState.value.currentUser?.getIdToken(false)?.await()?.token
-            }
+            val token = userUiState.value.currentUser?.getIdToken(false)?.await()?.token
             apolloClient.query(GetProfileQuery(id))
                 .addHttpHeader("Authorization", "Bearer $token")
                 .toFlow()
@@ -136,8 +172,8 @@ class SettingsViewModel(private val apolloClient: ApolloClient) : ViewModel() {
 
     suspend fun updateHandle(mainActivity: MainActivity, handle: String) {
         if (handle == userUiState.value.userInfo?.profile?.userProfile?.handle.toString()) return
-        var isTaken = false;
-        viewModelScope.launch() {
+        var isTaken: Boolean
+        viewModelScope.launch {
             if (handle.length !in 3..22) {
                 Toast.makeText(
                     mainActivity.baseContext,

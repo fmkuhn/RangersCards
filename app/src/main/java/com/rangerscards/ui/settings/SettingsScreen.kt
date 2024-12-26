@@ -3,31 +3,18 @@ package com.rangerscards.ui.settings
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.automirrored.filled.ArrowForward
-import androidx.compose.material.icons.automirrored.filled.ExitToApp
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Close
-import androidx.compose.material.icons.filled.Done
-import androidx.compose.material.icons.filled.Edit
 import androidx.compose.material.icons.filled.Email
 import androidx.compose.material.icons.filled.Lock
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -53,7 +40,7 @@ import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rangerscards.MainActivity
 import com.rangerscards.R
 import com.rangerscards.ui.AppViewModelProvider
-import com.rangerscards.ui.settings.components.SettingsButton
+import com.rangerscards.ui.components.SquareButton
 import com.rangerscards.ui.settings.components.SettingsCard
 import com.rangerscards.ui.settings.components.SettingsClickableSurface
 import com.rangerscards.ui.settings.components.SettingsInputField
@@ -123,20 +110,20 @@ fun SettingsScreen(
                             ),
                             visualTransformation = PasswordVisualTransformation()
                         )
-                        SettingsButton(
+                        SquareButton(
                             R.string.sign_in_to_account_button,
-                            Icons.AutoMirrored.Filled.ArrowForward,
-                            {
+                            R.drawable.login_32dp,
+                            onClick = {
                                 settingsViewModel.signIn(mainActivity, email, password)
                                 openAuthDialog = false
                                 email = ""
                                 password = ""
                             }
                         )
-                        SettingsButton(
+                        SquareButton(
                             R.string.sign_up_to_app_account_button,
-                            Icons.Filled.Add,
-                            {
+                            R.drawable.add_32dp,
+                            onClick = {
                                 settingsViewModel.createAccount(mainActivity, email, password)
                                 openAuthDialog = false
                                 email = ""
@@ -146,67 +133,114 @@ fun SettingsScreen(
                     }
                 }
                 TextWhenNotLoggedIn()
-                SettingsButton(
+                SquareButton(
                     stringId = R.string.sign_in_to_app_account_button,
-                    leadingIcon = Icons.AutoMirrored.Filled.ArrowForward,
+                    leadingIcon = R.drawable.login_32dp,
                     onClick = { openAuthDialog = true }
                 )
             } else {
-                if (openAuthDialog) Dialog(
-                    onDismissRequest = { openAuthDialog = false },
-                    properties = DialogProperties(
-                        dismissOnBackPress = true,
-                        dismissOnClickOutside = true,
-                        usePlatformDefaultWidth = false
-                    )
-                ) {
-                    SettingsCard(
-                        isDarkTheme = isDarkTheme,
-                        labelIdRes = R.string.sign_out_account_title
+                if (openAuthDialog) {
+                    var isDeleting by remember { mutableStateOf(false) }
+                    Dialog(
+                        onDismissRequest = { openAuthDialog = false },
+                        properties = DialogProperties(
+                            dismissOnBackPress = true,
+                            dismissOnClickOutside = true,
+                            usePlatformDefaultWidth = false
+                        )
                     ) {
-                        Text(
-                            text = stringResource(id = R.string.sign_out_account_text),
-                            color = CustomTheme.colors.d30,
-                            fontFamily = Jost,
-                            fontWeight = FontWeight.Normal,
-                            fontSize = 18.sp,
-                            lineHeight = 24.sp,
-                            modifier = modifier.padding(horizontal = 4.dp)
-                        )
-                        Button(
-                            onClick = { openAuthDialog = false },
-                            modifier = modifier,
-                            shape = CustomTheme.shapes.small,
-                            colors = ButtonDefaults.buttonColors().copy(CustomTheme.colors.d30),
-                            contentPadding = PaddingValues(8.dp)
-                        ) {
-                            Icon(
-                                Icons.Filled.Close,
-                                //painterResource(id = leadingIcon as Int),
-                                contentDescription = null,
-                                tint = CustomTheme.colors.warn,
-                                modifier = Modifier.size(24.dp)
-                            )
-                            Spacer(modifier = Modifier.width(8.dp))
-                            Text(
-                                text = stringResource(id = R.string.cancel_button),
-                                modifier = Modifier.fillMaxWidth(),
-                                color = CustomTheme.colors.l30,
-                                fontFamily = Jost,
-                                fontWeight = FontWeight.Medium,
-                                fontSize = 20.sp,
-                                lineHeight = 20.sp,
-                                letterSpacing = 0.1.sp
-                            )
-                        }
-                        SettingsButton(
-                            R.string.sign_out_account_button,
-                            Icons.AutoMirrored.Filled.ExitToApp,
-                            {
-                                settingsViewModel.signOut(mainActivity)
-                                openAuthDialog = false
+                        if (isDeleting) {
+                            SettingsCard(
+                                isDarkTheme = isDarkTheme,
+                                labelIdRes = R.string.delete_account_title
+                            ) {
+                                SettingsInputField(
+                                    leadingIcon = Icons.Filled.Email,
+                                    placeholder = R.string.email_placeholder,
+                                    textValue = email,
+                                    onValueChange = { email = it },
+                                    KeyboardOptions.Default.copy(
+                                        keyboardType = KeyboardType.Email,
+                                        imeAction = ImeAction.Next,
+                                    )
+                                )
+                                SettingsInputField(
+                                    leadingIcon = Icons.Filled.Lock,
+                                    placeholder = R.string.password_placeholder,
+                                    textValue = password,
+                                    onValueChange = { password = it },
+                                    KeyboardOptions.Default.copy(
+                                        keyboardType = KeyboardType.Password,
+                                        imeAction = ImeAction.Done,
+                                    ),
+                                    visualTransformation = PasswordVisualTransformation()
+                                )
+                                SquareButton(
+                                    stringId = R.string.cancel_button,
+                                    leadingIcon = R.drawable.close_32dp,
+                                    onClick = { openAuthDialog = false },
+                                    buttonColor = ButtonDefaults.buttonColors().copy(CustomTheme.colors.d30),
+                                    iconColor = CustomTheme.colors.warn,
+                                    textColor = CustomTheme.colors.l30
+                                )
+                                SquareButton(
+                                    R.string.delete_account_button,
+                                    R.drawable.delete_32dp,
+                                    onClick = {
+                                        settingsViewModel.deleteUser(mainActivity, email, password)
+                                        openAuthDialog = false
+                                        isDeleting = false
+                                        email = ""
+                                        password = ""
+                                    },
+                                    buttonColor = ButtonDefaults.buttonColors().copy(CustomTheme.colors.warn),
+                                    iconColor = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
+                                    textColor = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30
+                                )
                             }
-                        )
+                        }
+                        else {
+                            SettingsCard(
+                                isDarkTheme = isDarkTheme,
+                                labelIdRes = R.string.sign_out_account_title
+                            ) {
+                                Text(
+                                    text = stringResource(id = R.string.sign_out_account_text),
+                                    color = CustomTheme.colors.d30,
+                                    fontFamily = Jost,
+                                    fontWeight = FontWeight.Normal,
+                                    fontSize = 18.sp,
+                                    lineHeight = 24.sp,
+                                    modifier = modifier.padding(horizontal = 4.dp)
+                                )
+                                SquareButton(
+                                    stringId = R.string.cancel_button,
+                                    leadingIcon = R.drawable.close_32dp,
+                                    onClick = { openAuthDialog = false },
+                                    buttonColor = ButtonDefaults.buttonColors().copy(CustomTheme.colors.d30),
+                                    iconColor = CustomTheme.colors.warn,
+                                    textColor = CustomTheme.colors.l30
+                                )
+                                SquareButton(
+                                    R.string.delete_account_button,
+                                    R.drawable.delete_32dp,
+                                    onClick = {
+                                        isDeleting = true
+                                    },
+                                    buttonColor = ButtonDefaults.buttonColors().copy(CustomTheme.colors.warn),
+                                    iconColor = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
+                                    textColor = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30
+                                )
+                                SquareButton(
+                                    stringId = R.string.sign_out_account_button,
+                                    leadingIcon = R.drawable.logout_32dp,
+                                    onClick = {
+                                        settingsViewModel.signOut(mainActivity)
+                                        openAuthDialog = false
+                                    }
+                                )
+                            }
+                        }
                     }
                 }
                 else if (openHandleDialog) {
@@ -227,7 +261,7 @@ fun SettingsScreen(
                             if (!isLoading) {
                                 if (userHandle.isEmpty()) userHandle = user.userInfo?.profile?.userProfile?.handle ?: ""
                                 SettingsInputField(
-                                    leadingIcon = Icons.Filled.AccountCircle,
+                                    leadingIcon = R.drawable.badge_32dp,
                                     placeholder = null,
                                     textValue = userHandle,
                                     onValueChange = { userHandle = it },
@@ -238,44 +272,31 @@ fun SettingsScreen(
                                 )
                             }
                             else CircularProgressIndicator(
-                                Modifier.size(32.dp).align(Alignment.CenterHorizontally),
+                                Modifier
+                                    .size(32.dp)
+                                    .align(Alignment.CenterHorizontally),
                                 color = CustomTheme.colors.d20
                             )
                             Row(
                                 modifier = Modifier.fillMaxWidth(),
                                 horizontalArrangement = Arrangement.spacedBy(8.dp)
                             ) {
-                                Button(
+                                SquareButton(
+                                    stringId = R.string.cancel_button,
+                                    leadingIcon = R.drawable.close_32dp,
                                     onClick = { openHandleDialog = false },
-                                    modifier = modifier.weight(0.5f),
-                                    shape = CustomTheme.shapes.small,
-                                    enabled = !isLoading,
-                                    colors = ButtonDefaults.buttonColors().copy(
+                                    buttonColor = ButtonDefaults.buttonColors().copy(
                                         CustomTheme.colors.d30,
                                         disabledContainerColor = CustomTheme.colors.m
                                     ),
-                                    contentPadding = PaddingValues(8.dp)
-                                ) {
-                                    Icon(
-                                        Icons.Filled.Close,
-                                        //painterResource(id = leadingIcon as Int),
-                                        contentDescription = null,
-                                        tint = CustomTheme.colors.warn,
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = stringResource(id = R.string.cancel_button),
-                                        modifier = Modifier.fillMaxWidth(),
-                                        color = CustomTheme.colors.l30,
-                                        fontFamily = Jost,
-                                        fontWeight = FontWeight.Medium,
-                                        fontSize = 20.sp,
-                                        lineHeight = 20.sp,
-                                        letterSpacing = 0.1.sp
-                                    )
-                                }
-                                Button(
+                                    iconColor = CustomTheme.colors.warn,
+                                    textColor = CustomTheme.colors.l30,
+                                    modifier = Modifier.weight(0.5f),
+                                    isEnabled = !isLoading
+                                )
+                                SquareButton(
+                                    stringId = R.string.done_button,
+                                    leadingIcon = R.drawable.done_32dp,
                                     onClick = {
                                         isLoading = true
                                         coroutineScope.launch {
@@ -286,34 +307,15 @@ fun SettingsScreen(
                                             userHandle = user.userInfo?.profile?.userProfile?.handle.toString()
                                         }
                                     },
-                                    modifier = modifier.weight(0.5f),
-                                    shape = CustomTheme.shapes.small,
-                                    enabled = !isLoading,
-                                    colors = ButtonDefaults.buttonColors().copy(
+                                    buttonColor = ButtonDefaults.buttonColors().copy(
                                         CustomTheme.colors.d10,
                                         disabledContainerColor = CustomTheme.colors.m
                                     ),
-                                    contentPadding = PaddingValues(8.dp)
-                                ) {
-                                    Icon(
-                                        Icons.Filled.Done,
-                                        //painterResource(id = leadingIcon as Int),
-                                        contentDescription = null,
-                                        tint = CustomTheme.colors.l15,
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                    Spacer(modifier = Modifier.width(8.dp))
-                                    Text(
-                                        text = stringResource(id = R.string.done_button),
-                                        modifier = Modifier.fillMaxWidth(),
-                                        color = CustomTheme.colors.l30,
-                                        fontFamily = Jost,
-                                        fontWeight = FontWeight.Medium,
-                                        fontSize = 20.sp,
-                                        lineHeight = 20.sp,
-                                        letterSpacing = 0.1.sp
-                                    )
-                                }
+                                    iconColor = CustomTheme.colors.l15,
+                                    textColor = CustomTheme.colors.l30,
+                                    modifier = Modifier.weight(0.5f),
+                                    isEnabled = !isLoading
+                                )
                             }
                         }
                     }
@@ -334,8 +336,8 @@ fun SettingsScreen(
                         )
                     }
                     else SettingsClickableSurface(
-                        leadingIcon = Icons.Filled.AccountCircle,
-                        trailingIcon = Icons.Filled.Edit,
+                        leadingIcon = R.drawable.badge_32dp,
+                        trailingIcon = R.drawable.edit_32dp,
                         headerId = R.string.account_name_header,
                         text = user.userInfo?.profile?.userProfile?.handle ?: "",
                         { openHandleDialog = true }
@@ -356,8 +358,8 @@ fun SettingsScreen(
                     else {
                         val friendsCount = user.userInfo?.profile?.userProfile?.friends?.size ?: 0
                         SettingsClickableSurface(
-                            leadingIcon = Icons.Filled.Person,
-                            trailingIcon = Icons.Filled.Add,
+                            leadingIcon = R.drawable.group_32dp,
+                            trailingIcon = R.drawable.add_32dp,
                             headerId = R.string.friends_amount_header,
                             text = pluralStringResource(
                                 id = R.plurals.friends_amount,
@@ -368,47 +370,12 @@ fun SettingsScreen(
                         )
                     }
                 }
-                SettingsButton(
-                    R.string.sign_out_account_button,
-                    Icons.AutoMirrored.Filled.ExitToApp,
-                    { openAuthDialog = true }
+                SquareButton(
+                    stringId = R.string.sign_out_account_button,
+                    leadingIcon = R.drawable.logout_32dp,
+                    onClick = { openAuthDialog = true },
                 )
             }
         }
     }
 }
-//        if (user.currentUser == null) {
-//            Text(text = "Please log in by email and password")
-//            TextField(
-//                value = email,
-//                onValueChange = { email = it },
-//                singleLine = true,
-//                label = { Text(text = "Email") },
-//                keyboardOptions = KeyboardOptions.Default.copy(
-//                    keyboardType = KeyboardType.Email,
-//                    imeAction = ImeAction.Next,
-//                ),
-//                modifier = Modifier
-//                    .padding(bottom = 32.dp)
-//                    .fillMaxWidth(),
-//            )
-//            TextField(
-//                value = password,
-//                onValueChange = { password = it },
-//                singleLine = true,
-//                label = { Text(text = "Password") },
-//                keyboardOptions = KeyboardOptions.Default.copy(
-//                    keyboardType = KeyboardType.Password,
-//                    imeAction = ImeAction.Done
-//                ),
-//                visualTransformation = PasswordVisualTransformation(),
-//                modifier = Modifier
-//                    .padding(bottom = 32.dp)
-//                    .fillMaxWidth(),
-//            )
-//            Button(
-//                onClick = { settingsViewModel.signIn(mainActivity, email, password) }
-//            ) {
-//                Text(text = "Log in")
-//            }
-//        }

@@ -1,30 +1,18 @@
 package com.rangerscards.ui.settings.components
 
+import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.ColumnScope
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.shape.RoundedCornerShape
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.AccountCircle
-import androidx.compose.material.icons.filled.Add
-import androidx.compose.material.icons.filled.Edit
-import androidx.compose.material.icons.filled.Email
-import androidx.compose.material.icons.filled.Person
-import androidx.compose.material.icons.filled.Settings
-import androidx.compose.material3.Button
-import androidx.compose.material3.ButtonColors
-import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -33,7 +21,6 @@ import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -42,6 +29,7 @@ import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rangerscards.R
+import com.rangerscards.ui.components.SquareButton
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
 import com.rangerscards.ui.theme.RangersCardsTheme
@@ -90,64 +78,9 @@ fun SettingsCard(
 }
 
 @Composable
-fun SettingsButton(
-    @StringRes stringId: Int,
-    leadingIcon: Any,
-    onClick: () -> Unit,
-    modifier: Modifier = Modifier.fillMaxWidth(),
-    isContactUsButton: Boolean = false,
-) {
-    lateinit var buttonColor: ButtonColors
-    val iconColor: Color
-    val textColor: Color
-    if (isContactUsButton) {
-        buttonColor = ButtonDefaults.buttonColors().copy(CustomTheme.colors.gold)
-        iconColor = CustomTheme.colors.d20
-        textColor = CustomTheme.colors.d30
-    } else {
-        buttonColor = ButtonDefaults.buttonColors().copy(CustomTheme.colors.d10)
-        iconColor = CustomTheme.colors.l20
-        textColor = CustomTheme.colors.l30
-    }
-    Button(
-        onClick = { onClick() },
-        modifier = modifier,
-        shape = CustomTheme.shapes.small,
-        colors = buttonColor,
-        contentPadding = PaddingValues(8.dp)
-    ) {
-        when(leadingIcon) {
-            is ImageVector -> Icon(
-                leadingIcon,
-                contentDescription = null,
-                tint = iconColor,
-                modifier = Modifier.size(24.dp)
-            )
-            else -> Icon(
-                painterResource(id = leadingIcon as Int),
-                contentDescription = null,
-                tint = iconColor,
-                modifier = Modifier.size(24.dp)
-            )
-        }
-        Spacer(modifier = Modifier.width(8.dp))
-        Text(
-            text = stringResource(id = stringId),
-            modifier = Modifier.fillMaxWidth(),
-            color = textColor,
-            fontFamily = Jost,
-            fontWeight = FontWeight.Medium,
-            fontSize = 20.sp,
-            lineHeight = 20.sp,
-            letterSpacing = 0.1.sp
-        )
-    }
-}
-
-@Composable
 fun SettingsClickableSurface(
-    leadingIcon: Any,
-    trailingIcon: Any,
+    @DrawableRes leadingIcon: Int,
+    @DrawableRes trailingIcon: Int,
     @StringRes headerId: Int,
     text: String,
     onClick: () -> Unit,
@@ -164,20 +97,12 @@ fun SettingsClickableSurface(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically
         ) {
-            when(leadingIcon) {
-                is ImageVector -> Icon(
-                    leadingIcon,
-                    contentDescription = null,
-                    tint = CustomTheme.colors.m,
-                    modifier = Modifier.size(32.dp)
-                )
-                else -> Icon(
-                    painterResource(id = leadingIcon as Int),
-                    contentDescription = null,
-                    tint = CustomTheme.colors.m,
-                    modifier = Modifier.size(32.dp)
-                )
-            }
+            Icon(
+                painterResource(id = leadingIcon),
+                contentDescription = null,
+                tint = CustomTheme.colors.m,
+                modifier = Modifier.size(32.dp)
+            )
             Column(
                 modifier = Modifier.weight(1f),
                 verticalArrangement = Arrangement.spacedBy(0.dp)
@@ -200,20 +125,12 @@ fun SettingsClickableSurface(
                     lineHeight = 20.sp,
                 )
             }
-            when(trailingIcon) {
-                is ImageVector -> Icon(
-                    trailingIcon,
-                    contentDescription = null,
-                    tint = CustomTheme.colors.m,
-                    modifier = Modifier.size(32.dp)
-                )
-                else -> Icon(
-                    painterResource(id = trailingIcon as Int),
-                    contentDescription = null,
-                    tint = CustomTheme.colors.m,
-                    modifier = Modifier.size(32.dp)
-                )
-            }
+            Icon(
+                painterResource(id = trailingIcon),
+                contentDescription = null,
+                tint = CustomTheme.colors.m,
+                modifier = Modifier.size(32.dp)
+            )
         }
     }
 }
@@ -249,8 +166,8 @@ fun SettingsScreenPreview() {
                     ),
                 ) {
                     SettingsClickableSurface(
-                        leadingIcon = Icons.Filled.AccountCircle,
-                        trailingIcon = Icons.Filled.Edit,
+                        leadingIcon = R.drawable.badge_32dp,
+                        trailingIcon = R.drawable.edit_32dp,
                         headerId = R.string.account_name_header,
                         text = "Evgeny727",
                         {}
@@ -260,23 +177,17 @@ fun SettingsScreenPreview() {
                         color = CustomTheme.colors.l10
                     )
                     SettingsClickableSurface(
-                        leadingIcon = Icons.Filled.Person,
-                        trailingIcon = Icons.Filled.Add,
+                        leadingIcon = R.drawable.group_32dp,
+                        trailingIcon = R.drawable.add_32dp,
                         headerId = R.string.friends_amount_header,
                         text = "3 friends",
                         {}
                     )
                 }
-                SettingsButton(
+                SquareButton(
                     R.string.sign_out_account_button,
-                    Icons.Filled.Settings,
-                    {}
-                )
-                SettingsButton(
-                    R.string.contact_us_button,
-                    Icons.Filled.Email,
-                    {},
-                    isContactUsButton = true
+                    R.drawable.logout_32dp,
+                    onClick = {}
                 )
             }
         }

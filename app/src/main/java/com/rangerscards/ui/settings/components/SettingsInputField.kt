@@ -74,7 +74,7 @@ fun SettingsInputField(
             else -> Icon(
                 painterResource(id = leadingIcon as Int),
                 contentDescription = null,
-                tint = CustomTheme.colors.l20,
+                tint = CustomTheme.colors.d20,
                 modifier = Modifier.size(24.dp)
             ) }
         },

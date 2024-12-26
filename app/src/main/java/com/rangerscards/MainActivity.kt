@@ -52,10 +52,16 @@ class MainActivity : ComponentActivity() {
             .addOnCompleteListener(this) { task ->
                 if (task.isSuccessful) {
                     // Sign in success, update UI with the signed-in user's information
+                    auth.signOut()
                     viewModel.viewModelScope.launch {
-                        delay(3000L)
+                        Toast.makeText(
+                            baseContext,
+                            "Please wait 1 minute while your token is authenticating.",
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                        delay(60000L)
                     }.invokeOnCompletion {
-                        viewModel.setUser(auth.currentUser)
+                        signIn(email, password)
                     }
                 } else {
                     // If sign in fails, display a message to the user.
