@@ -41,11 +41,8 @@ query getProfile($id: String!) {
   profile: rangers_users_by_pk(id: $id) {
     ...UserProfile
   }
-  settings: rangers_user_settings_by_pk(user_id: $id) {
-    user_id
-    private_decks
-  }
 }
+
 query getProfileByHandle($handle: String!) {
   profile: rangers_users(
     where: {
