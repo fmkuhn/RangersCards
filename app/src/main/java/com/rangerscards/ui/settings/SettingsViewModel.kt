@@ -134,14 +134,17 @@ class SettingsViewModel(private val apolloClient: ApolloClient) : ViewModel() {
     }
 
     private fun normalizeHandle(handle: String): String {
-        return handle.replace("[\\.\\$\\[\\]#/]".toRegex(),"_").lowercase(Locale.ENGLISH).trim()
+        return handle.replace("[\\.\\$\\[\\]#/]".toRegex(),"_")
+            .lowercase(Locale.ENGLISH).trim()
+    }
+
+    private suspend fun getCurrentToken(): String? {
+        return userUiState.value.currentUser?.getIdToken(false)?.await()?.token
     }
 
     suspend fun getUserInfo(id: String) {
         viewModelScope.launch {
-            val token = userUiState.value.currentUser?.getIdToken(false)?.await()?.token
             apolloClient.query(GetProfileQuery(id))
-                .addHttpHeader("Authorization", "Bearer $token")
                 .toFlow()
                 .collect {
                     val response = it
@@ -182,7 +185,8 @@ class SettingsViewModel(private val apolloClient: ApolloClient) : ViewModel() {
                 ).show()
             }
             else {
-                val result = apolloClient.query(GetProfileByHandleQuery(handle)).fetchPolicy(FetchPolicy.NetworkOnly).execute()
+                val result = apolloClient.query(GetProfileByHandleQuery(handle))
+                    .fetchPolicy(FetchPolicy.NetworkOnly).execute()
                 if (result.data?.profile?.isEmpty() == false) {
                     isTaken = true
                     Toast.makeText(
@@ -194,7 +198,7 @@ class SettingsViewModel(private val apolloClient: ApolloClient) : ViewModel() {
                     isTaken = false
                 }
                 if (!isTaken) {
-                    val token = userUiState.value.currentUser?.getIdToken(false)?.await()?.token
+                    val token = getCurrentToken()
                     val response = apolloClient.mutation(UpdateHandleMutation(
                         userUiState.value.currentUser!!.uid,
                         handle.trim(),
