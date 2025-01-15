@@ -17,8 +17,12 @@ import com.rangerscards.GetProfileByHandleQuery
 import com.rangerscards.GetProfileQuery
 import com.rangerscards.MainActivity
 import com.rangerscards.UpdateHandleMutation
+import com.rangerscards.data.UserPreferencesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.SharingStarted
+import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -28,10 +32,21 @@ import java.util.Locale
 /**
  * ViewModel to maintain user's settings.
  */
-class SettingsViewModel(private val apolloClient: ApolloClient) : ViewModel() {
+class SettingsViewModel(
+    private val apolloClient: ApolloClient,
+    private val userPreferencesRepository: UserPreferencesRepository
+) : ViewModel() {
 
     private val _userUiState = MutableStateFlow(UserUIState())
     var userUiState = _userUiState.asStateFlow()
+
+    // theme state
+    val themeState: StateFlow<Int?> =
+        userPreferencesRepository.isDarkTheme.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = null
+        )
 
     fun setUser(user: FirebaseUser?) {
         _userUiState.update {
@@ -227,6 +242,12 @@ class SettingsViewModel(private val apolloClient: ApolloClient) : ViewModel() {
                 }
             }
         }.join()
+    }
+
+    fun selectTheme(theme: Int) {
+        viewModelScope.launch {
+            userPreferencesRepository.saveThemePreference(theme)
+        }
     }
 }
 

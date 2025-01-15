@@ -35,7 +35,7 @@ import com.rangerscards.ui.theme.Jost
 import com.rangerscards.ui.theme.RangersCardsTheme
 
 @Composable
-fun SettingsCard(
+fun SettingsBaseCard(
     isDarkTheme: Boolean,
     @StringRes labelIdRes: Int,
     modifier: Modifier = Modifier,
@@ -66,7 +66,7 @@ fun SettingsCard(
                     color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
                     style = CustomTheme.typography.headline,
                 )
-            }
+        }
             Column(
                 modifier = Modifier.padding(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -84,7 +84,7 @@ fun SettingsClickableSurface(
     @StringRes headerId: Int,
     text: String,
     onClick: () -> Unit,
-    modifier: Modifier = Modifier.fillMaxWidth()
+    modifier: Modifier = Modifier.fillMaxWidth(),
 ) {
     Surface(
         onClick = { onClick() },
@@ -157,7 +157,7 @@ fun SettingsScreenPreview() {
                 .background(CustomTheme.colors.l10)
                 .fillMaxSize()
         ) {
-            SettingsCard(labelIdRes = R.string.account_title, isDarkTheme = false) {
+            SettingsBaseCard(labelIdRes = R.string.account_title, isDarkTheme = false) {
                 TextWhenNotLoggedIn()
                 Column(
                     modifier = Modifier.background(

@@ -5,14 +5,16 @@ import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.compose.foundation.isSystemInDarkTheme
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
-import androidx.compose.runtime.getValue
-import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
-import androidx.compose.runtime.setValue
+import androidx.compose.runtime.collectAsState
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.lifecycle.viewModelScope
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -21,8 +23,6 @@ import com.rangerscards.ui.AppViewModelProvider
 import com.rangerscards.ui.settings.SettingsViewModel
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.RangersCardsTheme
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 class MainActivity : ComponentActivity() {
     private lateinit var auth: FirebaseAuth
@@ -33,15 +33,35 @@ class MainActivity : ComponentActivity() {
         setContent {
             viewModel = viewModel(factory = AppViewModelProvider.Factory)
             // Collecting user's theme from shared preferences via viewmodel - false = light, true = dark
-            // var currentTheme by viewmodel.getTheme().collectAsState(null)
-            var currentTheme by remember { mutableStateOf(false) }
-            RangersCardsTheme(/*currentTheme*/) {
+            val currentTheme = when(viewModel.themeState.collectAsState().value) {
+                0 -> false
+                1 -> true
+                2 -> isSystemInDarkTheme()
+                else -> null
+            }
+            if (currentTheme != null) RangersCardsTheme(currentTheme) {
                 // A surface container using the 'background' color from the theme
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = CustomTheme.colors.l30
                 ) {
-                    RangersApp(this, isSystemInDarkTheme())
+                    RangersApp(this, currentTheme)
+                }
+            }
+            else RangersCardsTheme(isSystemInDarkTheme()) {
+                // A surface container using the 'background' color from the theme
+                Surface(
+                    modifier = Modifier.fillMaxSize(),
+                    color = CustomTheme.colors.l30
+                ) {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally
+                    ) {
+                        CircularProgressIndicator(
+                            modifier = Modifier.size(32.dp),
+                            color = CustomTheme.colors.m)
+                    }
                 }
             }
         }
