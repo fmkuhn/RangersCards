@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    //Settings screen strings
+    <string name="account_title">Аккаунт RangersDB</string>
+    <string name="text_when_not_logged_in">Приложение работает и без регистрации аккаунта.\nНо наличие аккаунта позволит вам синхронизировать кампании и колоды между устройствами и RangersDB.</string>
+    <string name="sign_in_to_app_account_button">Войти в приложение</string>
+    <string name="sign_in_up_to_app_account_title">Войти/зарегистрироваться</string>
+    <string name="email_placeholder">Электронная почта</string>
+    <string name="password_placeholder">Пароль</string>
+    <string name="sign_in_to_account_button">Войти в свой аккаунт</string>
+    <string name="sign_up_to_app_account_button">Создать новый аккаунт</string>
+    <string name="sign_out_account_button">Выйти</string>
+    <string name="delete_account_button">Удалить аккаунт</string>
+    <string name="sign_out_account_title">Выйти из RangersDB?</string>
+    <string name="delete_account_title">Подтвердить удаление аккаунта</string>
+    <string name="sign_out_account_text">Выйти из аккаунта RangersDB?\n\nЕсли у вас есть кампании и колоды, загруженные на RangersDB, они будут удалены с этого устройства. Если вы снова войдёте в аккаунт, они снова синхронизируются.\n\nОбратите внимание: недавние изменения, сделанные без подключения к сети, могут быть утрачены.</string>
+    <string name="cancel_button">Отмена</string>
+    <string name="done_button">Готово</string>
+    <string name="account_name_header">Имя аккаунта</string>
+    <string name="friends_amount_header">Друзья</string>
+    <string name="contact_us_button">Обратная сязь</string>
+    <plurals name="friends_amount">
+        <item quantity="one">%d друг</item>
+        <item quantity="few">%d друга</item>
+        <item quantity="many">%d друзей</item>
+        <item quantity="other">%d друзей</item>
+    </plurals>
+    <string name="settings_title">Настройки</string>
+    <string name="theme_header">Тема</string>
+    <string name="light_theme">Светлая</string>
+    <string name="dark_theme">Тёмная</string>
+    <string name="system_theme">По умолчанию (%s)</string>
+    <string name="cards_title">Карты</string>
+    <string name="language_header">Язык</string>
+    <string name="update_cards_button">Обновить карты</string>
+</resources>

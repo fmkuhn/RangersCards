@@ -31,6 +31,10 @@ fun SettingsScreen(
             settingsViewModel = settingsViewModel,
             user = user
         )
+        CardsCard(
+            isDarkTheme = isDarkTheme,
+            settingsViewModel = settingsViewModel
+        )
         SettingsCard(
             isDarkTheme = isDarkTheme,
             settingsViewModel = settingsViewModel

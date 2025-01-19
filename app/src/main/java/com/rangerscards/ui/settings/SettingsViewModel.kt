@@ -3,6 +3,8 @@ package com.rangerscards.ui.settings
 import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.ApolloClient
@@ -248,6 +250,10 @@ class SettingsViewModel(
         viewModelScope.launch {
             userPreferencesRepository.saveThemePreference(theme)
         }
+    }
+
+    fun updateLocale(locale: String) {
+        AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(locale))
     }
 }
 
