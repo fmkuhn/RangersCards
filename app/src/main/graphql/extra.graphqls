@@ -1,0 +1,2 @@
+extend type query_root @fieldPolicy(forField: "rangers_users_by_pk", keyArgs: "id")
+extend type rangers_users @typePolicy(keyFields: "id")

@@ -43,7 +43,7 @@ query getProfile($id: String!) {
   }
 }
 
-query getProfileByHandle($handle: String!) {
+query getUserInfoByHandle($handle: String!) {
   profile: rangers_users(
     where: {
       handle: {
@@ -51,7 +51,7 @@ query getProfileByHandle($handle: String!) {
       }
     }
 	) {
-    ...UserProfile
+    ...UserInfo
   }
 }
 
