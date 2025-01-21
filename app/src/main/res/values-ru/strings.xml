@@ -32,6 +32,7 @@
     <string name="system_theme">По умолчанию (%s)</string>
     <string name="cards_title">Карты</string>
     <string name="language_header">Язык</string>
+    <string name="collection_header">Коллекция карт</string>
     <string name="update_cards_button">Обновить карты</string>
     <string name="authentication_failed_toast">Ошибка аутентификации.</string>
     <string name="invalid_password_toast">Неверный пароль. Он должен состоять минимум из 6 символов.</string>
@@ -40,4 +41,20 @@
     <string name="invalid_handle_toast">Неверное имя. Оно должно состоять от 2 до 22 символов.</string>
     <string name="invalid_email_toast">Неверный адрес электронной почты.</string>
     <string name="handle_already_taken_toast">Извините, это имя уже занято.</string>
+    <plurals name="expansions_amount">
+        <item quantity="one">%d дополнение</item>
+        <item quantity="few">%d дополнения</item>
+        <item quantity="many">%d дополнений</item>
+        <item quantity="other">%d дополнений</item>
+    </plurals>
+    <string name="rules_button">Правила</string>
+    <string name="english_search_results_radio_button">Искать по английским картам</string>
+    <string name="socials_title">Соцсети</string>
+    <string name="socials_text">Общайтесь с другими поклонниками «Earthborne Рейнджеры» в русскоязычных сообществах:</string>
+    <string name="discord_button">Дискорд</string>
+    <string name="telegram_button">Телеграм</string>
+    <string name="support_title">Поддержка</string>
+    <string name="about_button">О приложении</string>
+    <string name="backup_data_button">Резервное копирование</string>
+    <string name="diagnostics_button">Диагностика</string>
 </resources>

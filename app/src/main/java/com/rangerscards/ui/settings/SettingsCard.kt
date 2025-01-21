@@ -26,6 +26,7 @@ import com.rangerscards.ui.theme.CustomTheme
 fun SettingsCard(
     isDarkTheme: Boolean,
     settingsViewModel: SettingsViewModel,
+    language: String,
     modifier: Modifier = Modifier
 ) {
     var openThemeDialog by remember { mutableStateOf(false) }
@@ -38,53 +39,53 @@ fun SettingsCard(
         else -> stringResource(id = R.string.dark_theme)
     }
     val themeInt = settingsViewModel.themeState.collectAsState().value
+    if (openThemeDialog) {
+        Dialog(
+            onDismissRequest = { openThemeDialog = false },
+            properties = DialogProperties(
+                dismissOnBackPress = true,
+                dismissOnClickOutside = true,
+                usePlatformDefaultWidth = false
+            )
+        ) {
+            SettingsBaseCard(
+                isDarkTheme = isDarkTheme,
+                labelIdRes = R.string.theme_header
+            ) {
+                SettingsRadioButtonRow(
+                    text = stringResource(id = R.string.system_theme, systemThemeText),
+                    onClick = { openThemeDialog = false
+                        if (themeInt != 2) settingsViewModel.selectTheme(2) },
+                    isSelected = themeInt == 2
+                )
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    color = CustomTheme.colors.l10
+                )
+                SettingsRadioButtonRow(
+                    text = stringResource(id = R.string.light_theme),
+                    onClick = { openThemeDialog = false
+                        if (themeInt != 0) settingsViewModel.selectTheme(0) },
+                    isSelected = themeInt == 0
+                )
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    color = CustomTheme.colors.l10
+                )
+                SettingsRadioButtonRow(
+                    text = stringResource(id = R.string.dark_theme),
+                    onClick = { openThemeDialog = false
+                        if (themeInt != 1) settingsViewModel.selectTheme(1) },
+                    isSelected = themeInt == 1
+                )
+            }
+        }
+    }
     SettingsBaseCard(
         isDarkTheme = isDarkTheme,
         labelIdRes = R.string.settings_title,
         modifier = modifier
     ) {
-        if (openThemeDialog) {
-            Dialog(
-                onDismissRequest = { openThemeDialog = false },
-                properties = DialogProperties(
-                    dismissOnBackPress = true,
-                    dismissOnClickOutside = true,
-                    usePlatformDefaultWidth = false
-                )
-            ) {
-                SettingsBaseCard(
-                    isDarkTheme = isDarkTheme,
-                    labelIdRes = R.string.theme_header
-                ) {
-                    SettingsRadioButtonRow(
-                        text = stringResource(id = R.string.system_theme, systemThemeText),
-                        onClick = { openThemeDialog = false
-                            if (themeInt != 2) settingsViewModel.selectTheme(2) },
-                        isSelected = themeInt == 2
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier.padding(horizontal = 8.dp),
-                        color = CustomTheme.colors.l10
-                    )
-                    SettingsRadioButtonRow(
-                        text = stringResource(id = R.string.light_theme),
-                        onClick = { openThemeDialog = false
-                            if (themeInt != 0) settingsViewModel.selectTheme(0) },
-                        isSelected = themeInt == 0
-                    )
-                    HorizontalDivider(
-                        modifier = Modifier.padding(horizontal = 8.dp),
-                        color = CustomTheme.colors.l10
-                    )
-                    SettingsRadioButtonRow(
-                        text = stringResource(id = R.string.dark_theme),
-                        onClick = { openThemeDialog = false
-                            if (themeInt != 1) settingsViewModel.selectTheme(1) },
-                        isSelected = themeInt == 1
-                    )
-                }
-            }
-        }
         Column(
             modifier = Modifier.background(
                 if (isDarkTheme) CustomTheme.colors.l15 else CustomTheme.colors.l20,
@@ -99,5 +100,11 @@ fun SettingsCard(
                 { openThemeDialog = true }
             )
         }
+        if (language != "en") SettingsRadioButtonRow(
+            text = stringResource(id = R.string.english_search_results_radio_button),
+            onClick = { /*TODO: Implement english search results for non-english locales*/ },
+            leadingIcon = R.drawable.search_32dp,
+            isSelected = false //TODO: Change after implementation of english search results
+        )
     }
 }

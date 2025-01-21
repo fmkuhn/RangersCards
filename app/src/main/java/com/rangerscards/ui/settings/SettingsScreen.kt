@@ -1,8 +1,8 @@
 package com.rangerscards.ui.settings
 
 import androidx.compose.foundation.background
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
@@ -20,24 +20,44 @@ fun SettingsScreen(
     settingsViewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory)
 ) {
     val user by settingsViewModel.userUiState.collectAsState()
-    Column(
+    LazyColumn(
         modifier = modifier
             .background(CustomTheme.colors.l10)
-            .fillMaxSize()
+            .fillMaxSize(),
     ) {
-        AccountCard(
-            mainActivity = mainActivity,
-            isDarkTheme = isDarkTheme,
-            settingsViewModel = settingsViewModel,
-            user = user
-        )
-        CardsCard(
-            isDarkTheme = isDarkTheme,
-            settingsViewModel = settingsViewModel
-        )
-        SettingsCard(
-            isDarkTheme = isDarkTheme,
-            settingsViewModel = settingsViewModel
-        )
+        item {
+            AccountCard(
+                mainActivity = mainActivity,
+                isDarkTheme = isDarkTheme,
+                settingsViewModel = settingsViewModel,
+                user = user
+            )
+        }
+        item {
+            CardsCard(
+                isDarkTheme = isDarkTheme,
+                settingsViewModel = settingsViewModel
+            )
+        }
+        item {
+            SettingsCard(
+                isDarkTheme = isDarkTheme,
+                settingsViewModel = settingsViewModel,
+                language = user.language
+            )
+        }
+        item {
+            SocialsCard(
+                isDarkTheme = isDarkTheme,
+                settingsViewModel = settingsViewModel,
+                language = user.language
+            )
+        }
+        item {
+            SupportCard(
+                isDarkTheme = isDarkTheme,
+                settingsViewModel = settingsViewModel
+            )
+        }
     }
 }

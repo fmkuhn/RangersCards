@@ -1,6 +1,8 @@
 package com.rangerscards.ui.settings
 
 import android.content.Context
+import android.content.Intent
+import android.net.Uri
 import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
@@ -252,10 +254,23 @@ class SettingsViewModel(
 
     fun updateLocale(locale: String) {
         AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(locale))
+        _userUiState.update { userUIState ->
+            userUIState.copy(language = locale)
+        }
+    }
+
+    fun openLink(link: String, context: Context) {
+        context.startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(link)
+            )
+        )
     }
 }
 
 data class UserUIState(
     val currentUser: FirebaseUser? = Firebase.auth.currentUser,
     val userInfo: GetProfileQuery.Data? = null,
+    val language: String = Locale.getDefault().language.substring(0..1),
 )

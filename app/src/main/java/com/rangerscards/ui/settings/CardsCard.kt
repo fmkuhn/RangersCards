@@ -11,6 +11,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
@@ -83,10 +84,27 @@ fun CardsCard(
                 text = selectedLocale.displayLanguage,
                 { openLanguagePickerDialog = true }
             )
+            HorizontalDivider(
+                modifier = Modifier.padding(horizontal = 8.dp),
+                color = CustomTheme.colors.l10
+            )
+            SettingsClickableSurface(
+                leadingIcon = R.drawable.cards_32dp,
+                trailingIcon = R.drawable.edit_32dp,
+                headerId = R.string.collection_header,
+                //TODO:Add number of expansions after implementing collection
+                text = pluralStringResource(id = R.plurals.expansions_amount, count = 0, 0),
+                { /*TODO:Implement collection*/ }
+            )
         }
         SquareButton(
             stringId = R.string.update_cards_button,
             leadingIcon = R.drawable.reshuffle,
+            onClick = { /*TODO: Implement cards update*/ }
+        )
+        SquareButton(
+            stringId = R.string.rules_button,
+            leadingIcon = R.drawable.book_32dp,
             onClick = { /*TODO: Implement cards update*/ }
         )
     }

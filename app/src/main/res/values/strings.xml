@@ -19,7 +19,6 @@
     <string name="done_button">Done</string>
     <string name="account_name_header">Account name</string>
     <string name="friends_amount_header">Friends</string>
-    <string name="contact_us_button">Contact us</string>
     <plurals name="friends_amount">
         <item quantity="zero">%d friends</item>
         <item quantity="one">%d friend</item>
@@ -33,9 +32,20 @@
     <string name="light_theme">Light</string>
     <string name="dark_theme">Dark</string>
     <string name="system_theme">Default (%s)</string>
+    <string name="english_search_results_radio_button">Include English search results</string>
     <string name="cards_title">Cards</string>
     <string name="language_header">Language</string>
+    <string name="collection_header">Collection</string>
+    <plurals name="expansions_amount">
+        <item quantity="zero">%d expansions</item>
+        <item quantity="one">%d expansion</item>
+        <item quantity="two">%d expansions</item>
+        <item quantity="few">%d expansions</item>
+        <item quantity="many">%d expansions</item>
+        <item quantity="other">%d expansions</item>
+    </plurals>
     <string name="update_cards_button">Update cards</string>
+    <string name="rules_button">Rules</string>
     <string name="authentication_failed_toast">Authentication failed.</string>
     <string name="invalid_password_toast">Invalid password. It must be 6 characters minimum.</string>
     <string name="invalid_email_toast">Invalid email.</string>
@@ -43,4 +53,14 @@
     <string name="invalid_credentials_toast">Invalid credentials.</string>
     <string name="handle_already_taken_toast">Sorry, this handle has already been taken.</string>
     <string name="invalid_handle_toast">Invalid handle. It must be between 2 and 22 characters long.</string>
+    <string name="socials_title">Socials</string>
+    <string name="socials_text">Chat with other Earthborne Rangers players:</string>
+    <string name="discord_button">Discord</string>
+    <string name="telegram_button">Telegram</string>
+    <string name="support_title">Support</string>
+    <string name="support_text">Support Rangers Cards on %s.</string>
+    <string name="about_button">About</string>
+    <string name="backup_data_button">Backup Data</string>
+    <string name="diagnostics_button">Diagnostics</string>
+    <string name="contact_us_button">Contact us</string>
 </resources>
