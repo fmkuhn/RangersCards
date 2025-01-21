@@ -1,5 +1,6 @@
 package com.rangerscards.ui.settings
 
+import android.content.Context
 import android.util.Log
 import android.util.Patterns
 import android.widget.Toast
@@ -15,9 +16,10 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
-import com.rangerscards.GetProfileByHandleQuery
 import com.rangerscards.GetProfileQuery
+import com.rangerscards.GetUserInfoByHandleQuery
 import com.rangerscards.MainActivity
+import com.rangerscards.R
 import com.rangerscards.UpdateHandleMutation
 import com.rangerscards.data.UserPreferencesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -56,43 +58,45 @@ class SettingsViewModel(
         }
     }
 
+    private fun invalidPasswordToast(context: Context) {
+        Toast.makeText(
+            context,
+            context.getString(R.string.invalid_password_toast),
+            Toast.LENGTH_SHORT,
+        ).show()
+    }
+
+    private fun invalidEmailToast(context: Context) {
+        Toast.makeText(
+            context,
+            context.getString(R.string.invalid_email_toast),
+            Toast.LENGTH_SHORT,
+        ).show()
+    }
+
     fun signIn(mainActivity: MainActivity, email: String, password: String) {
+        val context = mainActivity.baseContext
         if (validateEmail(email)) {
             if (validatePassword(password)) {
                 mainActivity.signIn(email, password)
             } else {
-                Toast.makeText(
-                    mainActivity.baseContext,
-                    "Invalid password. It must be 6 symbols minimum.",
-                    Toast.LENGTH_SHORT,
-                ).show()
+                invalidPasswordToast(context)
             }
         } else {
-            Toast.makeText(
-                mainActivity.baseContext,
-                "Invalid email.",
-                Toast.LENGTH_SHORT,
-            ).show()
+            invalidEmailToast(context)
         }
     }
 
     fun createAccount(mainActivity: MainActivity, email: String, password: String) {
+        val context = mainActivity.baseContext
         if (validateEmail(email)) {
             if (validatePassword(password)) {
                 mainActivity.createAccount(email, password)
             } else {
-                Toast.makeText(
-                    mainActivity.baseContext,
-                    "Invalid password. It must be 6 characters minimum.",
-                    Toast.LENGTH_SHORT,
-                ).show()
+                invalidPasswordToast(context)
             }
         } else {
-            Toast.makeText(
-                mainActivity.baseContext,
-                "Invalid email.",
-                Toast.LENGTH_SHORT,
-            ).show()
+            invalidEmailToast(context)
         }
     }
 
@@ -104,6 +108,7 @@ class SettingsViewModel(
     }
 
     fun deleteUser(mainActivity: MainActivity, email: String, password: String) {
+        val context = mainActivity.baseContext
         if (validateEmail(email)) {
             if (validatePassword(password)) {
                 val user = userUiState.value.currentUser
@@ -112,8 +117,8 @@ class SettingsViewModel(
                         if (it.isSuccessful) user.delete().addOnCompleteListener {
                             Log.d("AUTH", "User account deleted.")
                             Toast.makeText(
-                                mainActivity.baseContext,
-                                "Account successfully deleted.",
+                                context,
+                                context.getString(R.string.account_successfully_deleted_toast),
                                 Toast.LENGTH_SHORT,
                             ).show()
                             _userUiState.update { userUiState ->
@@ -121,25 +126,17 @@ class SettingsViewModel(
                             }
                         } else {
                             Toast.makeText(
-                                mainActivity.baseContext,
-                                "Invalid credentials.",
+                                context,
+                                context.getString(R.string.invalid_credentials_toast),
                                 Toast.LENGTH_SHORT,
                             ).show()
                         }
                     }
             } else {
-                Toast.makeText(
-                    mainActivity.baseContext,
-                    "Invalid password. It must be 6 characters minimum.",
-                    Toast.LENGTH_SHORT,
-                ).show()
+                invalidPasswordToast(context)
             }
         } else {
-            Toast.makeText(
-                mainActivity.baseContext,
-                "Invalid email.",
-                Toast.LENGTH_SHORT,
-            ).show()
+            invalidEmailToast(context)
         }
     }
 
@@ -194,21 +191,22 @@ class SettingsViewModel(
         if (handle == userUiState.value.userInfo?.profile?.userProfile?.handle.toString()) return
         var isTaken: Boolean
         viewModelScope.launch {
+            val context = mainActivity.baseContext
             if (handle.length !in 3..22) {
                 Toast.makeText(
-                    mainActivity.baseContext,
-                    "Invalid handle. It must be between 2 and 22 characters long.",
+                    context,
+                    context.getString(R.string.invalid_handle_toast),
                     Toast.LENGTH_SHORT,
                 ).show()
             }
             else {
-                val result = apolloClient.query(GetProfileByHandleQuery(handle))
+                val result = apolloClient.query(GetUserInfoByHandleQuery(handle))
                     .fetchPolicy(FetchPolicy.NetworkOnly).execute()
                 if (result.data?.profile?.isEmpty() == false) {
                     isTaken = true
                     Toast.makeText(
-                        mainActivity.baseContext,
-                        "Sorry, this handle has already been taken.",
+                        context,
+                        context.getString(R.string.handle_already_taken_toast),
                         Toast.LENGTH_SHORT,
                     ).show()
                 } else {

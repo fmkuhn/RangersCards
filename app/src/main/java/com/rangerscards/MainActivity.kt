@@ -75,11 +75,7 @@ class MainActivity : AppCompatActivity() {
                     viewModel.setUser(auth.currentUser)
                 } else {
                     // If sign in fails, display a message to the user.
-                    Toast.makeText(
-                        baseContext,
-                        "Authentication failed.",
-                        Toast.LENGTH_SHORT,
-                    ).show()
+                    authenticationFailedToast()
                     viewModel.setUser(null)
                 }
             }
@@ -93,11 +89,7 @@ class MainActivity : AppCompatActivity() {
                     viewModel.setUser(auth.currentUser)
                 } else {
                     // If sign in fails, display a message to the user.
-                    Toast.makeText(
-                        baseContext,
-                        "Authentication failed.",
-                        Toast.LENGTH_SHORT,
-                    ).show()
+                    authenticationFailedToast()
                     viewModel.setUser(null)
                 }
             }
@@ -105,5 +97,13 @@ class MainActivity : AppCompatActivity() {
 
     fun signOut() {
         auth.signOut()
+    }
+
+    private fun authenticationFailedToast() {
+        Toast.makeText(
+            baseContext,
+            getString(R.string.authentication_failed_toast),
+            Toast.LENGTH_SHORT,
+        ).show()
     }
 }

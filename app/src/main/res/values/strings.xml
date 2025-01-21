@@ -36,4 +36,11 @@
     <string name="cards_title">Cards</string>
     <string name="language_header">Language</string>
     <string name="update_cards_button">Update cards</string>
+    <string name="authentication_failed_toast">Authentication failed.</string>
+    <string name="invalid_password_toast">Invalid password. It must be 6 characters minimum.</string>
+    <string name="invalid_email_toast">Invalid email.</string>
+    <string name="account_successfully_deleted_toast">Account successfully deleted.</string>
+    <string name="invalid_credentials_toast">Invalid credentials.</string>
+    <string name="handle_already_taken_toast">Sorry, this handle has already been taken.</string>
+    <string name="invalid_handle_toast">Invalid handle. It must be between 2 and 22 characters long.</string>
 </resources>

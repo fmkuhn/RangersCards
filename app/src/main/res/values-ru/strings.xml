@@ -33,4 +33,11 @@
     <string name="cards_title">Карты</string>
     <string name="language_header">Язык</string>
     <string name="update_cards_button">Обновить карты</string>
+    <string name="authentication_failed_toast">Ошибка аутентификации.</string>
+    <string name="invalid_password_toast">Неверный пароль. Он должен состоять минимум из 6 символов.</string>
+    <string name="account_successfully_deleted_toast">Аккаунт успешно удалён.</string>
+    <string name="invalid_credentials_toast">Неверные учетные данные.</string>
+    <string name="invalid_handle_toast">Неверное имя. Оно должно состоять от 2 до 22 символов.</string>
+    <string name="invalid_email_toast">Неверный адрес электронной почты.</string>
+    <string name="handle_already_taken_toast">Извините, это имя уже занято.</string>
 </resources>
