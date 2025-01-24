@@ -306,7 +306,7 @@ fun AccountCard(
                                     }.invokeOnCompletion {
                                         isLoading = false
                                         openHandleDialog = false
-                                        userHandle = user.userInfo?.profile?.userProfile?.handle.toString()
+                                        userHandle = user.userInfo?.profile?.userProfile?.handle ?: ""
                                     }
                                 },
                                 buttonColor = ButtonDefaults.buttonColors().copy(

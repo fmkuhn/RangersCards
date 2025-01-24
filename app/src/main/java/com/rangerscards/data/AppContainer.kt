@@ -21,6 +21,7 @@ private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
 interface AppContainer {
     val apolloClient: ApolloClient
     val userPreferencesRepository: UserPreferencesRepository
+    val userAuthRepository: UserAuthRepository
 }
 
 /**
@@ -40,5 +41,9 @@ class AppDataContainer(private val context: Context) : AppContainer {
 
     override val userPreferencesRepository: UserPreferencesRepository by lazy {
         UserPreferencesRepository(context.dataStore)
+    }
+
+    override val userAuthRepository: UserAuthRepository by lazy {
+        UserAuthRepository()
     }
 }

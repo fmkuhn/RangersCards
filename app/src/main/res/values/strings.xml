@@ -52,6 +52,7 @@
     <string name="account_successfully_deleted_toast">Account successfully deleted.</string>
     <string name="invalid_credentials_toast">Invalid credentials.</string>
     <string name="handle_already_taken_toast">Sorry, this handle has already been taken.</string>
+    <string name="token_not_authenticated">Sorry, network requests with changes could not working in first few minutes.</string>
     <string name="invalid_handle_toast">Invalid handle. It must be between 2 and 22 characters long.</string>
     <string name="socials_title">Socials</string>
     <string name="socials_text">Chat with other Earthborne Rangers players:</string>

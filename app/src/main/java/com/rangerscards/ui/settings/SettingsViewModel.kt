@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.Uri
 import android.util.Log
-import android.util.Patterns
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
@@ -12,6 +11,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.cache.normalized.FetchPolicy
+import com.apollographql.apollo.cache.normalized.apolloStore
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.apollographql.apollo.exception.ApolloNetworkException
 import com.google.firebase.Firebase
@@ -23,6 +23,7 @@ import com.rangerscards.GetUserInfoByHandleQuery
 import com.rangerscards.MainActivity
 import com.rangerscards.R
 import com.rangerscards.UpdateHandleMutation
+import com.rangerscards.data.UserAuthRepository
 import com.rangerscards.data.UserPreferencesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -34,12 +35,21 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import java.util.Locale
 
+/**
+ * Data class to hold state for User's settings
+ */
+data class UserUIState(
+    val currentUser: FirebaseUser? = Firebase.auth.currentUser,
+    val userInfo: GetProfileQuery.Data? = null,
+    val language: String = Locale.getDefault().language.substring(0..1),
+)
 
 /**
  * ViewModel to maintain user's settings.
  */
 class SettingsViewModel(
     private val apolloClient: ApolloClient,
+    private val userAuthRepository: UserAuthRepository,
     private val userPreferencesRepository: UserPreferencesRepository
 ) : ViewModel() {
 
@@ -60,50 +70,16 @@ class SettingsViewModel(
         }
     }
 
-    private fun invalidPasswordToast(context: Context) {
-        Toast.makeText(
-            context,
-            context.getString(R.string.invalid_password_toast),
-            Toast.LENGTH_SHORT,
-        ).show()
-    }
-
-    private fun invalidEmailToast(context: Context) {
-        Toast.makeText(
-            context,
-            context.getString(R.string.invalid_email_toast),
-            Toast.LENGTH_SHORT,
-        ).show()
-    }
-
     fun signIn(mainActivity: MainActivity, email: String, password: String) {
-        val context = mainActivity.baseContext
-        if (validateEmail(email)) {
-            if (validatePassword(password)) {
-                mainActivity.signIn(email, password)
-            } else {
-                invalidPasswordToast(context)
-            }
-        } else {
-            invalidEmailToast(context)
-        }
+        userAuthRepository.signIn(mainActivity, email, password)
     }
 
     fun createAccount(mainActivity: MainActivity, email: String, password: String) {
-        val context = mainActivity.baseContext
-        if (validateEmail(email)) {
-            if (validatePassword(password)) {
-                mainActivity.createAccount(email, password)
-            } else {
-                invalidPasswordToast(context)
-            }
-        } else {
-            invalidEmailToast(context)
-        }
+        userAuthRepository.createAccount(mainActivity, email, password)
     }
 
     fun signOut(mainActivity: MainActivity) {
-        mainActivity.signOut()
+        userAuthRepository.signOut(mainActivity)
         _userUiState.update {
             it.copy(currentUser = null, userInfo = null)
         }
@@ -111,9 +87,9 @@ class SettingsViewModel(
 
     fun deleteUser(mainActivity: MainActivity, email: String, password: String) {
         val context = mainActivity.baseContext
-        if (validateEmail(email)) {
-            if (validatePassword(password)) {
-                val user = userUiState.value.currentUser
+        if (userAuthRepository.validateEmail(email)) {
+            if (userAuthRepository.validatePassword(password)) {
+                val user = _userUiState.value.currentUser
                 user?.reauthenticate(EmailAuthProvider.getCredential(email, password))
                     ?.addOnCompleteListener {
                         if (it.isSuccessful) user.delete().addOnCompleteListener {
@@ -126,6 +102,7 @@ class SettingsViewModel(
                             _userUiState.update { userUiState ->
                                 userUiState.copy(currentUser = null, userInfo = null)
                             }
+                            apolloClient.apolloStore.clearAll()
                         } else {
                             Toast.makeText(
                                 context,
@@ -135,18 +112,11 @@ class SettingsViewModel(
                         }
                     }
             } else {
-                invalidPasswordToast(context)
+                userAuthRepository.invalidPasswordToast(context)
             }
         } else {
-            invalidEmailToast(context)
+            userAuthRepository.invalidEmailToast(context)
         }
-    }
-
-    private fun validateEmail(email: String): Boolean {
-        return email.isNotEmpty() && Patterns.EMAIL_ADDRESS.matcher(email).matches()
-    }
-    private fun validatePassword(password: String): Boolean {
-        return password.length in 6..4096
     }
 
     private fun normalizeHandle(handle: String): String {
@@ -154,8 +124,8 @@ class SettingsViewModel(
             .lowercase(Locale.ENGLISH).trim()
     }
 
-    private suspend fun getCurrentToken(): String? {
-        return userUiState.value.currentUser?.getIdToken(false)?.await()?.token
+    private suspend fun getCurrentToken(refresh: Boolean?): String? {
+        return userUiState.value.currentUser?.getIdToken(refresh ?: false)?.await()?.token
     }
 
     suspend fun getUserInfo(id: String) {
@@ -190,7 +160,7 @@ class SettingsViewModel(
     }
 
     suspend fun updateHandle(mainActivity: MainActivity, handle: String) {
-        if (handle == userUiState.value.userInfo?.profile?.userProfile?.handle.toString()) return
+        if (handle == (userUiState.value.userInfo?.profile?.userProfile?.handle ?: "")) return
         var isTaken: Boolean
         viewModelScope.launch {
             val context = mainActivity.baseContext
@@ -215,7 +185,7 @@ class SettingsViewModel(
                     isTaken = false
                 }
                 if (!isTaken) {
-                    val token = getCurrentToken()
+                    val token = getCurrentToken(true)
                     val response = apolloClient.mutation(UpdateHandleMutation(
                         userUiState.value.currentUser!!.uid,
                         handle.trim(),
@@ -226,6 +196,11 @@ class SettingsViewModel(
                         response.errors.orEmpty().isNotEmpty() -> {
                             // GraphQL error
                             Log.d("GraphQL error", response.errors!!.first().message)
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.token_not_authenticated),
+                                Toast.LENGTH_SHORT,
+                            ).show()
                         }
                         response.exception is ApolloNetworkException -> {
                             // Network error
@@ -268,9 +243,3 @@ class SettingsViewModel(
         )
     }
 }
-
-data class UserUIState(
-    val currentUser: FirebaseUser? = Firebase.auth.currentUser,
-    val userInfo: GetProfileQuery.Data? = null,
-    val language: String = Locale.getDefault().language.substring(0..1),
-)

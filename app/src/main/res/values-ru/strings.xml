@@ -38,6 +38,7 @@
     <string name="invalid_password_toast">Неверный пароль. Он должен состоять минимум из 6 символов.</string>
     <string name="account_successfully_deleted_toast">Аккаунт успешно удалён.</string>
     <string name="invalid_credentials_toast">Неверные учетные данные.</string>
+    <string name="token_not_authenticated">Изините, сетевые запросы с изменениями данных могут не работать первые пару минут</string>
     <string name="invalid_handle_toast">Неверное имя. Оно должно состоять от 2 до 22 символов.</string>
     <string name="invalid_email_toast">Неверный адрес электронной почты.</string>
     <string name="handle_already_taken_toast">Извините, это имя уже занято.</string>
@@ -54,6 +55,7 @@
     <string name="discord_button">Дискорд</string>
     <string name="telegram_button">Телеграм</string>
     <string name="support_title">Поддержка</string>
+    <string name="support_text">Поддержите приложение на %s.</string>
     <string name="about_button">О приложении</string>
     <string name="backup_data_button">Резервное копирование</string>
     <string name="diagnostics_button">Диагностика</string>
