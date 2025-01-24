@@ -3,6 +3,7 @@ plugins {
     id("org.jetbrains.kotlin.android")
     id("com.google.gms.google-services")
     id("com.apollographql.apollo") version "4.1.0"
+    id("com.google.devtools.ksp") version "2.1.0-1.0.29"
 }
 
 android {
@@ -55,28 +56,34 @@ android {
 
 dependencies {
     // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:33.7.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.8.0"))
     implementation("com.google.firebase:firebase-auth")
 
     // Import Apollo Kotlin
-    implementation("com.apollographql.apollo:apollo-runtime:4.1.0")
-    implementation("com.apollographql.apollo:apollo-normalized-cache:4.1.0")
-    implementation("com.apollographql.apollo:apollo-normalized-cache-sqlite:4.1.0")
+    implementation("com.apollographql.apollo:apollo-runtime:4.1.1")
+    implementation("com.apollographql.apollo:apollo-normalized-cache:4.1.1")
+    implementation("com.apollographql.apollo:apollo-normalized-cache-sqlite:4.1.1")
 
-    implementation("io.coil-kt:coil-compose:2.6.0")
+    //Import Room
+    implementation("androidx.room:room-ktx:2.6.1")
+    implementation("androidx.room:room-runtime:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
+
+    implementation("io.coil-kt:coil-compose:2.7.0")
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
-    implementation("androidx.activity:activity-compose:1.9.3")
+    implementation("androidx.activity:activity-compose:1.10.0")
     implementation("androidx.navigation:navigation-compose:2.8.5")
-    implementation(platform("androidx.compose:compose-bom:2024.12.01"))
+    implementation(platform("androidx.compose:compose-bom:2025.01.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
-    implementation("androidx.datastore:datastore-preferences:1.1.1")
+    implementation("androidx.datastore:datastore-preferences:1.1.2")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.appcompat:appcompat-resources:1.7.0")
+    implementation("androidx.navigation:navigation-compose:2.8.5")
 
     testImplementation("junit:junit:4.13.2")
 
