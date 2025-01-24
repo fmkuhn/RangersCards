@@ -1,6 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     //Settings screen strings
+    <string name="settings_nav_bar_button">Настройки</string>
+    <string name="cards_nav_bar_button">Карты</string>
+    <string name="decks_nav_bar_button">Колоды</string>
+    <string name="campaigns_nav_bar_button">Кампании</string>
     <string name="account_title">Аккаунт RangersDB</string>
     <string name="text_when_not_logged_in">Приложение работает и без регистрации аккаунта.\nНо наличие аккаунта позволит вам синхронизировать кампании и колоды между устройствами и RangersDB.</string>
     <string name="sign_in_to_app_account_button">Войти в приложение</string>
@@ -38,7 +42,6 @@
     <string name="invalid_password_toast">Неверный пароль. Он должен состоять минимум из 6 символов.</string>
     <string name="account_successfully_deleted_toast">Аккаунт успешно удалён.</string>
     <string name="invalid_credentials_toast">Неверные учетные данные.</string>
-    <string name="token_not_authenticated">Изините, сетевые запросы с изменениями данных могут не работать первые пару минут</string>
     <string name="invalid_handle_toast">Неверное имя. Оно должно состоять от 2 до 22 символов.</string>
     <string name="invalid_email_toast">Неверный адрес электронной почты.</string>
     <string name="handle_already_taken_toast">Извините, это имя уже занято.</string>

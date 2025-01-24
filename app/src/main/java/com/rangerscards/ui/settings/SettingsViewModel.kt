@@ -196,11 +196,6 @@ class SettingsViewModel(
                         response.errors.orEmpty().isNotEmpty() -> {
                             // GraphQL error
                             Log.d("GraphQL error", response.errors!!.first().message)
-                            Toast.makeText(
-                                context,
-                                context.getString(R.string.token_not_authenticated),
-                                Toast.LENGTH_SHORT,
-                            ).show()
                         }
                         response.exception is ApolloNetworkException -> {
                             // Network error

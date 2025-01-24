@@ -1,6 +1,12 @@
 <resources>
     <string name="app_name" translatable="false">RangersCards</string>
 
+    //BottomNavBar
+    <string name="settings_nav_bar_button">Settings</string>
+    <string name="cards_nav_bar_button">Cards</string>
+    <string name="decks_nav_bar_button">Decks</string>
+    <string name="campaigns_nav_bar_button">Campaigns</string>
+
     //Settings screen strings
     <string name="account_title">Account RangersDB</string>
     <string name="text_when_not_logged_in">This app works just fine without an account.\nBut signing in will allow you to sync campaigns and decks between devices and with RangersDB.</string>
@@ -52,7 +58,6 @@
     <string name="account_successfully_deleted_toast">Account successfully deleted.</string>
     <string name="invalid_credentials_toast">Invalid credentials.</string>
     <string name="handle_already_taken_toast">Sorry, this handle has already been taken.</string>
-    <string name="token_not_authenticated">Sorry, network requests with changes could not working in first few minutes.</string>
     <string name="invalid_handle_toast">Invalid handle. It must be between 2 and 22 characters long.</string>
     <string name="socials_title">Socials</string>
     <string name="socials_text">Chat with other Earthborne Rangers players:</string>
