@@ -45,7 +45,7 @@ class MainActivity : AppCompatActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = CustomTheme.colors.l30
                 ) {
-                    RangersApp(this, currentTheme)
+                    RangersApp(this, currentTheme, viewModel)
                 }
             }
             else RangersCardsTheme(isSystemInDarkTheme()) {

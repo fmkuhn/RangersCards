@@ -2,7 +2,6 @@ package com.rangerscards
 
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
-import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
 import androidx.compose.material3.NavigationBar
@@ -24,6 +23,7 @@ import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
 import androidx.navigation.compose.rememberNavController
 import com.rangerscards.ui.settings.SettingsScreen
+import com.rangerscards.ui.settings.SettingsViewModel
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
 
@@ -39,61 +39,64 @@ val topLevelRoutes = listOf(
  * Top level composable that represents screens for the application.
  */
 @Composable
-fun RangersApp(mainActivity: MainActivity, isDarkTheme: Boolean) {
+fun RangersApp(mainActivity: MainActivity, isDarkTheme: Boolean, settingsViewModel: SettingsViewModel) {
     val navController = rememberNavController()
     //RangersNavHost(navController = navController)
-    SettingsScreen(mainActivity, isDarkTheme, contentPadding = PaddingValues(0.dp))
 
-//    Scaffold(
-//        bottomBar = {
-//            NavigationBar(
-//                containerColor = CustomTheme.colors.l30
-//            ) {
-//                val navBackStackEntry by navController.currentBackStackEntryAsState()
-//                val currentDestination = navBackStackEntry?.destination
-//                topLevelRoutes.forEach { topLevelRoute ->
-//                    NavigationBarItem(
-//                        selected = currentDestination?.route == topLevelRoute.route,
-//                        onClick = { /*TODO*/ },
-//                        icon = { Icon(
-//                            painterResource(id = topLevelRoute.icon),
-//                            contentDescription = null,
-//                            tint = CustomTheme.colors.d30,
-//                            modifier = Modifier.size(24.dp)
-//                        ) },
-//                        label = { Text(
-//                            text = stringResource(id = topLevelRoute.label),
-//                            color = CustomTheme.colors.d30,
-//                            fontFamily = Jost,
-//                            fontWeight = FontWeight.Medium,
-//                            fontSize = 14.sp,
-//                            lineHeight = 16.sp,
-//                            letterSpacing = 0.5.sp
-//                        ) },
-//                        alwaysShowLabel = false,
-//                        colors = NavigationBarItemColors(
-//                            CustomTheme.colors.d30,
-//                            CustomTheme.colors.d30,
-//                            Color.Transparent,
-//                            CustomTheme.colors.d30,
-//                            CustomTheme.colors.d30,
-//                            CustomTheme.colors.d30,
-//                            CustomTheme.colors.d30
-//                        )
-//                    )
-//                }
-//            }
-//        }
-//    ) { innerPadding ->
-//        NavHost(
-//            navController = navController,
-//            startDestination = topLevelRoutes[3].route
-//        ) {
-//            composable(topLevelRoutes[3].route) {
-//                SettingsScreen(mainActivity, isDarkTheme, contentPadding = innerPadding)
-//            }
-//        }
-//    }
+    Scaffold(
+        bottomBar = {
+            NavigationBar(
+                containerColor = CustomTheme.colors.l30
+            ) {
+                val navBackStackEntry by navController.currentBackStackEntryAsState()
+                val currentDestination = navBackStackEntry?.destination
+                topLevelRoutes.forEach { topLevelRoute ->
+                    NavigationBarItem(
+                        selected = currentDestination?.route == topLevelRoute.route,
+                        onClick = { /*TODO*/ },
+                        icon = { Icon(
+                            painterResource(id = topLevelRoute.icon),
+                            contentDescription = null,
+                            tint = CustomTheme.colors.d30,
+                            modifier = Modifier.size(24.dp)
+                        ) },
+                        label = { Text(
+                            text = stringResource(id = topLevelRoute.label),
+                            color = CustomTheme.colors.d30,
+                            fontFamily = Jost,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 14.sp,
+                            lineHeight = 16.sp,
+                            letterSpacing = 0.5.sp
+                        ) },
+                        alwaysShowLabel = false,
+                        colors = NavigationBarItemColors(
+                            CustomTheme.colors.d30,
+                            CustomTheme.colors.d30,
+                            Color.Transparent,
+                            CustomTheme.colors.d30,
+                            CustomTheme.colors.d30,
+                            CustomTheme.colors.d30,
+                            CustomTheme.colors.d30
+                        )
+                    )
+                }
+            }
+        }
+    ) { innerPadding ->
+        NavHost(
+            navController = navController,
+            startDestination = topLevelRoutes[3].route
+        ) {
+            composable(topLevelRoutes[3].route) {
+                SettingsScreen(
+                    mainActivity = mainActivity,
+                    isDarkTheme = isDarkTheme,
+                    settingsViewModel = settingsViewModel,
+                    contentPadding = innerPadding)
+            }
+        }
+    }
 }
 
 /**
