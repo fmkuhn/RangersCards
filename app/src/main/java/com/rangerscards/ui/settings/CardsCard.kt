@@ -8,7 +8,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
@@ -29,8 +29,8 @@ fun CardsCard(
     settingsViewModel: SettingsViewModel,
     modifier: Modifier = Modifier
 ) {
-    var openLanguagePickerDialog by remember { mutableStateOf(false) }
-    var openLanguageConfirmationDialog by remember { mutableStateOf(false) }
+    var openLanguagePickerDialog by rememberSaveable { mutableStateOf(false) }
+    var openLanguageConfirmationDialog by rememberSaveable { mutableStateOf(false) }
     val selectedLocale = AppCompatDelegate.getApplicationLocales()[0] ?: Locale.getDefault()
     if (openLanguagePickerDialog) {
         Dialog(

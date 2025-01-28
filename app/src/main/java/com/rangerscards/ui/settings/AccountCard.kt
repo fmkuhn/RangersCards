@@ -21,6 +21,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -53,10 +54,10 @@ fun AccountCard(
     user: UserUIState,
     modifier: Modifier = Modifier
 ) {
-    var email by remember { mutableStateOf("") }
-    var password by remember { mutableStateOf("") }
-    var openAuthDialog by remember { mutableStateOf(false) }
-    var openHandleDialog by remember { mutableStateOf(false) }
+    var email by rememberSaveable { mutableStateOf("") }
+    var password by rememberSaveable { mutableStateOf("") }
+    var openAuthDialog by rememberSaveable { mutableStateOf(false) }
+    var openHandleDialog by rememberSaveable { mutableStateOf(false) }
     var userHandle by remember { mutableStateOf("") }
 
     LaunchedEffect(user.currentUser) {
