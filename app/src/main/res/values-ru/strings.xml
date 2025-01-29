@@ -36,6 +36,7 @@
     <string name="system_theme">По умолчанию (%s)</string>
     <string name="cards_title">Карты</string>
     <string name="language_header">Язык</string>
+    <string name="info_text_about_locale_switching">Для изменения языка необходимо загрузить перевод карт из RangersDB. Этот процесс требует интернет-соединения и займёт какое-то время.</string>
     <string name="collection_header">Коллекция карт</string>
     <string name="update_cards_button">Обновить карты</string>
     <string name="authentication_failed_toast">Ошибка аутентификации.</string>
@@ -62,4 +63,5 @@
     <string name="about_button">О приложении</string>
     <string name="backup_data_button">Резервное копирование</string>
     <string name="diagnostics_button">Диагностика</string>
+    <string name="cards_updating">Обновление карт</string>
 </resources>

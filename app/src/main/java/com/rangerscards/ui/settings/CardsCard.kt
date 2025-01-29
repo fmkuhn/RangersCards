@@ -5,6 +5,7 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -12,7 +13,10 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.pluralStringResource
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.rangerscards.R
@@ -21,6 +25,7 @@ import com.rangerscards.ui.settings.components.SettingsBaseCard
 import com.rangerscards.ui.settings.components.SettingsClickableSurface
 import com.rangerscards.ui.settings.components.SettingsRadioButtonRow
 import com.rangerscards.ui.theme.CustomTheme
+import com.rangerscards.ui.theme.Jost
 import java.util.Locale
 
 @Composable
@@ -30,7 +35,6 @@ fun CardsCard(
     modifier: Modifier = Modifier
 ) {
     var openLanguagePickerDialog by rememberSaveable { mutableStateOf(false) }
-    var openLanguageConfirmationDialog by rememberSaveable { mutableStateOf(false) }
     val selectedLocale = AppCompatDelegate.getApplicationLocales()[0] ?: Locale.getDefault()
     if (openLanguagePickerDialog) {
         Dialog(
@@ -43,8 +47,18 @@ fun CardsCard(
         ) {
             SettingsBaseCard(
                 isDarkTheme = isDarkTheme,
-                labelIdRes = R.string.theme_header
+                labelIdRes = R.string.language_header
             ) {
+                Text(
+                    text = stringResource(id = R.string.info_text_about_locale_switching),
+                    color = CustomTheme.colors.d30,
+                    fontFamily = Jost,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 18.sp,
+                    lineHeight = 24.sp,
+                    letterSpacing = 0.2.sp,
+                    modifier = modifier.padding(horizontal = 4.dp)
+                )
                 SettingsRadioButtonRow(
                     text = Locale.forLanguageTag("en").displayLanguage,
                     onClick = { openLanguagePickerDialog = false

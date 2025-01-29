@@ -1,6 +1,8 @@
 <resources>
     <string name="app_name" translatable="false">RangersCards</string>
 
+    <string name="cards_updating">Updating cards</string>
+
     //BottomNavBar
     <string name="settings_nav_bar_button">Settings</string>
     <string name="cards_nav_bar_button">Cards</string>
@@ -41,6 +43,7 @@
     <string name="english_search_results_radio_button">Include English search results</string>
     <string name="cards_title">Cards</string>
     <string name="language_header">Language</string>
+    <string name="info_text_about_locale_switching">Changing app language requires downloading the translated card information from RangersDB. This requires network and can take some time.</string>
     <string name="collection_header">Collection</string>
     <plurals name="expansions_amount">
         <item quantity="zero">%d expansions</item>

@@ -22,6 +22,7 @@ interface AppContainer {
     val apolloClient: ApolloClient
     val userPreferencesRepository: UserPreferencesRepository
     val userAuthRepository: UserAuthRepository
+    val cardsRepository: CardsRepository
 }
 
 /**
@@ -45,5 +46,9 @@ class AppDataContainer(private val context: Context) : AppContainer {
 
     override val userAuthRepository: UserAuthRepository by lazy {
         UserAuthRepository()
+    }
+
+    override val cardsRepository: CardsRepository by lazy {
+        OfflineCardsRepository(CardsDatabase.getDatabase(context).cardDao())
     }
 }

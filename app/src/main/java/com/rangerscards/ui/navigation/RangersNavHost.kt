@@ -1,20 +1,35 @@
 package com.rangerscards.ui.navigation
 
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.unit.dp
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.rangerscards.MainActivity
+import com.rangerscards.R
 import com.rangerscards.ui.components.RangersTopAppBar
 import com.rangerscards.ui.settings.SettingsScreen
 import com.rangerscards.ui.settings.SettingsViewModel
+import com.rangerscards.ui.theme.CustomTheme
 
 @Composable
 fun RangersNavHost(
@@ -26,6 +41,7 @@ fun RangersNavHost(
     var titleId by rememberSaveable { mutableIntStateOf(TopLevelRoutes.Settings.label) }
     var actions: @Composable (RowScope.() -> Unit)? by rememberSaveable { mutableStateOf(null) }
     var switch: @Composable (RowScope.() -> Unit)? by rememberSaveable { mutableStateOf(null) }
+    val isCardsLoading by settingsViewModel.isCardsLoading.collectAsState()
     Scaffold(
         topBar = {
             RangersTopAppBar(
@@ -45,49 +61,87 @@ fun RangersNavHost(
             startDestination = TopLevelRoutes.Settings.route
         ) {
             composable(TopLevelRoutes.Settings.route) {
-                SettingsScreen(
-                    mainActivity = mainActivity,
-                    isDarkTheme = isDarkTheme,
-                    settingsViewModel = settingsViewModel,
-                    contentPadding = innerPadding
-                )
+                if (!isCardsLoading) {
+                    SettingsScreen(
+                        mainActivity = mainActivity,
+                        isDarkTheme = isDarkTheme,
+                        settingsViewModel = settingsViewModel,
+                        contentPadding = innerPadding
+                    )
+                } else {
+                    CardsDownloadingCircularProgressIndicator()
+                }
                 titleId = TopLevelRoutes.Settings.label
                 actions = null
                 switch = null
             }
             composable(TopLevelRoutes.Cards.route) {
-                SettingsScreen(
-                    mainActivity = mainActivity,
-                    isDarkTheme = isDarkTheme,
-                    settingsViewModel = settingsViewModel,
-                    contentPadding = innerPadding
-                )
+                if (!isCardsLoading) {
+                    SettingsScreen(
+                        mainActivity = mainActivity,
+                        isDarkTheme = isDarkTheme,
+                        settingsViewModel = settingsViewModel,
+                        contentPadding = innerPadding
+                    )
+                } else {
+                    CardsDownloadingCircularProgressIndicator()
+                }
                 titleId = TopLevelRoutes.Cards.label
                 actions = {/*TODO: Implement action buttons*/}
                 switch = {/*TODO: Implement Switch button*/}
             }
             composable(TopLevelRoutes.Decks.route) {
-                SettingsScreen(
-                    mainActivity = mainActivity,
-                    isDarkTheme = isDarkTheme,
-                    settingsViewModel = settingsViewModel,
-                    contentPadding = innerPadding
-                )
+                if (!isCardsLoading) {
+                    SettingsScreen(
+                        mainActivity = mainActivity,
+                        isDarkTheme = isDarkTheme,
+                        settingsViewModel = settingsViewModel,
+                        contentPadding = innerPadding
+                    )
+                } else {
+                    CardsDownloadingCircularProgressIndicator()
+                }
                 titleId = TopLevelRoutes.Decks.label
                 actions = {/*TODO: Implement action buttons*/}
                 switch = null
             }
             composable(TopLevelRoutes.Campaigns.route) {
-                SettingsScreen(
-                    mainActivity = mainActivity,
-                    isDarkTheme = isDarkTheme,
-                    settingsViewModel = settingsViewModel,
-                    contentPadding = innerPadding
-                )
+                if (!isCardsLoading) {
+                    SettingsScreen(
+                        mainActivity = mainActivity,
+                        isDarkTheme = isDarkTheme,
+                        settingsViewModel = settingsViewModel,
+                        contentPadding = innerPadding
+                    )
+                } else {
+                    CardsDownloadingCircularProgressIndicator()
+                }
                 titleId = TopLevelRoutes.Campaigns.label
                 actions = {/*TODO: Implement action buttons*/}
                 switch = null
             }
+        }
+    }
+}
+
+@Composable
+fun CardsDownloadingCircularProgressIndicator() {
+    Surface(
+        modifier = Modifier.fillMaxSize().padding(16.dp),
+        color = CustomTheme.colors.l30
+    ) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+        ) {
+            Text(
+                text = stringResource(id = R.string.cards_updating),
+                color = CustomTheme.colors.d30,
+                style = CustomTheme.typography.headline
+            )
+            CircularProgressIndicator(
+                modifier = Modifier.size(32.dp),
+                color = CustomTheme.colors.m)
         }
     }
 }

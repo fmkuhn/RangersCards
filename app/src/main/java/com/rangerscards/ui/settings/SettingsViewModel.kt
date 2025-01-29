@@ -18,11 +18,14 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
+import com.rangerscards.GetAllCardsQuery
 import com.rangerscards.GetProfileQuery
 import com.rangerscards.GetUserInfoByHandleQuery
 import com.rangerscards.MainActivity
 import com.rangerscards.R
 import com.rangerscards.UpdateHandleMutation
+import com.rangerscards.data.Card
+import com.rangerscards.data.CardsRepository
 import com.rangerscards.data.UserAuthRepository
 import com.rangerscards.data.UserPreferencesRepository
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -50,7 +53,8 @@ data class UserUIState(
 class SettingsViewModel(
     private val apolloClient: ApolloClient,
     private val userAuthRepository: UserAuthRepository,
-    private val userPreferencesRepository: UserPreferencesRepository
+    private val userPreferencesRepository: UserPreferencesRepository,
+    private val cardsRepository: CardsRepository
 ) : ViewModel() {
 
     private val _userUiState = MutableStateFlow(UserUIState())
@@ -63,6 +67,9 @@ class SettingsViewModel(
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = null
         )
+
+    private val _isCardsLoading = MutableStateFlow(false)
+    var isCardsLoading = _isCardsLoading.asStateFlow()
 
     fun setUser(user: FirebaseUser?) {
         _userUiState.update {
@@ -227,6 +234,27 @@ class SettingsViewModel(
         _userUiState.update { userUIState ->
             userUIState.copy(language = locale)
         }
+        downloadCards()
+    }
+
+    fun downloadCards() {
+        _isCardsLoading.update { true }
+        viewModelScope.launch {
+            val response = apolloClient.query(GetAllCardsQuery(_userUiState.value.language))
+                .fetchPolicy(FetchPolicy.NetworkOnly).execute()
+            if (response.data != null) {
+                if (cardsRepository.isExists())
+                    cardsRepository.updateAllCards(response.data!!.cards.toCards())
+                else {
+                    cardsRepository.insertAllCards(response.data!!.cards.toCards())
+                }
+                userPreferencesRepository.saveCardsUpdatedTimestamp(
+                    response.data!!.all_updated_at[0].updated_at.toString()
+                )
+            }
+        }.invokeOnCompletion {
+            _isCardsLoading.update { false }
+        }
     }
 
     fun openLink(link: String, context: Context) {
@@ -236,5 +264,63 @@ class SettingsViewModel(
                 Uri.parse(link)
             )
         )
+    }
+}
+
+/**
+ * Extension function to convert [GetAllCardsQuery.Card] to [Card]
+ */
+fun GetAllCardsQuery.Card.toCard(): Card? {
+    return this.card.id?.let {
+        Card(
+        id = it,
+        name = this.card.name,
+        realTraits = this.card.real_traits,
+        traits = this.card.traits,
+        equip = this.card.equip,
+        presence = this.card.presence,
+        tokenId = this.card.token_id,
+        tokenName = this.card.token_name,
+        tokenPlurals = this.card.token_plurals,
+        tokenCount = this.card.token_count,
+        harm = this.card.harm,
+        approachConflict = this.card.approach_conflict,
+        approachReason = this.card.approach_reason,
+        approachExploration = this.card.approach_exploration,
+        approachConnection = this.card.approach_connection,
+        text = this.card.text,
+        setId = this.card.set_id,
+        setName = this.card.set_name,
+        setTypeId = this.card.set_type_id,
+        setSize = this.card.set_size,
+        setTypeName = this.card.set_type_name,
+        setPosition = this.card.set_position,
+        quantity = this.card.quantity,
+        level = this.card.level,
+        flavor = this.card.flavor,
+        typeId = this.card.type_id,
+        typeName = this.card.type_name,
+        cost = this.card.cost,
+        aspectId = this.card.aspect_id,
+        aspectName = this.card.aspect_name,
+        aspectShortName = this.card.aspect_short_name,
+        progress = this.card.progress,
+        imageSrc = this.card.imagesrc,
+        position = this.card.position,
+        deckLimit = this.card.deck_limit,
+        spoiler = this.card.spoiler,
+        sunChallenge = this.card.sun_challenge,
+        mountainChallenge = this.card.mountain_challenge,
+        crestChallenge = this.card.crest_challenge,
+    )
+    }
+}
+
+/**
+ * Extension function to convert list of [GetAllCardsQuery.Card] to list of [Card]
+ */
+fun List<GetAllCardsQuery.Card>.toCards(): List<Card> {
+    return this.mapNotNull {
+        it.toCard()
     }
 }
