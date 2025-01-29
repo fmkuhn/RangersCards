@@ -127,12 +127,13 @@ fun RangersNavHost(
 @Composable
 fun CardsDownloadingCircularProgressIndicator() {
     Surface(
-        modifier = Modifier.fillMaxSize().padding(16.dp),
+        modifier = Modifier.fillMaxSize(),
         color = CustomTheme.colors.l30
     ) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.padding(16.dp)
         ) {
             Text(
                 text = stringResource(id = R.string.cards_updating),
