@@ -39,17 +39,17 @@ fun SupportCard(
         SquareButton(
             stringId = R.string.about_button,
             leadingIcon = R.drawable.info_32dp,
-            onClick = { /*TODO: Implement click logic*/ }
+            onClick = { /*TODO: Implement about page*/ }
         )
         SquareButton(
             stringId = R.string.backup_data_button,
             leadingIcon = R.drawable.book_32dp,
-            onClick = { /*TODO: Implement click logic*/ }
+            onClick = { /*TODO: Implement backup*/ }
         )
         SquareButton(
             stringId = R.string.diagnostics_button,
             leadingIcon = R.drawable.build_32dp,
-            onClick = { /*TODO: Implement click logic*/ }
+            onClick = { /*TODO: Implement diagnostic*/ }
         )
         SquareButton(
             stringId = R.string.contact_us_button,
@@ -57,7 +57,7 @@ fun SupportCard(
             buttonColor = ButtonDefaults.buttonColors().copy(CustomTheme.colors.gold),
             iconColor = if (isDarkTheme) CustomTheme.colors.l20 else CustomTheme.colors.d20,
             textColor = if (isDarkTheme) CustomTheme.colors.l30 else CustomTheme.colors.d30,
-            onClick = { /*TODO: Implement click logic*/ }
+            onClick = { /*TODO: Implement contact us button onClick*/ }
         )
     }
 }

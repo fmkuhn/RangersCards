@@ -1,9 +1,3 @@
-# import Deck from 'fragments.graphql'
-# import SearchDeck from 'fragments.graphql'
-# import DeckWithCampaign from 'fragments.graphql'
-# import DeckDetail from 'fragments.graphql'
-# import DeckComment from 'fragments.graphql'
-
 mutation upgradeDeck(
   $deckId: Int!
 ) {

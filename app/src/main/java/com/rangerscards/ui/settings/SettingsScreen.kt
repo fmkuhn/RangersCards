@@ -6,6 +6,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
@@ -24,6 +25,9 @@ fun SettingsScreen(
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
     val user by settingsViewModel.userUiState.collectAsState()
+    LaunchedEffect(Unit) {
+        settingsViewModel.downloadCardsIfDatabaseNotExists()
+    }
     LazyColumn(
         modifier = modifier
             .background(CustomTheme.colors.l10)

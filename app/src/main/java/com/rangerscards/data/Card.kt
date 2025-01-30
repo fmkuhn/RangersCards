@@ -9,6 +9,8 @@ data class Card (
     @PrimaryKey(autoGenerate = false)
     val id: String,
     val name: String?,
+    @ColumnInfo(name = "real_name")
+    val realName: String?,
     @ColumnInfo(name = "real_traits")
     val realTraits: String?,
     val traits: String?,
@@ -32,6 +34,8 @@ data class Card (
     @ColumnInfo(name = "approach_connection")
     val approachConnection: Int?,
     val text: String?,
+    @ColumnInfo(name = "real_text")
+    val realText: String?,
     @ColumnInfo(name = "set_id")
     val setId: String?,
     @ColumnInfo(name = "set_name")
@@ -47,6 +51,8 @@ data class Card (
     val quantity: Int?,
     val level: Int?,
     val flavor: String?,
+    @ColumnInfo(name = "real_flavor")
+    val realFlavor: String?,
     @ColumnInfo(name = "type_id")
     val typeId: String?,
     @ColumnInfo(name = "type_name")

@@ -1,5 +1,3 @@
-# import UserInfo from 'fragments.graphql'
-
 fragment UserProfile on rangers_users {
   id
   handle
@@ -18,22 +16,6 @@ fragment UserProfile on rangers_users {
     user {
       ...UserInfo
     }
-  }
-}
-
-fragment NavProfile on rangers_users {
-  id
-  handle
-  received_requests_aggregate {
-    aggregate {
-      count
-    }
-  }
-}
-
-query getNavProfile($id: String!) {
-  profile: rangers_users_by_pk(id: $id) {
-    ...NavProfile
   }
 }
 

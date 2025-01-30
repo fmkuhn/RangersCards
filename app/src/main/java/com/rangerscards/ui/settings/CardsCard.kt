@@ -114,12 +114,12 @@ fun CardsCard(
         SquareButton(
             stringId = R.string.update_cards_button,
             leadingIcon = R.drawable.reshuffle,
-            onClick = { /*TODO: Implement cards update*/ }
+            onClick = { settingsViewModel.updateCardsIfNotUpdated() }
         )
         SquareButton(
             stringId = R.string.rules_button,
             leadingIcon = R.drawable.book_32dp,
-            onClick = { /*TODO: Implement cards update*/ }
+            onClick = { /*TODO: Implement rules*/ }
         )
     }
 }

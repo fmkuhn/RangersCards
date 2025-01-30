@@ -1,10 +1,3 @@
-
-fragment Aspect on rangers_aspect_localized {
-  id
-  name
-  short_name
-}
-
 query getAllCards($locale: String!) {
   cards: rangers_card_localized(
     where: {
@@ -15,6 +8,16 @@ query getAllCards($locale: String!) {
   }
   all_updated_at: rangers_card_updated(
     where: { locale: { _eq: $locale }}
+  ) {
+    updated_at
+  }
+}
+
+query getCardsUpdatedAt($locale: String!) {
+  card_updated_at: rangers_card_updated(
+    where: {
+      locale: { _eq: $locale }
+    }
   ) {
     updated_at
   }

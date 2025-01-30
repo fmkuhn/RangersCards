@@ -19,6 +19,7 @@ import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
 import com.rangerscards.GetAllCardsQuery
+import com.rangerscards.GetCardsUpdatedAtQuery
 import com.rangerscards.GetProfileQuery
 import com.rangerscards.GetUserInfoByHandleQuery
 import com.rangerscards.MainActivity
@@ -63,6 +64,13 @@ class SettingsViewModel(
     // theme state
     val themeState: StateFlow<Int?> =
         userPreferencesRepository.isDarkTheme.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = null
+        )
+
+    private val cardsUpdatedAtState: StateFlow<String?> =
+        userPreferencesRepository.cardsUpdatedAt.stateIn(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = null
@@ -237,16 +245,17 @@ class SettingsViewModel(
         downloadCards()
     }
 
-    fun downloadCards() {
+    private fun downloadCards() {
         _isCardsLoading.update { true }
         viewModelScope.launch {
-            val response = apolloClient.query(GetAllCardsQuery(_userUiState.value.language))
+            val language = _userUiState.value.language
+            val response = apolloClient.query(GetAllCardsQuery(language))
                 .fetchPolicy(FetchPolicy.NetworkOnly).execute()
             if (response.data != null) {
                 if (cardsRepository.isExists())
-                    cardsRepository.updateAllCards(response.data!!.cards.toCards())
+                    cardsRepository.updateAllCards(response.data!!.cards.toCards(language))
                 else {
-                    cardsRepository.insertAllCards(response.data!!.cards.toCards())
+                    cardsRepository.insertAllCards(response.data!!.cards.toCards(language))
                 }
                 userPreferencesRepository.saveCardsUpdatedTimestamp(
                     response.data!!.all_updated_at[0].updated_at.toString()
@@ -254,6 +263,34 @@ class SettingsViewModel(
             }
         }.invokeOnCompletion {
             _isCardsLoading.update { false }
+        }
+    }
+
+    fun updateCardsIfNotUpdated() {
+        _isCardsLoading.update { true }
+        viewModelScope.launch {
+           val response = apolloClient.query(GetCardsUpdatedAtQuery(_userUiState.value.language))
+               .fetchPolicy(FetchPolicy.NetworkOnly).execute()
+           if (response.data != null) {
+                if (userPreferencesRepository.compareTimestamps(
+                        cardsUpdatedAtState.value.toString(),
+                        response.data!!.card_updated_at[0].updated_at.toString()
+                )) {
+                    downloadCards()
+                }
+               else {
+                    _isCardsLoading.update { false }
+                }
+           }
+        }
+    }
+
+    fun downloadCardsIfDatabaseNotExists() {
+        viewModelScope.launch {
+            val exists = cardsRepository.isExists()
+            if (!exists) {
+                downloadCards()
+            }
         }
     }
 
@@ -270,48 +307,51 @@ class SettingsViewModel(
 /**
  * Extension function to convert [GetAllCardsQuery.Card] to [Card]
  */
-fun GetAllCardsQuery.Card.toCard(): Card? {
+fun GetAllCardsQuery.Card.toCard(locale: String): Card? {
     return this.card.id?.let {
         Card(
-        id = it,
-        name = this.card.name,
-        realTraits = this.card.real_traits,
-        traits = this.card.traits,
-        equip = this.card.equip,
-        presence = this.card.presence,
-        tokenId = this.card.token_id,
-        tokenName = this.card.token_name,
-        tokenPlurals = this.card.token_plurals,
-        tokenCount = this.card.token_count,
-        harm = this.card.harm,
-        approachConflict = this.card.approach_conflict,
-        approachReason = this.card.approach_reason,
-        approachExploration = this.card.approach_exploration,
-        approachConnection = this.card.approach_connection,
-        text = this.card.text,
-        setId = this.card.set_id,
-        setName = this.card.set_name,
-        setTypeId = this.card.set_type_id,
-        setSize = this.card.set_size,
-        setTypeName = this.card.set_type_name,
-        setPosition = this.card.set_position,
-        quantity = this.card.quantity,
-        level = this.card.level,
-        flavor = this.card.flavor,
-        typeId = this.card.type_id,
-        typeName = this.card.type_name,
-        cost = this.card.cost,
-        aspectId = this.card.aspect_id,
-        aspectName = this.card.aspect_name,
-        aspectShortName = this.card.aspect_short_name,
-        progress = this.card.progress,
-        imageSrc = this.card.imagesrc,
-        position = this.card.position,
-        deckLimit = this.card.deck_limit,
-        spoiler = this.card.spoiler,
-        sunChallenge = this.card.sun_challenge,
-        mountainChallenge = this.card.mountain_challenge,
-        crestChallenge = this.card.crest_challenge,
+            id = it,
+            name = this.card.name,
+            realName = if (locale == "en") null else this.card.real_name,
+            realTraits = this.card.real_traits,
+            traits = this.card.traits,
+            equip = this.card.equip,
+            presence = this.card.presence,
+            tokenId = this.card.token_id,
+            tokenName = this.card.token_name,
+            tokenPlurals = this.card.token_plurals,
+            tokenCount = this.card.token_count,
+            harm = this.card.harm,
+            approachConflict = this.card.approach_conflict,
+            approachReason = this.card.approach_reason,
+            approachExploration = this.card.approach_exploration,
+            approachConnection = this.card.approach_connection,
+            text = this.card.text,
+            realText = if (locale == "en") null else this.card.real_text,
+            setId = this.card.set_id,
+            setName = this.card.set_name,
+            setTypeId = this.card.set_type_id,
+            setSize = this.card.set_size,
+            setTypeName = this.card.set_type_name,
+            setPosition = this.card.set_position,
+            quantity = this.card.quantity,
+            level = this.card.level,
+            flavor = this.card.flavor,
+            realFlavor = if (locale == "en") null else this.card.real_flavor,
+            typeId = this.card.type_id,
+            typeName = this.card.type_name,
+            cost = this.card.cost,
+            aspectId = this.card.aspect_id,
+            aspectName = this.card.aspect_name,
+            aspectShortName = this.card.aspect_short_name,
+            progress = this.card.progress,
+            imageSrc = this.card.imagesrc ?: this.card.real_imagesrc,
+            position = this.card.position,
+            deckLimit = this.card.deck_limit,
+            spoiler = this.card.spoiler,
+            sunChallenge = this.card.sun_challenge,
+            mountainChallenge = this.card.mountain_challenge,
+            crestChallenge = this.card.crest_challenge,
     )
     }
 }
@@ -319,8 +359,8 @@ fun GetAllCardsQuery.Card.toCard(): Card? {
 /**
  * Extension function to convert list of [GetAllCardsQuery.Card] to list of [Card]
  */
-fun List<GetAllCardsQuery.Card>.toCards(): List<Card> {
+fun List<GetAllCardsQuery.Card>.toCards(locale: String): List<Card> {
     return this.mapNotNull {
-        it.toCard()
+        it.toCard(locale)
     }
 }
