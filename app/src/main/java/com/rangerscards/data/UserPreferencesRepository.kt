@@ -27,22 +27,8 @@ class UserPreferencesRepository(
             } else {
                 throw it
             }
-        }
-        .map { preferences ->
+        }.map { preferences ->
             preferences[THEME] ?: 2
-        }
-
-    val cardsUpdatedAt: Flow<String> = dataStore.data
-        .catch {
-            if (it is IOException) {
-                Log.e(TAG, "Error reading preferences.", it)
-                emit(emptyPreferences())
-            } else {
-                throw it
-            }
-        }
-        .map { preferences ->
-            preferences[CARDS_UPDATED_AT] ?: ""
         }
 
     private companion object {
@@ -61,6 +47,20 @@ class UserPreferencesRepository(
         dataStore.edit { preferences ->
             preferences[CARDS_UPDATED_AT] = timestamp
         }
+    }
+
+    suspend fun getCarsUpdatedAt(): Flow<String> {
+        val carsUpdatedAt = dataStore.data.catch {
+            if (it is IOException) {
+                Log.e(TAG, "Error reading preferences.", it)
+                emit(emptyPreferences())
+            } else {
+                throw it
+            }
+        }.map { preferences ->
+            preferences[CARDS_UPDATED_AT] ?: ""
+        }
+        return carsUpdatedAt
     }
 
     fun compareTimestamps(timestamp1: String, timestamp2: String): Boolean {

@@ -69,13 +69,6 @@ class SettingsViewModel(
             initialValue = null
         )
 
-    private val cardsUpdatedAtState: StateFlow<String?> =
-        userPreferencesRepository.cardsUpdatedAt.stateIn(
-            scope = viewModelScope,
-            started = SharingStarted.WhileSubscribed(5_000),
-            initialValue = null
-        )
-
     private val _isCardsLoading = MutableStateFlow(false)
     var isCardsLoading = _isCardsLoading.asStateFlow()
 
@@ -272,15 +265,17 @@ class SettingsViewModel(
            val response = apolloClient.query(GetCardsUpdatedAtQuery(_userUiState.value.language))
                .fetchPolicy(FetchPolicy.NetworkOnly).execute()
            if (response.data != null) {
-                if (userPreferencesRepository.compareTimestamps(
-                        cardsUpdatedAtState.value.toString(),
-                        response.data!!.card_updated_at[0].updated_at.toString()
-                )) {
-                    downloadCards()
-                }
-               else {
-                    _isCardsLoading.update { false }
-                }
+               userPreferencesRepository.getCarsUpdatedAt().collect {
+                   if (userPreferencesRepository.compareTimestamps(
+                           it,
+                           response.data!!.card_updated_at[0].updated_at.toString()
+                       )) {
+                       downloadCards()
+                   }
+                   else {
+                       _isCardsLoading.update { false }
+                   }
+               }
            }
         }
     }
