@@ -26,6 +26,7 @@ import com.rangerscards.ui.theme.CustomTheme
 fun SettingsCard(
     isDarkTheme: Boolean,
     settingsViewModel: SettingsViewModel,
+    userCardsSettings: CardsSettings,
     language: String,
     modifier: Modifier = Modifier
 ) {
@@ -102,9 +103,9 @@ fun SettingsCard(
         }
         if (language != "en") SettingsRadioButtonRow(
             text = stringResource(id = R.string.english_search_results_radio_button),
-            onClick = { /*TODO: Implement english search results for non-english locales*/ },
+            onClick = { settingsViewModel.setEnglishSearchResultsSetting() },
             leadingIcon = R.drawable.search_32dp,
-            isSelected = false //TODO: Change after implementation of english search results
+            isSelected = userCardsSettings.englishSearchResults //TODO: Change after implementation of english search results
         )
     }
 }

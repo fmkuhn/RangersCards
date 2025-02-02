@@ -46,6 +46,11 @@ data class UserUIState(
     val currentUser: FirebaseUser? = Firebase.auth.currentUser,
     val userInfo: GetProfileQuery.Data? = null,
     val language: String = Locale.getDefault().language.substring(0..1),
+    val cardsSettings: CardsSettings = CardsSettings()
+)
+
+data class CardsSettings(
+    val englishSearchResults: Boolean = false
 )
 
 /**
@@ -296,6 +301,14 @@ class SettingsViewModel(
                 Uri.parse(link)
             )
         )
+    }
+
+    fun setEnglishSearchResultsSetting() {
+        _userUiState.update {
+            it.copy(
+                cardsSettings = CardsSettings(!it.cardsSettings.englishSearchResults)
+            )
+        }
     }
 }
 

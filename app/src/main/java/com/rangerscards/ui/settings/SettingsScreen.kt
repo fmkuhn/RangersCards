@@ -55,6 +55,7 @@ fun SettingsScreen(
             SettingsCard(
                 isDarkTheme = isDarkTheme,
                 settingsViewModel = settingsViewModel,
+                userCardsSettings = user.cardsSettings,
                 language = user.language
             )
         }
