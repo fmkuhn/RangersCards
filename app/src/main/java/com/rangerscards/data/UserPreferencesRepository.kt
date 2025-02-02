@@ -49,7 +49,7 @@ class UserPreferencesRepository(
         }
     }
 
-    suspend fun getCarsUpdatedAt(): Flow<String> {
+    fun getCarsUpdatedAt(): Flow<String> {
         val carsUpdatedAt = dataStore.data.catch {
             if (it is IOException) {
                 Log.e(TAG, "Error reading preferences.", it)

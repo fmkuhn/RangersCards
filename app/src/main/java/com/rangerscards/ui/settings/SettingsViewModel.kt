@@ -136,7 +136,7 @@ class SettingsViewModel(
         return userUiState.value.currentUser?.getIdToken(refresh ?: false)?.await()?.token
     }
 
-    suspend fun getUserInfo(id: String) {
+    fun getUserInfo(id: String) {
         viewModelScope.launch {
             apolloClient.query(GetProfileQuery(id))
                 .toFlow()
@@ -347,7 +347,7 @@ fun GetAllCardsQuery.Card.toCard(locale: String): Card? {
             sunChallenge = this.card.sun_challenge,
             mountainChallenge = this.card.mountain_challenge,
             crestChallenge = this.card.crest_challenge,
-    )
+        )
     }
 }
 
