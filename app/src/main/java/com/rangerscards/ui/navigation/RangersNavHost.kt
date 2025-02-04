@@ -15,17 +15,22 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import com.rangerscards.MainActivity
 import com.rangerscards.R
+import com.rangerscards.ui.AppViewModelProvider
+import com.rangerscards.ui.cards.CardsScreen
+import com.rangerscards.ui.cards.CardsViewModel
 import com.rangerscards.ui.components.RangersTopAppBar
 import com.rangerscards.ui.settings.SettingsScreen
 import com.rangerscards.ui.settings.SettingsViewModel
@@ -39,8 +44,8 @@ fun RangersNavHost(
 ) {
     val navController = rememberNavController()
     var titleId by rememberSaveable { mutableIntStateOf(TopLevelRoutes.Settings.label) }
-    var actions: @Composable (RowScope.() -> Unit)? by rememberSaveable { mutableStateOf(null) }
-    var switch: @Composable (RowScope.() -> Unit)? by rememberSaveable { mutableStateOf(null) }
+    var actions: @Composable (RowScope.() -> Unit)? by remember { mutableStateOf(null) }
+    var switch: @Composable (RowScope.() -> Unit)? by remember { mutableStateOf(null) }
     val isCardsLoading by settingsViewModel.isCardsLoading.collectAsState()
     Scaffold(
         topBar = {
@@ -75,11 +80,16 @@ fun RangersNavHost(
                 actions = null
                 switch = null
             }
-            composable(TopLevelRoutes.Cards.route) {
+            composable(TopLevelRoutes.Cards.route) { backStackEntry ->
                 if (!isCardsLoading) {
-                    SettingsScreen(
+                    val cardsViewModel: CardsViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = backStackEntry
+                    )
+                    CardsScreen(
                         mainActivity = mainActivity,
                         isDarkTheme = isDarkTheme,
+                        cardsViewModel = cardsViewModel,
                         settingsViewModel = settingsViewModel,
                         contentPadding = innerPadding
                     )
