@@ -74,7 +74,9 @@ dependencies {
     implementation("androidx.paging:paging-runtime-ktx:3.3.5")
     implementation("androidx.paging:paging-compose:3.3.5")
 
+    //Import Coil
     implementation("io.coil-kt:coil-compose:2.7.0")
+
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")

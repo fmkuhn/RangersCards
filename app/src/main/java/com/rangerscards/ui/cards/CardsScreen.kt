@@ -92,5 +92,31 @@ fun CardsScreen(
                 isDarkTheme = isDarkTheme
             )
         }
+        item {
+            CardListItem(
+                aspectId = null,
+                aspectShortName = null,
+                cost = null,
+                imageSrc = "/img/card/core_ru/01079.jpg",
+                name = "Scuttler Tunnel",
+                typeName = "Role",
+                traits = null,
+                level = null,
+                isDarkTheme = isDarkTheme
+            )
+        }
+        item {
+            CardListItem(
+                aspectId = null,
+                aspectShortName = null,
+                cost = null,
+                imageSrc = "/img/card/core_ru/01038.jpg",
+                name = "Scuttler Tunnel",
+                typeName = "Role",
+                traits = null,
+                level = null,
+                isDarkTheme = isDarkTheme
+            )
+        }
     }
 }
