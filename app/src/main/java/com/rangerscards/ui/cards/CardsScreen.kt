@@ -1,16 +1,27 @@
 package com.rangerscards.ui.cards
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
+import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import com.rangerscards.MainActivity
+import com.rangerscards.data.Card
 import com.rangerscards.ui.components.CardListItem
 import com.rangerscards.ui.components.RowTypeDivider
 import com.rangerscards.ui.settings.SettingsViewModel
@@ -26,97 +37,60 @@ fun CardsScreen(
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
 
-    val user by settingsViewModel.userUiState.collectAsState()
-    val userCardsSetting = user.cardsSettings
-    LazyColumn(
-        modifier = modifier
-            .background(CustomTheme.colors.l30)
-            .fillMaxSize()
-            .padding(
-                top = contentPadding.calculateTopPadding(),
-                bottom = contentPadding.calculateBottomPadding()
-            ),
-    ) {
-        item {
-            RowTypeDivider("Test type")
+    //val user by settingsViewModel.userUiState.collectAsState()
+    //val userCardsSetting = user.cardsSettings
+    val cardsList by cardsViewModel.getAllCards(false).collectAsState(emptyList())
+    var groupedCardsList: Map<String, List<Card>> by remember {
+        mutableStateOf(cardsList.groupBy { it.setName.toString() })
+    }
+    LaunchedEffect(cardsList) {
+        groupedCardsList = cardsList.groupBy { it.setName.toString() }
+    }
+    if (cardsList.isEmpty()) {
+        Column(
+            verticalArrangement = Arrangement.Center,
+            horizontalAlignment = Alignment.CenterHorizontally,
+            modifier = Modifier.background(CustomTheme.colors.l30)
+                .fillMaxSize()
+                .padding(
+                    top = contentPadding.calculateTopPadding(),
+                    bottom = contentPadding.calculateBottomPadding()
+                ),
+        ) {
+            CircularProgressIndicator(
+                modifier = Modifier.size(32.dp),
+                color = CustomTheme.colors.m)
         }
-        item {
-            CardListItem(
-                aspectId = "AWA",
-                aspectShortName = "AWA",
-                cost = 2,
-                imageSrc = null,
-                name = "Scuttler Tunnel",
-                typeName = null,
-                traits = "Being / Companion / Mammal",
-                level = 2,
-                isDarkTheme = isDarkTheme
-            )
-        }
-        item {
-            CardListItem(
-                aspectId = "FOC",
-                aspectShortName = "FOC",
-                cost = null,
-                imageSrc = null,
-                name = "Scuttler Tunnel",
-                typeName = null,
-                traits = "Being / Companion / Mammal / and moooooore / maybe some",
-                level = 2,
-                isDarkTheme = isDarkTheme
-            )
-        }
-        item {
-            CardListItem(
-                aspectId = "FIT",
-                aspectShortName = "FIT",
-                cost = 1,
-                imageSrc = null,
-                name = "Scuttler Tunnel",
-                typeName = null,
-                traits = "Being / Companion / Mammal",
-                level = 1,
-                isDarkTheme = isDarkTheme
-            )
-        }
-        item {
-            CardListItem(
-                aspectId = "SPI",
-                aspectShortName = "SPI",
-                cost = 3,
-                imageSrc = null,
-                name = "Scuttler Tunnel",
-                typeName = null,
-                traits = "Being / Companion / Mammal",
-                level = 3,
-                isDarkTheme = isDarkTheme
-            )
-        }
-        item {
-            CardListItem(
-                aspectId = null,
-                aspectShortName = null,
-                cost = null,
-                imageSrc = "/img/card/core_ru/01079.jpg",
-                name = "Scuttler Tunnel",
-                typeName = "Role",
-                traits = null,
-                level = null,
-                isDarkTheme = isDarkTheme
-            )
-        }
-        item {
-            CardListItem(
-                aspectId = null,
-                aspectShortName = null,
-                cost = null,
-                imageSrc = "/img/card/core_ru/01038.jpg",
-                name = "Scuttler Tunnel",
-                typeName = "Role",
-                traits = null,
-                level = null,
-                isDarkTheme = isDarkTheme
-            )
+    }
+    else {
+        LazyColumn(
+            modifier = modifier
+                .background(CustomTheme.colors.l30)
+                .fillMaxSize()
+                .padding(
+                    top = contentPadding.calculateTopPadding(),
+                    bottom = contentPadding.calculateBottomPadding()
+                ),
+        ) {
+            groupedCardsList.forEach { groupKey ->
+                item(key = groupKey.key) {
+                    RowTypeDivider(groupKey.key)
+                }
+                items(items = groupKey.value, key = { it.id }) { item ->
+                    CardListItem(
+                        aspectId = item.aspectId,
+                        aspectShortName = item.aspectShortName,
+                        cost = item.cost,
+                        imageSrc = item.imageSrc,
+                        name = item.name.toString(),
+                        typeName = item.typeName,
+                        traits = item.traits,
+                        level = item.level,
+                        isDarkTheme = isDarkTheme,
+                        onClick = {/*TODO: Implement navigation to item's page*/}
+                    )
+                }
+            }
         }
     }
 }

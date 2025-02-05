@@ -87,7 +87,7 @@ fun SettingsClickableSurface(
     modifier: Modifier = Modifier.fillMaxWidth(),
 ) {
     Surface(
-        onClick = { onClick() },
+        onClick = onClick,
         modifier = modifier,
         shape = CustomTheme.shapes.large,
         color = Color.Transparent

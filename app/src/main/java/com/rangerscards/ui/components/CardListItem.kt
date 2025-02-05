@@ -2,6 +2,7 @@ package com.rangerscards.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -50,8 +51,10 @@ fun CardListItem(
     traits: String?,
     level: Int?,
     isDarkTheme: Boolean,
+    onClick: () -> Unit
 ) {
     Surface(
+        onClick = onClick,
         modifier = Modifier.fillMaxWidth(),
         color = Color.Transparent
     ) {
@@ -248,7 +251,8 @@ fun SettingsScreenPreview() {
                 typeName = null,
                 traits = "Being / Companion / Mammal",
                 level = 2,
-                isDarkTheme = isSystemInDarkTheme()
+                isDarkTheme = isSystemInDarkTheme(),
+                onClick = {}
             )
         }
     }
