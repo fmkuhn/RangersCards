@@ -2,7 +2,6 @@ package com.rangerscards.ui.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
@@ -135,7 +134,10 @@ fun CardListItemImageContainer(
                     modifier = Modifier.fillMaxSize()
                 ) {
                     if (cost != null) Text(
-                        text = cost.toString(),
+                        text = when(cost) {
+                            -2 -> "X"
+                            else -> cost.toString()
+                        },
                         color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
                         fontFamily = Jost,
                         fontWeight = FontWeight.Bold,

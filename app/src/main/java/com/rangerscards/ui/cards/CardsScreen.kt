@@ -46,7 +46,7 @@ fun CardsScreen(
     LaunchedEffect(cardsList) {
         groupedCardsList = cardsList.groupBy { it.setName.toString() }
     }
-    if (cardsList.isEmpty()) {
+    if (groupedCardsList.isEmpty()) {
         Column(
             verticalArrangement = Arrangement.Center,
             horizontalAlignment = Alignment.CenterHorizontally,
