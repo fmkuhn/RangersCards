@@ -46,11 +46,6 @@ data class UserUIState(
     val currentUser: FirebaseUser? = Firebase.auth.currentUser,
     val userInfo: GetProfileQuery.Data? = null,
     val language: String = Locale.getDefault().language.substring(0..1),
-    val cardsSettings: CardsSettings = CardsSettings()
-)
-
-data class CardsSettings(
-    val englishSearchResults: Boolean = false
 )
 
 /**
@@ -72,6 +67,13 @@ class SettingsViewModel(
             scope = viewModelScope,
             started = SharingStarted.WhileSubscribed(5_000),
             initialValue = null
+        )
+
+    val isIncludeEnglishSearchResultsState: StateFlow<Boolean> =
+        userPreferencesRepository.isIncludeEnglishSearchResults.stateIn(
+            scope = viewModelScope,
+            started = SharingStarted.WhileSubscribed(5_000),
+            initialValue = false
         )
 
     private val _isCardsLoading = MutableStateFlow(false)
@@ -303,11 +305,9 @@ class SettingsViewModel(
         )
     }
 
-    fun setEnglishSearchResultsSetting() {
-        _userUiState.update {
-            it.copy(
-                cardsSettings = CardsSettings(!it.cardsSettings.englishSearchResults)
-            )
+    fun setEnglishSearchResultsSetting(isInclude: Boolean) {
+        viewModelScope.launch {
+            userPreferencesRepository.saveIncludeEnglishSearchResults(isInclude)
         }
     }
 }

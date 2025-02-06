@@ -87,10 +87,8 @@ fun RangersNavHost(
                         viewModelStoreOwner = backStackEntry
                     )
                     CardsScreen(
-                        mainActivity = mainActivity,
                         isDarkTheme = isDarkTheme,
                         cardsViewModel = cardsViewModel,
-                        settingsViewModel = settingsViewModel,
                         contentPadding = innerPadding
                     )
                 } else {

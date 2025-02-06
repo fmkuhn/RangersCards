@@ -1,5 +1,6 @@
 package com.rangerscards.data
 
+import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
 
 interface CardsRepository {
@@ -10,5 +11,12 @@ interface CardsRepository {
 
     suspend fun isExists(): Boolean
 
-    fun getAllCardsStream(spoiler: Boolean): Flow<List<Card>>
+    fun getAllCards(spoiler: Boolean): Flow<PagingData<Card>>
+
+    fun searchCards(
+        searchQuery: String,
+        includeEnglish: Boolean,
+        spoiler: Boolean,
+        language: String
+    ): Flow<PagingData<Card>>
 }

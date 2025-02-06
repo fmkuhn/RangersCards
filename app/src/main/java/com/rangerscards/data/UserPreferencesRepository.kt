@@ -4,6 +4,7 @@ import android.util.Log
 import androidx.datastore.core.DataStore
 import androidx.datastore.core.IOException
 import androidx.datastore.preferences.core.Preferences
+import androidx.datastore.preferences.core.booleanPreferencesKey
 import androidx.datastore.preferences.core.edit
 import androidx.datastore.preferences.core.emptyPreferences
 import androidx.datastore.preferences.core.intPreferencesKey
@@ -31,10 +32,23 @@ class UserPreferencesRepository(
             preferences[THEME] ?: 2
         }
 
+    val isIncludeEnglishSearchResults: Flow<Boolean> = dataStore.data
+        .catch {
+            if (it is IOException) {
+                Log.e(TAG, "Error reading preferences.", it)
+                emit(emptyPreferences())
+            } else {
+                throw it
+            }
+        }.map { preferences ->
+            preferences[INCLUDE_ENGLISH_SEARCH_RESULTS] ?: false
+        }
+
     private companion object {
         val THEME = intPreferencesKey("theme")
         const val TAG = "UserPreferencesRepo"
         val CARDS_UPDATED_AT = stringPreferencesKey("cards_updated_at")
+        val INCLUDE_ENGLISH_SEARCH_RESULTS = booleanPreferencesKey("english_results")
     }
 
     suspend fun saveThemePreference(theme: Int) {
@@ -46,6 +60,12 @@ class UserPreferencesRepository(
     suspend fun saveCardsUpdatedTimestamp(timestamp: String) {
         dataStore.edit { preferences ->
             preferences[CARDS_UPDATED_AT] = timestamp
+        }
+    }
+
+    suspend fun saveIncludeEnglishSearchResults(isIncludeEnglishSearchResults: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[INCLUDE_ENGLISH_SEARCH_RESULTS] = isIncludeEnglishSearchResults
         }
     }
 
