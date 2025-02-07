@@ -64,4 +64,6 @@
     <string name="backup_data_button">Резервное копирование</string>
     <string name="diagnostics_button">Диагностика</string>
     <string name="cards_updating">Обновление карт</string>
+    <string name="no_matching_cards">Нет карт по запросу «%s»</string>
+    <string name="no_matching_cards_filtered">Нет подходящих карт</string>
 </resources>

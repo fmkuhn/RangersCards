@@ -21,8 +21,10 @@ import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
@@ -32,6 +34,7 @@ import com.rangerscards.data.Card
 import com.rangerscards.ui.components.CardListItem
 import com.rangerscards.ui.components.RowTypeDivider
 import com.rangerscards.ui.theme.CustomTheme
+import com.rangerscards.ui.theme.Jost
 
 @Composable
 fun CardsScreen(
@@ -55,7 +58,7 @@ fun CardsScreen(
     Column(
         modifier = modifier
             .background(CustomTheme.colors.l15)
-            .fillMaxWidth()
+            .fillMaxSize()
             .padding(
                 top = contentPadding.calculateTopPadding(),
                 bottom = contentPadding.calculateBottomPadding()
@@ -74,42 +77,47 @@ fun CardsScreen(
                 .fillMaxSize(),
             state = listState
         ) {
+            if (cardsLazyItems.itemCount == 0 && cardsLazyItems.loadState.isIdle) item {
+                //TODO:Change text
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(16.dp).fillMaxWidth()
+                ) {
+                    Text(
+                        text = if (searchQuery.isEmpty()) 
+                            stringResource(R.string.no_matching_cards_filtered)
+                            else stringResource(id = R.string.no_matching_cards, searchQuery),
+                        color = CustomTheme.colors.d30,
+                        fontFamily = Jost,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 18.sp,
+                        lineHeight = 24.sp,
+                        letterSpacing = 0.2.sp,
+                    )
+                }
+            }
             items(
                 count = cardsLazyItems.itemCount,
                 key = cardsLazyItems.itemKey(Card::id),
                 contentType = cardsLazyItems.itemContentType { it }
             ) { index ->
-                if (cardsLazyItems.itemCount == 0) {
-                    //TODO:Change text
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally,
-                        modifier = Modifier.padding(16.dp)
-                    ) {
-                        Text(
-                            text = stringResource(id = R.string.cards_updating),
-                            color = CustomTheme.colors.d30,
-                            style = CustomTheme.typography.headline
-                        )
-                    }
-                } else {
-                    val item = cardsLazyItems[index] ?: return@items
-                    val showHeader = if (index == 0) true
-                    else cardsLazyItems[index - 1]?.setName != item.setName
-                    if (showHeader) RowTypeDivider(text = item.setName.toString())
-                    CardListItem(
-                        aspectId = item.aspectId,
-                        aspectShortName = item.aspectShortName,
-                        cost = item.cost,
-                        imageSrc = item.imageSrc,
-                        name = item.name.toString(),
-                        typeName = item.typeName,
-                        traits = item.traits,
-                        level = item.level,
-                        isDarkTheme = isDarkTheme,
-                        onClick = {/*TODO: Implement navigation to item's page*/}
-                    )
-                }
+                val item = cardsLazyItems[index] ?: return@items
+                val showHeader = if (index == 0) true
+                else cardsLazyItems[index - 1]?.setName != item.setName
+                if (showHeader) RowTypeDivider(text = item.setName.toString())
+                CardListItem(
+                    aspectId = item.aspectId,
+                    aspectShortName = item.aspectShortName,
+                    cost = item.cost,
+                    imageSrc = item.imageSrc,
+                    name = item.name.toString(),
+                    typeName = item.typeName,
+                    traits = item.traits,
+                    level = item.level,
+                    isDarkTheme = isDarkTheme,
+                    onClick = {/*TODO: Implement navigation to item's page*/}
+                )
             }
 
             // Handle load states: initial load and pagination load errors/loading.
@@ -117,17 +125,29 @@ fun CardsScreen(
                 when {
                     loadState.refresh is LoadState.Loading -> {
                         item {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(32.dp).fillMaxWidth(),
-                                color = CustomTheme.colors.m)
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.padding(16.dp).fillMaxWidth()
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(32.dp),
+                                    color = CustomTheme.colors.m)
+                            }
                         }
                     }
 
                     loadState.append is LoadState.Loading -> {
                         item {
-                            CircularProgressIndicator(
-                                modifier = Modifier.size(32.dp).fillMaxWidth(),
-                                color = CustomTheme.colors.m)
+                            Column(
+                                verticalArrangement = Arrangement.Center,
+                                horizontalAlignment = Alignment.CenterHorizontally,
+                                modifier = Modifier.padding(16.dp).fillMaxWidth()
+                            ) {
+                                CircularProgressIndicator(
+                                    modifier = Modifier.size(32.dp),
+                                    color = CustomTheme.colors.m)
+                            }
                         }
                     }
                 }
