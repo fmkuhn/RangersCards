@@ -71,7 +71,7 @@ class CardsViewModel(
      */
     fun onSearchQueryChanged(newQuery: String) {
         _searchQuery.update {
-            newQuery.trim()
+            newQuery
         }
     }
 }
