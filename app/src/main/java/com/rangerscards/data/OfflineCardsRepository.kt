@@ -19,7 +19,7 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
             config = PagingConfig(
                 pageSize = 20,
                 enablePlaceholders = false,
-                initialLoadSize = 30
+                initialLoadSize = 40
             ),
             pagingSourceFactory = { cardDao.getAllCards(spoiler) }
         ).flow
@@ -48,7 +48,7 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
             config = PagingConfig(
                 pageSize = 20,
                 enablePlaceholders = false,
-                initialLoadSize = 30
+                initialLoadSize = 40
             ),
             pagingSourceFactory = { cardDao.searchCards(ftsQuery, spoiler) }
         ).flow
