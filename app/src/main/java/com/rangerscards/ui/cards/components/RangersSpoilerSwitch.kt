@@ -58,7 +58,7 @@ fun RangersSpoilerSwitch(
     )
     val animatedColorCrestIcon by animateColorAsState(
         targetValue = if (spoiler) CustomTheme.colors.d30 else CustomTheme.colors.l10,
-        label = "Color for ranger icon"
+        label = "Color for crest icon"
     )
 
     Box(
