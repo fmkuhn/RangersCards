@@ -1,5 +1,8 @@
 package com.rangerscards.ui.cards
 
+import android.app.Activity
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -20,6 +23,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -45,14 +49,21 @@ fun CardsScreen(
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
     val searchQuery by cardsViewModel.searchQuery.collectAsState()
+    val spoiler by cardsViewModel.spoiler.collectAsState()
     val cardsLazyItems = cardsViewModel.searchResults.collectAsLazyPagingItems()
     // Remember a LazyListState to control and observe scroll position.
     val listState = rememberLazyListState()
 
+    val activity = LocalActivity.current
+
     // Whenever the search query changes, scroll the list back to the top.
-    LaunchedEffect(searchQuery) {
+    LaunchedEffect(searchQuery, spoiler) {
         // Scroll to the first item
         listState.animateScrollToItem(0)
+    }
+
+    BackHandler {
+        activity?.finish()
     }
 
     // Search TextField: user enters the search query.

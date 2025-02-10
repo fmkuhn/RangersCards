@@ -52,7 +52,9 @@ fun RangersNavHost(
         topBar = {
             RangersTopAppBar(
                 titleId = titleId,
-                canNavigateBack = navController.previousBackStackEntry != null,
+                canNavigateBack = navController.previousBackStackEntry != null &&
+                        navController.previousBackStackEntry?.destination?.route
+                        != navController.graph.startDestinationRoute,
                 navigateUp = { navController.navigateUp() },
                 actions = actions,
                 switch = switch

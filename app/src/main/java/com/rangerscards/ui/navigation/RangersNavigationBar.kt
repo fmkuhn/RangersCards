@@ -53,7 +53,7 @@ fun RangersNavigationBar(
                     navBackStackEntry?.destination?.route?.let {
                         popUpTo(navController.graph.startDestinationId) {
                             saveState = true
-                            inclusive = true
+                            inclusive = false
                         }
                         launchSingleTop = true
                         restoreState = true
