@@ -79,6 +79,10 @@ class CardsViewModel(
         }
     }
 
+    fun clearSearchQuery() {
+        _searchQuery.update { "" }
+    }
+
     /**
      * Called when the user switches spoiler.
      */

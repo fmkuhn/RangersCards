@@ -32,6 +32,7 @@ import androidx.paging.compose.itemKey
 import com.rangerscards.R
 import com.rangerscards.data.Card
 import com.rangerscards.ui.components.CardListItem
+import com.rangerscards.ui.components.RangersSearchOutlinedField
 import com.rangerscards.ui.components.RowTypeDivider
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
@@ -57,19 +58,17 @@ fun CardsScreen(
     // Search TextField: user enters the search query.
     Column(
         modifier = modifier
-            .background(CustomTheme.colors.l15)
+            .background(CustomTheme.colors.l20)
             .fillMaxSize()
             .padding(
                 top = contentPadding.calculateTopPadding(),
                 bottom = contentPadding.calculateBottomPadding()
             ),
     ) {
-        OutlinedTextField(
-            value = searchQuery,
-            onValueChange = { newQuery -> cardsViewModel.onSearchQueryChanged(newQuery) },
-            singleLine = true,
-            keyboardOptions = KeyboardOptions.Default.copy(imeAction = ImeAction.Search),
-            modifier = Modifier.fillMaxWidth().padding(8.dp)
+        RangersSearchOutlinedField(
+            query = searchQuery,
+            onQueryChanged = cardsViewModel::onSearchQueryChanged,
+            onClearClicked = cardsViewModel::clearSearchQuery
         )
         LazyColumn(
             modifier = modifier
