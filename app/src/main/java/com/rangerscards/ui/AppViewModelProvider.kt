@@ -23,7 +23,7 @@ object AppViewModelProvider {
         }
 
         //Initializer for CardsViewModel
-        initializer() {
+        initializer {
             CardsViewModel(rangersApplication().container.cardsRepository,
                 rangersApplication().container.userPreferencesRepository)
         }

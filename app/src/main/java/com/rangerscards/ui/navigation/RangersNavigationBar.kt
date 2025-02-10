@@ -48,10 +48,10 @@ fun RangersNavigationBar(
     ) {
         TopLevelRoutes.entries.forEach { topLevelRoute ->
             NavigationBarItem(
-                selected = currentDestination?.route == topLevelRoute.route,
+                selected = currentDestination?.route?.startsWith(topLevelRoute.route) ?: false,
                 onClick = { navController.navigate(topLevelRoute.route) {
                     navBackStackEntry?.destination?.route?.let {
-                        popUpTo(it) {
+                        popUpTo(navController.graph.startDestinationId) {
                             saveState = true
                             inclusive = true
                         }
