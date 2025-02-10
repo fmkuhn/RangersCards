@@ -37,15 +37,19 @@ class CardsViewModel(
             initialValue = false
         )
 
+    // Holds the current spoiler state.
+    private val _spoiler = MutableStateFlow(false)
+    val spoiler: StateFlow<Boolean> = _spoiler.asStateFlow()
+
     // Exposes the paginated search results as PagingData.
     @OptIn(ExperimentalCoroutinesApi::class)
     val searchResults: Flow<PagingData<Card>> =
-        combine(_searchQuery, _includeEnglish) { query, include ->
-            query.trim() to include
-        }.flatMapLatest { (query, include) ->
+        combine(_searchQuery, _includeEnglish, _spoiler) { query, include, spoiler ->
+            Triple(query.trim(), include, spoiler)
+        }.flatMapLatest { (query, include, spoiler) ->
             // When the search query or include flag changes, perform a new search.
             if (query.isEmpty()) {
-                cardsRepository.getAllCards(false).catch { throwable ->
+                cardsRepository.getAllCards(spoiler).catch { throwable ->
                     // Log the error.
                     throwable.printStackTrace()
                     // Return an empty PagingData on error so that the flow continues.
@@ -55,7 +59,7 @@ class CardsViewModel(
                 cardsRepository.searchCards(
                     searchQuery = query,
                     includeEnglish = include,
-                    spoiler = false,
+                    spoiler = spoiler,
                     language = Locale.getDefault().language.substring(0..1)
                 ).catch { throwable ->
                     // Log the error.
@@ -73,5 +77,12 @@ class CardsViewModel(
         _searchQuery.update {
             newQuery
         }
+    }
+
+    /**
+     * Called when the user switches spoiler.
+     */
+    fun onSpoilerChanged() {
+        _spoiler.update { !it }
     }
 }

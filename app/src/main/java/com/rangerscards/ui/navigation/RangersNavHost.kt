@@ -31,6 +31,7 @@ import com.rangerscards.R
 import com.rangerscards.ui.AppViewModelProvider
 import com.rangerscards.ui.cards.CardsScreen
 import com.rangerscards.ui.cards.CardsViewModel
+import com.rangerscards.ui.cards.components.RangersSpoilerSwitch
 import com.rangerscards.ui.components.RangersTopAppBar
 import com.rangerscards.ui.settings.SettingsScreen
 import com.rangerscards.ui.settings.SettingsViewModel
@@ -45,7 +46,7 @@ fun RangersNavHost(
     val navController = rememberNavController()
     var titleId by rememberSaveable { mutableIntStateOf(TopLevelRoutes.Settings.label) }
     var actions: @Composable (RowScope.() -> Unit)? by remember { mutableStateOf(null) }
-    var switch: @Composable (RowScope.() -> Unit)? by remember { mutableStateOf(null) }
+    var switch: @Composable (RowScope.() -> Unit)? = null
     val isCardsLoading by settingsViewModel.isCardsLoading.collectAsState()
     Scaffold(
         topBar = {
@@ -81,11 +82,11 @@ fun RangersNavHost(
                 switch = null
             }
             composable(TopLevelRoutes.Cards.route) { backStackEntry ->
+                val cardsViewModel: CardsViewModel = viewModel(
+                    factory = AppViewModelProvider.Factory,
+                    viewModelStoreOwner = backStackEntry
+                )
                 if (!isCardsLoading) {
-                    val cardsViewModel: CardsViewModel = viewModel(
-                        factory = AppViewModelProvider.Factory,
-                        viewModelStoreOwner = backStackEntry
-                    )
                     CardsScreen(
                         isDarkTheme = isDarkTheme,
                         cardsViewModel = cardsViewModel,
@@ -96,7 +97,10 @@ fun RangersNavHost(
                 }
                 titleId = TopLevelRoutes.Cards.label
                 actions = {/*TODO: Implement action buttons*/}
-                switch = {/*TODO: Implement Switch button*/}
+                switch = {
+                    val spoiler by cardsViewModel.spoiler.collectAsState()
+                    RangersSpoilerSwitch(spoiler, cardsViewModel::onSpoilerChanged)
+                }
             }
             composable(TopLevelRoutes.Decks.route) {
                 if (!isCardsLoading) {
