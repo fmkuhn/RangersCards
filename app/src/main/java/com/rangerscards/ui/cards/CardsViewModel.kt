@@ -5,6 +5,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.rangerscards.data.Card
+import com.rangerscards.data.CardListItemProjection
 import com.rangerscards.data.CardsRepository
 import com.rangerscards.data.UserPreferencesRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
@@ -43,7 +44,7 @@ class CardsViewModel(
 
     // Exposes the paginated search results as PagingData.
     @OptIn(ExperimentalCoroutinesApi::class)
-    val searchResults: Flow<PagingData<Card>> =
+    val searchResults: Flow<PagingData<CardListItemProjection>> =
         combine(_searchQuery, _includeEnglish, _spoiler) { query, include, spoiler ->
             Triple(query.trim(), include, spoiler)
         }.flatMapLatest { (query, include, spoiler) ->

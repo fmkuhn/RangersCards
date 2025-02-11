@@ -29,7 +29,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import com.rangerscards.R
-import com.rangerscards.data.Card
+import com.rangerscards.data.CardListItemProjection
 import com.rangerscards.ui.components.CardListItem
 import com.rangerscards.ui.components.RangersSearchOutlinedField
 import com.rangerscards.ui.components.RowTypeDivider
@@ -83,7 +83,6 @@ fun CardsScreen(
             state = listState
         ) {
             if (cardsLazyItems.itemCount == 0 && cardsLazyItems.loadState.isIdle) item {
-                //TODO:Change text
                 Column(
                     verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
@@ -104,7 +103,7 @@ fun CardsScreen(
             }
             items(
                 count = cardsLazyItems.itemCount,
-                key = cardsLazyItems.itemKey(Card::id),
+                key = cardsLazyItems.itemKey(CardListItemProjection::id),
                 contentType = cardsLazyItems.itemContentType { it }
             ) { index ->
                 val item = cardsLazyItems[index] ?: return@items

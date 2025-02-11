@@ -1,9 +1,11 @@
 package com.rangerscards.data
 
+import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import kotlinx.coroutines.flow.Flow
+import java.util.Locale
 
 class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
 
@@ -13,7 +15,7 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
 
     override suspend fun isExists(): Boolean = cardDao.isExists()
 
-    override fun getAllCards(spoiler: Boolean): Flow<PagingData<Card>> {
+    override fun getAllCards(spoiler: Boolean): Flow<PagingData<CardListItemProjection>> {
         // Create a Pager that wraps the PagingSource from the DAO.
         return Pager(
             config = PagingConfig(
@@ -30,18 +32,25 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
         includeEnglish: Boolean,
         spoiler: Boolean,
         language: String
-    ): Flow<PagingData<Card>> {
+    ): Flow<PagingData<CardListItemProjection>> {
         // Build the FTS query string
         val ftsQuery = if (language == "ru") {
             val stemedString = searchQuery
                 .replace("\"(\\[\"]|.*)?\"".toRegex(), " ")
                 .split("[^\\p{Alpha}]+".toRegex())
                 .filter { it.isNotBlank() }
-                .joinToString(separator = " OR ", transform = Porter::stem)
+                .joinToString(separator = " ", transform = { "${Porter.stem(it)}*" })
             createQueryString(stemedString, includeEnglish)
         } else {
-            createQueryString(searchQuery, includeEnglish)
+            val stemedString = searchQuery
+                .lowercase(Locale.forLanguageTag(language))
+                .replace("\"(\\[\"]|.*)?\"".toRegex(), " ")
+                .split("[^\\p{Alpha}]+".toRegex())
+                .filter { it.isNotBlank() }
+                .joinToString(separator = " ", transform = { "$it*" })
+            createQueryString(stemedString, includeEnglish)
         }
+        Log.d("Test", ftsQuery)
 
         // Create a Pager that wraps the PagingSource from the DAO.
         return Pager(
@@ -55,13 +64,7 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
     }
 
     private fun createQueryString(searchQuery: String, includeEnglish: Boolean): String {
-        return if (includeEnglish) "name:$searchQuery* OR real_name:$searchQuery* OR " +
-                "traits:$searchQuery* OR real_traits:$searchQuery* OR " +
-                "text:$searchQuery* OR real_text:$searchQuery* OR " +
-                "sun_challenge:$searchQuery* OR mountain_challenge:$searchQuery* OR " +
-                "crest_challenge:$searchQuery*"
-        else "name:$searchQuery* OR traits:$searchQuery* OR " +
-                "text:$searchQuery* OR sun_challenge:$searchQuery* OR " +
-                "mountain_challenge:$searchQuery* OR crest_challenge:$searchQuery*"
+        return if (!includeEnglish) "composite:($searchQuery)"
+        else "real_composite:($searchQuery)"
     }
 }

@@ -77,4 +77,7 @@ data class Card (
     val mountainChallenge: String?,
     @ColumnInfo(name = "crest_challenge")
     val crestChallenge: String?,
+    val composite: String?,
+    @ColumnInfo(name = "real_composite")
+    val realComposite: String?
 )

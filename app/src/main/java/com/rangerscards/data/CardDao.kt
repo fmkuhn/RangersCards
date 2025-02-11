@@ -19,18 +19,21 @@ interface CardDao {
     @Query("SELECT EXISTS(SELECT * FROM card)")
     suspend fun isExists(): Boolean
 
-    @Query("SELECT * FROM card WHERE spoiler = :spoiler " +
+    @Query("SELECT id, set_name, aspect_id, aspect_short_name, cost, image_src, name, type_name, " +
+            "traits, level FROM card WHERE spoiler = :spoiler " +
             "OR (spoiler IS NULL AND NOT EXISTS (" +
             "SELECT 1 FROM card WHERE spoiler = :spoiler)) " +
             "ORDER BY (set_type_id IS NULL), set_type_id, set_id, set_position"
     )
-    fun getAllCards(spoiler: Boolean): PagingSource<Int, Card>
+    fun getAllCards(spoiler: Boolean): PagingSource<Int, CardListItemProjection>
 
-    @Query("SELECT card.* FROM card JOIN card_fts ON (card.id = card_fts.id) " +
+    @Query("SELECT card.id, card.set_name, card.aspect_id, card.aspect_short_name, card.cost, " +
+            "card.image_src, card.name, card.type_name, card.traits, card.level " +
+            "FROM card JOIN card_fts ON (card.id = card_fts.id) " +
             "WHERE (spoiler = :spoiler OR (spoiler IS NULL AND NOT EXISTS " +
             "(SELECT 1 FROM card WHERE spoiler = :spoiler))) " +
             "AND (card_fts MATCH :query) " +
             "ORDER BY (card.set_type_id IS NULL), card.set_type_id, card.set_id, card.set_position"
     )
-    fun searchCards(query: String, spoiler: Boolean): PagingSource<Int, Card>
+    fun searchCards(query: String, spoiler: Boolean): PagingSource<Int, CardListItemProjection>
 }

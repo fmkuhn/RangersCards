@@ -13,22 +13,7 @@ data class CardFts(
     @ColumnInfo(name = "rowid")
     val rowId: Int,
     val id: String,
-    val name: String?,
-    @ColumnInfo(name = "real_name")
-    val realName: String?,
-    @ColumnInfo(name = "real_traits")
-    val realTraits: String?,
-    val traits: String?,
-    val text: String?,
-    @ColumnInfo(name = "real_text")
-    val realText: String?,
-    val flavor: String?,
-    @ColumnInfo(name = "real_flavor")
-    val realFlavor: String?,
-    @ColumnInfo(name = "sun_challenge")
-    val sunChallenge: String?,
-    @ColumnInfo(name = "mountain_challenge")
-    val mountainChallenge: String?,
-    @ColumnInfo(name = "crest_challenge")
-    val crestChallenge: String?,
+    val composite: String?,
+    @ColumnInfo(name = "real_composite")
+    val realComposite: String?
 )

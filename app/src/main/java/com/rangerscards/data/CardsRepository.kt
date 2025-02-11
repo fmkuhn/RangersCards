@@ -11,12 +11,12 @@ interface CardsRepository {
 
     suspend fun isExists(): Boolean
 
-    fun getAllCards(spoiler: Boolean): Flow<PagingData<Card>>
+    fun getAllCards(spoiler: Boolean): Flow<PagingData<CardListItemProjection>>
 
     fun searchCards(
         searchQuery: String,
         includeEnglish: Boolean,
         spoiler: Boolean,
         language: String
-    ): Flow<PagingData<Card>>
+    ): Flow<PagingData<CardListItemProjection>>
 }
