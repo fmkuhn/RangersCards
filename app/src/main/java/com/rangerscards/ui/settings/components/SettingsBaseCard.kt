@@ -66,7 +66,7 @@ fun SettingsBaseCard(
                     color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
                     style = CustomTheme.typography.headline,
                 )
-        }
+            }
             Column(
                 modifier = Modifier.padding(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
