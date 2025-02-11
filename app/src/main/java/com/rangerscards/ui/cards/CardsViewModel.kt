@@ -4,7 +4,6 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.rangerscards.data.Card
 import com.rangerscards.data.CardListItemProjection
 import com.rangerscards.data.CardsRepository
 import com.rangerscards.data.UserPreferencesRepository
