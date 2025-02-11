@@ -129,7 +129,7 @@ fun CardListItemImageContainer(
                     modifier = Modifier.size(34.dp)
                 )
                 Column(
-                    verticalArrangement = Arrangement.Bottom,
+                    verticalArrangement = Arrangement.Center,
                     horizontalAlignment = Alignment.CenterHorizontally,
                     modifier = Modifier.fillMaxSize()
                 ) {
@@ -152,6 +152,7 @@ fun CardListItemImageContainer(
                         fontWeight = FontWeight.Bold,
                         fontSize = 12.sp,
                         lineHeight = 14.sp,
+                        modifier = Modifier.sizeIn(maxHeight = 14.dp)
                     )
                 }
             }
