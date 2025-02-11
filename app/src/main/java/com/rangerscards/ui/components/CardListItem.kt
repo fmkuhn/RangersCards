@@ -236,7 +236,7 @@ fun CardListItemLevelContainer(
 
 @Preview(showBackground = true)
 @Composable
-fun SettingsScreenPreview() {
+fun CardListItemScreenPreview() {
     RangersCardsTheme {
         Column(
             modifier = Modifier
