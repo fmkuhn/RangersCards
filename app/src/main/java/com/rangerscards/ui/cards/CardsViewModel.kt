@@ -6,6 +6,7 @@ import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.rangerscards.data.CardListItemProjection
 import com.rangerscards.data.CardsRepository
+import com.rangerscards.data.FullCardProjection
 import com.rangerscards.data.UserPreferencesRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -89,4 +90,6 @@ class CardsViewModel(
     fun onSpoilerChanged() {
         _spoiler.update { !it }
     }
+
+    fun getCardById(cardId: String): Flow<FullCardProjection> = cardsRepository.getCardById(cardId)
 }

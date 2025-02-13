@@ -6,6 +6,7 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import kotlinx.coroutines.flow.Flow
 
 @Dao
 interface CardDao {
@@ -36,4 +37,12 @@ interface CardDao {
             "ORDER BY (card.set_type_id IS NULL), card.set_type_id, card.set_id, card.set_position"
     )
     fun searchCards(query: String, spoiler: Boolean): PagingSource<Int, CardListItemProjection>
+
+    @Query("SELECT aspect_id, aspect_short_name, cost, image_src, name, presence, " +
+            "approach_conflict, approach_conflict, approach_reason, approach_exploration, " +
+            "type_name, traits, equip, harm, progress, token_plurals, token_count, text, flavor, " +
+            "level, set_name, set_size, set_position, sun_challenge, mountain_challenge, crest_challenge " +
+            "FROM card WHERE id = :cardId"
+    )
+    fun getCardById(cardId: String): Flow<FullCardProjection>
 }

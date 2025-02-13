@@ -19,4 +19,6 @@ interface CardsRepository {
         spoiler: Boolean,
         language: String
     ): Flow<PagingData<CardListItemProjection>>
+
+    fun getCardById(cardId: String): Flow<FullCardProjection>
 }

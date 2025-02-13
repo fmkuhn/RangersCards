@@ -25,9 +25,12 @@ import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.text.SpanStyle
+import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -192,11 +195,17 @@ fun CardListItemTextContainer(
             overflow = TextOverflow.Ellipsis,
         )
         Text(
-            text = traits ?: typeName ?: "",
+            text = buildAnnotatedString {
+                if (traits != null) {
+                    append("$typeName ")
+                    withStyle(style = SpanStyle(fontStyle = FontStyle.Italic)) {
+                        append("/ $traits")
+                    }
+                } else append(typeName)
+            },
             color = CustomTheme.colors.d10,
             fontFamily = Jost,
             fontWeight = FontWeight.Normal,
-            fontStyle = FontStyle.Italic,
             fontSize = 14.sp,
             lineHeight = 16.sp,
             maxLines = 1,

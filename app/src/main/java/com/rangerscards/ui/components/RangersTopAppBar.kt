@@ -1,12 +1,15 @@
 package com.rangerscards.ui.components
 
 import androidx.annotation.StringRes
+import androidx.compose.animation.AnimatedVisibility
+import androidx.compose.animation.Crossfade
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.RowScope
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -27,7 +30,7 @@ import com.rangerscards.ui.theme.CustomTheme
  */
 @Composable
 fun RangersTopAppBar(
-    @StringRes titleId: Int,
+    title: String,
     canNavigateBack: Boolean,
     navigateUp: () -> Unit = {},
     actions: @Composable (RowScope.() -> Unit)?,
@@ -42,13 +45,14 @@ fun RangersTopAppBar(
         Row(
             horizontalArrangement = Arrangement.spacedBy(8.dp),
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.padding(horizontal = if (!canNavigateBack && switch == null) 16.dp else 8.dp,
+            modifier = Modifier.padding(horizontal = if (switch == null) 16.dp else 8.dp,
                 vertical = 8.dp)
                 .fillMaxWidth()
         ) {
             if (canNavigateBack) IconButton(
                 onClick = { navigateUp() },
-                colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent)
+                colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
+                modifier = Modifier.size(24.dp)
             ) {
                 Icon(
                     painterResource(id = R.drawable.arrow_back_32dp),
@@ -58,10 +62,10 @@ fun RangersTopAppBar(
                 )
             } else if (switch != null) switch()
             Text(
-                text = stringResource(id = titleId),
+                text = title,
                 color = CustomTheme.colors.d30,
                 style = CustomTheme.typography.headline,
-                modifier = Modifier.weight(1f)
+                modifier = Modifier.weight(1f),
             )
             if (actions != null) actions()
         }

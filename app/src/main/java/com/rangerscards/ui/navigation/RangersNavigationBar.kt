@@ -10,15 +10,14 @@ import androidx.compose.material3.NavigationBarItem
 import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.getValue
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavHostController
-import androidx.navigation.compose.currentBackStackEntryAsState
 import com.rangerscards.R
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
@@ -26,11 +25,36 @@ import com.rangerscards.ui.theme.Jost
 /**
  * Top level routes for an app.
  */
-enum class TopLevelRoutes(val route: String, @DrawableRes val icon: Int, @StringRes val label: Int) {
-    Cards("Cards", R.drawable.card, R.string.cards_nav_bar_button),
-    Decks("Decks", R.drawable.cards_32dp, R.string.decks_nav_bar_button),
-    Campaigns("Campaigns", R.drawable.guide, R.string.campaigns_nav_bar_button),
-    Settings("Settings", R.drawable.settings_32dp, R.string.settings_nav_bar_button)
+sealed class BottomNavScreen(
+    val route: String,
+    @DrawableRes val icon: Int,
+    @StringRes val label: Int,
+    val startDestination: String
+) {
+    data object Cards : BottomNavScreen(
+        route = "cards",
+        icon = R.drawable.card,
+        label = R.string.cards_nav_bar_button,
+        startDestination = "cards/start"
+    )
+    data object Decks : BottomNavScreen(
+        route = "decks",
+        icon = R.drawable.cards_32dp,
+        label = R.string.decks_nav_bar_button,
+        startDestination = "decks/start"
+    )
+    data object Campaigns : BottomNavScreen(
+        route = "campaigns",
+        icon = R.drawable.guide,
+        label = R.string.campaigns_nav_bar_button,
+        startDestination = "campaigns/start"
+    )
+    data object Settings : BottomNavScreen(
+        route = "settings",
+        icon = R.drawable.settings_32dp,
+        label = R.string.settings_nav_bar_button,
+        startDestination = "settings/start"
+    )
 }
 
 /**
@@ -38,34 +62,33 @@ enum class TopLevelRoutes(val route: String, @DrawableRes val icon: Int, @String
  */
 @Composable
 fun RangersNavigationBar(
-    navController: NavHostController
+    navController: NavHostController,
+    bottomNavItems: List<BottomNavScreen>,
+    currentRoute: String?
 ) {
-    val navBackStackEntry by navController.currentBackStackEntryAsState()
-    val currentDestination = navBackStackEntry?.destination
     NavigationBar(
         containerColor = CustomTheme.colors.l30,
         modifier = Modifier.sizeIn(maxHeight = 70.dp)
     ) {
-        TopLevelRoutes.entries.forEach { topLevelRoute ->
+        bottomNavItems.forEach { bottomNavItem ->
             NavigationBarItem(
-                selected = currentDestination?.route?.startsWith(topLevelRoute.route) ?: false,
-                onClick = { navController.navigate(topLevelRoute.route) {
-                    navBackStackEntry?.destination?.route?.let {
-                        popUpTo(navController.graph.startDestinationId) {
-                            saveState = true
-                            inclusive = false
-                        }
-                        launchSingleTop = true
-                        restoreState = true
+                selected = currentRoute == bottomNavItem.route ||
+                        currentRoute?.startsWith(bottomNavItem.route) == true,
+                onClick = { navController.navigate(bottomNavItem.route) {
+                    popUpTo(navController.graph.findStartDestination().id) {
+                        saveState = true
+                        inclusive = false
                     }
+                    launchSingleTop = true
+                    restoreState = true
                 } },
                 icon = { Icon(
-                    painterResource(id = topLevelRoute.icon),
+                    painterResource(id = bottomNavItem.icon),
                     contentDescription = null,
                     modifier = Modifier.size(24.dp)
                 ) },
                 label = { Text(
-                    text = stringResource(id = topLevelRoute.label),
+                    text = stringResource(id = bottomNavItem.label),
                     fontFamily = Jost,
                     fontWeight = FontWeight.Medium,
                     fontSize = 14.sp,

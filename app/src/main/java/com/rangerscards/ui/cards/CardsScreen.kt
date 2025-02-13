@@ -41,6 +41,7 @@ fun CardsScreen(
     isDarkTheme: Boolean,
     modifier: Modifier = Modifier,
     cardsViewModel: CardsViewModel,
+    navigateToCard: (String) -> Unit,
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
     val searchQuery by cardsViewModel.searchQuery.collectAsState()
@@ -54,7 +55,7 @@ fun CardsScreen(
     // Whenever the search query changes, scroll the list back to the top.
     LaunchedEffect(searchQuery, spoiler) {
         // Scroll to the first item
-        listState.animateScrollToItem(0)
+        if (searchQuery.isNotEmpty()) listState.animateScrollToItem(0)
     }
 
     BackHandler {
@@ -120,7 +121,7 @@ fun CardsScreen(
                     traits = item.traits,
                     level = item.level,
                     isDarkTheme = isDarkTheme,
-                    onClick = {/*TODO: Implement navigation to item's page*/}
+                    onClick = { navigateToCard.invoke(item.id) }
                 )
             }
 

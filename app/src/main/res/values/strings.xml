@@ -77,4 +77,5 @@
     <string name="no_matching_cards">No matching cards for \"%s\"</string>
     <string name="no_matching_cards_filtered">No matching cards</string>
     <string name="search_for_card">Search for a card</string>
+    <string name="set_info">%d of %d</string>
 </resources>

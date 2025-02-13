@@ -67,4 +67,6 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
         return if (!includeEnglish) "composite:($searchQuery)"
         else "real_composite:($searchQuery)"
     }
+
+    override fun getCardById(cardId: String): Flow<FullCardProjection> = cardDao.getCardById(cardId)
 }

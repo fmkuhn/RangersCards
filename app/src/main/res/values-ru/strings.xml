@@ -67,4 +67,5 @@
     <string name="no_matching_cards">Нет карт по запросу «%s»</string>
     <string name="no_matching_cards_filtered">Нет подходящих карт</string>
     <string name="search_for_card">Найти карту</string>
+    <string name="set_info">%d из %d</string>
 </resources>
