@@ -360,11 +360,11 @@ fun GetAllCardsQuery.Card.toCard(locale: String): Card? {
             sunChallenge = this.card.sun_challenge,
             mountainChallenge = this.card.mountain_challenge,
             crestChallenge = this.card.crest_challenge,
-            composite = listOf(
+            composite = listOfNotNull(
                 this.card.name, this.card.traits, this.card.text, this.card.flavor,
                 this.card.sun_challenge, this.card.mountain_challenge, this.card.crest_challenge
             ).joinToString(" "),
-            realComposite = listOf(
+            realComposite = if (locale == "en") null else listOfNotNull(
                 this.card.name, this.card.real_name, this.card.traits, this.card.real_traits,
                 this.card.text, this.card.real_text, this.card.flavor, this.card.real_flavor,
                 this.card.sun_challenge + this.card.mountain_challenge, this.card.crest_challenge
