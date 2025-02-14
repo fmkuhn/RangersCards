@@ -14,6 +14,11 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.rangerscards.MainActivity
 import com.rangerscards.ui.AppViewModelProvider
+import com.rangerscards.ui.settings.components.AccountCard
+import com.rangerscards.ui.settings.components.CardsCard
+import com.rangerscards.ui.settings.components.SettingsCard
+import com.rangerscards.ui.settings.components.SocialsCard
+import com.rangerscards.ui.settings.components.SupportCard
 import com.rangerscards.ui.theme.CustomTheme
 
 @Composable

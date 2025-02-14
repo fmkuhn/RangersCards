@@ -1,4 +1,4 @@
-package com.rangerscards.ui.settings
+package com.rangerscards.ui.settings.components
 
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.compose.foundation.background
@@ -21,9 +21,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.rangerscards.R
 import com.rangerscards.ui.components.SquareButton
-import com.rangerscards.ui.settings.components.SettingsBaseCard
-import com.rangerscards.ui.settings.components.SettingsClickableSurface
-import com.rangerscards.ui.settings.components.SettingsRadioButtonRow
+import com.rangerscards.ui.settings.SettingsViewModel
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
 import java.util.Locale

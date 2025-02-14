@@ -1,4 +1,4 @@
-package com.rangerscards.ui.settings
+package com.rangerscards.ui.settings.components
 
 import androidx.compose.foundation.layout.padding
 import androidx.compose.material3.ButtonDefaults
@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rangerscards.R
 import com.rangerscards.ui.components.SquareButton
-import com.rangerscards.ui.settings.components.SettingsBaseCard
+import com.rangerscards.ui.settings.SettingsViewModel
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
 

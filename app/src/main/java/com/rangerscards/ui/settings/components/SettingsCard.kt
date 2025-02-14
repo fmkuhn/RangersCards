@@ -1,4 +1,4 @@
-package com.rangerscards.ui.settings
+package com.rangerscards.ui.settings.components
 
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -17,9 +17,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.rangerscards.R
-import com.rangerscards.ui.settings.components.SettingsBaseCard
-import com.rangerscards.ui.settings.components.SettingsClickableSurface
-import com.rangerscards.ui.settings.components.SettingsRadioButtonRow
+import com.rangerscards.ui.settings.SettingsViewModel
 import com.rangerscards.ui.theme.CustomTheme
 
 @Composable
