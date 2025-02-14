@@ -84,4 +84,8 @@
     <string name="no_matching_cards_filtered">No matching cards</string>
     <string name="search_for_card">Search for a card</string>
     <string name="set_info">%d of %d</string>
+    <string name="awa_styled_card_text">AWA</string>
+    <string name="fit_styled_card_text">FIT</string>
+    <string name="foc_styled_card_text">FOC</string>
+    <string name="spi_styled_card_text">SPI</string>
 </resources>

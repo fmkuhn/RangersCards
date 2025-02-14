@@ -72,4 +72,8 @@
     <string name="no_matching_cards_filtered">Нет подходящих карт</string>
     <string name="search_for_card">Найти карту</string>
     <string name="set_info">%d из %d</string>
+    <string name="awa_styled_card_text">ВОС</string>
+    <string name="fit_styled_card_text">ВЫН</string>
+    <string name="foc_styled_card_text">КОН</string>
+    <string name="spi_styled_card_text">ДУХ</string>
 </resources>
