@@ -50,7 +50,6 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
                 .joinToString(separator = " ", transform = { "$it*" })
             createQueryString(stemedString, includeEnglish, language)
         }
-        Log.d("Test", ftsQuery)
 
         // Create a Pager that wraps the PagingSource from the DAO.
         return Pager(
