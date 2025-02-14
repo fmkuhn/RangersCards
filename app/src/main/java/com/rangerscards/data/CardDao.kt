@@ -39,7 +39,7 @@ interface CardDao {
     fun searchCards(query: String, spoiler: Boolean): PagingSource<Int, CardListItemProjection>
 
     @Query("SELECT aspect_id, aspect_short_name, cost, image_src, name, presence, " +
-            "approach_conflict, approach_conflict, approach_reason, approach_exploration, " +
+            "approach_conflict, approach_reason, approach_exploration, approach_connection, " +
             "type_name, traits, equip, harm, progress, token_plurals, token_count, text, flavor, " +
             "level, set_name, set_size, set_position, sun_challenge, mountain_challenge, crest_challenge " +
             "FROM card WHERE id = :cardId"
