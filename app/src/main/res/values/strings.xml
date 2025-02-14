@@ -73,6 +73,12 @@
     <string name="diagnostics_button">Diagnostics</string>
     <string name="contact_us_button">Contact us</string>
 
+    //About screen
+    <string name="about_text">The information presented in this app about Earthborne Rangers, both literal and graphical, is copyrighted by Earthborne Games. This app is not produced, endorsed, supported, or affiliated with Earthborne Games.\n\nThis application was created by Eugene Karelin as a fan project to help support the Earthborne Rangers community. If you find yourself managing lots of decks and campaigns, I\'m hoping it proves useful.</string>
+    <string name="about_email_text">Feedback and bug reports are welcome by email at %s</string>
+    <string name="about_rangersdb_text">Many thanks to RangersDB.com for providing the structured data, API access and access to card images. Without their continued support, this project wouldn\'t be possible.</string>
+    <string name="icon_attribution">Icon Attribution:</string>
+
     //Cards screen strings
     <string name="no_matching_cards">No matching cards for \"%s\"</string>
     <string name="no_matching_cards_filtered">No matching cards</string>

@@ -18,8 +18,9 @@ import com.rangerscards.ui.theme.Jost
 @Composable
 fun SupportCard(
     isDarkTheme: Boolean,
-    settingsViewModel: SettingsViewModel,
-    modifier: Modifier = Modifier
+    navigateToAbout: () -> Unit,
+    modifier: Modifier = Modifier,
+    settingsViewModel: SettingsViewModel
 ) {
     SettingsBaseCard(
         isDarkTheme = isDarkTheme,
@@ -39,7 +40,7 @@ fun SupportCard(
         SquareButton(
             stringId = R.string.about_button,
             leadingIcon = R.drawable.info_32dp,
-            onClick = { /*TODO: Implement about page*/ }
+            onClick = navigateToAbout
         )
         SquareButton(
             stringId = R.string.backup_data_button,

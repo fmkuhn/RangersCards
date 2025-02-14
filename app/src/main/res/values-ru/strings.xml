@@ -64,6 +64,10 @@
     <string name="backup_data_button">Резервное копирование</string>
     <string name="diagnostics_button">Диагностика</string>
     <string name="cards_updating">Обновление карт</string>
+    <string name="about_text">Все права на представленную в этом приложении информацию о игре Earthborne Рейнджеры — как текстовую, так и графическую — принадлежат компании Earthborne Games. Создатель этого приложения не аффилирован и никоим образом не поддерживается Earthborne Games.\n\nПриложение создано Евгением Карелиным в качестве фанатского проекта в поддержку сообщества игры Earthborne Рейнджеры. Если вам приходится следить за множеством колод и кампаний одновременно, надеюсь, это приложение будет вам полезно.</string>
+    <string name="about_email_text">Сообщения об ошибках и предложения присылайте на %s</string>
+    <string name="about_rangersdb_text">Огромная благодарность сайту RangersDB.com за предоставление структурированных данных, изображений карт и доступ через API. Без постоянной поддержки администрации rangersdb этот проект не был бы возможен.</string>
+    <string name="icon_attribution">Пиктографика:</string>
     <string name="no_matching_cards">Нет карт по запросу «%s»</string>
     <string name="no_matching_cards_filtered">Нет подходящих карт</string>
     <string name="search_for_card">Найти карту</string>

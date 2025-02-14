@@ -49,6 +49,7 @@ import com.rangerscards.ui.cards.FullCardScreen
 import com.rangerscards.ui.cards.components.FullCard
 import com.rangerscards.ui.cards.components.RangersSpoilerSwitch
 import com.rangerscards.ui.components.RangersTopAppBar
+import com.rangerscards.ui.settings.SettingsAboutScreen
 import com.rangerscards.ui.settings.SettingsScreen
 import com.rangerscards.ui.settings.SettingsViewModel
 import com.rangerscards.ui.theme.CustomTheme
@@ -114,6 +115,11 @@ fun RangersNavHost(
                         SettingsScreen(
                             mainActivity = mainActivity,
                             isDarkTheme = isDarkTheme,
+                            navigateToAbout = {
+                                navController.navigate(
+                                    "${BottomNavScreen.Settings.route}/about"
+                                )
+                            },
                             settingsViewModel = settingsViewModel,
                             contentPadding = innerPadding
                         )
@@ -121,6 +127,14 @@ fun RangersNavHost(
                         CardsDownloadingCircularProgressIndicator()
                     }
                     title = stringResource(BottomNavScreen.Settings.label)
+                    actions = null
+                    switch = null
+                }
+                composable(BottomNavScreen.Settings.route + "/about") {
+                    SettingsAboutScreen(
+                        contentPadding = innerPadding
+                    )
+                    title = stringResource(R.string.about_button)
                     actions = null
                     switch = null
                 }
@@ -244,6 +258,11 @@ fun RangersNavHost(
                         SettingsScreen(
                             mainActivity = mainActivity,
                             isDarkTheme = isDarkTheme,
+                            navigateToAbout = {
+                                navController.navigate(
+                                    "${BottomNavScreen.Settings.route}/about"
+                                )
+                            },
                             settingsViewModel = settingsViewModel,
                             contentPadding = innerPadding
                         )

@@ -25,9 +25,10 @@ import com.rangerscards.ui.theme.CustomTheme
 fun SettingsScreen(
     mainActivity: MainActivity,
     isDarkTheme: Boolean,
-    modifier: Modifier = Modifier,
+    navigateToAbout: () -> Unit,
     settingsViewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory),
     contentPadding: PaddingValues = PaddingValues(0.dp),
+    modifier: Modifier = Modifier,
 ) {
     val user by settingsViewModel.userUiState.collectAsState()
     LaunchedEffect(Unit) {
@@ -73,7 +74,8 @@ fun SettingsScreen(
         item {
             SupportCard(
                 isDarkTheme = isDarkTheme,
-                settingsViewModel = settingsViewModel
+                settingsViewModel = settingsViewModel,
+                navigateToAbout = { navigateToAbout.invoke() }
             )
         }
     }
