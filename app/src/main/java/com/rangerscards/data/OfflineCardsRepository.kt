@@ -40,7 +40,7 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
                 .split("[^\\p{Alpha}]+".toRegex())
                 .filter { it.isNotBlank() }
                 .joinToString(separator = " ", transform = { "${Porter.stem(it)}*" })
-            createQueryString(stemedString, includeEnglish)
+            createQueryString(stemedString, includeEnglish, language)
         } else {
             val stemedString = searchQuery
                 .lowercase(Locale.forLanguageTag(language))
@@ -48,7 +48,7 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
                 .split("[^\\p{Alpha}]+".toRegex())
                 .filter { it.isNotBlank() }
                 .joinToString(separator = " ", transform = { "$it*" })
-            createQueryString(stemedString, includeEnglish)
+            createQueryString(stemedString, includeEnglish, language)
         }
         Log.d("Test", ftsQuery)
 
@@ -63,8 +63,8 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
         ).flow
     }
 
-    private fun createQueryString(searchQuery: String, includeEnglish: Boolean): String {
-        return if (!includeEnglish) "composite:($searchQuery)"
+    private fun createQueryString(searchQuery: String, includeEnglish: Boolean, language: String): String {
+        return if (!includeEnglish || language == "en") "composite:($searchQuery)"
         else "real_composite:($searchQuery)"
     }
 
