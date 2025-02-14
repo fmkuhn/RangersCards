@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="awa_styled_card_text">VIG</string>
+    <string name="fit_styled_card_text">PHY</string>
+    <string name="foc_styled_card_text">CON</string>
+    <string name="spi_styled_card_text">ESP</string>
+</resources>

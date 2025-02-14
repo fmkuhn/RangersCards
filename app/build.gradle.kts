@@ -23,7 +23,7 @@ android {
             useSupportLibrary = true
         }
 
-        resourceConfigurations += listOf("en", "ru")
+        resourceConfigurations += listOf("en", "ru", "de", "fr", "it")
     }
 
     buildTypes {
@@ -57,7 +57,7 @@ android {
 
 dependencies {
     // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:33.8.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.9.0"))
     implementation("com.google.firebase:firebase-auth")
 
     // Import Apollo Kotlin
@@ -72,8 +72,8 @@ dependencies {
     ksp("androidx.room:room-compiler:2.6.1")
 
     //Import Paging
-    implementation("androidx.paging:paging-runtime-ktx:3.3.5")
-    implementation("androidx.paging:paging-compose:3.3.5")
+    implementation("androidx.paging:paging-runtime-ktx:3.3.6")
+    implementation("androidx.paging:paging-compose:3.3.6")
 
     //Import Coil
     implementation("io.coil-kt:coil-compose:2.7.0")
@@ -82,8 +82,8 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation("androidx.activity:activity-compose:1.10.0")
-    implementation("androidx.navigation:navigation-compose:2.8.6")
-    implementation(platform("androidx.compose:compose-bom:2025.01.01"))
+    implementation("androidx.navigation:navigation-compose:2.8.7")
+    implementation(platform("androidx.compose:compose-bom:2025.02.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -96,7 +96,7 @@ dependencies {
 
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2025.01.01"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2025.02.00"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 
     debugImplementation("androidx.compose.ui:ui-tooling")

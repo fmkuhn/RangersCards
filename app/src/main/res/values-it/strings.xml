@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="awa_styled_card_text">PER</string>
+    <string name="fit_styled_card_text">FIS</string>
+    <string name="foc_styled_card_text">CON</string>
+    <string name="spi_styled_card_text">SPI</string>
+</resources>

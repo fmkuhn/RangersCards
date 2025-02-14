@@ -75,6 +75,39 @@ fun CardsCard(
                             settingsViewModel.updateLocale("ru") },
                     isSelected = selectedLocale.language == "ru"
                 )
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    color = CustomTheme.colors.l10
+                )
+                SettingsRadioButtonRow(
+                    text = Locale.forLanguageTag("de").displayLanguage,
+                    onClick = { openLanguagePickerDialog = false
+                        if (selectedLocale.language != "de")
+                            settingsViewModel.updateLocale("de") },
+                    isSelected = selectedLocale.language == "de"
+                )
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    color = CustomTheme.colors.l10
+                )
+                SettingsRadioButtonRow(
+                    text = Locale.forLanguageTag("fr").displayLanguage,
+                    onClick = { openLanguagePickerDialog = false
+                        if (selectedLocale.language != "fr")
+                            settingsViewModel.updateLocale("fr") },
+                    isSelected = selectedLocale.language == "fr"
+                )
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    color = CustomTheme.colors.l10
+                )
+                SettingsRadioButtonRow(
+                    text = Locale.forLanguageTag("it").displayLanguage,
+                    onClick = { openLanguagePickerDialog = false
+                        if (selectedLocale.language != "it")
+                            settingsViewModel.updateLocale("it") },
+                    isSelected = selectedLocale.language == "it"
+                )
             }
         }
     }

@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="awa_styled_card_text">WAH</string>
+    <string name="fit_styled_card_text">FIT</string>
+    <string name="foc_styled_card_text">RUH</string>
+    <string name="spi_styled_card_text">SOV</string>
+</resources>
