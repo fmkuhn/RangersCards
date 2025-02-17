@@ -29,6 +29,11 @@
         <item quantity="many">%d друзей</item>
         <item quantity="other">%d друзей</item>
     </plurals>
+    <string name="your_friends">Ваши друзья</string>
+    <string name="sent_requests">Отправленные запросы</string>
+    <string name="received_requests">Полученные запросы</string>
+    <string name="search_results">Результаты поиска</string>
+    <string name="no_matching_results">По запросу «%s» ничего не найдено.</string>
     <string name="settings_title">Настройки</string>
     <string name="theme_header">Тема</string>
     <string name="light_theme">Светлая</string>

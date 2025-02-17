@@ -37,15 +37,6 @@ query getUserInfoByHandle($handle: String!) {
   }
 }
 
-query friendStatus($fromUserId:String!, $toUserId:String!) {
-  rangers_friend_status_by_pk(
-    user_id_a: $fromUserId
-    user_id_b: $toUserId
-  ) {
-    status
-  }
-}
-
 mutation sendFriendRequest($fromUserId:String!, $toUserId:String!) {
   insert_rangers_friend_status(
     objects: [

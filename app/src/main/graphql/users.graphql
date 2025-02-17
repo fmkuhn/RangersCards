@@ -11,30 +11,3 @@ mutation updateHandle($userId:String!, $handle: String!, $normalizedHandle: Stri
     normalized_handle
   }
 }
-
-query searchHandles(
-  $normalizedHandle: String!,
-  $normalizedHandleStart: String!,
-  $offset: Int
-) {
-  startMatch: rangers_users(
-    where: {
-      normalized_handle: { _ilike: $normalizedHandleStart }
-    }
-    limit: 20
-    offset: $offset
-  ) {
-    id
-    handle
-  }
-  looseMatch: rangers_users(
-    where: {
-      normalized_handle: { _ilike: $normalizedHandle }
-    }
-    limit: 20
-    offset: $offset
-  ) {
-    id
-    handle
-  }
-}

@@ -18,17 +18,20 @@ import com.google.firebase.Firebase
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseUser
 import com.google.firebase.auth.auth
+import com.rangerscards.AcceptFriendRequestMutation
 import com.rangerscards.GetAllCardsQuery
 import com.rangerscards.GetCardsUpdatedAtQuery
 import com.rangerscards.GetProfileQuery
 import com.rangerscards.GetUserInfoByHandleQuery
 import com.rangerscards.MainActivity
 import com.rangerscards.R
+import com.rangerscards.RejectFriendRequestMutation
+import com.rangerscards.SendFriendRequestMutation
 import com.rangerscards.UpdateHandleMutation
-import com.rangerscards.data.database.Card
-import com.rangerscards.data.database.CardsRepository
 import com.rangerscards.data.UserAuthRepository
 import com.rangerscards.data.UserPreferencesRepository
+import com.rangerscards.data.database.Card
+import com.rangerscards.data.database.CardsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -78,6 +81,13 @@ class SettingsViewModel(
 
     private val _isCardsLoading = MutableStateFlow(false)
     var isCardsLoading = _isCardsLoading.asStateFlow()
+
+    // Holds the current search query entered by the user.
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
+    private val _searchResults = MutableStateFlow(emptyList<GetUserInfoByHandleQuery.Profile>())
+    val searchResults: StateFlow<List<GetUserInfoByHandleQuery.Profile>> = _searchResults.asStateFlow()
 
     fun setUser(user: FirebaseUser?) {
         _userUiState.update {
@@ -308,6 +318,64 @@ class SettingsViewModel(
     fun setEnglishSearchResultsSetting(isInclude: Boolean) {
         viewModelScope.launch {
             userPreferencesRepository.saveIncludeEnglishSearchResults(isInclude)
+        }
+    }
+
+    /**
+     * Called when the user enters a new search term.
+     */
+    fun onSearchQueryChanged(newQuery: String) {
+        _searchQuery.update {
+            newQuery
+        }
+    }
+
+    fun clearSearchQuery() {
+        _searchQuery.update { "" }
+    }
+
+    fun getUsersByHandle(handle: String) {
+        viewModelScope.launch {
+            if (handle == "") _searchResults.update {
+                emptyList()
+            } else {
+                val normalizeHandle = normalizeHandle(handle)
+                val result = apolloClient.query(GetUserInfoByHandleQuery("%$normalizeHandle%"))
+                    .fetchPolicy(FetchPolicy.NetworkOnly).execute()
+                if (result.data != null) {
+                    _searchResults.update {
+                        result.data?.profile ?: emptyList()
+                    }
+                }
+            }
+        }
+    }
+
+    fun sendFriendRequest(toUserId: String) {
+        val userId = userUiState.value.currentUser?.uid!!
+        viewModelScope.launch {
+            val token = getCurrentToken(true)
+            apolloClient.mutation(SendFriendRequestMutation(userId, toUserId))
+                .addHttpHeader("Authorization", "Bearer $token").execute()
+            getUserInfo(userId)
+        }
+    }
+    fun acceptFriendRequest(toUserId: String) {
+        val userId = userUiState.value.currentUser?.uid!!
+        viewModelScope.launch {
+            val token = getCurrentToken(true)
+            apolloClient.mutation(AcceptFriendRequestMutation(userId, toUserId))
+                .addHttpHeader("Authorization", "Bearer $token").execute()
+            getUserInfo(userId)
+        }
+    }
+    fun rejectFriendRequest(toUserId: String) {
+        val userId = userUiState.value.currentUser?.uid!!
+        viewModelScope.launch {
+            val token = getCurrentToken(true)
+            apolloClient.mutation(RejectFriendRequestMutation(userId, toUserId))
+                .addHttpHeader("Authorization", "Bearer $token").execute()
+            getUserInfo(userId)
         }
     }
 }

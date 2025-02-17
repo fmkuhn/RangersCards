@@ -26,6 +26,7 @@ fun SettingsScreen(
     mainActivity: MainActivity,
     isDarkTheme: Boolean,
     navigateToAbout: () -> Unit,
+    navigateToFriends: () -> Unit,
     settingsViewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory),
     contentPadding: PaddingValues = PaddingValues(0.dp),
     modifier: Modifier = Modifier,
@@ -48,7 +49,8 @@ fun SettingsScreen(
                 mainActivity = mainActivity,
                 isDarkTheme = isDarkTheme,
                 settingsViewModel = settingsViewModel,
-                user = user
+                user = user,
+                navigateToFriends = { navigateToFriends.invoke() }
             )
         }
         item {

@@ -50,6 +50,7 @@ fun AccountCard(
     isDarkTheme: Boolean,
     settingsViewModel: SettingsViewModel,
     user: UserUIState,
+    navigateToFriends: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var email by rememberSaveable { mutableStateOf("") }
@@ -367,7 +368,7 @@ fun AccountCard(
                             count = friendsCount,
                             friendsCount
                         ),
-                        {/*TODO:Implement friends changing*/ }
+                        onClick = navigateToFriends
                     )
                 }
             }

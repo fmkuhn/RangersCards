@@ -9,7 +9,6 @@ import androidx.compose.animation.core.LinearEasing
 import androidx.compose.animation.core.tween
 import androidx.compose.animation.fadeIn
 import androidx.compose.animation.fadeOut
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
@@ -46,10 +45,10 @@ import com.rangerscards.ui.AppViewModelProvider
 import com.rangerscards.ui.cards.CardsScreen
 import com.rangerscards.ui.cards.CardsViewModel
 import com.rangerscards.ui.cards.FullCardScreen
-import com.rangerscards.ui.cards.components.FullCard
 import com.rangerscards.ui.cards.components.RangersSpoilerSwitch
 import com.rangerscards.ui.components.RangersTopAppBar
 import com.rangerscards.ui.settings.SettingsAboutScreen
+import com.rangerscards.ui.settings.SettingsFriendsScreen
 import com.rangerscards.ui.settings.SettingsScreen
 import com.rangerscards.ui.settings.SettingsViewModel
 import com.rangerscards.ui.theme.CustomTheme
@@ -122,6 +121,13 @@ fun RangersNavHost(
                                     launchSingleTop = true
                                 }
                             },
+                            navigateToFriends = {
+                                navController.navigate(
+                                    "${BottomNavScreen.Settings.route}/friends"
+                                ) {
+                                    launchSingleTop = true
+                                }
+                            },
                             settingsViewModel = settingsViewModel,
                             contentPadding = innerPadding
                         )
@@ -137,6 +143,15 @@ fun RangersNavHost(
                         contentPadding = innerPadding
                     )
                     title = stringResource(R.string.about_button)
+                    actions = null
+                    switch = null
+                }
+                composable(BottomNavScreen.Settings.route + "/friends") {
+                    SettingsFriendsScreen(
+                        settingsViewModel = settingsViewModel,
+                        contentPadding = innerPadding
+                    )
+                    title = stringResource(R.string.your_friends)
                     actions = null
                     switch = null
                 }
@@ -208,42 +223,26 @@ fun RangersNavHost(
                     enterTransition = { EnterTransition.None },
                     exitTransition = { ExitTransition.None }) {
                     if (!isCardsLoading) {
-                        Column(
-                            modifier = Modifier
-                                .background(CustomTheme.colors.l30)
-                                .fillMaxSize()
-                                .padding(top = 60.dp)
-                        ) {
-                            FullCard(
-                                aspectId = "AWA",
-                                aspectShortName = "AWA",
-                                cost = 2,
-                                imageSrc = "/img/card/core_ru/01038.jpg",
-                                realImageSrc = "/img/card/core/01038.jpg",
-                                presence = 1,
-                                approachConflict = 1,
-                                approachReason = 1,
-                                approachExploration = 1,
-                                approachConnection = 1,
-                                typeName = null,
-                                traits = "Being / Companion / Mammal",
-                                equip = 2,
-                                harm = 1,
-                                progress = 1,
-                                tokenPlurals = "Запись,Записи,Записей",
-                                tokenCount = 0,
-                                text = "FOC + *: Navigate the winding tunnel to move your * to this feature.\n" +
-                                        "Response: When you perform a test, if your * is on this feature, add 1* to it to dodge each card in the same area.\n" +
-                                        "Clear *: If your * is on this feature, suffer 1 injury.",
-                                flavor = "Some flavor",
-                                level = 2,
-                                setName = "Reward",
-                                setSize = 31,
-                                setPosition = 2,
-                                isDarkTheme = isDarkTheme,
-                                name = "Scuttler g Tunnel\nnew g line"
-                            )
-                        }
+                        SettingsScreen(
+                            mainActivity = mainActivity,
+                            isDarkTheme = isDarkTheme,
+                            navigateToAbout = {
+                                navController.navigate(
+                                    "${BottomNavScreen.Settings.route}/about"
+                                ) {
+                                    launchSingleTop = true
+                                }
+                            },
+                            navigateToFriends = {
+                                navController.navigate(
+                                    "${BottomNavScreen.Settings.route}/friends"
+                                ) {
+                                    launchSingleTop = true
+                                }
+                            },
+                            settingsViewModel = settingsViewModel,
+                            contentPadding = innerPadding
+                        )
                     } else {
                         CardsDownloadingCircularProgressIndicator()
                     }
@@ -270,6 +269,13 @@ fun RangersNavHost(
                                     launchSingleTop = true
                                 }
                             },
+                            navigateToFriends = {
+                                navController.navigate(
+                                    "${BottomNavScreen.Settings.route}/friends"
+                                ) {
+                                    launchSingleTop = true
+                                }
+                            },
                             settingsViewModel = settingsViewModel,
                             contentPadding = innerPadding
                         )
@@ -277,7 +283,7 @@ fun RangersNavHost(
                         CardsDownloadingCircularProgressIndicator()
                     }
                     title = stringResource(BottomNavScreen.Campaigns.label)
-                    actions = null
+                    actions = {/*TODO: Implement action buttons*/}
                     switch = null
                 }
             }
