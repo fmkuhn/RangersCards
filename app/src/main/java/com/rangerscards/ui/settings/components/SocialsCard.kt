@@ -49,6 +49,11 @@ fun SocialsCard(
                 leadingIcon = R.drawable.telegram,
                 onClick = { settingsViewModel.openLink("https://t.me/rangersgameru", context) }
             )
+            else -> SquareButton(
+                stringId = R.string.discord_button,
+                leadingIcon = R.drawable.discord,
+                onClick = { settingsViewModel.openLink("https://discord.gg/pw3Cye8NQR", context) }
+            )
         }
     }
 }
