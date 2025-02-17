@@ -67,6 +67,8 @@ data class Card (
     val progress: Int?,
     @ColumnInfo(name = "image_src")
     val imageSrc: String?,
+    @ColumnInfo(name = "real_image_src")
+    val realImageSrc: String?,
     val position: Int?,
     @ColumnInfo(name = "deck_limit")
     val deckLimit: Int?,

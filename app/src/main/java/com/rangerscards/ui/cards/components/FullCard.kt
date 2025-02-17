@@ -22,7 +22,7 @@ fun FullCard(
     aspectShortName: String?,
     cost: Int?,
     imageSrc: String?,
-    name: String,
+    realImageSrc: String?,
     presence: Int?,
     approachConflict: Int?,
     approachReason: Int?,
@@ -46,6 +46,7 @@ fun FullCard(
 //    mountainChallenge: String?,
 //    crestChallenge: String?,
     isDarkTheme: Boolean,
+    name: String,
 ) {
     Surface(
         modifier = Modifier
@@ -69,7 +70,7 @@ fun FullCard(
                 aspectId,
                 aspectShortName,
                 cost,
-                imageSrc,
+                realImageSrc,
                 name,
                 presence,
                 approachConflict,
@@ -121,7 +122,7 @@ fun FullCardScreenPreview() {
                 aspectShortName = "AWA",
                 cost = 2,
                 imageSrc = null,
-                name = "Scuttler g Tunnel\nnew g line an some more",
+                realImageSrc = null,
                 presence = 1,
                 approachConflict = 1,
                 approachReason = 1,
@@ -140,7 +141,8 @@ fun FullCardScreenPreview() {
                 setName = "Reward",
                 setSize = 31,
                 setPosition = 2,
-                isDarkTheme = isSystemInDarkTheme()
+                isDarkTheme = isSystemInDarkTheme(),
+                name = "Scuttler g Tunnel\nnew g line an some more"
             )
         }
     }

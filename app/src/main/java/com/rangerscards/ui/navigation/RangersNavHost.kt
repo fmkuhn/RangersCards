@@ -219,7 +219,7 @@ fun RangersNavHost(
                                 aspectShortName = "AWA",
                                 cost = 2,
                                 imageSrc = "/img/card/core_ru/01038.jpg",
-                                name = "Scuttler g Tunnel\nnew g line",
+                                realImageSrc = "/img/card/core/01038.jpg",
                                 presence = 1,
                                 approachConflict = 1,
                                 approachReason = 1,
@@ -240,7 +240,8 @@ fun RangersNavHost(
                                 setName = "Reward",
                                 setSize = 31,
                                 setPosition = 2,
-                                isDarkTheme = isDarkTheme
+                                isDarkTheme = isDarkTheme,
+                                name = "Scuttler g Tunnel\nnew g line"
                             )
                         }
                     } else {

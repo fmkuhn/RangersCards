@@ -115,7 +115,7 @@ fun CardsScreen(
                     aspectId = item.aspectId,
                     aspectShortName = item.aspectShortName,
                     cost = item.cost,
-                    imageSrc = item.imageSrc,
+                    imageSrc = item.realImageSrc,
                     name = item.name.toString(),
                     typeName = item.typeName,
                     traits = item.traits,

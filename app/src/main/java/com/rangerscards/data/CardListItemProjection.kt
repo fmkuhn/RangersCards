@@ -16,6 +16,6 @@ data class CardListItemProjection(
     val aspectId: String?,
     @ColumnInfo(name = "aspect_short_name")
     val aspectShortName: String?,
-    @ColumnInfo(name = "image_src")
-    val imageSrc: String?,
+    @ColumnInfo(name = "real_image_src")
+    val realImageSrc: String?,
 )

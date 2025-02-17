@@ -45,6 +45,7 @@ fun FullCardScreen(
             aspectShortName = fullCard.aspectShortName,
             cost = fullCard.cost,
             imageSrc = fullCard.imageSrc,
+            realImageSrc = fullCard.realImageSrc,
             name = fullCard.name,
             presence = fullCard.presence,
             approachConflict = fullCard.approachConflict,

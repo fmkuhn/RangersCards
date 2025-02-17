@@ -354,6 +354,7 @@ fun GetAllCardsQuery.Card.toCard(locale: String): Card? {
             aspectShortName = this.card.aspect_short_name,
             progress = this.card.progress,
             imageSrc = this.card.imagesrc ?: this.card.real_imagesrc,
+            realImageSrc = this.card.real_imagesrc,
             position = this.card.position,
             deckLimit = this.card.deck_limit,
             spoiler = this.card.spoiler,

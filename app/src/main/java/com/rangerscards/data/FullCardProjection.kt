@@ -10,6 +10,8 @@ data class FullCardProjection(
     val cost: Int?,
     @ColumnInfo(name = "image_src")
     val imageSrc: String?,
+    @ColumnInfo(name = "real_image_src")
+    val realImageSrc: String?,
     val name: String,
     val presence: Int?,
     @ColumnInfo(name = "approach_conflict")
