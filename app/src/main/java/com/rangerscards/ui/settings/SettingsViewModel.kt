@@ -25,8 +25,8 @@ import com.rangerscards.GetUserInfoByHandleQuery
 import com.rangerscards.MainActivity
 import com.rangerscards.R
 import com.rangerscards.UpdateHandleMutation
-import com.rangerscards.data.Card
-import com.rangerscards.data.CardsRepository
+import com.rangerscards.data.database.Card
+import com.rangerscards.data.database.CardsRepository
 import com.rangerscards.data.UserAuthRepository
 import com.rangerscards.data.UserPreferencesRepository
 import kotlinx.coroutines.flow.MutableStateFlow

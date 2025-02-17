@@ -1,9 +1,9 @@
-package com.rangerscards.data
+package com.rangerscards.data.database
 
-import android.util.Log
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.rangerscards.data.Porter
 import kotlinx.coroutines.flow.Flow
 import java.util.Locale
 

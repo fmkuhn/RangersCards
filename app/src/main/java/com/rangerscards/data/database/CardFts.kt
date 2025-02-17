@@ -1,4 +1,4 @@
-package com.rangerscards.data
+package com.rangerscards.data.database
 
 import androidx.room.ColumnInfo
 import androidx.room.Entity

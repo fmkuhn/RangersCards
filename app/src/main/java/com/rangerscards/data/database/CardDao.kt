@@ -1,4 +1,4 @@
-package com.rangerscards.data
+package com.rangerscards.data.database
 
 import androidx.paging.PagingSource
 import androidx.room.Dao

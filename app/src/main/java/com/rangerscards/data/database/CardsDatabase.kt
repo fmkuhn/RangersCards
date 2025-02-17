@@ -1,4 +1,4 @@
-package com.rangerscards.data
+package com.rangerscards.data.database
 
 import android.content.Context
 import androidx.room.Database

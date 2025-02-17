@@ -9,6 +9,9 @@ import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.apollographql.apollo.cache.normalized.normalizedCache
 import com.apollographql.apollo.cache.normalized.sql.SqlNormalizedCacheFactory
+import com.rangerscards.data.database.CardsDatabase
+import com.rangerscards.data.database.CardsRepository
+import com.rangerscards.data.database.OfflineCardsRepository
 
 private const val PREFERENCE_NAME = "settings_preferences"
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
