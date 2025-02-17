@@ -299,5 +299,44 @@ object CardTextParser {
                 tint = CustomTheme.colors.d30
             )
         },
+//        "sun" to InlineTextContent(
+//            Placeholder(
+//                width = 16.sp,
+//                height = 16.sp,
+//                placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
+//            )
+//        ) {
+//            Icon(
+//                painter = painterResource(R.drawable.ranger),
+//                contentDescription = "Ranger Icon",
+//                tint = CustomTheme.colors.d30
+//            )
+//        },
+//        "mountain" to InlineTextContent(
+//            Placeholder(
+//                width = 16.sp,
+//                height = 16.sp,
+//                placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
+//            )
+//        ) {
+//            Icon(
+//                painter = painterResource(R.drawable.ranger),
+//                contentDescription = "Ranger Icon",
+//                tint = CustomTheme.colors.d30
+//            )
+//        },
+        "crest" to InlineTextContent(
+            Placeholder(
+                width = 16.sp,
+                height = 16.sp,
+                placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
+            )
+        ) {
+            Icon(
+                painter = painterResource(R.drawable.crest),
+                contentDescription = "Ranger Icon",
+                tint = CustomTheme.colors.d30
+            )
+        },
     )
 }
