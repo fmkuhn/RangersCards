@@ -40,28 +40,30 @@ fun FullCardTextContent(aspectId: String?, text: String?, flavor: String?) {
                 else -> CustomTheme.colors.m
             }
         )
-        val texts = text.toString().split("\n")
+        val texts: List<String> = text?.split("\n") ?: emptyList()
         Column(
             modifier = Modifier.fillMaxWidth().padding(8.dp),
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            texts.forEachIndexed { index, text ->
-                val annotatedText = CardTextParser.parseCustomText(text, aspectId)
-                BasicText(
-                    text = annotatedText,
-                    inlineContent = CardTextParser.inlineIconsMap,
-                    style = TextStyle(
-                        color = CustomTheme.colors.d30,
-                        fontFamily = Jost,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 16.sp,
-                        lineHeight = 18.sp,
+            if (texts.isNotEmpty()) {
+                texts.forEachIndexed { index, text ->
+                    val annotatedText = CardTextParser.parseCustomText(text, aspectId)
+                    BasicText(
+                        text = annotatedText,
+                        inlineContent = CardTextParser.inlineIconsMap,
+                        style = TextStyle(
+                            color = CustomTheme.colors.d30,
+                            fontFamily = Jost,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 16.sp,
+                            lineHeight = 18.sp,
+                        )
                     )
-                )
-                if (index != texts.lastIndex) HorizontalDivider(color = CustomTheme.colors.l10)
+                    if (index != texts.lastIndex) HorizontalDivider(color = CustomTheme.colors.l10)
+                }
             }
             if (flavor != null) {
-                HorizontalDivider(color = CustomTheme.colors.l10)
+                if (texts.isNotEmpty()) HorizontalDivider(color = CustomTheme.colors.l10)
                 Text(
                     text = flavor,
                     color = CustomTheme.colors.d10,

@@ -157,9 +157,9 @@ fun RangersNavHost(
                             isDarkTheme = isDarkTheme,
                             cardsViewModel = cardsViewModel,
                             contentPadding = innerPadding,
-                            navigateToCard = { cardId ->
+                            navigateToCard = { cardIndex ->
                                 navController.navigate(
-                                    "${BottomNavScreen.Cards.route}/card/$cardId"
+                                    "${BottomNavScreen.Cards.route}/card/$cardIndex"
                                 ) {
                                     launchSingleTop = true
                                 }
@@ -175,10 +175,10 @@ fun RangersNavHost(
                         RangersSpoilerSwitch(spoiler, cardsViewModel::onSpoilerChanged)
                     }
                 }
-                val cardIdArgument = "cardId"
+                val cardIndexArgument = "cardIndex"
                 composable(
-                    route = BottomNavScreen.Cards.route + "/card/{$cardIdArgument}",
-                    arguments = listOf(navArgument(cardIdArgument) { type = NavType.StringType })
+                    route = BottomNavScreen.Cards.route + "/card/{$cardIndexArgument}",
+                    arguments = listOf(navArgument(cardIndexArgument) { type = NavType.IntType })
                 ) { backStackEntry ->
                     val parentEntry = remember(backStackEntry) {
                         navController.getBackStackEntry(BottomNavScreen.Cards.startDestination)
@@ -187,11 +187,11 @@ fun RangersNavHost(
                         factory = AppViewModelProvider.Factory,
                         viewModelStoreOwner = parentEntry
                     )
-                    val cardId = backStackEntry.arguments?.getString(cardIdArgument)
+                    val cardIndex = backStackEntry.arguments?.getInt(cardIndexArgument)
                         ?: error("cardIdArgument cannot be null")
-                    val fullCard by cardsViewModel.getCardById(cardId).collectAsState(null)
                     FullCardScreen(
-                        fullCard = fullCard,
+                        cardsViewModel = cardsViewModel,
+                        cardIndex = cardIndex,
                         isDarkTheme = isDarkTheme,
                         contentPadding = innerPadding
                     )

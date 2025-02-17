@@ -43,7 +43,7 @@ fun CardsScreen(
     isDarkTheme: Boolean,
     modifier: Modifier = Modifier,
     cardsViewModel: CardsViewModel,
-    navigateToCard: (String) -> Unit,
+    navigateToCard: (Int) -> Unit,
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
     val searchQuery by cardsViewModel.searchQuery.collectAsState()
@@ -127,7 +127,7 @@ fun CardsScreen(
                     traits = item.traits,
                     level = item.level,
                     isDarkTheme = isDarkTheme,
-                    onClick = { navigateToCard.invoke(item.id) }
+                    onClick = { navigateToCard.invoke(index) }
                 )
             }
 
