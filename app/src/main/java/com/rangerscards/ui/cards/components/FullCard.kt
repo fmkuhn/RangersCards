@@ -135,7 +135,7 @@ fun FullCardScreenPreview() {
                 progress = 1,
                 tokenPlurals = "Запись,Записи,Записей",
                 tokenCount = 0,
-                text = "Some text\nAnd new g line",
+                text = "Some text\nAnd [[new]] g line",
                 flavor = "Some flavor",
                 level = 2,
                 setName = "Reward",

@@ -4,6 +4,8 @@ import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.AnnotatedString
@@ -29,7 +31,12 @@ object CardTextParser {
      * @return A Pair of the parsed AnnotatedString and the new index after processing.
      */
     @Composable
-    private fun parseSegment(text: String, start: Int, endTag: String? = null): Pair<AnnotatedString, Int> {
+    private fun parseSegment(
+        text: String,
+        start: Int,
+        endTag: String? = null,
+        aspectId: String?
+    ): Pair<AnnotatedString, Int> {
         val builder = AnnotatedString.Builder()
         var index = start
 
@@ -75,7 +82,9 @@ object CardTextParser {
                             // Advance index past the opening tag.
                             index = tagEnd + 1
                             // Recursively parse the content inside this tag.
-                            val (innerAnnotated, newIndex) = parseSegment(text, index, closingMarker)
+                            val (innerAnnotated, newIndex) = parseSegment(
+                                text, index, closingMarker, aspectId
+                            )
                             index = newIndex
                             // Choose a style based on the tag name.
                             val spanStyle = when (tagName) {
@@ -96,46 +105,82 @@ object CardTextParser {
                     }
                 }
                 '[' -> {
-                    // Process content within square brackets.
-                    val endBracket = text.indexOf(']', index)
-                    if (endBracket != -1) {
-                        when(val key = text.substring(index + 1, endBracket)) {
-                            "AWA" -> builder.withStyle(
+                    // Check if this is a double square bracket case.
+                    if (index + 1 < text.length && text[index + 1] == '[') {
+                        // Find the matching closing "]]"
+                        val endDoubleBracket = text.indexOf("]]", index)
+                        if (endDoubleBracket != -1) {
+                            val content = text.substring(index + 2, endDoubleBracket)
+                            // Apply a text shadow style.
+                            builder.withStyle(
                                 SpanStyle(
-                                    color = CustomTheme.colors.green,
-                                    fontWeight = FontWeight.Bold
-                                )) {
-                                append(stringResource(R.string.awa_styled_card_text))
+                                    shadow = Shadow(
+                                        color = when(aspectId) {
+                                            "AWA" -> CustomTheme.colors.green
+                                            "FIT" -> CustomTheme.colors.red
+                                            "FOC" -> CustomTheme.colors.blue
+                                            "SPI" -> CustomTheme.colors.orange
+                                            else -> CustomTheme.colors.m
+                                        },
+                                        blurRadius = 2f
+                                    )
+                                )
+                            ) {
+                                append(content)
                             }
-                            "FIT" -> builder.withStyle(
-                                SpanStyle(
-                                    color = CustomTheme.colors.red,
-                                    fontWeight = FontWeight.Bold
-                                )) {
-                                append(stringResource(R.string.fit_styled_card_text))
-                            }
-                            "FOC" -> builder.withStyle(
-                                SpanStyle(
-                                    color = CustomTheme.colors.blue,
-                                    fontWeight = FontWeight.Bold
-                                )) {
-                                append(stringResource(R.string.foc_styled_card_text))
-                            }
-                            "SPI" -> builder.withStyle(
-                                SpanStyle(
-                                    color = CustomTheme.colors.orange,
-                                    fontWeight = FontWeight.Bold
-                                )) {
-                                append(stringResource(R.string.spi_styled_card_text))
-                            }
-                            else -> builder.appendInlineContent(key, "[$key]")
+                            index = endDoubleBracket + 2
+                            continue
+                        } else {
+                            // No matching closing brackets; treat as literal.
+                            builder.append(currentChar)
+                            index++
                         }
-                        index = endBracket + 1
-                        continue
                     } else {
-                        // No closing bracket found; treat as literal.
-                        builder.append(currentChar)
-                        index++
+                        // Process content within square brackets.
+                        val endBracket = text.indexOf(']', index)
+                        if (endBracket != -1) {
+                            when (val key = text.substring(index + 1, endBracket)) {
+                                "AWA" -> builder.withStyle(
+                                    SpanStyle(
+                                        color = CustomTheme.colors.green,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                ) {
+                                    append(stringResource(R.string.awa_styled_card_text))
+                                }
+                                "FIT" -> builder.withStyle(
+                                    SpanStyle(
+                                        color = CustomTheme.colors.red,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                ) {
+                                    append(stringResource(R.string.fit_styled_card_text))
+                                }
+                                "FOC" -> builder.withStyle(
+                                    SpanStyle(
+                                        color = CustomTheme.colors.blue,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                ) {
+                                    append(stringResource(R.string.foc_styled_card_text))
+                                }
+                                "SPI" -> builder.withStyle(
+                                    SpanStyle(
+                                        color = CustomTheme.colors.orange,
+                                        fontWeight = FontWeight.Bold
+                                    )
+                                ) {
+                                    append(stringResource(R.string.spi_styled_card_text))
+                                }
+                                else -> builder.appendInlineContent(key, "[$key]")
+                            }
+                            index = endBracket + 1
+                            continue
+                        } else {
+                            // No closing bracket found; treat as literal.
+                            builder.append(currentChar)
+                            index++
+                        }
                     }
                 }
                 else -> {
@@ -158,8 +203,8 @@ object CardTextParser {
      * This is the function you would call from your composable.
      */
     @Composable
-    fun parseCustomText(rawText: String): AnnotatedString {
-        return parseSegment(rawText, 0, endTag = null).first
+    fun parseCustomText(rawText: String, aspectId: String?): AnnotatedString {
+        return parseSegment(rawText, 0, endTag = null, aspectId).first
     }
 
     val inlineIconsMap = mapOf(

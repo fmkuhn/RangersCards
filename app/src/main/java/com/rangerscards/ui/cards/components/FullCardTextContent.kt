@@ -46,7 +46,7 @@ fun FullCardTextContent(aspectId: String?, text: String?, flavor: String?) {
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             texts.forEachIndexed { index, text ->
-                val annotatedText = CardTextParser.parseCustomText(text)
+                val annotatedText = CardTextParser.parseCustomText(text, aspectId)
                 BasicText(
                     text = annotatedText,
                     inlineContent = CardTextParser.inlineIconsMap,
