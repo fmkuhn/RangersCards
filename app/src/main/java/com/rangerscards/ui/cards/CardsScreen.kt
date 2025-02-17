@@ -18,6 +18,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -35,6 +36,7 @@ import com.rangerscards.ui.components.RangersSearchOutlinedField
 import com.rangerscards.ui.components.RowTypeDivider
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
+import kotlinx.coroutines.flow.drop
 
 @Composable
 fun CardsScreen(
@@ -53,9 +55,13 @@ fun CardsScreen(
     val activity = LocalActivity.current
 
     // Whenever the search query changes, scroll the list back to the top.
-    LaunchedEffect(searchQuery, spoiler) {
-        // Scroll to the first item
-        if (searchQuery.isNotEmpty()) listState.animateScrollToItem(0)
+    LaunchedEffect(Unit) {
+        snapshotFlow { searchQuery to spoiler }
+            .drop(1)
+            .collect {
+                // Scroll to the first item
+                listState.animateScrollToItem(0)
+            }
     }
 
     BackHandler {
