@@ -118,7 +118,9 @@ fun RangersNavHost(
                             navigateToAbout = {
                                 navController.navigate(
                                     "${BottomNavScreen.Settings.route}/about"
-                                )
+                                ) {
+                                    launchSingleTop = true
+                                }
                             },
                             settingsViewModel = settingsViewModel,
                             contentPadding = innerPadding
@@ -158,7 +160,9 @@ fun RangersNavHost(
                             navigateToCard = { cardId ->
                                 navController.navigate(
                                     "${BottomNavScreen.Cards.route}/card/$cardId"
-                                )
+                                ) {
+                                    launchSingleTop = true
+                                }
                             }
                         )
                     } else {
@@ -261,7 +265,9 @@ fun RangersNavHost(
                             navigateToAbout = {
                                 navController.navigate(
                                     "${BottomNavScreen.Settings.route}/about"
-                                )
+                                ) {
+                                    launchSingleTop = true
+                                }
                             },
                             settingsViewModel = settingsViewModel,
                             contentPadding = innerPadding
