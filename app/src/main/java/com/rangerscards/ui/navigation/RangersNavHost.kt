@@ -16,6 +16,9 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -28,7 +31,9 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -47,6 +52,8 @@ import com.rangerscards.ui.cards.CardsViewModel
 import com.rangerscards.ui.cards.FullCardScreen
 import com.rangerscards.ui.cards.components.RangersSpoilerSwitch
 import com.rangerscards.ui.components.RangersTopAppBar
+import com.rangerscards.ui.decks.DecksScreen
+import com.rangerscards.ui.decks.DecksViewModel
 import com.rangerscards.ui.settings.SettingsAboutScreen
 import com.rangerscards.ui.settings.SettingsFriendsScreen
 import com.rangerscards.ui.settings.SettingsScreen
@@ -221,25 +228,22 @@ fun RangersNavHost(
             ) {
                 composable(BottomNavScreen.Decks.startDestination,
                     enterTransition = { EnterTransition.None },
-                    exitTransition = { ExitTransition.None }) {
+                    exitTransition = { ExitTransition.None }) { backStackEntry ->
+                    val decksViewModel: DecksViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = backStackEntry
+                    )
                     if (!isCardsLoading) {
-                        SettingsScreen(
-                            mainActivity = mainActivity,
+                        DecksScreen(
                             isDarkTheme = isDarkTheme,
-                            navigateToAbout = {
+                            navigateToDeck = { deckId ->
                                 navController.navigate(
-                                    "${BottomNavScreen.Settings.route}/about"
+                                    "${BottomNavScreen.Decks.route}/$deckId"
                                 ) {
                                     launchSingleTop = true
                                 }
                             },
-                            navigateToFriends = {
-                                navController.navigate(
-                                    "${BottomNavScreen.Settings.route}/friends"
-                                ) {
-                                    launchSingleTop = true
-                                }
-                            },
+                            decksViewModel = decksViewModel,
                             settingsViewModel = settingsViewModel,
                             contentPadding = innerPadding
                         )
@@ -247,7 +251,26 @@ fun RangersNavHost(
                         CardsDownloadingCircularProgressIndicator()
                     }
                     title = stringResource(BottomNavScreen.Decks.label)
-                    actions = {/*TODO: Implement action buttons*/}
+                    actions = {
+                        IconButton(
+                            onClick = {
+                                navController.navigate(
+                                    "${BottomNavScreen.Decks.route}/creation/start"
+                                ) {
+                                    launchSingleTop = true
+                                }
+                            },
+                            colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
+                            modifier = Modifier.size(24.dp)
+                        ) {
+                            Icon(
+                                painterResource(id = R.drawable.add_32dp),
+                                contentDescription = null,
+                                tint = CustomTheme.colors.m,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                    }
                     switch = null
                 }
             }

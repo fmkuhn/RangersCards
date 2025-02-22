@@ -85,13 +85,16 @@ class UserPreferencesRepository(
 
     fun compareTimestamps(timestamp1: String, timestamp2: String): Boolean {
         if (timestamp1.isEmpty()) return true
+        val timestamp1Fixed = TimestampNormilizer.fixFraction(timestamp1).toString()
+        val timestamp2Fixed = TimestampNormilizer.fixFraction(timestamp2).toString()
         // Define the date format
-        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSSSSXXX", Locale.getDefault())
+        val format = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.getDefault())
         format.timeZone = TimeZone.getTimeZone("UTC") // Set the timezone to UTC
 
         // Parse the timestamps
-        val date1: Date = format.parse(timestamp1) ?: Date(0) // Fallback to epoch if parsing fails
-        val date2: Date = format.parse(timestamp2) ?: Date(0) // Fallback to epoch if parsing fails
+        val date1: Date? = format.parse(timestamp1Fixed)
+        val date2: Date? = format.parse(timestamp2Fixed)
+        if (date1 == null || date2 == null) return true
         return when {
             date1.before(date2) -> true
             date1.after(date2) -> false

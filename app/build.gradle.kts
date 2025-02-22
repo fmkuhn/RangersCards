@@ -5,6 +5,7 @@ plugins {
     id("com.google.gms.google-services")
     id("com.apollographql.apollo") version "4.1.1"
     id("com.google.devtools.ksp") version "2.1.0-1.0.29"
+    kotlin("plugin.serialization") version "2.1.10"
 }
 
 android {
@@ -78,6 +79,9 @@ dependencies {
     //Import Coil
     implementation("io.coil-kt:coil-compose:2.7.0")
 
+    //Import json serialization
+    implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")
+
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
@@ -109,5 +113,7 @@ apollo {
         packageName.set("com.rangerscards")
         schemaFiles.from("src/main/graphql/schema.graphqls", "src/main/graphql/extra.graphqls")
         addTypename.set("always")
+        mapScalarToKotlinString("timestamptz")
+        mapScalar("jsonb", "kotlinx.serialization.json.JsonElement", "com.rangerscards.data.JsonElementAdapter")
     }
 }

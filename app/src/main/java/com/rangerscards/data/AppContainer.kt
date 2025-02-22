@@ -11,7 +11,10 @@ import com.apollographql.apollo.cache.normalized.normalizedCache
 import com.apollographql.apollo.cache.normalized.sql.SqlNormalizedCacheFactory
 import com.rangerscards.data.database.CardsDatabase
 import com.rangerscards.data.database.CardsRepository
+import com.rangerscards.data.database.DecksRepository
 import com.rangerscards.data.database.OfflineCardsRepository
+import com.rangerscards.data.database.OfflineDecksRepository
+import com.rangerscards.type.Jsonb
 
 private const val PREFERENCE_NAME = "settings_preferences"
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
@@ -26,6 +29,7 @@ interface AppContainer {
     val userPreferencesRepository: UserPreferencesRepository
     val userAuthRepository: UserAuthRepository
     val cardsRepository: CardsRepository
+    val decksRepository: DecksRepository
 }
 
 /**
@@ -38,6 +42,7 @@ class AppDataContainer(private val context: Context) : AppContainer {
     override val apolloClient: ApolloClient by lazy {
         ApolloClient.Builder()
             .serverUrl("https://gapi.rangersdb.com/v1/graphql")
+            .addCustomScalarAdapter(Jsonb.type, JsonElementAdapter)
             .normalizedCache(SqlNormalizedCacheFactory("apollo.db"))
             .fetchPolicy(FetchPolicy.CacheAndNetwork)
             .build()
@@ -53,5 +58,9 @@ class AppDataContainer(private val context: Context) : AppContainer {
 
     override val cardsRepository: CardsRepository by lazy {
         OfflineCardsRepository(CardsDatabase.getDatabase(context).cardDao())
+    }
+
+    override val decksRepository: DecksRepository by lazy {
+        OfflineDecksRepository(CardsDatabase.getDatabase(context).deckDao())
     }
 }
