@@ -206,98 +206,99 @@ object CardTextParser {
         return parseSegment(rawText, 0, endTag = null, aspectId).first
     }
 
-    val inlineIconsMap = mapOf(
-        "conflict" to InlineTextContent(
-            Placeholder(
-                width = 16.sp,
-                height = 16.sp,
-                placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
-            )
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.conflict),
-                contentDescription = "Conflict Icon",
-                tint = CustomTheme.colors.d30
-            )
-        },
-        "reason" to InlineTextContent(
-            Placeholder(
-                width = 16.sp,
-                height = 16.sp,
-                placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
-            )
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.reason),
-                contentDescription = "Reason Icon",
-                tint = CustomTheme.colors.d30
-            )
-        },
-        "exploration" to InlineTextContent(
-            Placeholder(
-                width = 16.sp,
-                height = 16.sp,
-                placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
-            )
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.exploration),
-                contentDescription = "Exploration Icon",
-                tint = CustomTheme.colors.d30
-            )
-        },
-        "connection" to InlineTextContent(
-            Placeholder(
-                width = 16.sp,
-                height = 16.sp,
-                placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
-            )
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.connection),
-                contentDescription = "Connection Icon",
-                tint = CustomTheme.colors.d30
-            )
-        },
-        "harm" to InlineTextContent(
-            Placeholder(
-                width = 16.sp,
-                height = 16.sp,
-                placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
-            )
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.harm),
-                contentDescription = "Harm Icon",
-                tint = CustomTheme.colors.d30
-            )
-        },
-        "progress" to InlineTextContent(
-            Placeholder(
-                width = 16.sp,
-                height = 16.sp,
-                placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
-            )
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.progress),
-                contentDescription = "Progress Icon",
-                tint = CustomTheme.colors.d30
-            )
-        },
-        "ranger" to InlineTextContent(
-            Placeholder(
-                width = 16.sp,
-                height = 16.sp,
-                placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
-            )
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.ranger),
-                contentDescription = "Ranger Icon",
-                tint = CustomTheme.colors.d30
-            )
-        },
+    val inlineIconsMap by lazy {
+        mapOf(
+            "conflict" to InlineTextContent(
+                Placeholder(
+                    width = 16.sp,
+                    height = 16.sp,
+                    placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
+                )
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.conflict),
+                    contentDescription = "Conflict Icon",
+                    tint = CustomTheme.colors.d30
+                )
+            },
+            "reason" to InlineTextContent(
+                Placeholder(
+                    width = 16.sp,
+                    height = 16.sp,
+                    placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
+                )
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.reason),
+                    contentDescription = "Reason Icon",
+                    tint = CustomTheme.colors.d30
+                )
+            },
+            "exploration" to InlineTextContent(
+                Placeholder(
+                    width = 16.sp,
+                    height = 16.sp,
+                    placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
+                )
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.exploration),
+                    contentDescription = "Exploration Icon",
+                    tint = CustomTheme.colors.d30
+                )
+            },
+            "connection" to InlineTextContent(
+                Placeholder(
+                    width = 16.sp,
+                    height = 16.sp,
+                    placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
+                )
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.connection),
+                    contentDescription = "Connection Icon",
+                    tint = CustomTheme.colors.d30
+                )
+            },
+            "harm" to InlineTextContent(
+                Placeholder(
+                    width = 16.sp,
+                    height = 16.sp,
+                    placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
+                )
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.harm),
+                    contentDescription = "Harm Icon",
+                    tint = CustomTheme.colors.d30
+                )
+            },
+            "progress" to InlineTextContent(
+                Placeholder(
+                    width = 16.sp,
+                    height = 16.sp,
+                    placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
+                )
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.progress),
+                    contentDescription = "Progress Icon",
+                    tint = CustomTheme.colors.d30
+                )
+            },
+            "ranger" to InlineTextContent(
+                Placeholder(
+                    width = 16.sp,
+                    height = 16.sp,
+                    placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
+                )
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.ranger),
+                    contentDescription = "Ranger Icon",
+                    tint = CustomTheme.colors.d30
+                )
+            },
 //        "sun" to InlineTextContent(
 //            Placeholder(
 //                width = 16.sp,
@@ -324,18 +325,19 @@ object CardTextParser {
 //                tint = CustomTheme.colors.d30
 //            )
 //        },
-        "crest" to InlineTextContent(
-            Placeholder(
-                width = 16.sp,
-                height = 16.sp,
-                placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
-            )
-        ) {
-            Icon(
-                painter = painterResource(R.drawable.crest),
-                contentDescription = "Ranger Icon",
-                tint = CustomTheme.colors.d30
-            )
-        },
-    )
+            "crest" to InlineTextContent(
+                Placeholder(
+                    width = 16.sp,
+                    height = 16.sp,
+                    placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
+                )
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.crest),
+                    contentDescription = "Ranger Icon",
+                    tint = CustomTheme.colors.d30
+                )
+            },
+        )
+    }
 }

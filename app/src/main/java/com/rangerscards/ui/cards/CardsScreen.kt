@@ -31,7 +31,7 @@ import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import com.rangerscards.R
 import com.rangerscards.data.database.CardListItemProjection
-import com.rangerscards.ui.components.CardListItem
+import com.rangerscards.ui.cards.components.CardListItem
 import com.rangerscards.ui.components.RangersSearchOutlinedField
 import com.rangerscards.ui.components.RowTypeDivider
 import com.rangerscards.ui.theme.CustomTheme
@@ -80,6 +80,7 @@ fun CardsScreen(
     ) {
         RangersSearchOutlinedField(
             query = searchQuery,
+            R.string.search_for_card,
             onQueryChanged = cardsViewModel::onSearchQueryChanged,
             onClearClicked = cardsViewModel::clearSearchQuery
         )

@@ -1,7 +1,7 @@
 package com.rangerscards.data.database
 
+import androidx.paging.PagingSource
 import androidx.room.Dao
-import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Transaction
@@ -23,6 +23,15 @@ interface DeckDao {
 
     @Query("DELETE FROM deck WHERE uploaded = 1")
     suspend fun deleteAllUploadedDecks()
+
+    @Query("SELECT id, user_handle, name, meta, campaign_name FROM deck WHERE next_id IS NULL " +
+            "ORDER BY updated_at DESC"
+    )
+    fun getAllDecks(): PagingSource<Int, DeckListItemProjection>
+
+    @Query("Select id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, " +
+            "type_name, traits, level FROM card WHERE id = :id")
+    fun getCard(id: String): Flow<CardListItemProjection>
 
     @Transaction
     suspend fun syncDecks(networkData: List<Deck>) {

@@ -2,14 +2,26 @@ package com.rangerscards.ui.decks
 
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import androidx.paging.PagingData
+import androidx.paging.cachedIn
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.GetMyDecksQuery
 import com.rangerscards.data.TimestampNormilizer
+import com.rangerscards.data.database.CardListItemProjection
 import com.rangerscards.data.database.Deck
+import com.rangerscards.data.database.DeckListItemProjection
 import com.rangerscards.data.database.DecksRepository
+import kotlinx.coroutines.ExperimentalCoroutinesApi
+import kotlinx.coroutines.flow.Flow
+import kotlinx.coroutines.flow.MutableStateFlow
+import kotlinx.coroutines.flow.StateFlow
+import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.catch
+import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 
@@ -17,6 +29,11 @@ class DecksViewModel(
     private val apolloClient: ApolloClient,
     private val decksRepository: DecksRepository
 ) : ViewModel() {
+
+    // Holds the current search term entered by the user.
+    private val _searchQuery = MutableStateFlow("")
+    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
+
     fun getAllNetworkDecks(user: FirebaseUser?) {
         viewModelScope.launch {
             if (user != null) {
@@ -31,6 +48,43 @@ class DecksViewModel(
             }
             else decksRepository.deleteAllUploadedDecks()
         }
+    }
+
+    // Exposes the paginated search results as PagingData.
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val searchResults: Flow<PagingData<DeckListItemProjection>> =
+        _searchQuery.flatMapLatest { query ->
+            // When the search query or include flag changes, perform a new search.
+            if (query.trim().isEmpty()) {
+                decksRepository.getAllDecks().catch { throwable ->
+                    // Log the error.
+                    throwable.printStackTrace()
+                    // Return an empty PagingData on error so that the flow continues.
+                    emit(PagingData.empty())
+                }
+            } else {
+                decksRepository.getAllDecks().catch { throwable ->
+                    // Log the error.
+                    throwable.printStackTrace()
+                    // Return an empty PagingData on error so that the flow continues.
+                    emit(PagingData.empty())
+                }
+            }
+        }.cachedIn(viewModelScope)
+
+    fun getCard(id: String): Flow<CardListItemProjection> = decksRepository.getCard(id)
+
+    /**
+     * Called when the user enters a new search term.
+     */
+    fun onSearchQueryChanged(newQuery: String) {
+        _searchQuery.update {
+            newQuery
+        }
+    }
+
+    fun clearSearchQuery() {
+        _searchQuery.update { "" }
     }
 }
 

@@ -63,6 +63,7 @@ fun SettingsFriendsScreen(
     ) {
         RangersSearchOutlinedField(
             query = searchQuery,
+            placeholder = R.string.search_friends,
             onQueryChanged = settingsViewModel::onSearchQueryChanged,
             onClearClicked = settingsViewModel::clearSearchQuery
         )

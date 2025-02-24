@@ -1,4 +1,4 @@
-package com.rangerscards.ui.components
+package com.rangerscards.ui.cards.components
 
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background

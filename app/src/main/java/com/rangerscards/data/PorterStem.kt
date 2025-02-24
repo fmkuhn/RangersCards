@@ -3,7 +3,7 @@ package com.rangerscards.data
 import java.util.Locale
 import java.util.regex.Pattern
 
-object Porter {
+object PorterStem {
 
     private val PERFECTIVEGROUND = Pattern.compile("((ив|ивши|ившись|ыв|ывши|ывшись)|((<=[ая])(в|вши|вшись)))$")
 

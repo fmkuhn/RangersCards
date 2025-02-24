@@ -29,6 +29,7 @@
         <item quantity="many">%d друзей</item>
         <item quantity="other">%d друзей</item>
     </plurals>
+    <string name="search_friends">Поиск друзей</string>
     <string name="your_friends">Ваши друзья</string>
     <string name="sent_requests">Отправленные запросы</string>
     <string name="received_requests">Полученные запросы</string>
@@ -81,4 +82,15 @@
     <string name="fit_styled_card_text">ВЫН</string>
     <string name="foc_styled_card_text">КОН</string>
     <string name="spi_styled_card_text">ДУХ</string>
+    <string name="traveler_background">Путник</string>
+    <string name="shepherd_background">Пастух</string>
+    <string name="forager_background">Добытчик</string>
+    <string name="artisan_background">Ремесленник</string>
+    <string name="explorer_specialty">Разведчик</string>
+    <string name="shaper_specialty">Форматор</string>
+    <string name="conciliator_specialty">Примиритель</string>
+    <string name="artificer_specialty">Изобретатель</string>
+    <string name="search_decks">Поиск по колодам</string>
+    <string name="no_matching_decks">По запросу «%s» колод не найдено</string>
+    <string name="no_decks">Пока у вас нет колод.\n\nНажмите кнопку +, чтобы создать новую.</string>
 </resources>

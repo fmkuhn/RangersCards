@@ -1,5 +1,6 @@
 package com.rangerscards.ui.components
 
+import androidx.annotation.StringRes
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
@@ -34,6 +35,7 @@ import com.rangerscards.ui.theme.Jost
 @Composable
 fun RangersSearchOutlinedField(
     query: String,
+    @StringRes placeholder: Int,
     onQueryChanged: (String) -> Unit,
     onClearClicked: () -> Unit,
 ) {
@@ -72,7 +74,7 @@ fun RangersSearchOutlinedField(
                     modifier = Modifier.fillMaxWidth()
                 )
                 if (query.isEmpty()) Text(
-                    text = stringResource(R.string.search_for_card),
+                    text = stringResource(placeholder),
                     color = CustomTheme.colors.d10,
                     fontFamily = Jost,
                     fontWeight = FontWeight.Normal,

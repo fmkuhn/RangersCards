@@ -235,7 +235,6 @@ fun RangersNavHost(
                     )
                     if (!isCardsLoading) {
                         DecksScreen(
-                            isDarkTheme = isDarkTheme,
                             navigateToDeck = { deckId ->
                                 navController.navigate(
                                     "${BottomNavScreen.Decks.route}/$deckId"

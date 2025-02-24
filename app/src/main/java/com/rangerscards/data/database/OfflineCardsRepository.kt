@@ -3,7 +3,7 @@ package com.rangerscards.data.database
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.rangerscards.data.Porter
+import com.rangerscards.data.PorterStem
 import kotlinx.coroutines.flow.Flow
 import java.util.Locale
 
@@ -39,7 +39,7 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
                 .replace("\"(\\[\"]|.*)?\"".toRegex(), " ")
                 .split("[^\\p{Alpha}]+".toRegex())
                 .filter { it.isNotBlank() }
-                .joinToString(separator = " ", transform = { "${Porter.stem(it)}*" })
+                .joinToString(separator = " ", transform = { "${PorterStem.stem(it)}*" })
             createQueryString(stemedString, includeEnglish, language)
         } else {
             val stemedString = searchQuery
