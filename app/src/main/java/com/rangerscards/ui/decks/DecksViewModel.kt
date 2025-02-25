@@ -63,7 +63,7 @@ class DecksViewModel(
                     emit(PagingData.empty())
                 }
             } else {
-                decksRepository.getAllDecks().catch { throwable ->
+                decksRepository.searchDecks(query.trim()).catch { throwable ->
                     // Log the error.
                     throwable.printStackTrace()
                     // Return an empty PagingData on error so that the flow continues.

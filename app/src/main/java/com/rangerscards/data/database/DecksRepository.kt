@@ -12,5 +12,7 @@ interface DecksRepository {
 
     fun getAllDecks(): Flow<PagingData<DeckListItemProjection>>
 
+    fun searchDecks(query: String): Flow<PagingData<DeckListItemProjection>>
+
     fun getCard(id: String): Flow<CardListItemProjection>
 }
