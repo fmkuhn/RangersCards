@@ -1,4 +1,4 @@
-package com.rangerscards.data
+package com.rangerscards.data.objects
 
 import com.apollographql.apollo.api.Adapter
 import com.apollographql.apollo.api.CustomScalarAdapters

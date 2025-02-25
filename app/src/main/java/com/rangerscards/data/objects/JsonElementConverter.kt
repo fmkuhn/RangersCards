@@ -1,4 +1,4 @@
-package com.rangerscards.data.database
+package com.rangerscards.data.objects
 
 import androidx.room.TypeConverter
 import kotlinx.serialization.json.Json

@@ -30,8 +30,8 @@ import com.rangerscards.SendFriendRequestMutation
 import com.rangerscards.UpdateHandleMutation
 import com.rangerscards.data.UserAuthRepository
 import com.rangerscards.data.UserPreferencesRepository
-import com.rangerscards.data.database.Card
-import com.rangerscards.data.database.CardsRepository
+import com.rangerscards.data.database.card.Card
+import com.rangerscards.data.database.repository.CardsRepository
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow

@@ -1,9 +1,13 @@
-package com.rangerscards.data.database
+package com.rangerscards.data.database.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
-import com.rangerscards.data.PorterStem
+import com.rangerscards.data.database.card.Card
+import com.rangerscards.data.database.card.CardListItemProjection
+import com.rangerscards.data.database.card.FullCardProjection
+import com.rangerscards.data.database.dao.CardDao
+import com.rangerscards.data.objects.PorterStem
 import kotlinx.coroutines.flow.Flow
 import java.util.Locale
 

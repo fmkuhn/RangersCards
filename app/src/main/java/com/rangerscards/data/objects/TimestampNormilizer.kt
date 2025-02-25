@@ -1,4 +1,4 @@
-package com.rangerscards.data
+package com.rangerscards.data.objects
 
 object TimestampNormilizer {
     // It ensures the fraction has exactly 3 digits.

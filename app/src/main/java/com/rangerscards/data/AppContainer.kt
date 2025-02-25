@@ -10,10 +10,11 @@ import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.apollographql.apollo.cache.normalized.normalizedCache
 import com.apollographql.apollo.cache.normalized.sql.SqlNormalizedCacheFactory
 import com.rangerscards.data.database.CardsDatabase
-import com.rangerscards.data.database.CardsRepository
-import com.rangerscards.data.database.DecksRepository
-import com.rangerscards.data.database.OfflineCardsRepository
-import com.rangerscards.data.database.OfflineDecksRepository
+import com.rangerscards.data.database.repository.CardsRepository
+import com.rangerscards.data.database.repository.DecksRepository
+import com.rangerscards.data.database.repository.OfflineCardsRepository
+import com.rangerscards.data.database.repository.OfflineDecksRepository
+import com.rangerscards.data.objects.JsonElementAdapter
 import com.rangerscards.type.Jsonb
 
 private const val PREFERENCE_NAME = "settings_preferences"

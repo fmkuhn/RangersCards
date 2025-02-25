@@ -1,4 +1,4 @@
-package com.rangerscards.data
+package com.rangerscards.data.objects
 
 object Plurals {
     fun getPlural(lang: String, plurals: String, count: Int): String {

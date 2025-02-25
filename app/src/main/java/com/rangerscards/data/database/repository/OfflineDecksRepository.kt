@@ -1,10 +1,13 @@
-package com.rangerscards.data.database
+package com.rangerscards.data.database.repository
 
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import com.rangerscards.data.database.card.CardListItemProjection
+import com.rangerscards.data.database.dao.DeckDao
+import com.rangerscards.data.database.deck.Deck
+import com.rangerscards.data.database.deck.DeckListItemProjection
 import kotlinx.coroutines.flow.Flow
-import java.util.Locale
 
 
 class OfflineDecksRepository(private val deckDao: DeckDao) : DecksRepository {

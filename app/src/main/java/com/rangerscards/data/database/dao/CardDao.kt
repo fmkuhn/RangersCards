@@ -1,4 +1,4 @@
-package com.rangerscards.data.database
+package com.rangerscards.data.database.dao
 
 import androidx.paging.PagingSource
 import androidx.room.Dao
@@ -6,6 +6,9 @@ import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import com.rangerscards.data.database.card.Card
+import com.rangerscards.data.database.card.CardListItemProjection
+import com.rangerscards.data.database.card.FullCardProjection
 import kotlinx.coroutines.flow.Flow
 
 @Dao

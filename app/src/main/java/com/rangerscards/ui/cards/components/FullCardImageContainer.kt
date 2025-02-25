@@ -11,7 +11,7 @@ import androidx.compose.ui.unit.dp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.rangerscards.R
-import com.rangerscards.data.ImageSrc
+import com.rangerscards.data.objects.ImageSrc
 import com.rangerscards.ui.theme.CustomTheme
 
 @Composable

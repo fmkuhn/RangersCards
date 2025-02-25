@@ -9,11 +9,11 @@ import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.GetMyDecksQuery
-import com.rangerscards.data.TimestampNormilizer
-import com.rangerscards.data.database.CardListItemProjection
-import com.rangerscards.data.database.Deck
-import com.rangerscards.data.database.DeckListItemProjection
-import com.rangerscards.data.database.DecksRepository
+import com.rangerscards.data.objects.TimestampNormilizer
+import com.rangerscards.data.database.card.CardListItemProjection
+import com.rangerscards.data.database.deck.Deck
+import com.rangerscards.data.database.deck.DeckListItemProjection
+import com.rangerscards.data.database.repository.DecksRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow

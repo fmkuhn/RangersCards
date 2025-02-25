@@ -1,6 +1,9 @@
-package com.rangerscards.data.database
+package com.rangerscards.data.database.repository
 
 import androidx.paging.PagingData
+import com.rangerscards.data.database.card.Card
+import com.rangerscards.data.database.card.CardListItemProjection
+import com.rangerscards.data.database.card.FullCardProjection
 import kotlinx.coroutines.flow.Flow
 
 interface CardsRepository {

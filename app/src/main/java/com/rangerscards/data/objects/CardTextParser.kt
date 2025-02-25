@@ -1,4 +1,4 @@
-package com.rangerscards.data
+package com.rangerscards.data.objects
 
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent

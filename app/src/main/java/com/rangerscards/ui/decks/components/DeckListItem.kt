@@ -39,8 +39,8 @@ import androidx.compose.ui.unit.sp
 import coil.compose.AsyncImage
 import coil.request.ImageRequest
 import com.rangerscards.R
-import com.rangerscards.data.DeckMetaMaps
-import com.rangerscards.data.ImageSrc
+import com.rangerscards.data.objects.DeckMetaMaps
+import com.rangerscards.data.objects.ImageSrc
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
 import kotlinx.serialization.json.JsonElement

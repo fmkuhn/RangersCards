@@ -30,7 +30,7 @@ import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
 import com.rangerscards.R
-import com.rangerscards.data.database.DeckListItemProjection
+import com.rangerscards.data.database.deck.DeckListItemProjection
 import com.rangerscards.ui.components.RangersSearchOutlinedField
 import com.rangerscards.ui.decks.components.DeckListItem
 import com.rangerscards.ui.settings.SettingsViewModel

@@ -114,6 +114,6 @@ apollo {
         schemaFiles.from("src/main/graphql/schema.graphqls", "src/main/graphql/extra.graphqls")
         addTypename.set("always")
         mapScalarToKotlinString("timestamptz")
-        mapScalar("jsonb", "kotlinx.serialization.json.JsonElement", "com.rangerscards.data.JsonElementAdapter")
+        mapScalar("jsonb", "kotlinx.serialization.json.JsonElement", "com.rangerscards.data.objects.JsonElementAdapter")
     }
 }

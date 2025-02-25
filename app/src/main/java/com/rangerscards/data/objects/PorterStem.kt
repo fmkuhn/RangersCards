@@ -1,4 +1,4 @@
-package com.rangerscards.data
+package com.rangerscards.data.objects
 
 import java.util.Locale
 import java.util.regex.Pattern

@@ -17,8 +17,6 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import androidx.paging.compose.collectAsLazyPagingItems
-import com.rangerscards.data.database.CardListItemProjection
-import com.rangerscards.data.database.FullCardProjection
 import com.rangerscards.ui.cards.components.FullCard
 import com.rangerscards.ui.theme.CustomTheme
 
