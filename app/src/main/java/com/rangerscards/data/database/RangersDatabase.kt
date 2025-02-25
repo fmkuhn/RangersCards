@@ -14,17 +14,17 @@ import com.rangerscards.data.objects.JsonElementConverter
 
 @Database(entities = [Card::class, CardFts::class, Deck::class], version = 1, exportSchema = true)
 @TypeConverters(JsonElementConverter::class)
-abstract class CardsDatabase : RoomDatabase() {
+abstract class RangersDatabase : RoomDatabase() {
     abstract fun cardDao(): CardDao
     abstract fun deckDao(): DeckDao
 
     companion object {
         @Volatile
-        private var Instance: CardsDatabase? = null
+        private var Instance: RangersDatabase? = null
 
-        fun getDatabase(context: Context): CardsDatabase {
+        fun getDatabase(context: Context): RangersDatabase {
             return Instance ?: synchronized(this) {
-                Room.databaseBuilder(context, CardsDatabase::class.java, "card_database")
+                Room.databaseBuilder(context, RangersDatabase::class.java, "rangers_database")
                     .fallbackToDestructiveMigration()
                     .build()
                     .also { Instance = it }

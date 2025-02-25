@@ -9,7 +9,7 @@ import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.apollographql.apollo.cache.normalized.normalizedCache
 import com.apollographql.apollo.cache.normalized.sql.SqlNormalizedCacheFactory
-import com.rangerscards.data.database.CardsDatabase
+import com.rangerscards.data.database.RangersDatabase
 import com.rangerscards.data.database.repository.CardsRepository
 import com.rangerscards.data.database.repository.DecksRepository
 import com.rangerscards.data.database.repository.OfflineCardsRepository
@@ -58,10 +58,10 @@ class AppDataContainer(private val context: Context) : AppContainer {
     }
 
     override val cardsRepository: CardsRepository by lazy {
-        OfflineCardsRepository(CardsDatabase.getDatabase(context).cardDao())
+        OfflineCardsRepository(RangersDatabase.getDatabase(context).cardDao())
     }
 
     override val decksRepository: DecksRepository by lazy {
-        OfflineDecksRepository(CardsDatabase.getDatabase(context).deckDao())
+        OfflineDecksRepository(RangersDatabase.getDatabase(context).deckDao())
     }
 }

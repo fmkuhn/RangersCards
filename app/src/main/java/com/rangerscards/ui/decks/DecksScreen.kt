@@ -23,6 +23,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.paging.LoadState
@@ -89,7 +90,7 @@ fun DecksScreen(
         LazyColumn(
             modifier = modifier
                 .background(CustomTheme.colors.l30)
-                .fillMaxSize(),
+                .fillMaxSize().padding(vertical = 8.dp),
             state = listState
         ) {
             if (decksLazyItems.itemCount == 0 && decksLazyItems.loadState.isIdle) item {
@@ -108,6 +109,7 @@ fun DecksScreen(
                         fontSize = 18.sp,
                         lineHeight = 24.sp,
                         letterSpacing = 0.2.sp,
+                        textAlign = TextAlign.Center
                     )
                 }
             }
