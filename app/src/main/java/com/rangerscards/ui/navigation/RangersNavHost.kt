@@ -42,6 +42,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
@@ -53,6 +54,8 @@ import com.rangerscards.ui.cards.CardsViewModel
 import com.rangerscards.ui.cards.FullCardScreen
 import com.rangerscards.ui.cards.components.RangersSpoilerSwitch
 import com.rangerscards.ui.components.RangersTopAppBar
+import com.rangerscards.ui.deck.DeckScreen
+import com.rangerscards.ui.deck.DeckViewModel
 import com.rangerscards.ui.decks.DeckCreationScreen
 import com.rangerscards.ui.decks.DecksScreen
 import com.rangerscards.ui.decks.DecksViewModel
@@ -73,6 +76,10 @@ fun RangersNavHost(
         BottomNavScreen.Campaigns, BottomNavScreen.Settings)
     val navBackStackEntry by navController.currentBackStackEntryAsState()
     val currentRoute = navBackStackEntry?.destination?.route
+    val showBars = currentRoute?.let { route ->
+        // Hide the topBar and bottomBar when in the full-screen flow.
+        !route.startsWith("deck/")
+    } ?: true
     val context = LocalContext.current
     var title by rememberSaveable { mutableStateOf(context.getString(BottomNavScreen.Settings.label)) }
     var actions: @Composable (RowScope.() -> Unit)? by remember { mutableStateOf(null) }
@@ -80,7 +87,7 @@ fun RangersNavHost(
     val isCardsLoading by settingsViewModel.isCardsLoading.collectAsState()
     Scaffold(
         topBar = {
-            RangersTopAppBar(
+            if (showBars) RangersTopAppBar(
                 title = title,
                 canNavigateBack = bottomNavItems.none { it.startDestination == currentRoute },
                 navigateUp = { navController.navigateUp() },
@@ -89,7 +96,7 @@ fun RangersNavHost(
             )
         },
         bottomBar = {
-            RangersNavigationBar(navController, bottomNavItems, currentRoute)
+            if (showBars) RangersNavigationBar(navController, bottomNavItems, currentRoute)
         }
     ) { innerPadding ->
         NavHost(
@@ -212,7 +219,7 @@ fun RangersNavHost(
                         viewModelStoreOwner = parentEntry
                     )
                     val cardIndex = backStackEntry.arguments?.getInt(cardIndexArgument)
-                        ?: error("cardIdArgument cannot be null")
+                        ?: error("cardIndexArgument cannot be null")
                     FullCardScreen(
                         cardsViewModel = cardsViewModel,
                         cardIndex = cardIndex,
@@ -238,9 +245,8 @@ fun RangersNavHost(
                     if (!isCardsLoading) {
                         DecksScreen(
                             navigateToDeck = { deckId ->
-                                //TODO:Implement navigation to deck screen
                                 navController.navigate(
-                                    "${BottomNavScreen.Decks.route}/$deckId"
+                                    "deck/$deckId"
                                 ) {
                                     launchSingleTop = true
                                 }
@@ -290,9 +296,8 @@ fun RangersNavHost(
                             navController.navigateUp()
                         },
                         onCreate = { deckId ->
-                            //TODO:Implement navigation to deck screen
                             navController.navigate(
-                                "${BottomNavScreen.Decks.route}/$deckId"
+                                "deck/$deckId"
                             ) {
                                 popUpTo(BottomNavScreen.Decks.startDestination) {
                                     saveState = true
@@ -308,6 +313,27 @@ fun RangersNavHost(
                         contentPadding = innerPadding
                     )
                     title = stringResource(R.string.new_deck)
+                    actions = null
+                    switch = null
+                }
+            }
+            val deckIdArgument = "deckId"
+            navigation(
+                startDestination = "deck/{$deckIdArgument}",
+                route = "deck"
+            ) {
+                composable(
+                    route = "deck/{$deckIdArgument}",
+                    arguments = listOf(navArgument(deckIdArgument) { type = NavType.StringType })
+                ) { backStackEntry ->
+                    val deckViewModel: DeckViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = backStackEntry
+                    )
+                    val deckId = backStackEntry.arguments?.getString(deckIdArgument)
+                        ?: error("deckIdArgument cannot be null")
+                    DeckScreen()
+                    title = ""
                     actions = null
                     switch = null
                 }

@@ -43,7 +43,7 @@ import kotlinx.serialization.json.jsonPrimitive
 
 @Composable
 fun DecksScreen(
-    navigateToDeck: (Int) -> Unit,
+    navigateToDeck: (String) -> Unit,
     decksViewModel: DecksViewModel,
     settingsViewModel: SettingsViewModel,
     modifier: Modifier = Modifier,
@@ -127,7 +127,7 @@ fun DecksScreen(
                     imageSrc = role!!.realImageSrc!!,
                     name = item.name,
                     role = role!!.name!!,
-                    onClick = { navigateToDeck.invoke(index) },
+                    onClick = { navigateToDeck.invoke(item.id) },
                     isCampaign = if (item.campaignName != null) true else null,
                     campaignName = item.campaignName,
                 )

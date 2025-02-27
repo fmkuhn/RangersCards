@@ -45,7 +45,6 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.paging.compose.collectAsLazyPagingItems
 import androidx.paging.compose.itemContentType
 import androidx.paging.compose.itemKey
-import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.R
 import com.rangerscards.data.database.card.CardListItemProjection
 import com.rangerscards.data.objects.DeckMetaMaps
@@ -397,9 +396,7 @@ fun DeckCreationScreen(
                                 context = context
                             )
                         }.invokeOnCompletion {
-                            //TODO:Uncomment when implement deck screen
-                            //onCreate.invoke(decksViewModel.deckIdToOpen.value)
-                            onCancel.invoke()
+                            onCreate.invoke(decksViewModel.deckIdToOpen.value)
                         }
                     },
                     buttonColor = ButtonDefaults.buttonColors().copy(
