@@ -107,5 +107,20 @@
     <string name="search_decks">Search decks</string>
     <string name="no_matching_decks">No matching decks for \"%s\"</string>
     <string name="no_decks">No decks yet.\n\nUse the + button to create a new one.</string>
+    <string name="new_deck">New deck</string>
+    <string name="custom_deck_tab">Custom deck</string>
+    <string name="starter_deck_tab">Starter deck</string>
+    <string name="deck_creation_name_label">Name</string>
+    <string name="deck_creation_name_placeholder">Enter a name for this deck.</string>
+    <string name="starter_deck_title">Choose starter deck:</string>
+    <string name="upload_to_rangersdb">Upload to RangersDB</string>
+    <string name="create_deck_button">Create deck</string>
+    <string name="background">Background</string>
+    <string name="background_placeholder">Choose background</string>
+    <string name="specialty">Specialty</string>
+    <string name="specialty_placeholder">Choose specialty</string>
+    <string name="role">Role</string>
+    <string name="role_placeholder">Choose role</string>
+    <string name="starter_deck_name_postfix">(Starter)</string>
 
 </resources>

@@ -8,7 +8,7 @@ import kotlinx.serialization.json.JsonElement
 @Entity(tableName = "Deck")
 data class Deck(
     @PrimaryKey(autoGenerate = false)
-    val id: Int,
+    val id: String,
     val uploaded: Boolean,
     @ColumnInfo(name = "user_id")
     val userId: String,

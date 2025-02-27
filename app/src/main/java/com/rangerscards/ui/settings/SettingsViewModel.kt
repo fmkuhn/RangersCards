@@ -13,7 +13,6 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.apolloStore
 import com.apollographql.apollo.cache.normalized.fetchPolicy
-import com.apollographql.apollo.exception.ApolloNetworkException
 import com.google.firebase.Firebase
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseUser
@@ -159,26 +158,8 @@ class SettingsViewModel(
                 .toFlow()
                 .collect {
                     val response = it
-                    when {
-                        response.errors.orEmpty().isNotEmpty() -> {
-                            // GraphQL error
-                            Log.d("GraphQL error", response.errors!!.first().message)
-                        }
-                        response.exception is ApolloNetworkException -> {
-                            // Network error
-                            Log.d("Network error", "Please check your network connectivity.")
-                        }
-                        response.data != null -> {
-                            // data (never partial)
-                            _userUiState.update { uiState ->
-                                uiState.copy(userInfo = response.data)
-                            }
-                        }
-                        else -> {
-                            // Another fetch error, maybe a cache miss?
-                            // Or potentially a non-compliant server returning data: null without an error
-                            Log.d("Another fetch error", "Oh no... An error happened.")
-                        }
+                    if (response.data != null) _userUiState.update { uiState ->
+                        uiState.copy(userInfo = response.data)
                     }
                 }
         }
@@ -217,25 +198,7 @@ class SettingsViewModel(
                         normalizeHandle(handle))
                     ).addHttpHeader("Authorization", "Bearer $token")
                         .execute()
-                    when {
-                        response.errors.orEmpty().isNotEmpty() -> {
-                            // GraphQL error
-                            Log.d("GraphQL error", response.errors!!.first().message)
-                        }
-                        response.exception is ApolloNetworkException -> {
-                            // Network error
-                            Log.d("Network error", "Please check your network connectivity.")
-                        }
-                        response.data != null -> {
-                            // data (never partial)
-                            getUserInfo(userUiState.value.currentUser!!.uid)
-                        }
-                        else -> {
-                            // Another fetch error, maybe a cache miss?
-                            // Or potentially a non-compliant server returning data: null without an error
-                            Log.d("Another fetch error", "Oh no... An error happened.")
-                        }
-                    }
+                    if (response.data != null) getUserInfo(userUiState.value.currentUser!!.uid)
                 }
             }
         }.join()

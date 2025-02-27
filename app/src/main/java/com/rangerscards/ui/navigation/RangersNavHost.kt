@@ -37,6 +37,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
@@ -52,6 +53,7 @@ import com.rangerscards.ui.cards.CardsViewModel
 import com.rangerscards.ui.cards.FullCardScreen
 import com.rangerscards.ui.cards.components.RangersSpoilerSwitch
 import com.rangerscards.ui.components.RangersTopAppBar
+import com.rangerscards.ui.decks.DeckCreationScreen
 import com.rangerscards.ui.decks.DecksScreen
 import com.rangerscards.ui.decks.DecksViewModel
 import com.rangerscards.ui.settings.SettingsAboutScreen
@@ -236,6 +238,7 @@ fun RangersNavHost(
                     if (!isCardsLoading) {
                         DecksScreen(
                             navigateToDeck = { deckId ->
+                                //TODO:Implement navigation to deck screen
                                 navController.navigate(
                                     "${BottomNavScreen.Decks.route}/$deckId"
                                 ) {
@@ -254,22 +257,58 @@ fun RangersNavHost(
                         IconButton(
                             onClick = {
                                 navController.navigate(
-                                    "${BottomNavScreen.Decks.route}/creation/start"
+                                    "${BottomNavScreen.Decks.route}/creation"
                                 ) {
                                     launchSingleTop = true
                                 }
                             },
                             colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
-                            modifier = Modifier.size(24.dp)
+                            modifier = Modifier.size(32.dp),
+                            enabled = !isCardsLoading
                         ) {
                             Icon(
                                 painterResource(id = R.drawable.add_32dp),
                                 contentDescription = null,
                                 tint = CustomTheme.colors.m,
-                                modifier = Modifier.size(24.dp)
+                                modifier = Modifier.size(32.dp)
                             )
                         }
                     }
+                    switch = null
+                }
+                composable(BottomNavScreen.Decks.route + "/creation") { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry(BottomNavScreen.Decks.startDestination)
+                    }
+                    val decksViewModel: DecksViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val user by settingsViewModel.userUiState.collectAsState()
+                    DeckCreationScreen(
+                        onCancel = {
+                            navController.navigateUp()
+                        },
+                        onCreate = { deckId ->
+                            //TODO:Implement navigation to deck screen
+                            navController.navigate(
+                                "${BottomNavScreen.Decks.route}/$deckId"
+                            ) {
+                                popUpTo(BottomNavScreen.Decks.startDestination) {
+                                    saveState = true
+                                    inclusive = false
+                                }
+                                launchSingleTop = true
+                                restoreState = true
+                            }
+                        },
+                        decksViewModel = decksViewModel,
+                        user = user,
+                        isDarkTheme = isDarkTheme,
+                        contentPadding = innerPadding
+                    )
+                    title = stringResource(R.string.new_deck)
+                    actions = null
                     switch = null
                 }
             }

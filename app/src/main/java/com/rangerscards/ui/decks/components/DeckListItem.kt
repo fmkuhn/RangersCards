@@ -45,6 +45,8 @@ import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
 @Composable
@@ -99,6 +101,12 @@ fun DeckListItem(
                             modifier = Modifier.size(32.dp)
                         )
                     }
+                if (meta.jsonObject["problem"]?.jsonArray != null) Icon(
+                    painterResource(R.drawable.error_32dp),
+                    contentDescription = "Error",
+                    tint = CustomTheme.colors.warn,
+                    modifier = Modifier.size(24.dp)
+                )
             }
             HorizontalDivider(
                 color = CustomTheme.colors.l10
@@ -165,8 +173,13 @@ fun DeckListItemTextContainer(
             val background = DeckMetaMaps.background[meta["background"]?.jsonPrimitive?.content]
             val specialty = DeckMetaMaps.specialty[meta["specialty"]?.jsonPrimitive?.content]
             Text(
-                text = stringResource(background!!) + " - " +
-                        stringResource(specialty!!) + " - $role",
+                text = buildAnnotatedString {
+                    if (background != null)
+                        append(stringResource(background) + " - ")
+                    if (specialty != null)
+                        append(stringResource(specialty) + " - ")
+                    append(role)
+                },
                 color = CustomTheme.colors.d20,
                 fontFamily = Jost,
                 fontWeight = FontWeight.Normal,

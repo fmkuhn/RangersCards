@@ -46,4 +46,18 @@ class OfflineDecksRepository(private val deckDao: DeckDao) : DecksRepository {
     }
 
     override fun getCard(id: String): Flow<CardListItemProjection> = deckDao.getCard(id)
+
+    override fun getRoles(specialty: String): Flow<PagingData<CardListItemProjection>> {
+        // Create a Pager that wraps the PagingSource from the DAO.
+        return Pager(
+            config = PagingConfig(
+                pageSize = 5,
+                enablePlaceholders = false,
+                initialLoadSize = 5
+            ),
+            pagingSourceFactory = { deckDao.getRoles(specialty) }
+        ).flow
+    }
+
+    override suspend fun insertDeck(deck: Deck) = deckDao.insertDeck(deck)
 }

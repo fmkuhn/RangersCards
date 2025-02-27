@@ -93,4 +93,19 @@
     <string name="search_decks">Поиск по колодам</string>
     <string name="no_matching_decks">По запросу «%s» колод не найдено</string>
     <string name="no_decks">Пока у вас нет колод.\n\nНажмите кнопку +, чтобы создать новую.</string>
+    <string name="new_deck">Новая колода</string>
+    <string name="custom_deck_tab">Пользовательская колода</string>
+    <string name="starter_deck_tab">Стартовая колода</string>
+    <string name="deck_creation_name_label">Название</string>
+    <string name="deck_creation_name_placeholder">Введите название этой колоды.</string>
+    <string name="starter_deck_title">Выберите стартовую колоду:</string>
+    <string name="upload_to_rangersdb">Загрузить на RangersDB</string>
+    <string name="create_deck_button">Создать колоду</string>
+    <string name="background">Квалификация</string>
+    <string name="background_placeholder">Выберите квалификацию</string>
+    <string name="specialty">Специализация</string>
+    <string name="specialty_placeholder">Выберите специализацию</string>
+    <string name="role">Роль</string>
+    <string name="role_placeholder">Выберите роль</string>
+    <string name="starter_deck_name_postfix">(Стартовый)</string>
 </resources>

@@ -1,5 +1,6 @@
 package com.rangerscards.ui.decks
 
+import android.content.Context
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -8,12 +9,16 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.google.firebase.auth.FirebaseUser
+import com.rangerscards.CreateDeckMutation
 import com.rangerscards.GetMyDecksQuery
-import com.rangerscards.data.objects.TimestampNormilizer
 import com.rangerscards.data.database.card.CardListItemProjection
 import com.rangerscards.data.database.deck.Deck
 import com.rangerscards.data.database.deck.DeckListItemProjection
 import com.rangerscards.data.database.repository.DecksRepository
+import com.rangerscards.data.objects.DeckMetaMaps
+import com.rangerscards.data.objects.StarterDecks
+import com.rangerscards.data.objects.TimestampNormilizer
+import com.rangerscards.ui.settings.UserUIState
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -24,11 +29,27 @@ import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonNull
+import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.serialization.json.put
+import java.text.SimpleDateFormat
+import java.util.Date
+import java.util.Locale
+import java.util.TimeZone
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 class DecksViewModel(
     private val apolloClient: ApolloClient,
     private val decksRepository: DecksRepository
 ) : ViewModel() {
+
+    private val _deckIdToOpen = MutableStateFlow("")
+    val deckIdToOpen: StateFlow<String> = _deckIdToOpen.asStateFlow()
 
     // Holds the current search term entered by the user.
     private val _searchQuery = MutableStateFlow("")
@@ -72,6 +93,14 @@ class DecksViewModel(
             }
         }.cachedIn(viewModelScope)
 
+    fun getRoles(specialty: String): Flow<PagingData<CardListItemProjection>> =
+        decksRepository.getRoles(specialty).catch { throwable ->
+            // Log the error.
+            throwable.printStackTrace()
+            // Return an empty PagingData on error so that the flow continues.
+            emit(PagingData.empty())
+        }.cachedIn(viewModelScope)
+
     fun getCard(id: String): Flow<CardListItemProjection> = decksRepository.getCard(id)
 
     /**
@@ -86,6 +115,154 @@ class DecksViewModel(
     fun clearSearchQuery() {
         _searchQuery.update { "" }
     }
+
+    @OptIn(ExperimentalUuidApi::class)
+    suspend fun createDeck(
+        name: String,
+        background: String,
+        specialty: String,
+        role: String,
+        isUploading: Boolean,
+        starterDeckId: Int,
+        postfix: String,
+        user: UserUIState,
+        context: Context
+    ) {
+        if (isUploading) {
+            val token = user.currentUser!!.getIdToken(true).await().token
+            if (starterDeckId >= 0) {
+                val starterDeck = StarterDecks.starterDecks[starterDeckId]
+                val backgroundLocalized = DeckMetaMaps
+                    .background[starterDeck.meta.jsonObject["background"]?.jsonPrimitive?.content]
+                val specialtyLocalized = DeckMetaMaps
+                    .specialty[starterDeck.meta.jsonObject["specialty"]?.jsonPrimitive?.content]
+                val newDeck = apolloClient.mutation(CreateDeckMutation(
+                    name = name.ifEmpty { "${context.getString(backgroundLocalized!!)} - " +
+                            "${context.getString(specialtyLocalized!!)} $postfix" },
+                    foc = starterDeck.foc,
+                    fit = starterDeck.fit,
+                    awa = starterDeck.awa,
+                    spi = starterDeck.spi,
+                    meta = starterDeck.meta,
+                    slots = starterDeck.slots,
+                    extraSlots = JsonNull,
+                )).addHttpHeader("Authorization", "Bearer $token").execute()
+                if (newDeck.data != null) {
+                    decksRepository.insertDeck(newDeck.data!!.deck!!.deck.toDeck(true))
+                    _deckIdToOpen.update { newDeck.data!!.deck!!.deck.id.toString() }
+                }
+            } else {
+                val backgroundLocalized = DeckMetaMaps.background[background]
+                val specialtyLocalized = DeckMetaMaps.specialty[specialty]
+                val newDeck = apolloClient.mutation(CreateDeckMutation(
+                    name = name.ifEmpty { "${context.getString(backgroundLocalized!!)} - " +
+                            context.getString(specialtyLocalized!!) },
+                    foc = 3,
+                    fit = 3,
+                    awa = 3,
+                    spi = 3,
+                    meta = buildJsonObject {
+                        put("role", role)
+                        put("background", background)
+                        put("specialty", specialty)
+                    },
+                    slots = JsonNull,
+                    extraSlots = JsonNull,
+                )).addHttpHeader("Authorization", "Bearer $token").execute()
+                if (newDeck.data != null) {
+                    decksRepository.insertDeck(newDeck.data!!.deck!!.deck.toDeck(true))
+                    _deckIdToOpen.update { newDeck.data!!.deck!!.deck.id.toString() }
+                }
+            }
+        } else {
+            val uuid = Uuid.random().toString()
+            if (starterDeckId >= 0) {
+                val starterDeck = StarterDecks.starterDecks[starterDeckId]
+                val backgroundLocalized = DeckMetaMaps
+                    .background[starterDeck.meta.jsonObject["background"]?.jsonPrimitive?.content]
+                val specialtyLocalized = DeckMetaMaps
+                    .specialty[starterDeck.meta.jsonObject["specialty"]?.jsonPrimitive?.content]
+                decksRepository.insertDeck(
+                    createLocalDeck(
+                        id = uuid,
+                        userId = user.currentUser?.uid.toString(),
+                        userHandle = user.userInfo?.profile?.userProfile?.handle,
+                        deckName = name.ifEmpty { "${context.getString(backgroundLocalized!!)} - " +
+                                "${context.getString(specialtyLocalized!!)} $postfix" },
+                        meta = starterDeck.meta
+                    )
+                )
+                _deckIdToOpen.update { uuid }
+            } else {
+                val backgroundLocalized = DeckMetaMaps.background[background]
+                val specialtyLocalized = DeckMetaMaps.specialty[specialty]
+                decksRepository.insertDeck(createLocalDeck(
+                    id = uuid,
+                    userId = user.currentUser?.uid.toString(),
+                    userHandle = user.userInfo?.profile?.userProfile?.handle,
+                    deckName = name.ifEmpty { "${context.getString(backgroundLocalized!!)} - " +
+                            context.getString(specialtyLocalized!!) },
+                    meta = buildJsonObject {
+                        put("role", role)
+                        put("background", background)
+                        put("specialty", specialty)
+                    }
+                ))
+                _deckIdToOpen.update { uuid }
+            }
+        }
+    }
+
+    private fun createLocalDeck(
+        id: String,
+        userId: String,
+        userHandle: String?,
+        deckName: String,
+        meta: JsonElement,
+    ): Deck {
+        return Deck(
+            id = id,
+            uploaded = false,
+            userId = userId,
+            userHandle = userHandle,
+            slots = JsonObject(emptyMap()),
+            sideSlots = JsonObject(emptyMap()),
+            extraSlots = JsonObject(emptyMap()),
+            version = 1,
+            name = deckName,
+            description = null,
+            awa = 3,
+            spi = 3,
+            fit = 3,
+            foc = 3,
+            createdAt = getCurrentDateTime(),
+            updatedAt = getCurrentDateTime(),
+            meta = meta,
+            campaignId = null,
+            campaignName = null,
+            campaignRewards = null,
+            previousId = null,
+            previousSlots = null,
+            previousSideSlots = null,
+            nextId = null,
+        )
+    }
+
+    private fun getCurrentDateTime(): String {
+        // Get the current time
+        val now = Date()
+        // Create a formatter using the pattern "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+        // The "XXX" pattern is supported in API 24 and formats the timezone as +00:00
+        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.US)
+        sdf.timeZone = TimeZone.getTimeZone("UTC")
+        val formatted = sdf.format(now)
+        // Replace trailing "Z" with "+00:00" if necessary
+        return if (formatted.endsWith("Z")) {
+            formatted.substring(0, formatted.length - 1) + "+00:00"
+        } else {
+            formatted
+        }
+    }
 }
 
 /**
@@ -93,7 +270,7 @@ class DecksViewModel(
  */
 fun com.rangerscards.fragment.Deck.toDeck(uploaded: Boolean): Deck {
     return Deck(
-        id = this.id,
+        id = this.id.toString(),
         uploaded = uploaded,
         userId = this.user_id,
         userHandle = this.user.userInfo.handle,
