@@ -123,4 +123,28 @@
     <string name="role_placeholder">Choose role</string>
     <string name="starter_deck_name_postfix">(Starter)</string>
 
+    //Deck errors
+    <string name="invalid_aspects">Chosen aspects are invalid.</string>
+    <string name="too_many_duplicates">Too many cards with the same name.</string>
+    <string name="need_two_cards">You must include two of each card in your starting deck.</string>
+    <string name="personality_error">Not enough personality cards.</string>
+    <string name="too_many_awa_personality">Too many AWA personality cards.</string>
+    <string name="too_many_spi_personality">Too many SPI personality cards.</string>
+    <string name="too_many_foc_personality">Too many FOC personality cards.</string>
+    <string name="too_many_fit_personality">Too many FIT personality cards.</string>
+    <string name="background_error">Not enough background cards.</string>
+    <string name="too_many_background">Too many cards of the chosen background.</string>
+    <string name="specialty_error">Not enough specialty cards.</string>
+    <string name="too_many_specialty">Too many cards of the chosen specialty.</string>
+    <string name="role_error">You must choose a role card.</string>
+    <string name="outside_interest_error">Not enough outside interest cards.</string>
+    <string name="invalid_background">Contains too many cards that do not match your chosen background.</string>
+    <string name="invalid_specialty">Contains too many cards that do not match your chosen specialty.</string>
+    <string name="invalid_role">Your role card does not match your chosen specialty.</string>
+    <string name="invalid_aspect_levels">Your deck contains cards with aspect requirements that are not allowed.</string>
+    <string name="invalid_outside_interest">Your outside interest card cannot have the Expert trait.</string>
+    <string name="too_many_outside_interest">There are too many outside interest cards in the deck.</string>
+    <string name="too_many_cards">Too many cards. When making deck changes while camping, you should remove cards to make room for rewards to maintain a 30 card deck.</string>
+    <string name="too_few_cards">Not enough cards. When reward cards are removed while camping, you must add back cards from your original deck to maintain a 30 card deck.</string>
+
 </resources>

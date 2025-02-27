@@ -1,6 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    //Settings screen strings
     <string name="settings_nav_bar_button">Настройки</string>
     <string name="cards_nav_bar_button">Карты</string>
     <string name="decks_nav_bar_button">Колоды</string>
@@ -108,4 +107,26 @@
     <string name="role">Роль</string>
     <string name="role_placeholder">Выберите роль</string>
     <string name="starter_deck_name_postfix">(Стартовый)</string>
+    <string name="invalid_aspects">Выбранные черты недопустимы.</string>
+    <string name="too_many_duplicates">Слишком много карт с одинаковым названием.</string>
+    <string name="need_two_cards">Вы должны включить в свою стартовую колоду по две копии каждой карты.</string>
+    <string name="personality_error">Недостаточно карт личности.</string>
+    <string name="too_many_awa_personality">Слишком много карт личности с чертой ВОС.</string>
+    <string name="too_many_spi_personality">Слишком много карт личности с чертой ДУХ.</string>
+    <string name="too_many_foc_personality">Слишком много карт личности с чертой КОН.</string>
+    <string name="too_many_fit_personality">Слишком много карт личности с чертой ВЫН.</string>
+    <string name="background_error">Недостаточно карт квалификации.</string>
+    <string name="too_many_background">Слишком много карт выбранной квалификации.</string>
+    <string name="specialty_error">Недостаточно карт специализации.</string>
+    <string name="too_many_specialty">Слишком много карт выбранной специализации.</string>
+    <string name="role_error">Вы должны выбрать карту роли.</string>
+    <string name="outside_interest_error">Недостаточно карт хобби.</string>
+    <string name="invalid_background">Содержит слишком много карт, которые не соответствую выбранной квалификации.</string>
+    <string name="invalid_specialty">Содержит слишком много карт, которые не соответствую выбранной специализации.</string>
+    <string name="invalid_role">Ваша карта роли не соответствует выбранной специализации.</string>
+    <string name="invalid_aspect_levels">В вашей колоде есть карты с недопустимыми требованиями к чертам.</string>
+    <string name="invalid_outside_interest">Выбранная карта хобби не может иметь признак «Эксперт».</string>
+    <string name="too_many_outside_interest">Слишком много карт хобби в вашей колоде.</string>
+    <string name="too_many_cards">Слишком много карт. При замене карт на награды следует удалить любую карту (кроме карты с признаком недуг), чтобы сохранить размер колоды в 30 карт.</string>
+    <string name="too_few_cards">Слишком мало карт. При замене наград следует вернуть обратно карту из вашей изначальной колоды, чтобы сохранить размер колоды в 30 карт.</string>
 </resources>

@@ -1,6 +1,7 @@
 package com.rangerscards.ui.navigation
 
 import androidx.compose.animation.AnimatedContentTransitionScope
+import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
 import androidx.compose.animation.ExitTransition
 import androidx.compose.animation.core.EaseIn
@@ -37,12 +38,10 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
-import androidx.navigation.NavGraph.Companion.findStartDestination
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
-import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
@@ -87,16 +86,20 @@ fun RangersNavHost(
     val isCardsLoading by settingsViewModel.isCardsLoading.collectAsState()
     Scaffold(
         topBar = {
-            if (showBars) RangersTopAppBar(
-                title = title,
-                canNavigateBack = bottomNavItems.none { it.startDestination == currentRoute },
-                navigateUp = { navController.navigateUp() },
-                actions = actions,
-                switch = switch
-            )
+            AnimatedVisibility(showBars) {
+                RangersTopAppBar(
+                    title = title,
+                    canNavigateBack = bottomNavItems.none { it.startDestination == currentRoute },
+                    navigateUp = { navController.navigateUp() },
+                    actions = actions,
+                    switch = switch
+                )
+            }
         },
         bottomBar = {
-            if (showBars) RangersNavigationBar(navController, bottomNavItems, currentRoute)
+            AnimatedVisibility(showBars) {
+                RangersNavigationBar(navController, bottomNavItems, currentRoute)
+            }
         }
     ) { innerPadding ->
         NavHost(
