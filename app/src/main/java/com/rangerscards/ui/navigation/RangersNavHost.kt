@@ -335,7 +335,13 @@ fun RangersNavHost(
                     )
                     val deckId = backStackEntry.arguments?.getString(deckIdArgument)
                         ?: error("deckIdArgument cannot be null")
-                    DeckScreen()
+                    DeckScreen(
+                        navController = navController,
+                        deckViewModel = deckViewModel,
+                        deckId = deckId,
+                        isDarkTheme = isDarkTheme,
+                        contentPadding = innerPadding
+                    )
                     title = ""
                     actions = null
                     switch = null

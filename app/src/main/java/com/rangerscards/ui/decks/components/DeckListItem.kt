@@ -191,55 +191,53 @@ fun DeckListItemTextContainer(
             )
         }
         if (isCampaign != null) {
-            Row {
-                val icondId = if (isCampaign) "campaign" else "ranger"
-                BasicText(
-                    text = buildAnnotatedString {
-                        appendInlineContent(
-                            icondId,
-                            "[$icondId]"
+            val icondId = if (isCampaign) "campaign" else "ranger"
+            BasicText(
+                text = buildAnnotatedString {
+                    appendInlineContent(
+                        icondId,
+                        "[$icondId]"
+                    )
+                    append(" $campaignOrUserName")
+                },
+                inlineContent = mapOf(
+                    "campaign" to InlineTextContent(
+                        Placeholder(
+                            width = 20.sp,
+                            height = 16.sp,
+                            placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
                         )
-                        append(" $campaignOrUserName")
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.guide),
+                            contentDescription = "Campaign Icon",
+                            tint = CustomTheme.colors.d10
+                        )
                     },
-                    inlineContent = mapOf(
-                        "campaign" to InlineTextContent(
-                            Placeholder(
-                                width = 20.sp,
-                                height = 16.sp,
-                                placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
-                            )
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.guide),
-                                contentDescription = "Campaign Icon",
-                                tint = CustomTheme.colors.d10
-                            )
-                        },
-                        "ranger" to InlineTextContent(
-                            Placeholder(
-                                width = 16.sp,
-                                height = 16.sp,
-                                placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
-                            )
-                        ) {
-                            Icon(
-                                painter = painterResource(R.drawable.ranger),
-                                contentDescription = "Ranger Icon",
-                                tint = CustomTheme.colors.d10
-                            )
-                        },
-                    ),
-                    style = TextStyle(
-                        color = CustomTheme.colors.d10,
-                        fontFamily = Jost,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 16.sp,
-                        lineHeight = 18.sp,
-                    ),
-                    maxLines = 1,
-                    overflow = TextOverflow.Ellipsis,
-                )
-            }
+                    "ranger" to InlineTextContent(
+                        Placeholder(
+                            width = 16.sp,
+                            height = 16.sp,
+                            placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
+                        )
+                    ) {
+                        Icon(
+                            painter = painterResource(R.drawable.ranger),
+                            contentDescription = "Ranger Icon",
+                            tint = CustomTheme.colors.d10
+                        )
+                    },
+                ),
+                style = TextStyle(
+                    color = CustomTheme.colors.d10,
+                    fontFamily = Jost,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 16.sp,
+                    lineHeight = 18.sp,
+                ),
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
         }
     }
 }

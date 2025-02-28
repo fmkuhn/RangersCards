@@ -11,8 +11,10 @@ import com.apollographql.apollo.cache.normalized.normalizedCache
 import com.apollographql.apollo.cache.normalized.sql.SqlNormalizedCacheFactory
 import com.rangerscards.data.database.RangersDatabase
 import com.rangerscards.data.database.repository.CardsRepository
+import com.rangerscards.data.database.repository.DeckRepository
 import com.rangerscards.data.database.repository.DecksRepository
 import com.rangerscards.data.database.repository.OfflineCardsRepository
+import com.rangerscards.data.database.repository.OfflineDeckRepository
 import com.rangerscards.data.database.repository.OfflineDecksRepository
 import com.rangerscards.data.objects.JsonElementAdapter
 import com.rangerscards.type.Jsonb
@@ -31,6 +33,7 @@ interface AppContainer {
     val userAuthRepository: UserAuthRepository
     val cardsRepository: CardsRepository
     val decksRepository: DecksRepository
+    val deckRepository: DeckRepository
 }
 
 /**
@@ -63,5 +66,9 @@ class AppDataContainer(private val context: Context) : AppContainer {
 
     override val decksRepository: DecksRepository by lazy {
         OfflineDecksRepository(RangersDatabase.getDatabase(context).deckDao())
+    }
+
+    override val deckRepository: DeckRepository by lazy {
+        OfflineDeckRepository(RangersDatabase.getDatabase(context).deckDao())
     }
 }

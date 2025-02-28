@@ -11,6 +11,7 @@ import androidx.room.Upsert
 import com.rangerscards.data.database.card.CardListItemProjection
 import com.rangerscards.data.database.deck.Deck
 import com.rangerscards.data.database.deck.DeckListItemProjection
+import com.rangerscards.data.database.deck.RoleCardProjection
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -64,4 +65,10 @@ interface DeckDao {
             deleteNotIn(networkIds)
         }
     }
+
+    @Query("SELECT * FROM deck WHERE id = :id")
+    fun getDeckById(id: String): Flow<Deck>
+
+    @Query("Select id, name, text, real_image_src FROM card WHERE id = :id")
+    fun getRole(id: String): Flow<RoleCardProjection>
 }
