@@ -22,6 +22,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -57,9 +60,13 @@ fun DecksScreen(
     val user by settingsViewModel.userUiState.collectAsState()
     val isRefreshing by decksViewModel.isRefreshing.collectAsState()
     val refreshState = rememberPullToRefreshState()
+    var userId by rememberSaveable { mutableStateOf("") }
     val decksLazyItems = decksViewModel.searchResults.collectAsLazyPagingItems()
     LaunchedEffect(user.currentUser) {
-        decksViewModel.getAllNetworkDecks(user.currentUser)
+        if (userId != user.currentUser?.uid.toString()) {
+            decksViewModel.getAllNetworkDecks(user.currentUser)
+            userId = user.currentUser?.uid.toString()
+        }
     }
 
     val searchQuery by decksViewModel.searchQuery.collectAsState()
