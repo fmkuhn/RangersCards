@@ -51,12 +51,16 @@ class DecksViewModel(
     private val _deckIdToOpen = MutableStateFlow("")
     val deckIdToOpen: StateFlow<String> = _deckIdToOpen.asStateFlow()
 
+    private val _isRefreshing = MutableStateFlow(false)
+    val isRefreshing: StateFlow<Boolean> = _isRefreshing.asStateFlow()
+
     // Holds the current search term entered by the user.
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
     fun getAllNetworkDecks(user: FirebaseUser?) {
         viewModelScope.launch {
+            _isRefreshing.update { true }
             if (user != null) {
                 val token = user.getIdToken(true).await().token
                 val response = apolloClient.query(GetMyDecksQuery(user.uid))
@@ -68,7 +72,7 @@ class DecksViewModel(
                 }
             }
             else decksRepository.deleteAllUploadedDecks()
-        }
+        }.invokeOnCompletion { _isRefreshing.update { false } }
     }
 
     // Exposes the paginated search results as PagingData.

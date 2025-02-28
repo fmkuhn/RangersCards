@@ -13,7 +13,11 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.ExperimentalMaterial3Api
 import androidx.compose.material3.Text
+import androidx.compose.material3.pulltorefresh.PullToRefreshBox
+import androidx.compose.material3.pulltorefresh.PullToRefreshDefaults
+import androidx.compose.material3.pulltorefresh.rememberPullToRefreshState
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -41,6 +45,7 @@ import kotlinx.coroutines.flow.drop
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
+@OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun DecksScreen(
     navigateToDeck: (String) -> Unit,
@@ -50,8 +55,10 @@ fun DecksScreen(
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
     val user by settingsViewModel.userUiState.collectAsState()
+    val isRefreshing by decksViewModel.isRefreshing.collectAsState()
+    val refreshState = rememberPullToRefreshState()
     val decksLazyItems = decksViewModel.searchResults.collectAsLazyPagingItems()
-    LaunchedEffect(Unit) {
+    LaunchedEffect(user.currentUser) {
         decksViewModel.getAllNetworkDecks(user.currentUser)
     }
 
@@ -87,79 +94,101 @@ fun DecksScreen(
             onQueryChanged = decksViewModel::onSearchQueryChanged,
             onClearClicked = decksViewModel::clearSearchQuery
         )
-        LazyColumn(
-            modifier = modifier
-                .background(CustomTheme.colors.l30)
-                .fillMaxSize().padding(vertical = 8.dp),
-            state = listState
-        ) {
-            if (decksLazyItems.itemCount == 0 && decksLazyItems.loadState.isIdle) item {
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.padding(16.dp).fillMaxWidth()
-                ) {
-                    Text(
-                        text = if (searchQuery.isEmpty())
-                            stringResource(R.string.no_decks)
-                        else stringResource(id = R.string.no_matching_decks, searchQuery),
-                        color = CustomTheme.colors.d30,
-                        fontFamily = Jost,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 18.sp,
-                        lineHeight = 24.sp,
-                        letterSpacing = 0.2.sp,
-                        textAlign = TextAlign.Center
-                    )
-                }
-            }
-            items(
-                count = decksLazyItems.itemCount,
-                key = decksLazyItems.itemKey(DeckListItemProjection::id),
-                contentType = decksLazyItems.itemContentType { it }
-            ) { index ->
-                val item = decksLazyItems[index] ?: return@items
-                val role by decksViewModel.getCard(
-                    item.meta.jsonObject["role"]?.jsonPrimitive?.content.toString()
-                ).collectAsState(null)
-                if (role != null) DeckListItem(
-                    meta = item.meta,
-                    imageSrc = role!!.realImageSrc!!,
-                    name = item.name,
-                    role = role!!.name!!,
-                    onClick = { navigateToDeck.invoke(item.id) },
-                    isCampaign = if (item.campaignName != null) true else null,
-                    campaignName = item.campaignName,
+        PullToRefreshBox(
+            isRefreshing = isRefreshing,
+            state = refreshState,
+            onRefresh = { decksViewModel.getAllNetworkDecks(user.currentUser) },
+            indicator = {
+                PullToRefreshDefaults.Indicator(
+                    modifier = Modifier.align(Alignment.TopCenter),
+                    isRefreshing = isRefreshing,
+                    containerColor = CustomTheme.colors.d10,
+                    color = CustomTheme.colors.l30,
+                    state = refreshState
                 )
             }
+        ) {
+            LazyColumn(
+                modifier = modifier
+                    .background(CustomTheme.colors.l30)
+                    .fillMaxSize()
+                    .padding(vertical = 8.dp),
+                state = listState
+            ) {
+                if (decksLazyItems.itemCount == 0 && decksLazyItems.loadState.isIdle) item {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = if (searchQuery.isEmpty())
+                                stringResource(R.string.no_decks)
+                            else stringResource(id = R.string.no_matching_decks, searchQuery),
+                            color = CustomTheme.colors.d30,
+                            fontFamily = Jost,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 18.sp,
+                            lineHeight = 24.sp,
+                            letterSpacing = 0.2.sp,
+                            textAlign = TextAlign.Center
+                        )
+                    }
+                }
+                items(
+                    count = decksLazyItems.itemCount,
+                    key = decksLazyItems.itemKey(DeckListItemProjection::id),
+                    contentType = decksLazyItems.itemContentType { it }
+                ) { index ->
+                    val item = decksLazyItems[index] ?: return@items
+                    val role by decksViewModel.getCard(
+                        item.meta.jsonObject["role"]?.jsonPrimitive?.content.toString()
+                    ).collectAsState(null)
+                    if (role != null) DeckListItem(
+                        meta = item.meta,
+                        imageSrc = role!!.realImageSrc!!,
+                        name = item.name,
+                        role = role!!.name!!,
+                        onClick = { navigateToDeck.invoke(item.id) },
+                        isCampaign = if (item.campaignName != null) true else null,
+                        campaignName = item.campaignName,
+                    )
+                }
 
-            // Handle load states: initial load and pagination load errors/loading.
-            decksLazyItems.apply {
-                when {
-                    loadState.refresh is LoadState.Loading -> {
-                        item {
-                            Column(
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.padding(16.dp).fillMaxWidth()
-                            ) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(32.dp),
-                                    color = CustomTheme.colors.m)
+                // Handle load states: initial load and pagination load errors/loading.
+                decksLazyItems.apply {
+                    when {
+                        loadState.refresh is LoadState.Loading -> {
+                            item {
+                                Column(
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                        .fillMaxWidth()
+                                ) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(32.dp),
+                                        color = CustomTheme.colors.m)
+                                }
                             }
                         }
-                    }
 
-                    loadState.append is LoadState.Loading -> {
-                        item {
-                            Column(
-                                verticalArrangement = Arrangement.Center,
-                                horizontalAlignment = Alignment.CenterHorizontally,
-                                modifier = Modifier.padding(16.dp).fillMaxWidth()
-                            ) {
-                                CircularProgressIndicator(
-                                    modifier = Modifier.size(32.dp),
-                                    color = CustomTheme.colors.m)
+                        loadState.append is LoadState.Loading -> {
+                            item {
+                                Column(
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                        .fillMaxWidth()
+                                ) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(32.dp),
+                                        color = CustomTheme.colors.m)
+                                }
                             }
                         }
                     }
