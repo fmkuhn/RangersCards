@@ -10,7 +10,7 @@ interface CardsRepository {
 
     suspend fun updateAllCards(cards: List<Card>)
 
-    suspend fun insertAllCards(cards: List<Card>)
+    suspend fun upsertAllCards(cards: List<Card>)
 
     suspend fun isExists(): Boolean
 

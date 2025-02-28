@@ -2,10 +2,10 @@ package com.rangerscards.data.database.dao
 
 import androidx.paging.PagingSource
 import androidx.room.Dao
-import androidx.room.Insert
 import androidx.room.OnConflictStrategy
 import androidx.room.Query
 import androidx.room.Update
+import androidx.room.Upsert
 import com.rangerscards.data.database.card.Card
 import com.rangerscards.data.database.card.CardListItemProjection
 import com.rangerscards.data.database.card.FullCardProjection
@@ -17,8 +17,8 @@ interface CardDao {
     @Update(onConflict = OnConflictStrategy.REPLACE)
     suspend fun updateAll(cards: List<Card>)
 
-    @Insert(onConflict = OnConflictStrategy.REPLACE)
-    suspend fun insertAll(cards: List<Card>)
+    @Upsert
+    suspend fun upsertAll(cards: List<Card>)
 
     @Query("SELECT EXISTS(SELECT * FROM card)")
     suspend fun isExists(): Boolean

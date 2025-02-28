@@ -15,7 +15,7 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
 
     override suspend fun updateAllCards(cards: List<Card>) = cardDao.updateAll(cards)
 
-    override suspend fun insertAllCards(cards: List<Card>) = cardDao.insertAll(cards)
+    override suspend fun upsertAllCards(cards: List<Card>) = cardDao.upsertAll(cards)
 
     override suspend fun isExists(): Boolean = cardDao.isExists()
 

@@ -13,6 +13,7 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.apolloStore
 import com.apollographql.apollo.cache.normalized.fetchPolicy
+import com.apollographql.apollo.exception.ApolloNetworkException
 import com.google.firebase.Firebase
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseUser
@@ -228,11 +229,14 @@ class SettingsViewModel(
                 if (cardsRepository.isExists())
                     cardsRepository.updateAllCards(response.data!!.cards.toCards(language))
                 else {
-                    cardsRepository.insertAllCards(response.data!!.cards.toCards(language))
+                    cardsRepository.upsertAllCards(response.data!!.cards.toCards(language))
                 }
-                userPreferencesRepository.saveCardsUpdatedTimestamp(
-                    response.data!!.all_updated_at[0].updated_at.toString()
-                )
+                if (response.errors.orEmpty().isEmpty()
+                    && response.exception !is ApolloNetworkException) {
+                    userPreferencesRepository.saveCardsUpdatedTimestamp(
+                        response.data!!.all_updated_at[0].updated_at.toString()
+                    )
+                }
             }
         }.invokeOnCompletion {
             _isCardsLoading.update { false }
