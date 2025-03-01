@@ -142,8 +142,7 @@ fun DeckScreen(
                         )
                     }
                 }
-            }
-            else {
+            } else {
                 item(key = "description/${deckId}") {
                     val role by deckViewModel.getRole(
                         deck!!.meta.jsonObject["role"]?.jsonPrimitive?.content.toString()
@@ -156,9 +155,9 @@ fun DeckScreen(
                             imageSrc = role?.realImageSrc,
                             name = role?.name.toString(),
                             text = CardTextParser.parseCustomText(role?.text.toString(), null),
-                            campaignName = deck?.campaignName
+                            campaignName = deck!!.campaignName
                         )
-                        val stats = listOfNotNull(deck?.awa, deck?.spi, deck?.fit, deck?.foc)
+                        val stats = listOf(deck!!.awa, deck!!.spi, deck!!.fit, deck!!.foc)
                         FullDeckStatsItem(stats, isDarkTheme)
                     }
                 }
