@@ -191,12 +191,12 @@ fun DeckListItemTextContainer(
             )
         }
         if (isCampaign != null) {
-            val icondId = if (isCampaign) "campaign" else "ranger"
+            val iconId = if (isCampaign) "campaign" else "ranger"
             BasicText(
                 text = buildAnnotatedString {
                     appendInlineContent(
-                        icondId,
-                        "[$icondId]"
+                        iconId,
+                        "[$iconId]"
                     )
                     append(" $campaignOrUserName")
                 },

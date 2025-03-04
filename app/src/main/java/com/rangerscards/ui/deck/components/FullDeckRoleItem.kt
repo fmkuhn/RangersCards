@@ -95,12 +95,12 @@ fun FullDeckRoleItem(
                 lineHeight = 18.sp,
             )
             if (campaignName != null) {
-                val icondId = "campaign"
+                val iconId = "campaign"
                 BasicText(
                     text = buildAnnotatedString {
                         appendInlineContent(
-                            icondId,
-                            "[$icondId]"
+                            iconId,
+                            "[$iconId]"
                         )
                         append(" $campaignName")
                     },
