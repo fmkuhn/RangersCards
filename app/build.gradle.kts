@@ -58,7 +58,7 @@ android {
 
 dependencies {
     // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:33.9.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
     implementation("com.google.firebase:firebase-auth")
 
     // Import Apollo Kotlin
@@ -85,16 +85,17 @@ dependencies {
     implementation("androidx.core:core-ktx:1.15.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.8.7")
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
-    implementation("androidx.activity:activity-compose:1.10.0")
-    implementation("androidx.navigation:navigation-compose:2.8.7")
+    implementation("androidx.activity:activity-compose:1.10.1")
+    implementation("androidx.navigation:navigation-compose:2.8.8")
     implementation(platform("androidx.compose:compose-bom:2025.02.00"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
     implementation("androidx.compose.material3:material3")
-    implementation("androidx.datastore:datastore-preferences:1.1.2")
+    implementation("androidx.datastore:datastore-preferences:1.1.3")
     implementation("androidx.appcompat:appcompat:1.7.0")
     implementation("androidx.appcompat:appcompat-resources:1.7.0")
+    implementation("org.jetbrains.kotlinx:kotlinx-collections-immutable:0.3.8")
 
     testImplementation("junit:junit:4.13.2")
 
