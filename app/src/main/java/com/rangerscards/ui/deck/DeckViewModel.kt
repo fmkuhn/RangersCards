@@ -268,7 +268,7 @@ class DeckViewModel(
                         slots = it.slots.put(id, it.slots[id]!! - 1),
                         sideSlots = it.sideSlots.put(id, (it.sideSlots[id] ?: 0) + 1)
                 )
-            } else{
+            } else {
                 if (originalDeck.value!!.campaignRewards?.contains(id) == true ||
                     setId == "malady") it.copy(
                         slots = it.slots.remove(id),
