@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import androidx.room.Upsert
+import com.rangerscards.data.database.card.CardDeckListItemProjection
 import com.rangerscards.data.database.card.CardListItemProjection
 import com.rangerscards.data.database.deck.Deck
 import com.rangerscards.data.database.deck.DeckListItemProjection
@@ -67,8 +68,18 @@ interface DeckDao {
     }
 
     @Query("SELECT * FROM deck WHERE id = :id")
-    fun getDeckById(id: String): Flow<Deck>
+    suspend fun getDeckById(id: String): Deck
 
     @Query("Select id, name, text, real_image_src FROM card WHERE id = :id")
-    fun getRole(id: String): Flow<RoleCardProjection>
+    suspend fun getRole(id: String): RoleCardProjection
+
+    @Query("SELECT id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, " +
+            "type_name, traits, level, set_id, set_type_id, deck_limit FROM card " +
+            "WHERE id IN (:ids) ORDER BY set_type_id, set_id, set_position")
+    fun getCardsByIds(ids: List<String>): Flow<List<CardDeckListItemProjection>>
+
+    @Query("SELECT id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, " +
+            "type_name, traits, level, set_id, set_type_id, deck_limit FROM card " +
+            "WHERE id IN (:ids) ORDER BY set_type_id, set_id, set_position")
+    suspend fun getChangedCardsByIds(ids: List<String>): List<CardDeckListItemProjection>
 }

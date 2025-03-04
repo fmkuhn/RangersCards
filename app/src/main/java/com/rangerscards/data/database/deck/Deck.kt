@@ -38,11 +38,11 @@ data class Deck(
     @ColumnInfo(name = "campaign_rewards")
     val campaignRewards: JsonElement?,
     @ColumnInfo(name = "previous_id")
-    val previousId: Int?,
+    val previousId: String?,
     @ColumnInfo(name = "previous_slots")
     val previousSlots: JsonElement?,
     @ColumnInfo(name = "previous_side_slots")
     val previousSideSlots: JsonElement?,
     @ColumnInfo(name = "next_id")
-    val nextId: Int?,
+    val nextId: String?,
 )

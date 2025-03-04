@@ -26,7 +26,6 @@
         <item quantity="one">%d друг</item>
         <item quantity="few">%d друга</item>
         <item quantity="many">%d друзей</item>
-        <item quantity="other">%d друзей</item>
     </plurals>
     <string name="search_friends">Поиск друзей</string>
     <string name="your_friends">Ваши друзья</string>
@@ -55,7 +54,6 @@
         <item quantity="one">%d дополнение</item>
         <item quantity="few">%d дополнения</item>
         <item quantity="many">%d дополнений</item>
-        <item quantity="other">%d дополнений</item>
     </plurals>
     <string name="rules_button">Правила</string>
     <string name="english_search_results_radio_button">Искать по английским картам</string>
@@ -129,4 +127,26 @@
     <string name="too_many_outside_interest">Слишком много карт хобби в вашей колоде.</string>
     <string name="too_many_cards">Слишком много карт. При замене карт на награды следует удалить любую карту (кроме карты с признаком недуг), чтобы сохранить размер колоды в 30 карт.</string>
     <string name="too_few_cards">Слишком мало карт. При замене наград следует вернуть обратно карту из вашей изначальной колоды, чтобы сохранить размер колоды в 30 карт.</string>
+    <plurals name="more_problems">
+        <item quantity="one"> + ещё %d проблема</item>
+        <item quantity="few"> + ещё %d проблемы</item>
+        <item quantity="many"> + ещё %d проблем</item>
+    </plurals>
+    <string name="edit_deck_button">Править</string>
+    <string name="cards_amount_in_deck">%d / 30 карт</string>
+    <plurals name="maladies_amount">
+        <item quantity="one">(%d недуг)</item>
+        <item quantity="few">(%d недуга)</item>
+        <item quantity="many">(%d недугов)</item>
+    </plurals>
+    <string name="personality">Личность</string>
+    <string name="outside_interest">Хобби</string>
+    <string name="rewards_and_maladies">Награды и Недуги</string>
+    <string name="side_deck">Сайд колода</string>
+    <string name="deck_changes">Изменения</string>
+    <string name="deck_changes_added">Добавлены</string>
+    <string name="deck_changes_removed">Удалены</string>
+    <string name="deck_changes_added_collection">Добавлены из коллекции</string>
+    <string name="deck_changes_returned_collection">Возвращены в коллекцию</string>
+    <string name="save_deck_button">Сохранить изменения</string>
 </resources>

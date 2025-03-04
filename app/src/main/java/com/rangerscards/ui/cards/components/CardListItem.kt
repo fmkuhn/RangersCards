@@ -6,15 +6,20 @@ import androidx.compose.foundation.isSystemInDarkTheme
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -53,7 +58,13 @@ fun CardListItem(
     traits: String?,
     level: Int?,
     isDarkTheme: Boolean,
-    onClick: () -> Unit
+    onClick: () -> Unit,
+    charForAmount: String? = null,
+    currentAmount: Int? = null,
+    onAddClick: (() -> Unit)? = null,
+    onAddEnabled: Boolean = false,
+    onRemoveClick: (() -> Unit)? = null,
+    onRemoveEnabled: Boolean = false,
 ) {
     Surface(
         onClick = onClick,
@@ -64,8 +75,10 @@ fun CardListItem(
             modifier = Modifier.fillMaxWidth(),
         ) {
             Row(
-                modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
-                    .fillMaxWidth(),
+                modifier = Modifier
+                    .padding(vertical = 4.dp, horizontal = 8.dp)
+                    .fillMaxWidth()
+                    .height(IntrinsicSize.Max),
                 horizontalArrangement = Arrangement.spacedBy(4.dp),
                 verticalAlignment = Alignment.Top
             ) {
@@ -81,6 +94,14 @@ fun CardListItem(
                 CardListItemTextContainer(name, typeName, traits, Modifier.weight(1f))
                 if (level != null)
                     CardListItemLevelContainer(aspectId, aspectShortName, level, isDarkTheme)
+                CardListItemDeckInfo(
+                    charForAmount,
+                    currentAmount,
+                    onAddClick,
+                    onAddEnabled,
+                    onRemoveClick,
+                    onRemoveEnabled
+                )
             }
             HorizontalDivider(
                 color = CustomTheme.colors.l10
@@ -244,6 +265,68 @@ fun CardListItemLevelContainer(
     }
 }
 
+@Composable
+fun CardListItemDeckInfo(
+    charForAmount: String?,
+    currentAmount: Int?,
+    onAddClick: (() -> Unit)?,
+    onAddEnable: Boolean,
+    onRemoveClick: (() -> Unit)?,
+    onRemoveEnable: Boolean
+) {
+    Row(
+        modifier = Modifier.fillMaxHeight(),
+        horizontalArrangement = Arrangement.spacedBy(4.dp),
+        verticalAlignment = Alignment.CenterVertically
+    ) {
+        if (onRemoveClick != null) IconButton(
+            onClick = onRemoveClick,
+            colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
+            modifier = Modifier.size(24.dp),
+            enabled = onRemoveEnable
+        ) {
+            Icon(
+                painterResource(id = R.drawable.remove_32dp),
+                contentDescription = null,
+                tint = CustomTheme.colors.m,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+        if (currentAmount != null) Surface(
+            modifier = Modifier.fillMaxHeight(),
+            color = CustomTheme.colors.l10,
+            shape = CustomTheme.shapes.small,
+            shadowElevation = 4.dp
+        ) {
+            Box(
+                modifier = Modifier.padding(horizontal = 6.dp).sizeIn(minWidth = 18.dp),
+                contentAlignment = Alignment.Center
+            ) {
+                Text(
+                    text = "${ if (currentAmount < 0) "" else (charForAmount ?: "×")}$currentAmount",
+                    color = CustomTheme.colors.d10,
+                    fontFamily = Jost,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 16.sp,
+                )
+            }
+        }
+        if (onAddClick != null) IconButton(
+            onClick = onAddClick,
+            colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
+            modifier = Modifier.size(24.dp),
+            enabled = onAddEnable
+        ) {
+            Icon(
+                painterResource(id = R.drawable.add_32dp),
+                contentDescription = null,
+                tint = CustomTheme.colors.m,
+                modifier = Modifier.size(24.dp)
+            )
+        }
+    }
+}
+
 @Preview(showBackground = true)
 @Composable
 fun CardListItemScreenPreview() {
@@ -259,11 +342,15 @@ fun CardListItemScreenPreview() {
                 cost = 2,
                 imageSrc = null,
                 name = "Scuttler g Tunnel",
-                typeName = null,
+                typeName = "Attachment",
                 traits = "Being / Companion / Mammal",
                 level = 2,
                 isDarkTheme = isSystemInDarkTheme(),
-                onClick = {}
+                onClick = {},
+                charForAmount = "×",
+                currentAmount = 2,
+                onAddClick = {},
+                onRemoveClick = {}
             )
         }
     }

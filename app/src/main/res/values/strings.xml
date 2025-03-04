@@ -147,4 +147,32 @@
     <string name="too_many_cards">Too many cards. When making deck changes while camping, you should remove cards to make room for rewards to maintain a 30 card deck.</string>
     <string name="too_few_cards">Not enough cards. When reward cards are removed while camping, you must add back cards from your original deck to maintain a 30 card deck.</string>
 
+    //FullDeck screen
+    <plurals name="more_problems">
+        <item quantity="one"> + %d more problem</item>
+        <item quantity="two"> + %d more problems</item>
+        <item quantity="few"> + %d more problems</item>
+        <item quantity="many"> + %d more problems</item>
+        <item quantity="other"> + %d more problems</item>
+    </plurals>
+    <string name="edit_deck_button">Edit</string>
+    <string name="cards_amount_in_deck">%d / 30 cards</string>
+    <plurals name="maladies_amount">
+        <item quantity="one">(%d malady)</item>
+        <item quantity="two">(%d maladies)</item>
+        <item quantity="few">(%d maladies)</item>
+        <item quantity="many">(%d maladies)</item>
+        <item quantity="other">(%d maladies)</item>
+    </plurals>
+    <string name="personality">Personality</string>
+    <string name="outside_interest">Outside interest</string>
+    <string name="rewards_and_maladies">Rewards and Maladies</string>
+    <string name="side_deck">Side deck</string>
+    <string name="deck_changes">Changes</string>
+    <string name="deck_changes_added">Added</string>
+    <string name="deck_changes_removed">Removed</string>
+    <string name="deck_changes_added_collection">Added from collection</string>
+    <string name="deck_changes_returned_collection">Returned to collection</string>
+    <string name="save_deck_button">Save changes</string>
+
 </resources>

@@ -303,11 +303,9 @@ fun RangersNavHost(
                                 "deck/$deckId"
                             ) {
                                 popUpTo(BottomNavScreen.Decks.startDestination) {
-                                    saveState = true
                                     inclusive = false
                                 }
                                 launchSingleTop = true
-                                restoreState = true
                             }
                         },
                         decksViewModel = decksViewModel,
@@ -335,10 +333,12 @@ fun RangersNavHost(
                     )
                     val deckId = backStackEntry.arguments?.getString(deckIdArgument)
                         ?: error("deckIdArgument cannot be null")
+                    val user by settingsViewModel.userUiState.collectAsState()
                     DeckScreen(
                         navController = navController,
                         deckViewModel = deckViewModel,
                         deckId = deckId,
+                        user = user.currentUser,
                         isDarkTheme = isDarkTheme,
                         contentPadding = innerPadding
                     )

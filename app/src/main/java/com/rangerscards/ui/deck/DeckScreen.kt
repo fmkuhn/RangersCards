@@ -1,15 +1,22 @@
 package com.rangerscards.ui.deck
 
+import androidx.activity.compose.BackHandler
+import androidx.annotation.StringRes
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.material3.Button
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
@@ -17,38 +24,80 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
+import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.buildAnnotatedString
+import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavHostController
+import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.R
 import com.rangerscards.data.objects.CardTextParser
 import com.rangerscards.data.objects.DeckMetaMaps
+import com.rangerscards.ui.cards.components.CardListItem
+import com.rangerscards.ui.deck.components.DeckCardsTypeCard
+import com.rangerscards.ui.deck.components.FullDeckProblemsItem
 import com.rangerscards.ui.deck.components.FullDeckRoleItem
 import com.rangerscards.ui.deck.components.FullDeckStatsItem
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
+import kotlinx.coroutines.delay
 
 @Composable
 fun DeckScreen(
     navController: NavHostController,
     deckViewModel: DeckViewModel,
     deckId: String,
+    user: FirebaseUser?,
     isDarkTheme: Boolean,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
-    val deck by deckViewModel.getDeck(deckId).collectAsState(null)
+    val originalDeck by deckViewModel.originalDeck.collectAsState()
+    val editableDeck by deckViewModel.editableDeck.collectAsState()
+    val values by deckViewModel.updatableValues.collectAsState()
+    val isEditing by deckViewModel.isEditing.collectAsState()
+    val role by deckViewModel.role.collectAsState()
+    val deck = if (isEditing) editableDeck else originalDeck
+    var needLoadDeck by rememberSaveable { mutableStateOf(true) }
+    val slots = deckViewModel.slotsCardsFlow.collectAsState(null).value?.groupBy {
+        when {
+            it.setId == "personality" -> "personality"
+            it.setTypeId == "background" -> if (it.setId == deck!!.background) "background" else "outsideInterest"
+            it.setTypeId == "specialty" -> if (it.setId == deck!!.specialty) "specialty" else "outsideInterest"
+            else -> "other"
+        }
+    }?.mapValues { (_, cards) -> cards.associateWith { (values!!.slots[it.id] ?: 0) } }
+    val orderedSlots = listOf("personality", "background", "specialty", "outsideInterest", "other")
+        .associateWith { key -> slots?.get(key) }
+    val extraSlots = deckViewModel.extraSlotsCardsFlow.collectAsState(null).value
+        ?.associate { card -> card to (values!!.extraSlots[card.id] ?: 0) }
+    val changedCards = deckViewModel.changedCards.collectAsState()
+    LaunchedEffect(needLoadDeck) {
+        delay(500L)
+        if (needLoadDeck) {
+            deckViewModel.loadDeck(deckId)
+            needLoadDeck = false
+        }
+    }
+    BackHandler {
+        if (deckViewModel.checkChanges()) {
+            //TODO:Implement save dialog
+        } else navController.navigateUp()
+    }
     Scaffold(
         containerColor = CustomTheme.colors.l30,
         modifier = Modifier.padding(
@@ -70,7 +119,11 @@ fun DeckScreen(
                         .fillMaxWidth()
                 ) {
                     IconButton(
-                        onClick = { navController.navigateUp() },
+                        onClick = {
+                            if (deckViewModel.checkChanges()) {
+                                //TODO:Implement save dialog
+                            } else navController.navigateUp()
+                        },
                         colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
                         modifier = Modifier.size(24.dp)
                     ) {
@@ -84,12 +137,8 @@ fun DeckScreen(
                     Column(
                         modifier = Modifier.weight(1f)
                     ) {
-                        val background = DeckMetaMaps.background[
-                            deck?.meta?.jsonObject?.get("background")?.jsonPrimitive?.content
-                        ]
-                        val specialty = DeckMetaMaps.specialty[
-                            deck?.meta?.jsonObject?.get("specialty")?.jsonPrimitive?.content
-                        ]
+                        val background = DeckMetaMaps.background[deck?.background]
+                        val specialty = DeckMetaMaps.specialty[deck?.specialty]
                         Text(
                             text = buildAnnotatedString {
                                 if (background != null)
@@ -120,33 +169,34 @@ fun DeckScreen(
             }
         },
     ) { innerPadding ->
-        LazyColumn(
-            modifier = Modifier.padding(
-                top = innerPadding.calculateTopPadding() + 8.dp,
-                bottom = 8.dp,
-                start = 8.dp,
-                end = 8.dp
-            ),
-            verticalArrangement = Arrangement.spacedBy(16.dp)
-        ) {
-            if (deck == null) {
-                item {
-                    Column(
-                        modifier = Modifier.fillMaxSize(),
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
-                    ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(32.dp),
-                            color = CustomTheme.colors.m
-                        )
-                    }
-                }
-            } else {
+        if (deck == null) {
+            Column(
+                modifier = Modifier.fillMaxSize().padding(
+                    top = innerPadding.calculateTopPadding() + 8.dp,
+                    bottom = 8.dp,
+                    start = 8.dp,
+                    end = 8.dp
+                ),
+                verticalArrangement = Arrangement.Center,
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator(
+                    modifier = Modifier.size(32.dp),
+                    color = CustomTheme.colors.m
+                )
+            }
+        } else {
+            LazyColumn(
+                modifier = Modifier.padding(
+                    top = innerPadding.calculateTopPadding() + 8.dp,
+                    bottom = 8.dp,
+                    start = 8.dp,
+                    end = 8.dp
+                ),
+                verticalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
                 item(key = "description/${deckId}") {
-                    val role by deckViewModel.getRole(
-                        deck!!.meta.jsonObject["role"]?.jsonPrimitive?.content.toString()
-                    ).collectAsState(null)
+                    if (role == null) deckViewModel.getRole(deck.roleId)
                     Column(
                         modifier = Modifier.fillMaxWidth(),
                         verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -155,13 +205,370 @@ fun DeckScreen(
                             imageSrc = role?.realImageSrc,
                             name = role?.name.toString(),
                             text = CardTextParser.parseCustomText(role?.text.toString(), null),
-                            campaignName = deck!!.campaignName
+                            campaignName = deck.campaignName
                         )
-                        val stats = listOf(deck!!.awa, deck!!.spi, deck!!.fit, deck!!.foc)
+                        val stats = listOf(values!!.awa, values!!.spi, values!!.fit, values!!.foc)
                         FullDeckStatsItem(stats, isDarkTheme)
+                    }
+                }
+                if (!values!!.problems.isNullOrEmpty())
+                    item(key = "problem") {
+                        FullDeckProblemsItem(values!!.problems!!)
+                    }
+                if (deck.nextId == null) item (key = "edit_button") {
+                    Button(
+                        onClick = { if (!isEditing) deckViewModel.enterEditMode()
+                            else deckViewModel.saveChanges(user) },
+                        modifier = Modifier.fillMaxWidth(),
+                        shape = CustomTheme.shapes.small,
+                        colors = ButtonDefaults.buttonColors().copy(CustomTheme.colors.d10),
+                        contentPadding = PaddingValues(8.dp),
+                    ) {
+                        Icon(
+                            painterResource(id = if (!isEditing) R.drawable.edit_32dp
+                            else R.drawable.done_32dp),
+                            contentDescription = null,
+                            tint = CustomTheme.colors.l30,
+                            modifier = Modifier.size(24.dp)
+                        )
+                        Spacer(modifier = Modifier.width(8.dp))
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            Text(
+                                text = stringResource(id = if (!isEditing) R.string.edit_deck_button
+                                else R.string.save_deck_button),
+                                modifier = Modifier.fillMaxWidth(),
+                                color = CustomTheme.colors.l30,
+                                fontFamily = Jost,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 18.sp,
+                                letterSpacing = 0.1.sp
+                            )
+                            val (amount, maladyAmount) = slots?.values?.flatMap { it.entries }
+                                ?.fold(0 to 0) { (nonMalady, malady), (cardItem, value) ->
+                                    if (cardItem.setId == "malady")
+                                        nonMalady to (malady + value)
+                                    else
+                                        (nonMalady + value) to malady
+                                } ?: (0 to 0)
+                            Text(
+                                text = buildAnnotatedString {
+                                    append(stringResource(R.string.cards_amount_in_deck, amount))
+                                    if (maladyAmount > 0)
+                                        append(" ${pluralStringResource(
+                                            R.plurals.maladies_amount, maladyAmount, maladyAmount
+                                        )}")
+                                },
+                                modifier = Modifier.fillMaxWidth(),
+                                color = CustomTheme.colors.l10,
+                                fontFamily = Jost,
+                                fontWeight = FontWeight.Normal,
+                                fontStyle = FontStyle.Italic,
+                                fontSize = 14.sp,
+                            )
+                        }
+                    }
+                }
+                orderedSlots.forEach { (key, value) ->
+                    when(key) {
+                        "personality" -> item {
+                            DeckCardsTypeCard(
+                                label = stringResource(R.string.personality),
+                                onClick = {}
+                            ) {
+                                value?.forEach { (card, amount) ->
+                                    key(card.id) {
+                                        CardListItem(
+                                            aspectId = card.aspectId,
+                                            aspectShortName = card.aspectShortName,
+                                            cost = card.cost,
+                                            imageSrc = card.realImageSrc,
+                                            name = card.name.toString(),
+                                            typeName = card.typeName,
+                                            traits = card.typeName,
+                                            level = card.level,
+                                            isDarkTheme = isDarkTheme,
+                                            currentAmount = amount,
+                                            onRemoveClick = if (isEditing) {
+                                                { deckViewModel.removeCard(card.id) }
+                                            } else null,
+                                            onRemoveEnabled = amount > 0,
+                                            onAddClick = if (isEditing) {
+                                                { deckViewModel.addCard(card.id) }
+                                            } else null,
+                                            onAddEnabled = amount != card.deckLimit,
+                                            onClick = { /*navigateToCard.invoke(index)*/ }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        "background" -> item {
+                            DeckCardsTypeCard(
+                                label = stringResource(R.string.background) + ": " +
+                                        stringResource(DeckMetaMaps.background[deck.background]!!),
+                                onClick = {}
+                            ) {
+                                value?.forEach { (card, amount) ->
+                                    key(card.id) {
+                                        CardListItem(
+                                            aspectId = card.aspectId,
+                                            aspectShortName = card.aspectShortName,
+                                            cost = card.cost,
+                                            imageSrc = card.realImageSrc,
+                                            name = card.name.toString(),
+                                            typeName = card.typeName,
+                                            traits = card.typeName,
+                                            level = card.level,
+                                            isDarkTheme = isDarkTheme,
+                                            currentAmount = amount,
+                                            onRemoveClick = if (isEditing) {
+                                                { deckViewModel.removeCard(card.id) }
+                                            } else null,
+                                            onRemoveEnabled = amount > 0,
+                                            onAddClick = if (isEditing) {
+                                                { deckViewModel.addCard(card.id) }
+                                            } else null,
+                                            onAddEnabled = amount != card.deckLimit,
+                                            onClick = { /*navigateToCard.invoke(index)*/ }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        "specialty" -> item {
+                            DeckCardsTypeCard(
+                                label = stringResource(R.string.specialty) + ": " +
+                                        stringResource(DeckMetaMaps.specialty[deck.specialty]!!),
+                                onClick = {}
+                            ) {
+                                value?.forEach { (card, amount) ->
+                                    key(card.id) {
+                                        CardListItem(
+                                            aspectId = card.aspectId,
+                                            aspectShortName = card.aspectShortName,
+                                            cost = card.cost,
+                                            imageSrc = card.realImageSrc,
+                                            name = card.name.toString(),
+                                            typeName = card.typeName,
+                                            traits = card.typeName,
+                                            level = card.level,
+                                            isDarkTheme = isDarkTheme,
+                                            currentAmount = amount,
+                                            onRemoveClick = if (isEditing) {
+                                                { deckViewModel.removeCard(card.id) }
+                                            } else null,
+                                            onRemoveEnabled = amount > 0,
+                                            onAddClick = if (isEditing) {
+                                                { deckViewModel.addCard(card.id) }
+                                            } else null,
+                                            onAddEnabled = amount != card.deckLimit,
+                                            onClick = { /*navigateToCard.invoke(index)*/ }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        "outsideInterest" -> item {
+                            DeckCardsTypeCard(
+                                label = stringResource(R.string.outside_interest),
+                                onClick = {}
+                            ) {
+                                value?.forEach { (card, amount) ->
+                                    key(card.id) {
+                                        CardListItem(
+                                            aspectId = card.aspectId,
+                                            aspectShortName = card.aspectShortName,
+                                            cost = card.cost,
+                                            imageSrc = card.realImageSrc,
+                                            name = card.name.toString(),
+                                            typeName = card.typeName,
+                                            traits = card.typeName,
+                                            level = card.level,
+                                            isDarkTheme = isDarkTheme,
+                                            currentAmount = amount,
+                                            onRemoveClick = if (isEditing) {
+                                                { deckViewModel.removeCard(card.id) }
+                                            } else null,
+                                            onRemoveEnabled = amount > 0,
+                                            onAddClick = if (isEditing) {
+                                                { deckViewModel.addCard(card.id) }
+                                            } else null,
+                                            onAddEnabled = amount != card.deckLimit,
+                                            onClick = { /*navigateToCard.invoke(index)*/ }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                        "other" -> if (deck.previousId != null) item {
+                            DeckCardsTypeCard(
+                                label = stringResource(R.string.rewards_and_maladies),
+                                onClick = {}
+                            ) {
+                                value?.forEach { (card, amount) ->
+                                    key(card.id) {
+                                        CardListItem(
+                                            aspectId = card.aspectId,
+                                            aspectShortName = card.aspectShortName,
+                                            cost = card.cost,
+                                            imageSrc = card.realImageSrc,
+                                            name = card.name.toString(),
+                                            typeName = card.typeName,
+                                            traits = card.typeName,
+                                            level = card.level,
+                                            isDarkTheme = isDarkTheme,
+                                            currentAmount = amount,
+                                            onRemoveClick = if (isEditing) {
+                                                { deckViewModel.removeCard(card.id) }
+                                            } else null,
+                                            onRemoveEnabled = amount > 0,
+                                            onAddClick = if (isEditing) {
+                                                { deckViewModel.addCard(card.id) }
+                                            } else null,
+                                            onAddEnabled = amount != card.deckLimit,
+                                            onClick = { /*navigateToCard.invoke(index)*/ }
+                                        )
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+                item {
+                    DeckCardsTypeCard(
+                        showIcon = false,
+                        label = stringResource(R.string.side_deck),
+                    ) {
+                        extraSlots?.forEach { (card, amount) ->
+                            key(card.id) {
+                                CardListItem(
+                                    aspectId = card.aspectId,
+                                    aspectShortName = card.aspectShortName,
+                                    cost = card.cost,
+                                    imageSrc = card.realImageSrc,
+                                    name = card.name.toString(),
+                                    typeName = card.typeName,
+                                    traits = card.typeName,
+                                    level = card.level,
+                                    isDarkTheme = isDarkTheme,
+                                    currentAmount = values?.slots?.get(card.id) ?: 0,
+                                    onClick = { /*navigateToCard.invoke(index)*/ }
+                                )
+                            }
+                        }
+                    }
+                }
+                if (deck.previousId != null && changedCards.value != null) item {
+                    DeckCardsTypeCard(
+                        showIcon = false,
+                        label = stringResource(R.string.deck_changes),
+                    ) {
+                        changedCards.value!!.forEach { (textId, cards) ->
+                            when(textId) {
+                                R.string.deck_changes_added -> if (cards.isNotEmpty()) {
+                                    DeckChangesHeader(textId)
+                                    cards.forEach { card ->
+                                        key(card.id) {
+                                            CardListItem(
+                                                aspectId = card.aspectId,
+                                                aspectShortName = card.aspectShortName,
+                                                cost = card.cost,
+                                                imageSrc = card.realImageSrc,
+                                                name = card.name.toString(),
+                                                typeName = card.typeName,
+                                                traits = card.typeName,
+                                                level = card.level,
+                                                isDarkTheme = isDarkTheme,
+                                                charForAmount = "+",
+                                                currentAmount = deck.addedCards[card.id],
+                                                onClick = { /*navigateToCard.invoke(index)*/ }
+                                            )
+                                        }
+                                    }
+                                }
+                                R.string.deck_changes_removed -> if (cards.isNotEmpty()) {
+                                    DeckChangesHeader(textId)
+                                    cards.forEach { card ->
+                                        key(card.id) {
+                                            CardListItem(
+                                                aspectId = card.aspectId,
+                                                aspectShortName = card.aspectShortName,
+                                                cost = card.cost,
+                                                imageSrc = card.realImageSrc,
+                                                name = card.name.toString(),
+                                                typeName = card.typeName,
+                                                traits = card.typeName,
+                                                level = card.level,
+                                                isDarkTheme = isDarkTheme,
+                                                currentAmount = deck.removedCards[card.id],
+                                                onClick = { /*navigateToCard.invoke(index)*/ }
+                                            )
+                                        }
+                                    }
+                                }
+                                R.string.deck_changes_added_collection -> if (cards.isNotEmpty()) {
+                                    DeckChangesHeader(textId)
+                                    cards.forEach { card ->
+                                        key(card.id) {
+                                            CardListItem(
+                                                aspectId = card.aspectId,
+                                                aspectShortName = card.aspectShortName,
+                                                cost = card.cost,
+                                                imageSrc = card.realImageSrc,
+                                                name = card.name.toString(),
+                                                typeName = card.typeName,
+                                                traits = card.typeName,
+                                                level = card.level,
+                                                isDarkTheme = isDarkTheme,
+                                                charForAmount = "+",
+                                                currentAmount = deck.addedCollectionCards[card.id],
+                                                onClick = { /*navigateToCard.invoke(index)*/ }
+                                            )
+                                        }
+                                    }
+                                }
+                                R.string.deck_changes_returned_collection -> if (cards.isNotEmpty()) {
+                                    DeckChangesHeader(textId)
+                                    cards.forEach { card ->
+                                        key(card.id) {
+                                            CardListItem(
+                                                aspectId = card.aspectId,
+                                                aspectShortName = card.aspectShortName,
+                                                cost = card.cost,
+                                                imageSrc = card.realImageSrc,
+                                                name = card.name.toString(),
+                                                typeName = card.typeName,
+                                                traits = card.typeName,
+                                                level = card.level,
+                                                isDarkTheme = isDarkTheme,
+                                                currentAmount = deck.returnedCollectionCards[card.id],
+                                                onClick = { /*navigateToCard.invoke(index)*/ }
+                                            )
+                                        }
+                                    }
+                                }
+                            }
+                        }
                     }
                 }
             }
         }
+    }
+}
+
+@Composable
+fun DeckChangesHeader(@StringRes textId: Int) {
+    Column(modifier = Modifier.fillMaxWidth()) {
+        Text(
+            text = stringResource(textId),
+            color = CustomTheme.colors.d30,
+            fontFamily = Jost,
+            fontWeight = FontWeight.Normal,
+            fontStyle = FontStyle.Italic,
+            fontSize = 18.sp,
+            lineHeight = 18.sp,
+            modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp)
+        )
+        HorizontalDivider(color = CustomTheme.colors.l10)
     }
 }

@@ -189,11 +189,10 @@ class DecksViewModel(
                 decksRepository.insertDeck(
                     createLocalDeck(
                         id = uuid,
-                        userId = user.currentUser?.uid.toString(),
-                        userHandle = user.userInfo?.profile?.userProfile?.handle,
                         deckName = name.ifEmpty { "${context.getString(backgroundLocalized!!)} - " +
                                 "${context.getString(specialtyLocalized!!)} $postfix" },
-                        meta = starterDeck.meta
+                        meta = starterDeck.meta,
+                        slots = starterDeck.slots
                     )
                 )
                 _deckIdToOpen.update { uuid }
@@ -202,15 +201,14 @@ class DecksViewModel(
                 val specialtyLocalized = DeckMetaMaps.specialty[specialty]
                 decksRepository.insertDeck(createLocalDeck(
                     id = uuid,
-                    userId = user.currentUser?.uid.toString(),
-                    userHandle = user.userInfo?.profile?.userProfile?.handle,
                     deckName = name.ifEmpty { "${context.getString(backgroundLocalized!!)} - " +
                             context.getString(specialtyLocalized!!) },
                     meta = buildJsonObject {
                         put("role", role)
                         put("background", background)
                         put("specialty", specialty)
-                    }
+                    },
+                    slots = null
                 ))
                 _deckIdToOpen.update { uuid }
             }
@@ -219,17 +217,16 @@ class DecksViewModel(
 
     private fun createLocalDeck(
         id: String,
-        userId: String,
-        userHandle: String?,
         deckName: String,
+        slots: JsonElement?,
         meta: JsonElement,
     ): Deck {
         return Deck(
             id = id,
             uploaded = false,
-            userId = userId,
-            userHandle = userHandle,
-            slots = JsonObject(emptyMap()),
+            userId = "",
+            userHandle = null,
+            slots = slots ?: JsonObject(emptyMap()),
             sideSlots = JsonObject(emptyMap()),
             extraSlots = JsonObject(emptyMap()),
             version = 1,
@@ -251,21 +248,21 @@ class DecksViewModel(
             nextId = null,
         )
     }
+}
 
-    private fun getCurrentDateTime(): String {
-        // Get the current time
-        val now = Date()
-        // Create a formatter using the pattern "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
-        // The "XXX" pattern is supported in API 24 and formats the timezone as +00:00
-        val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.US)
-        sdf.timeZone = TimeZone.getTimeZone("UTC")
-        val formatted = sdf.format(now)
-        // Replace trailing "Z" with "+00:00" if necessary
-        return if (formatted.endsWith("Z")) {
-            formatted.substring(0, formatted.length - 1) + "+00:00"
-        } else {
-            formatted
-        }
+fun getCurrentDateTime(): String {
+    // Get the current time
+    val now = Date()
+    // Create a formatter using the pattern "yyyy-MM-dd'T'HH:mm:ss.SSSXXX"
+    // The "XXX" pattern is supported in API 24 and formats the timezone as +00:00
+    val sdf = SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss.SSSXXX", Locale.US)
+    sdf.timeZone = TimeZone.getTimeZone("UTC")
+    val formatted = sdf.format(now)
+    // Replace trailing "Z" with "+00:00" if necessary
+    return if (formatted.endsWith("Z")) {
+        formatted.substring(0, formatted.length - 1) + "+00:00"
+    } else {
+        formatted
     }
 }
 
@@ -294,10 +291,10 @@ fun com.rangerscards.fragment.Deck.toDeck(uploaded: Boolean): Deck {
         campaignId = this.campaign?.id,
         campaignName = this.campaign?.name,
         campaignRewards = this.campaign?.rewards,
-        previousId = this.previous_deck?.id,
+        previousId = this.previous_deck?.id?.toString(),
         previousSlots = this.previous_deck?.slots,
         previousSideSlots = this.previous_deck?.side_slots,
-        nextId = this.next_deck?.id,
+        nextId = this.next_deck?.id?.toString(),
     )
 }
 
