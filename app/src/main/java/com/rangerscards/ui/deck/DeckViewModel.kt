@@ -256,17 +256,27 @@ class DeckViewModel(
         }
     }
 
-    fun removeCard(id: String) {
+    fun removeCard(id: String, setId: String?) {
         if (updatableValues.value!!.slots.contains(id)) _updatableValues.update {
             if (originalDeck.value!!.previousId == null) it!!.copy(
                 slots = it.slots.remove(id)
-            ) else if (it!!.slots[id]!! > 1) it.copy(
-                slots = it.slots.put(id, it.slots[id]!! - 1),
-                sideSlots = it.sideSlots.put(id, (it.sideSlots[id] ?: 0) + 1)
-            ) else it.copy(
-                slots = it.slots.remove(id),
-                sideSlots = it.sideSlots.put(id, (it.sideSlots[id] ?: 0) + 1)
-            )
+            ) else if (it!!.slots[id]!! > 1) {
+                if (originalDeck.value!!.campaignRewards?.contains(id) == true ||
+                    setId == "malady") it.copy(
+                        slots = it.slots.put(id, it.slots[id]!! - 1)
+                ) else it.copy(
+                        slots = it.slots.put(id, it.slots[id]!! - 1),
+                        sideSlots = it.sideSlots.put(id, (it.sideSlots[id] ?: 0) + 1)
+                )
+            } else{
+                if (originalDeck.value!!.campaignRewards?.contains(id) == true ||
+                    setId == "malady") it.copy(
+                        slots = it.slots.remove(id),
+                ) else it.copy(
+                    slots = it.slots.remove(id),
+                    sideSlots = it.sideSlots.put(id, (it.sideSlots[id] ?: 0) + 1)
+                )
+            }
         }
     }
 

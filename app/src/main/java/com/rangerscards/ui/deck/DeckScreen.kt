@@ -289,7 +289,7 @@ fun DeckScreen(
                                             isDarkTheme = isDarkTheme,
                                             currentAmount = amount,
                                             onRemoveClick = if (isEditing) {
-                                                { deckViewModel.removeCard(card.id) }
+                                                { deckViewModel.removeCard(card.id, card.setId) }
                                             } else null,
                                             onRemoveEnabled = amount > 0,
                                             onAddClick = if (isEditing) {
@@ -322,7 +322,7 @@ fun DeckScreen(
                                             isDarkTheme = isDarkTheme,
                                             currentAmount = amount,
                                             onRemoveClick = if (isEditing) {
-                                                { deckViewModel.removeCard(card.id) }
+                                                { deckViewModel.removeCard(card.id, card.setId) }
                                             } else null,
                                             onRemoveEnabled = amount > 0,
                                             onAddClick = if (isEditing) {
@@ -355,7 +355,7 @@ fun DeckScreen(
                                             isDarkTheme = isDarkTheme,
                                             currentAmount = amount,
                                             onRemoveClick = if (isEditing) {
-                                                { deckViewModel.removeCard(card.id) }
+                                                { deckViewModel.removeCard(card.id, card.setId) }
                                             } else null,
                                             onRemoveEnabled = amount > 0,
                                             onAddClick = if (isEditing) {
@@ -387,7 +387,7 @@ fun DeckScreen(
                                             isDarkTheme = isDarkTheme,
                                             currentAmount = amount,
                                             onRemoveClick = if (isEditing) {
-                                                { deckViewModel.removeCard(card.id) }
+                                                { deckViewModel.removeCard(card.id, card.setId) }
                                             } else null,
                                             onRemoveEnabled = amount > 0,
                                             onAddClick = if (isEditing) {
@@ -419,7 +419,7 @@ fun DeckScreen(
                                             isDarkTheme = isDarkTheme,
                                             currentAmount = amount,
                                             onRemoveClick = if (isEditing) {
-                                                { deckViewModel.removeCard(card.id) }
+                                                { deckViewModel.removeCard(card.id, card.setId) }
                                             } else null,
                                             onRemoveEnabled = amount > 0,
                                             onAddClick = if (isEditing) {
@@ -439,8 +439,9 @@ fun DeckScreen(
                         showIcon = false,
                         label = stringResource(R.string.side_deck),
                     ) {
-                        extraSlots?.forEach { (card, amount) ->
+                        extraSlots?.forEach { (card, _) ->
                             key(card.id) {
+                                val currentAmount = values?.slots?.get(card.id) ?: 0
                                 CardListItem(
                                     aspectId = card.aspectId,
                                     aspectShortName = card.aspectShortName,
@@ -451,7 +452,15 @@ fun DeckScreen(
                                     traits = card.typeName,
                                     level = card.level,
                                     isDarkTheme = isDarkTheme,
-                                    currentAmount = values?.slots?.get(card.id) ?: 0,
+                                    currentAmount = currentAmount,
+                                    onRemoveClick = if (isEditing) {
+                                        { deckViewModel.removeCard(card.id, card.setId) }
+                                    } else null,
+                                    onRemoveEnabled = currentAmount > 0,
+                                    onAddClick = if (isEditing) {
+                                        { deckViewModel.addCard(card.id) }
+                                    } else null,
+                                    onAddEnabled = currentAmount != card.deckLimit,
                                     onClick = { /*navigateToCard.invoke(index)*/ }
                                 )
                             }
