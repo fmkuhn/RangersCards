@@ -270,9 +270,9 @@ fun CardListItemDeckInfo(
     charForAmount: String?,
     currentAmount: Int?,
     onAddClick: (() -> Unit)?,
-    onAddEnable: Boolean,
+    onAddEnabled: Boolean,
     onRemoveClick: (() -> Unit)?,
-    onRemoveEnable: Boolean
+    onRemoveEnabled: Boolean
 ) {
     Row(
         modifier = Modifier.fillMaxHeight(),
@@ -283,7 +283,7 @@ fun CardListItemDeckInfo(
             onClick = onRemoveClick,
             colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
             modifier = Modifier.size(24.dp),
-            enabled = onRemoveEnable
+            enabled = onRemoveEnabled
         ) {
             Icon(
                 painterResource(id = R.drawable.remove_32dp),
@@ -315,7 +315,7 @@ fun CardListItemDeckInfo(
             onClick = onAddClick,
             colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
             modifier = Modifier.size(24.dp),
-            enabled = onAddEnable
+            enabled = onAddEnabled
         ) {
             Icon(
                 painterResource(id = R.drawable.add_32dp),

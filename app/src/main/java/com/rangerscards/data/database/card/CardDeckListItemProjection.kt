@@ -6,6 +6,8 @@ data class CardDeckListItemProjection(
     val id: String,
     val name: String?,
     val traits: String?,
+    @ColumnInfo(name = "real_traits")
+    val realTraits: String?,
     @ColumnInfo(name = "set_name")
     val setName: String?,
     val level: Int?,

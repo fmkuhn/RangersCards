@@ -29,6 +29,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
@@ -43,19 +44,29 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.compose.ui.window.Dialog
+import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.R
 import com.rangerscards.data.objects.CardTextParser
 import com.rangerscards.data.objects.DeckMetaMaps
 import com.rangerscards.ui.cards.components.CardListItem
+import com.rangerscards.ui.components.SquareButton
 import com.rangerscards.ui.deck.components.DeckCardsTypeCard
 import com.rangerscards.ui.deck.components.FullDeckProblemsItem
 import com.rangerscards.ui.deck.components.FullDeckRoleItem
 import com.rangerscards.ui.deck.components.FullDeckStatsItem
+import com.rangerscards.ui.settings.components.SettingsBaseCard
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
 import kotlinx.coroutines.delay
+import kotlinx.coroutines.launch
+
+enum class DialogType {
+    Save,
+    Delete,
+}
 
 @Composable
 fun DeckScreen(
@@ -86,6 +97,11 @@ fun DeckScreen(
     val extraSlots = deckViewModel.extraSlotsCardsFlow.collectAsState(null).value
         ?.associate { card -> card to (values!!.extraSlots[card.id] ?: 0) }
     val changedCards = deckViewModel.changedCards.collectAsState()
+    val deckProblems = deckViewModel.deckProblemsFlow.collectAsState(deck?.problems to (0 to null))
+    var showActionDialog by rememberSaveable { mutableStateOf<DialogType?>(null) }
+    var showLoadingInDialog by rememberSaveable { mutableStateOf(false) }
+    var showNameDialog by rememberSaveable { mutableStateOf(false) }
+    val coroutine = rememberCoroutineScope()
     LaunchedEffect(needLoadDeck) {
         delay(500L)
         if (needLoadDeck) {
@@ -95,7 +111,7 @@ fun DeckScreen(
     }
     BackHandler {
         if (deckViewModel.checkChanges()) {
-            //TODO:Implement save dialog
+            showActionDialog = DialogType.Save
         } else navController.navigateUp()
     }
     Scaffold(
@@ -121,7 +137,7 @@ fun DeckScreen(
                     IconButton(
                         onClick = {
                             if (deckViewModel.checkChanges()) {
-                                //TODO:Implement save dialog
+                                showActionDialog = DialogType.Save
                             } else navController.navigateUp()
                         },
                         colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
@@ -169,14 +185,100 @@ fun DeckScreen(
             }
         },
     ) { innerPadding ->
+        if (showActionDialog != null) Dialog(
+            onDismissRequest = { showActionDialog = null },
+            properties = DialogProperties(
+                dismissOnBackPress = true,
+                dismissOnClickOutside = true,
+                usePlatformDefaultWidth = false
+            )
+        ) {
+            SettingsBaseCard(
+                isDarkTheme = isDarkTheme,
+                labelIdRes = R.string.save_deck_changes_header
+            ) {
+                Text(
+                    text = stringResource(id = R.string.save_deck_changes_text),
+                    color = CustomTheme.colors.d30,
+                    fontFamily = Jost,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 18.sp,
+                    lineHeight = 24.sp,
+                    modifier = Modifier.padding(horizontal = 4.dp)
+                )
+                SquareButton(
+                    stringId = R.string.cancel_button,
+                    leadingIcon = R.drawable.close_32dp,
+                    onClick = { showActionDialog = null },
+                    buttonColor = ButtonDefaults.buttonColors()
+                        .copy(CustomTheme.colors.d30),
+                    iconColor = CustomTheme.colors.warn,
+                    textColor = CustomTheme.colors.l30
+                )
+                SquareButton(
+                    R.string.discard_deck_changes_button,
+                    R.drawable.delete_32dp,
+                    onClick = {
+                        deckViewModel.discardChanges()
+                        showActionDialog = null
+                        navController.navigateUp()
+                    },
+                    buttonColor = ButtonDefaults.buttonColors()
+                        .copy(CustomTheme.colors.warn),
+                    iconColor = if (isDarkTheme)
+                        CustomTheme.colors.d30 else CustomTheme.colors.l30,
+                    textColor = if (isDarkTheme)
+                        CustomTheme.colors.d30 else CustomTheme.colors.l30,
+                    isEnabled = !showLoadingInDialog
+                )
+                SquareButton(
+                    stringId = R.string.save_deck_changes_button,
+                    leadingIcon = R.drawable.done_32dp,
+                    onClick = {
+                        coroutine.launch {
+                            showLoadingInDialog = true
+                            showActionDialog = null
+                            deckViewModel.saveChanges(user, deckProblems.value.first)
+                        }.invokeOnCompletion {
+                            showLoadingInDialog = false
+                            navController.navigateUp()
+                        }
+                    },
+                )
+            }
+        }
+        if (showLoadingInDialog) Dialog(
+            onDismissRequest = { showLoadingInDialog = false },
+            properties = DialogProperties(
+                dismissOnBackPress = false,
+                dismissOnClickOutside = false,
+                usePlatformDefaultWidth = false
+            )
+        ) {
+            SettingsBaseCard(
+                isDarkTheme = isDarkTheme,
+                labelIdRes = R.string.saving_deck_changes_header
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(32.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally
+                ) {
+                    CircularProgressIndicator(modifier = Modifier.size(32.dp), color = CustomTheme.colors.m)
+                }
+            }
+        }
         if (deck == null) {
             Column(
-                modifier = Modifier.fillMaxSize().padding(
-                    top = innerPadding.calculateTopPadding() + 8.dp,
-                    bottom = 8.dp,
-                    start = 8.dp,
-                    end = 8.dp
-                ),
+                modifier = Modifier
+                    .fillMaxSize()
+                    .padding(
+                        top = innerPadding.calculateTopPadding() + 8.dp,
+                        bottom = 8.dp,
+                        start = 8.dp,
+                        end = 8.dp
+                    ),
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
@@ -211,14 +313,22 @@ fun DeckScreen(
                         FullDeckStatsItem(stats, isDarkTheme)
                     }
                 }
-                if (!values!!.problems.isNullOrEmpty())
+                if (!deckProblems.value.first.isNullOrEmpty())
                     item(key = "problem") {
-                        FullDeckProblemsItem(values!!.problems!!)
+                        FullDeckProblemsItem(deckProblems.value.first!!)
                     }
                 if (deck.nextId == null) item (key = "edit_button") {
                     Button(
                         onClick = { if (!isEditing) deckViewModel.enterEditMode()
-                            else deckViewModel.saveChanges(user) },
+                            else {
+                                coroutine.launch {
+                                    showLoadingInDialog = true
+                                    deckViewModel.saveChanges(user, deckProblems.value.first)
+                                }.invokeOnCompletion {
+                                    showLoadingInDialog = false
+                                    showActionDialog = null
+                                }
+                            } },
                         modifier = Modifier.fillMaxWidth(),
                         shape = CustomTheme.shapes.small,
                         colors = ButtonDefaults.buttonColors().copy(CustomTheme.colors.d10),
@@ -296,7 +406,11 @@ fun DeckScreen(
                                                 { deckViewModel.addCard(card.id) }
                                             } else null,
                                             onAddEnabled = amount != card.deckLimit,
-                                            onClick = { /*navigateToCard.invoke(index)*/ }
+                                            onClick = { navController.navigate(
+                                                "deck/card/${card.id}"
+                                            ) {
+                                                launchSingleTop = true
+                                            } }
                                         )
                                     }
                                 }
@@ -329,7 +443,11 @@ fun DeckScreen(
                                                 { deckViewModel.addCard(card.id) }
                                             } else null,
                                             onAddEnabled = amount != card.deckLimit,
-                                            onClick = { /*navigateToCard.invoke(index)*/ }
+                                            onClick = { navController.navigate(
+                                                "deck/card/${card.id}"
+                                            ) {
+                                                launchSingleTop = true
+                                            } }
                                         )
                                     }
                                 }
@@ -362,7 +480,11 @@ fun DeckScreen(
                                                 { deckViewModel.addCard(card.id) }
                                             } else null,
                                             onAddEnabled = amount != card.deckLimit,
-                                            onClick = { /*navigateToCard.invoke(index)*/ }
+                                            onClick = { navController.navigate(
+                                                "deck/card/${card.id}"
+                                            ) {
+                                                launchSingleTop = true
+                                            } }
                                         )
                                     }
                                 }
@@ -394,7 +516,11 @@ fun DeckScreen(
                                                 { deckViewModel.addCard(card.id) }
                                             } else null,
                                             onAddEnabled = amount != card.deckLimit,
-                                            onClick = { /*navigateToCard.invoke(index)*/ }
+                                            onClick = { navController.navigate(
+                                                "deck/card/${card.id}"
+                                            ) {
+                                                launchSingleTop = true
+                                            } }
                                         )
                                     }
                                 }
@@ -426,7 +552,11 @@ fun DeckScreen(
                                                 { deckViewModel.addCard(card.id) }
                                             } else null,
                                             onAddEnabled = amount != card.deckLimit,
-                                            onClick = { /*navigateToCard.invoke(index)*/ }
+                                            onClick = { navController.navigate(
+                                                "deck/card/${card.id}"
+                                            ) {
+                                                launchSingleTop = true
+                                            } }
                                         )
                                     }
                                 }
@@ -461,7 +591,11 @@ fun DeckScreen(
                                         { deckViewModel.addCard(card.id) }
                                     } else null,
                                     onAddEnabled = currentAmount != card.deckLimit,
-                                    onClick = { /*navigateToCard.invoke(index)*/ }
+                                    onClick = { navController.navigate(
+                                        "deck/card/${card.id}"
+                                    ) {
+                                        launchSingleTop = true
+                                    } }
                                 )
                             }
                         }
@@ -490,7 +624,11 @@ fun DeckScreen(
                                                 isDarkTheme = isDarkTheme,
                                                 charForAmount = "+",
                                                 currentAmount = deck.addedCards[card.id],
-                                                onClick = { /*navigateToCard.invoke(index)*/ }
+                                                onClick = { navController.navigate(
+                                                    "deck/card/${card.id}"
+                                                ) {
+                                                    launchSingleTop = true
+                                                } }
                                             )
                                         }
                                     }
@@ -510,7 +648,11 @@ fun DeckScreen(
                                                 level = card.level,
                                                 isDarkTheme = isDarkTheme,
                                                 currentAmount = deck.removedCards[card.id],
-                                                onClick = { /*navigateToCard.invoke(index)*/ }
+                                                onClick = { navController.navigate(
+                                                    "deck/card/${card.id}"
+                                                ) {
+                                                    launchSingleTop = true
+                                                } }
                                             )
                                         }
                                     }
@@ -531,7 +673,11 @@ fun DeckScreen(
                                                 isDarkTheme = isDarkTheme,
                                                 charForAmount = "+",
                                                 currentAmount = deck.addedCollectionCards[card.id],
-                                                onClick = { /*navigateToCard.invoke(index)*/ }
+                                                onClick = { navController.navigate(
+                                                    "deck/card/${card.id}"
+                                                ) {
+                                                    launchSingleTop = true
+                                                } }
                                             )
                                         }
                                     }
@@ -551,7 +697,11 @@ fun DeckScreen(
                                                 level = card.level,
                                                 isDarkTheme = isDarkTheme,
                                                 currentAmount = deck.returnedCollectionCards[card.id],
-                                                onClick = { /*navigateToCard.invoke(index)*/ }
+                                                onClick = { navController.navigate(
+                                                    "deck/card/${card.id}"
+                                                ) {
+                                                    launchSingleTop = true
+                                                } }
                                             )
                                         }
                                     }

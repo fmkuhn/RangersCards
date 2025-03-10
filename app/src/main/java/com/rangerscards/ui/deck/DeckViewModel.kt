@@ -4,7 +4,6 @@ import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.ApolloClient
-import com.apollographql.apollo.exception.ApolloNetworkException
 import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.R
 import com.rangerscards.SaveDeckMutation
@@ -14,10 +13,8 @@ import com.rangerscards.data.database.deck.RoleCardProjection
 import com.rangerscards.data.database.repository.DeckRepository
 import com.rangerscards.ui.decks.getCurrentDateTime
 import com.rangerscards.ui.decks.toDeck
-import kotlinx.collections.immutable.PersistentList
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
-import kotlinx.collections.immutable.toPersistentList
 import kotlinx.collections.immutable.toPersistentMap
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
@@ -27,6 +24,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.flow
 import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
@@ -54,6 +52,7 @@ data class FullDeckState(
     val roleId: String,
     val background: String,
     val specialty: String,
+    val problems: List<String>?,
     val campaignId: Int?,
     val campaignName: String?,
     val campaignRewards: List<String>?,
@@ -75,7 +74,6 @@ data class OftenUpdatableDeckValues(
     val spi: Int,
     val fit: Int,
     val foc: Int,
-    val problems: PersistentList<String>?,
 )
 
 class DeckViewModel(
@@ -122,6 +120,12 @@ class DeckViewModel(
             deckRepository.getCardsByIds(it)
         }
 
+    @OptIn(ExperimentalCoroutinesApi::class)
+    val deckProblemsFlow: Flow<Pair<List<String>, Pair<Int, Int?>>> = slotsCardsFlow
+        .flatMapLatest {
+            parseDeckForErrors(it)
+        }
+
     fun loadDeck(id: String) {
         viewModelScope.launch {
             val deck = deckRepository.getDeck(id)
@@ -134,9 +138,6 @@ class DeckViewModel(
                     spi = deck.spi,
                     fit = deck.fit,
                     foc = deck.foc,
-                    problems = deck.meta.jsonObject["problem"]?.jsonArray?.map {
-                        it.jsonPrimitive.content
-                    }?.toPersistentList()
                 )
             }
             _originalDeck.update { deck.toDeckState() }
@@ -230,6 +231,163 @@ class DeckViewModel(
         }
     }
 
+    private fun parseDeckForErrors(
+        cards: List<CardDeckListItemProjection>
+    ): Flow<Pair<List<String>, Pair<Int, Int?>>> {
+        val isUpgrade = originalDeck.value?.previousId != null
+        val problems = mutableListOf<String>()
+        // Build stats mapping
+        val stats = mapOf(
+            "AWA" to updatableValues.value!!.awa,
+            "FIT" to updatableValues.value!!.fit,
+            "FOC" to updatableValues.value!!.foc,
+            "SPI" to updatableValues.value!!.spi
+        )
+        var splashCount = 0
+        var splashResId: Int? = 0
+        val deckSize = cards.associateWith { updatableValues.value!!.slots[it.id] }
+            .entries.sumOf { it.value ?: 0 }
+        cards.forEach { card ->
+            val cardCount = updatableValues.value!!.slots[card.id] ?: 0
+            if (cardCount > 2) {
+                if (card.setId != "malady") {
+                    problems.add("too_many_duplicates")
+                }
+            }else if (!isUpgrade && cardCount != 2) {
+                problems.add("need_two_cards")
+            }
+            if (card.aspectId != null && card.level != null) {
+                if ((stats[card.aspectId] ?: 0) < card.level) {
+                    problems.add("invalid_aspect_levels")
+                }
+            }
+        }
+        if (isUpgrade) {
+            if (deckSize < 30) {
+                problems.add("too_few_cards")
+            } else if (deckSize > 30) {
+                problems.add("too_many_cards")
+            }
+        } else {
+            // Additional rules for starting decks:
+            var backgroundNonExpert = 0
+            var backgroundCount = 0
+            var specialtyNonExpert = 0
+            var specialtyCount = 0
+            val personalityCount = mutableMapOf(
+                "AWA" to 0,
+                "FIT" to 0,
+                "FOC" to 0,
+                "SPI" to 0
+            )
+            cards.forEach { card ->
+                val cardCount = updatableValues.value!!.slots[card.id] ?: 0
+                when(card.setId) {
+                    "personality" -> {
+                        if (card.aspectId != null) {
+                            when (card.aspectId) {
+                                "AWA" -> {
+                                    personalityCount["AWA"] = personalityCount.getValue("AWA") + 2
+                                    if (personalityCount.getValue("AWA") > 2) problems.add("too_many_awa_personality")
+                                }
+                                "FOC" -> {
+                                    personalityCount["FOC"] = personalityCount.getValue("FOC") + 2
+                                    if (personalityCount.getValue("FOC") > 2) problems.add("too_many_foc_personality")
+                                }
+                                "FIT" -> {
+                                    personalityCount["FIT"] = personalityCount.getValue("FIT") + 2
+                                    if (personalityCount.getValue("FIT") > 2) problems.add("too_many_fit_personality")
+                                }
+                                "SPI" -> {
+                                    personalityCount["SPI"] = personalityCount.getValue("SPI") + 2
+                                    if (personalityCount.getValue("SPI") > 2) problems.add("too_many_spi_personality")
+                                }
+                            }
+                        }
+                    }
+                    else -> {
+                        when (card.setTypeId) {
+                            "background" -> {
+                                if (card.setId == originalDeck.value!!.background) {
+                                    backgroundCount += cardCount
+                                    if (card.realTraits == null || !card.realTraits.contains("Expert")) {
+                                        backgroundNonExpert += cardCount
+                                    }
+                                    if (backgroundCount > 10) {
+                                        if (backgroundCount > 12 || splashCount >= 2) {
+                                            problems.add("too_many_background")
+                                        } else if (backgroundNonExpert < 2) {
+                                            problems.add("invalid_outside_interest")
+                                        } else {
+                                            splashResId = R.string.background_as_outside_interest
+                                            splashCount += cardCount
+                                        }
+                                    }
+                                } else {
+                                    if (card.realTraits != null && card.realTraits.contains("Expert")) {
+                                        problems.add("invalid_outside_interest")
+                                    } else {
+                                        splashCount += cardCount
+                                        if (splashCount > 2) {
+                                            problems.add("too_many_outside_interest")
+                                        }
+                                    }
+                                }
+                            }
+                            "specialty" -> {
+                                if (card.setId == originalDeck.value!!.specialty) {
+                                    specialtyCount += cardCount
+                                    if (card.realTraits == null || !card.realTraits.contains("Expert")) {
+                                        specialtyNonExpert += updatableValues.value!!.slots[card.id] ?: 0
+                                    }
+                                    if (specialtyCount > 10) {
+                                        if (specialtyCount > 12 || splashCount >= 2) {
+                                            problems.add("too_many_specialty")
+                                        } else if (specialtyNonExpert < 2) {
+                                            problems.add("invalid_outside_interest")
+                                        } else {
+                                            splashResId = R.string.specialty_as_outside_interest
+                                            splashCount += cardCount
+                                        }
+                                    }
+                                } else {
+                                    if (card.realTraits != null && card.realTraits.contains("Expert")) {
+                                        problems.add("invalid_outside_interest")
+                                    } else {
+                                        splashCount += cardCount
+                                        if (splashCount > 2) {
+                                            problems.add("too_many_outside_interest")
+                                        }
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+            // Validate personality counts: each aspect must equal exactly 2.
+            if (personalityCount["AWA"] != 2 ||
+                personalityCount["FIT"] != 2 ||
+                personalityCount["FOC"] != 2 ||
+                personalityCount["SPI"] != 2
+            ) {
+                problems.add("personality")
+            }
+            if (specialtyCount < 10) {
+                problems.add("specialty")
+            }
+            if (backgroundCount < 10) {
+                problems.add("background")
+            }
+            if (splashCount < 2) {
+                problems.add("outside_interest")
+            }
+        }
+        return flow {
+            emit(problems to (if (splashCount == 2) splashCount to splashResId else 0 to null))
+        }
+    }
+
     fun enterEditMode() {
         originalDeck.value?.let { original ->
             editableDeck.update { original.copy() }
@@ -239,7 +397,7 @@ class DeckViewModel(
     }
 
     fun addCard(id: String) {
-        if (updatableValues.value!!.slots.contains(id)) _updatableValues.update {
+        _updatableValues.update {
             if (originalDeck.value!!.previousId == null) it!!.copy(
                 slots = it.slots.put(id, 2)
             ) else if (it!!.sideSlots.contains(id)) {
@@ -257,7 +415,7 @@ class DeckViewModel(
     }
 
     fun removeCard(id: String, setId: String?) {
-        if (updatableValues.value!!.slots.contains(id)) _updatableValues.update {
+        _updatableValues.update {
             if (originalDeck.value!!.previousId == null) it!!.copy(
                 slots = it.slots.remove(id)
             ) else if (it!!.slots[id]!! > 1) {
@@ -280,14 +438,30 @@ class DeckViewModel(
         }
     }
 
+    fun addExtraCard(id: String) {
+        _updatableValues.update {
+            it!!.copy(
+                extraSlots = it.extraSlots.put(id, 1)
+            )
+        }
+    }
+
+    fun removeExtraCard(id: String) {
+        _updatableValues.update {
+            it!!.copy(
+                extraSlots = it.extraSlots.remove(id)
+            )
+        }
+    }
+
     fun checkChanges(): Boolean {
         return (originalDeck.value != editableDeck.value ||
                 updatableValues.value != backupOftenValues) &&
                 editableDeck.value != null && backupOftenValues != null
     }
 
-    fun saveChanges(user: FirebaseUser?) {
-        if (checkChanges()) viewModelScope.launch {
+    suspend fun saveChanges(user: FirebaseUser?, problems: List<String>?) {
+        if (checkChanges()) {
             if (editableDeck.value!!.uploaded) {
                 val values = updatableValues.value!!
                 val token = user!!.getIdToken(true).await().token
@@ -301,8 +475,8 @@ class DeckViewModel(
                     spi = values.spi,
                     meta = buildJsonObject {
                         put("role", editableDeck.value!!.roleId)
-                        if (!values.problems.isNullOrEmpty()) put("problem", buildJsonArray {
-                            values.problems.forEach { add(it) }
+                        if (!problems.isNullOrEmpty()) put("problem", buildJsonArray {
+                            problems.forEach { add(it) }
                         })
                         put("background", editableDeck.value!!.background)
                         put("specialty", editableDeck.value!!.specialty)
@@ -314,48 +488,21 @@ class DeckViewModel(
                     extraSlots = buildJsonObject {
                         values.extraSlots.forEach { (key, value) -> put(key, value) } },
                 )).addHttpHeader("Authorization", "Bearer $token").execute()
-                when {
-                    newDeck.errors.orEmpty().isNotEmpty() -> {
-                        // GraphQL error
-                        Log.d("GraphQL error", newDeck.errors!!.first().message)
-                    }
-
-                    newDeck.exception is ApolloNetworkException -> {
-                        // Network error
-                        Log.d("Network error", newDeck.exception!!.message.toString())
-                    }
-
-                    newDeck.data != null -> {
-                        // data (never partial)
-                        Log.d("test", newDeck.data!!.update_rangers_deck_by_pk!!.deck.name)
-                        deckRepository.updateDeck(
-                            newDeck.data!!.update_rangers_deck_by_pk!!.deck.toDeck(true)
-                        )
-                    }
-
-                    else -> {
-                        // Another fetch error, maybe a cache miss?
-                        // Or potentially a non-compliant server returning data: null without an error
-                        Log.d("Another fetch error", "Oh no... An error happened.")
-                    }
+                if (newDeck.data != null) {
+                    Log.d("test", newDeck.data!!.update_rangers_deck_by_pk!!.deck.name)
+                    deckRepository.updateDeck(
+                        newDeck.data!!.update_rangers_deck_by_pk!!.deck.toDeck(true)
+                    )
                 }
-//                if (newDeck.data != null) {
-//                    Log.d("test", newDeck.data!!.update_rangers_deck_by_pk!!.deck.name)
-//                    deckRepository.updateDeck(
-//                        newDeck.data!!.update_rangers_deck_by_pk!!.deck.toDeck(true)
-//                    )
-//                }
             } else {
-                deckRepository.updateDeck(editableDeck.value!!.toDeck(updatableValues.value!!))
+                deckRepository.updateDeck(editableDeck.value!!.toDeck(
+                    updatableValues.value!!, problems
+                ))
             }
-            loadDeck(editableDeck.value!!.id)
-            backupOftenValues = null
-            isEditing.update { false }
-            }.invokeOnCompletion { editableDeck.update { null } } else {
-                backupOftenValues = null
-                isEditing.update { false }
-                editableDeck.update { null }
-            }
+        }
+        backupOftenValues = null
+        isEditing.update { false }
+        editableDeck.update { null }
     }
 
     fun discardChanges() {
@@ -393,6 +540,7 @@ fun Deck.toDeckState(): FullDeckState {
         roleId = this.meta.jsonObject["role"]!!.jsonPrimitive.content,
         background = this.meta.jsonObject["background"]!!.jsonPrimitive.content,
         specialty = this.meta.jsonObject["specialty"]!!.jsonPrimitive.content,
+        problems = this.meta.jsonObject["problem"]?.jsonArray?.map { it.jsonPrimitive.content },
         campaignId = this.campaignId,
         campaignName = this.campaignName,
         campaignRewards = this.campaignRewards?.jsonArray?.map { it.jsonPrimitive.content },
@@ -403,7 +551,7 @@ fun Deck.toDeckState(): FullDeckState {
     )
 }
 
-fun FullDeckState.toDeck(values: OftenUpdatableDeckValues): Deck {
+fun FullDeckState.toDeck(values: OftenUpdatableDeckValues, problems: List<String>?): Deck {
     val deckState = this
     return Deck(
         id = this.id,
@@ -424,8 +572,8 @@ fun FullDeckState.toDeck(values: OftenUpdatableDeckValues): Deck {
         updatedAt = getCurrentDateTime(),
         meta = buildJsonObject {
             put("role", deckState.roleId)
-            if (!values.problems.isNullOrEmpty()) put("problem", buildJsonArray {
-                values.problems.forEach { add(it) }
+            if (!problems.isNullOrEmpty()) put("problem", buildJsonArray {
+                problems.forEach { add(it) }
             })
             put("background", deckState.background)
             put("specialty", deckState.specialty)

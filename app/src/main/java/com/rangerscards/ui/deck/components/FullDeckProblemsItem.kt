@@ -22,11 +22,10 @@ import com.rangerscards.R
 import com.rangerscards.data.objects.DeckErrorsMap
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
-import kotlinx.collections.immutable.PersistentList
 
 @Composable
 fun FullDeckProblemsItem(
-    problems: PersistentList<String>
+    problems: List<String>
 ) {
     Column(modifier = Modifier.fillMaxWidth()) {
         val iconId = "problem"

@@ -1,5 +1,6 @@
 package com.rangerscards.ui.navigation
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -53,6 +54,7 @@ import com.rangerscards.ui.cards.CardsViewModel
 import com.rangerscards.ui.cards.FullCardScreen
 import com.rangerscards.ui.cards.components.RangersSpoilerSwitch
 import com.rangerscards.ui.components.RangersTopAppBar
+import com.rangerscards.ui.deck.DeckFullCardScreen
 import com.rangerscards.ui.deck.DeckScreen
 import com.rangerscards.ui.deck.DeckViewModel
 import com.rangerscards.ui.decks.DeckCreationScreen
@@ -341,6 +343,38 @@ fun RangersNavHost(
                         user = user.currentUser,
                         isDarkTheme = isDarkTheme,
                         contentPadding = innerPadding
+                    )
+                    title = ""
+                    actions = null
+                    switch = null
+                }
+                val cardIdArgument = "cardId"
+                composable(
+                    route = "deck/card/{$cardIdArgument}",
+                    arguments = listOf(navArgument(cardIdArgument) { type = NavType.StringType })
+                ) { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("deck/{$deckIdArgument}")
+                    }
+                    val deckViewModel: DeckViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val cardsViewModel: CardsViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = backStackEntry
+                    )
+                    val cardId = backStackEntry.arguments?.getString(cardIdArgument)
+                        ?: error("cardIdArgument cannot be null")
+                    val isEditing by deckViewModel.isEditing.collectAsState()
+                    DeckFullCardScreen(
+                        navigateUp = { navController.navigateUp() },
+                        deckViewModel = deckViewModel,
+                        cardsViewModel = cardsViewModel,
+                        cardId = cardId,
+                        isDarkTheme = isDarkTheme,
+                        contentPadding = innerPadding,
+                        isEditing = isEditing
                     )
                     title = ""
                     actions = null
