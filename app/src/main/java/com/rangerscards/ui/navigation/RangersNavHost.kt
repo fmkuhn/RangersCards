@@ -1,6 +1,5 @@
 package com.rangerscards.ui.navigation
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -106,22 +105,30 @@ fun RangersNavHost(
     ) { innerPadding ->
         NavHost(
             navController = navController,
-            startDestination = BottomNavScreen.Settings.route,
+            startDestination = BottomNavScreen.Decks.route,
             enterTransition = {
-                fadeIn(
-                    animationSpec = tween(300, easing = LinearEasing)
-                ) + slideIntoContainer(
-                    animationSpec = tween(300, easing = EaseIn),
-                    towards = AnimatedContentTransitionScope.SlideDirection.Up
-                )
+                if (initialState.destination.parent == targetState.destination.parent) {
+                    fadeIn(
+                        animationSpec = tween(300, easing = LinearEasing)
+                    ) + slideIntoContainer(
+                        animationSpec = tween(300, easing = EaseIn),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Up
+                    )
+                } else {
+                    EnterTransition.None
+                }
             },
             exitTransition = {
-                fadeOut(
-                    animationSpec = tween(400, easing = LinearEasing)
-                ) + slideOutOfContainer(
-                    animationSpec = tween(400, easing = EaseOut),
-                    towards = AnimatedContentTransitionScope.SlideDirection.Down
-                )
+                if (initialState.destination.parent == targetState.destination.parent) {
+                    fadeOut(
+                        animationSpec = tween(400, easing = LinearEasing)
+                    ) + slideOutOfContainer(
+                        animationSpec = tween(400, easing = EaseOut),
+                        towards = AnimatedContentTransitionScope.SlideDirection.Down
+                    )
+                } else {
+                    ExitTransition.None
+                }
             }
         ) {
             navigation(
@@ -323,10 +330,34 @@ fun RangersNavHost(
             val deckIdArgument = "deckId"
             navigation(
                 startDestination = "deck/{$deckIdArgument}",
-                route = "deck"
+                route = "deck",
             ) {
                 composable(
                     route = "deck/{$deckIdArgument}",
+                    enterTransition = {
+                        if (!initialState.destination.route.orEmpty().startsWith("deck/")) {
+                            fadeIn(
+                                animationSpec = tween(300, easing = LinearEasing)
+                            ) + slideIntoContainer(
+                                animationSpec = tween(300, easing = EaseIn),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Up
+                            )
+                        } else {
+                            EnterTransition.None
+                        }
+                    },
+                    exitTransition = {
+                        if (!targetState.destination.route.orEmpty().startsWith("deck/")) {
+                            fadeOut(
+                                animationSpec = tween(400, easing = LinearEasing)
+                            ) + slideOutOfContainer(
+                                animationSpec = tween(400, easing = EaseOut),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Down
+                            )
+                        } else {
+                            ExitTransition.None
+                        }
+                    },
                     arguments = listOf(navArgument(deckIdArgument) { type = NavType.StringType })
                 ) { backStackEntry ->
                     val deckViewModel: DeckViewModel = viewModel(
