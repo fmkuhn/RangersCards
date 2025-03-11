@@ -323,7 +323,8 @@ fun DeckScreen(
                     item(key = "problem") {
                         FullDeckProblemsItem(deckProblems.value.first!!)
                     }
-                if (deck.nextId == null && (user == null || user.uid == deck.userId)) item (key = "edit_button") {
+                if (deck.nextId == null && (user == null || user.uid == deck.userId
+                            || deck.userId.isEmpty())) item (key = "edit_button") {
                     Button(
                         onClick = { if (!isEditing) deckViewModel.enterEditMode()
                             else {
