@@ -56,7 +56,6 @@ import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.R
 import com.rangerscards.data.objects.CardTextParser
-import com.rangerscards.data.objects.DeckErrorsMap
 import com.rangerscards.data.objects.DeckMetaMaps
 import com.rangerscards.ui.cards.components.CardListItem
 import com.rangerscards.ui.components.SquareButton
@@ -324,7 +323,7 @@ fun DeckScreen(
                     item(key = "problem") {
                         FullDeckProblemsItem(deckProblems.value.first!!)
                     }
-                if (deck.nextId == null) item (key = "edit_button") {
+                if (deck.nextId == null && (user == null || user.uid == deck.userId)) item (key = "edit_button") {
                     Button(
                         onClick = { if (!isEditing) deckViewModel.enterEditMode()
                             else {
