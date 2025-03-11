@@ -181,5 +181,16 @@
     <string name="save_deck_changes_button">Save changes</string>
     <string name="discard_deck_changes_button">Discard Changes</string>
     <string name="saving_deck_changes_header">Saving…</string>
+    <string name="editing_deck_screen_header">Editing deck</string>
+    <string name="rewards_search_tab">Rewards</string>
+    <string name="maladies_search_tab">Maladies</string>
+    <string name="collection_search_tab">Collection</string>
+    <string name="displaced_search_tab">Displaced cards</string>
+    <string name="shaw_all_button">Show all</string>
+    <string name="personality_text">Select 4 different personality cards, 1 from each aspect.</string>
+    <string name="background_text">Select 5 different cards from your chosen background.</string>
+    <string name="specialty_text">Select 5 different cards from your chosen specialty.</string>
+    <string name="outside_interest_text">Select 1 card from any background or specialty as your outside interest.\nNote: cards from your chosen specialty/background are not shown here, but your outside interest is allowed to be from your chosen class if you use the other tabs to select it.</string>
+    <string name="collection_text">Some campaign events may allow you to permanently swap cards from your deck with those from the collection.\nAfter selecting a new collection card and removing one from your deck, you can ‘return’ a card to the collection using the displaced cards tab.</string>
 
 </resources>

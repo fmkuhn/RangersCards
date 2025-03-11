@@ -156,4 +156,15 @@
     <string name="save_deck_changes_button">Сохранить изменения</string>
     <string name="discard_deck_changes_button">Отменить изменения</string>
     <string name="saving_deck_changes_header">Сохранение…</string>
+    <string name="editing_deck_screen_header">Редактирование колоды</string>
+    <string name="rewards_search_tab">Награды</string>
+    <string name="maladies_search_tab">Недуги</string>
+    <string name="collection_search_tab">Коллекция</string>
+    <string name="displaced_search_tab">Отложенные карты</string>
+    <string name="shaw_all_button">Показать все</string>
+    <string name="personality_text">Выберите 4 уникальных карт личности: по 1 карте от каждой из 4 разных черт.</string>
+    <string name="background_text">Выберите 5 уникальных карт из карт вашей квалификации.</string>
+    <string name="specialty_text">Выберите 5 уникальных карт из карт вашей специализации.</string>
+    <string name="outside_interest_text">Выберите 1 карту из любой квалификации или специализации как ваше хобби.\nПримечание: карты из выбранной вами специальности/квалификации здесь не показаны, но ваше хобби может быть из выбранного вами класса, если вы используете другие вкладки для его выбора.</string>
+    <string name="collection_text">Некоторые события кампании могут позволить вам навсегда поменять карты из своей колоды на карты из коллекции.\nВыбрав новую карту коллекции и удалив одну из своей колоды, вы можете "вернуть" ее в коллекцию, используя вкладку отложенные карты.</string>
 </resources>

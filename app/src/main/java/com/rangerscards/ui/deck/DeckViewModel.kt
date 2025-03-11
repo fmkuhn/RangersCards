@@ -389,7 +389,7 @@ class DeckViewModel(
     }
 
     fun enterEditMode() {
-        originalDeck.value?.let { original ->
+        if (!isEditing.value) originalDeck.value?.let { original ->
             editableDeck.update { original.copy() }
             backupOftenValues = updatableValues.value
             isEditing.update { true }

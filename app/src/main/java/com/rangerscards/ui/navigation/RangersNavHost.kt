@@ -53,9 +53,11 @@ import com.rangerscards.ui.cards.CardsViewModel
 import com.rangerscards.ui.cards.FullCardScreen
 import com.rangerscards.ui.cards.components.RangersSpoilerSwitch
 import com.rangerscards.ui.components.RangersTopAppBar
+import com.rangerscards.ui.deck.DeckCardsSearchingListScreen
 import com.rangerscards.ui.deck.DeckFullCardScreen
 import com.rangerscards.ui.deck.DeckScreen
 import com.rangerscards.ui.deck.DeckViewModel
+import com.rangerscards.ui.deck.DeckCardsViewModel
 import com.rangerscards.ui.decks.DeckCreationScreen
 import com.rangerscards.ui.decks.DecksScreen
 import com.rangerscards.ui.decks.DecksViewModel
@@ -407,9 +409,32 @@ fun RangersNavHost(
                         contentPadding = innerPadding,
                         isEditing = isEditing
                     )
-                    title = ""
-                    actions = null
-                    switch = null
+                }
+                composable(route = "deck/cardsList") { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("deck/{$deckIdArgument}")
+                    }
+                    val deckViewModel: DeckViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val deckCardsViewModel: DeckCardsViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = backStackEntry
+                    )
+                    DeckCardsSearchingListScreen(
+                        navigateUp = { navController.navigateUp() },
+                        deckViewModel = deckViewModel,
+                        deckCardsViewModel = deckCardsViewModel,
+                        isDarkTheme = isDarkTheme,
+                        navigateToCard = { cardIndex ->
+                            navController.navigate(
+                                "deck/cardsList/card/$cardIndex"
+                            ) {
+                                launchSingleTop = true
+                            }
+                        }
+                    )
                 }
             }
             navigation(

@@ -13,6 +13,9 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.text.BasicText
+import androidx.compose.foundation.text.InlineTextContent
+import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.Button
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -38,6 +41,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.Placeholder
+import androidx.compose.ui.text.PlaceholderVerticalAlign
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
@@ -50,6 +56,7 @@ import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.R
 import com.rangerscards.data.objects.CardTextParser
+import com.rangerscards.data.objects.DeckErrorsMap
 import com.rangerscards.data.objects.DeckMetaMaps
 import com.rangerscards.ui.cards.components.CardListItem
 import com.rangerscards.ui.components.SquareButton
@@ -383,7 +390,12 @@ fun DeckScreen(
                         "personality" -> item {
                             DeckCardsTypeCard(
                                 label = stringResource(R.string.personality),
-                                onClick = {}
+                                onClick = { deckViewModel.enterEditMode()
+                                    navController.navigate(
+                                    "deck/cardsList"
+                                ) {
+                                    launchSingleTop = true
+                                } }
                             ) {
                                 value?.forEach { (card, amount) ->
                                     key(card.id) {
@@ -420,7 +432,12 @@ fun DeckScreen(
                             DeckCardsTypeCard(
                                 label = stringResource(R.string.background) + ": " +
                                         stringResource(DeckMetaMaps.background[deck.background]!!),
-                                onClick = {}
+                                onClick = { deckViewModel.enterEditMode()
+                                    navController.navigate(
+                                    "deck/cardsList"
+                                ) {
+                                    launchSingleTop = true
+                                } }
                             ) {
                                 value?.forEach { (card, amount) ->
                                     key(card.id) {
@@ -457,7 +474,12 @@ fun DeckScreen(
                             DeckCardsTypeCard(
                                 label = stringResource(R.string.specialty) + ": " +
                                         stringResource(DeckMetaMaps.specialty[deck.specialty]!!),
-                                onClick = {}
+                                onClick = { deckViewModel.enterEditMode()
+                                    navController.navigate(
+                                    "deck/cardsList"
+                                ) {
+                                    launchSingleTop = true
+                                } }
                             ) {
                                 value?.forEach { (card, amount) ->
                                     key(card.id) {
@@ -493,8 +515,53 @@ fun DeckScreen(
                         "outsideInterest" -> item {
                             DeckCardsTypeCard(
                                 label = stringResource(R.string.outside_interest),
-                                onClick = {}
+                                onClick = { deckViewModel.enterEditMode()
+                                    navController.navigate(
+                                    "deck/cardsList"
+                                ) {
+                                    launchSingleTop = true
+                                } }
                             ) {
+                                if (deckProblems.value.second.second != null) {
+                                    Column(modifier = Modifier.fillMaxWidth()) {
+                                        val iconId = "info"
+                                        BasicText(
+                                            modifier = Modifier.padding(horizontal = 8.dp),
+                                            text = buildAnnotatedString {
+                                                appendInlineContent(
+                                                    iconId,
+                                                    "[$iconId]"
+                                                )
+                                                append(" ${
+                                                    stringResource(deckProblems.value.second.second!!)
+                                                } ")
+                                            },
+                                            inlineContent = mapOf(
+                                                "info" to InlineTextContent(
+                                                    Placeholder(
+                                                        width = 16.sp,
+                                                        height = 16.sp,
+                                                        placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
+                                                    )
+                                                ) {
+                                                    Icon(
+                                                        painter = painterResource(R.drawable.info_32dp),
+                                                        contentDescription = "Info Icon",
+                                                        tint = CustomTheme.colors.m
+                                                    )
+                                                },
+                                            ),
+                                            style = TextStyle(
+                                                color = CustomTheme.colors.d30,
+                                                fontFamily = Jost,
+                                                fontWeight = FontWeight.Normal,
+                                                fontSize = 16.sp,
+                                                lineHeight = 18.sp,
+                                            ),
+                                        )
+                                        HorizontalDivider(color = CustomTheme.colors.l10)
+                                    }
+                                }
                                 value?.forEach { (card, amount) ->
                                     key(card.id) {
                                         CardListItem(
@@ -529,7 +596,12 @@ fun DeckScreen(
                         "other" -> if (deck.previousId != null) item {
                             DeckCardsTypeCard(
                                 label = stringResource(R.string.rewards_and_maladies),
-                                onClick = {}
+                                onClick = { deckViewModel.enterEditMode()
+                                    navController.navigate(
+                                    "deck/cardsList"
+                                ) {
+                                    launchSingleTop = true
+                                } }
                             ) {
                                 value?.forEach { (card, amount) ->
                                     key(card.id) {

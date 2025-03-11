@@ -356,7 +356,7 @@ fun GetAllCardsQuery.Card.toCard(locale: String): Card? {
             id = it,
             name = this.card.name,
             realName = if (locale == "en") null else this.card.real_name,
-            realTraits = if (locale == "en") null else this.card.real_traits,
+            realTraits = this.card.real_traits,
             traits = this.card.traits,
             equip = this.card.equip,
             presence = this.card.presence,

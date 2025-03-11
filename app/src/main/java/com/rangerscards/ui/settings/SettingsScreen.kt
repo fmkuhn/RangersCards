@@ -32,9 +32,6 @@ fun SettingsScreen(
     modifier: Modifier = Modifier,
 ) {
     val user by settingsViewModel.userUiState.collectAsState()
-    LaunchedEffect(Unit) {
-        settingsViewModel.downloadCardsIfDatabaseNotExists()
-    }
     LazyColumn(
         modifier = modifier
             .background(CustomTheme.colors.l10)

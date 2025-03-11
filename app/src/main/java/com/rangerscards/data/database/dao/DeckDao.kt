@@ -82,4 +82,124 @@ interface DeckDao {
             "type_name, traits, level, set_id, set_type_id, deck_limit FROM card " +
             "WHERE id IN (:ids) ORDER BY set_type_id, set_id, set_position")
     suspend fun getChangedCardsByIds(ids: List<String>): List<CardDeckListItemProjection>
+
+
+    //Queries for deck pagination without searching
+    @Query("SELECT id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, " +
+            "type_name, traits, level, set_id, set_type_id, deck_limit FROM card " +
+            "WHERE set_id = 'personality' ORDER BY aspect_id, set_position")
+    fun getPersonalityCards(): PagingSource<Int, CardDeckListItemProjection>
+
+    @Query("SELECT id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, " +
+            "type_name, traits, level, set_id, set_type_id, deck_limit FROM card " +
+            "WHERE set_id = :background AND set_type_id = 'background' AND type_id != 'role' " +
+            "ORDER BY aspect_id, set_position")
+    fun getBackgroundCards(background: String): PagingSource<Int, CardDeckListItemProjection>
+
+    @Query("SELECT id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, " +
+            "type_name, traits, level, set_id, set_type_id, deck_limit FROM card " +
+            "WHERE set_id = :specialty AND set_type_id = 'specialty' AND type_id != 'role' " +
+            "ORDER BY aspect_id, set_position")
+    fun getSpecialtyCards(specialty: String): PagingSource<Int, CardDeckListItemProjection>
+
+    @Query("SELECT id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, " +
+            "type_name, traits, level, set_id, set_type_id, deck_limit FROM card " +
+            "WHERE set_id != :background AND set_id != :specialty AND type_id != 'role' AND " +
+            "real_traits NOT LIKE '%expert%' ORDER BY (set_type_id IS NULL), set_type_id, set_id, set_position")
+    fun getOutsideInterestCards(background: String, specialty: String): PagingSource<Int, CardDeckListItemProjection>
+
+    @Query("SELECT id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, " +
+            "type_name, traits, level, set_id, set_type_id, deck_limit FROM card " +
+            "WHERE set_id == 'reward' ORDER BY (set_type_id IS NULL), set_type_id, set_id, set_position")
+    fun getAllRewards(): PagingSource<Int, CardDeckListItemProjection>
+
+    @Query("SELECT id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, " +
+            "type_name, traits, level, set_id, set_type_id, deck_limit FROM card " +
+            "WHERE id IN (:rewards) ORDER BY (set_type_id IS NULL), set_type_id, set_id, set_position")
+    fun getRewards(rewards: List<String>): PagingSource<Int, CardDeckListItemProjection>
+
+    @Query("SELECT id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, " +
+            "type_name, traits, level, set_id, set_type_id, deck_limit FROM card " +
+            "WHERE set_id == 'malady' ORDER BY (set_type_id IS NULL), set_type_id, set_id, set_position")
+    fun getAllMaladies(): PagingSource<Int, CardDeckListItemProjection>
+
+    @Query("SELECT id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, " +
+            "type_name, traits, level, set_id, set_type_id, deck_limit FROM card " +
+            "WHERE spoiler = 'false' OR (spoiler IS NULL AND NOT EXISTS (" +
+            "SELECT 1 FROM card WHERE spoiler = 'false')) AND type_id != 'role'" +
+            "ORDER BY (set_type_id IS NULL), set_type_id, set_id, set_position"
+    )
+    fun getAllCards(): PagingSource<Int, CardDeckListItemProjection>
+
+    @Query("SELECT id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, " +
+            "type_name, traits, level, set_id, set_type_id, deck_limit FROM card " +
+            "WHERE id IN (:ids) ORDER BY (set_type_id IS NULL), set_type_id, set_id, set_position")
+    fun getExtraCards(ids: List<String>): PagingSource<Int, CardDeckListItemProjection>
+
+
+    //Queries for deck pagination with searching
+    @Query("SELECT card.id, card.set_name, card.aspect_id, card.aspect_short_name, card.cost, " +
+            "card.real_image_src, card.name, card.type_name, card.traits, card.level, card.set_id, " +
+            "card.set_type_id, card.deck_limit FROM card JOIN card_fts ON (card.id = card_fts.id) " +
+            "WHERE set_id = 'personality' AND (card_fts MATCH :query) ORDER BY aspect_id, set_position")
+    fun searchPersonalityCards(query: String): PagingSource<Int, CardDeckListItemProjection>
+
+    @Query("SELECT card.id, card.set_name, card.aspect_id, card.aspect_short_name, card.cost, " +
+            "card.real_image_src, card.name, card.type_name, card.traits, card.level, card.set_id, " +
+            "card.set_type_id, card.deck_limit FROM card JOIN card_fts ON (card.id = card_fts.id)" +
+            "WHERE set_id = :background AND set_type_id = 'background' AND type_id != 'role' " +
+            "AND (card_fts MATCH :query) ORDER BY aspect_id, set_position")
+    fun searchBackgroundCards(query: String, background: String): PagingSource<Int, CardDeckListItemProjection>
+
+    @Query("SELECT card.id, card.set_name, card.aspect_id, card.aspect_short_name, card.cost, " +
+            "card.real_image_src, card.name, card.type_name, card.traits, card.level, card.set_id, " +
+            "card.set_type_id, card.deck_limit FROM card JOIN card_fts ON (card.id = card_fts.id)" +
+            "WHERE set_id = :specialty AND set_type_id = 'specialty' AND type_id != 'role' " +
+            "AND (card_fts MATCH :query) ORDER BY aspect_id, set_position")
+    fun searchSpecialtyCards(query: String, specialty: String): PagingSource<Int, CardDeckListItemProjection>
+
+    @Query("SELECT card.id, card.set_name, card.aspect_id, card.aspect_short_name, card.cost, " +
+            "card.real_image_src, card.name, card.type_name, card.traits, card.level, card.set_id, " +
+            "card.set_type_id, card.deck_limit FROM card JOIN card_fts ON (card.id = card_fts.id)" +
+            "WHERE set_id != :background AND set_id != :specialty AND type_id != 'role' AND " +
+            "real_traits NOT LIKE '%expert%' AND (card_fts MATCH :query) " +
+            "ORDER BY (set_type_id IS NULL), set_type_id, set_id, set_position")
+    fun searchOutsideInterestCards(query: String, background: String, specialty: String): PagingSource<Int, CardDeckListItemProjection>
+
+    @Query("SELECT card.id, card.set_name, card.aspect_id, card.aspect_short_name, card.cost, " +
+            "card.real_image_src, card.name, card.type_name, card.traits, card.level, card.set_id, " +
+            "card.set_type_id, card.deck_limit FROM card JOIN card_fts ON (card.id = card_fts.id)" +
+            "WHERE set_id == 'reward' AND (card_fts MATCH :query) " +
+            "ORDER BY (set_type_id IS NULL), set_type_id, set_id, set_position")
+    fun searchAllRewards(query: String): PagingSource<Int, CardDeckListItemProjection>
+
+    @Query("SELECT card.id, card.set_name, card.aspect_id, card.aspect_short_name, card.cost, " +
+            "card.real_image_src, card.name, card.type_name, card.traits, card.level, card.set_id, " +
+            "card.set_type_id, card.deck_limit FROM card JOIN card_fts ON (card.id = card_fts.id)" +
+            "WHERE card.id IN (:rewards) AND (card_fts MATCH :query) " +
+            "ORDER BY (set_type_id IS NULL), set_type_id, set_id, set_position")
+    fun searchRewards(query: String, rewards: List<String>): PagingSource<Int, CardDeckListItemProjection>
+
+    @Query("SELECT card.id, card.set_name, card.aspect_id, card.aspect_short_name, card.cost, " +
+            "card.real_image_src, card.name, card.type_name, card.traits, card.level, card.set_id, " +
+            "card.set_type_id, card.deck_limit FROM card JOIN card_fts ON (card.id = card_fts.id)" +
+            "WHERE set_id == 'malady' AND (card_fts MATCH :query) " +
+            "ORDER BY (set_type_id IS NULL), set_type_id, set_id, set_position")
+    fun searchAllMaladies(query: String): PagingSource<Int, CardDeckListItemProjection>
+
+    @Query("SELECT card.id, card.set_name, card.aspect_id, card.aspect_short_name, card.cost, " +
+            "card.real_image_src, card.name, card.type_name, card.traits, card.level, card.set_id, " +
+            "card.set_type_id, card.deck_limit FROM card JOIN card_fts ON (card.id = card_fts.id)" +
+            "WHERE spoiler = 'false' OR (spoiler IS NULL AND NOT EXISTS (" +
+            "SELECT 1 FROM card WHERE spoiler = 'false')) AND type_id != 'role' AND (card_fts MATCH :query)" +
+            "ORDER BY (set_type_id IS NULL), set_type_id, set_id, set_position"
+    )
+    fun searchAllCards(query: String): PagingSource<Int, CardDeckListItemProjection>
+
+    @Query("SELECT card.id, card.set_name, card.aspect_id, card.aspect_short_name, card.cost, " +
+            "card.real_image_src, card.name, card.type_name, card.traits, card.level, card.set_id, " +
+            "card.set_type_id, card.deck_limit FROM card JOIN card_fts ON (card.id = card_fts.id)" +
+            "WHERE card.id IN (:ids) AND (card_fts MATCH :query) " +
+            "ORDER BY (set_type_id IS NULL), set_type_id, set_id, set_position")
+    fun searchExtraCards(query: String, ids: List<String>): PagingSource<Int, CardDeckListItemProjection>
 }

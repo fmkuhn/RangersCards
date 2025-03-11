@@ -1,0 +1,262 @@
+package com.rangerscards.ui.deck
+
+import androidx.compose.foundation.background
+import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
+import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
+import androidx.compose.material3.Scaffold
+import androidx.compose.material3.Text
+import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
+import androidx.compose.runtime.snapshotFlow
+import androidx.compose.ui.Alignment
+import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
+import androidx.paging.LoadState
+import androidx.paging.compose.collectAsLazyPagingItems
+import androidx.paging.compose.itemContentType
+import androidx.paging.compose.itemKey
+import com.rangerscards.R
+import com.rangerscards.data.database.card.CardDeckListItemProjection
+import com.rangerscards.ui.cards.components.CardListItem
+import com.rangerscards.ui.components.RangersSearchOutlinedField
+import com.rangerscards.ui.components.RangersTabs
+import com.rangerscards.ui.components.RangersTopAppBar
+import com.rangerscards.ui.components.RowTypeDivider
+import com.rangerscards.ui.settings.components.SettingsRadioButtonRow
+import com.rangerscards.ui.theme.CustomTheme
+import com.rangerscards.ui.theme.Jost
+import kotlinx.coroutines.flow.drop
+
+@Composable
+fun DeckCardsSearchingListScreen(
+    navigateUp: () -> Unit,
+    deckViewModel: DeckViewModel,
+    deckCardsViewModel: DeckCardsViewModel,
+    isDarkTheme: Boolean,
+    navigateToCard: (Int) -> Unit,
+    modifier: Modifier = Modifier,
+    contentPadding: PaddingValues = PaddingValues(0.dp),
+) {
+    val values by deckViewModel.updatableValues.collectAsState()
+    val deck by deckViewModel.originalDeck.collectAsState()
+    val showAll by deckCardsViewModel.showAllSpoilers.collectAsState()
+    val searchQuery by deckCardsViewModel.searchQuery.collectAsState()
+    val typeIndex by deckCardsViewModel.typeIndex.collectAsState()
+    val cardsLazyItems = deckCardsViewModel.searchResults.collectAsLazyPagingItems()
+    // Remember a LazyListState to control and observe scroll position.
+    val listState = rememberLazyListState()
+
+    // Whenever the search query changes, scroll the list back to the top.
+    LaunchedEffect(Unit) {
+        snapshotFlow { searchQuery to typeIndex }
+            .drop(1)
+            .collect {
+                // Scroll to the first item
+                listState.animateScrollToItem(0)
+            }
+    }
+    LaunchedEffect(deck, values?.sideSlots) {
+        deckCardsViewModel.updateDeckInfo(deck!!, values!!.sideSlots.keys.toList())
+    }
+
+    Scaffold(
+        containerColor = CustomTheme.colors.l30,
+        modifier = modifier.padding(
+            top = contentPadding.calculateTopPadding(),
+            bottom = contentPadding.calculateBottomPadding()
+        ),
+        topBar = {
+            RangersTopAppBar(
+                title = stringResource(R.string.editing_deck_screen_header),
+                canNavigateBack = true,
+                navigateUp = navigateUp,
+                actions = {/*TODO: Implement action buttons*/},
+                switch = null
+            )
+        },
+    ) { innerPadding ->
+        Column(
+            modifier = modifier
+                .background(CustomTheme.colors.l20)
+                .fillMaxSize()
+                .padding(
+                    top = innerPadding.calculateTopPadding(),
+                    bottom = innerPadding.calculateBottomPadding()
+                ),
+        ) {
+            RangersTabs(
+                if (deck!!.previousId != null) listOf(
+                    R.string.rewards_search_tab,
+                    R.string.maladies_search_tab,
+                    R.string.collection_search_tab,
+                    R.string.displaced_search_tab
+                ) else listOf(
+                    R.string.personality,
+                    R.string.background,
+                    R.string.specialty,
+                    R.string.outside_interest
+                ),
+                typeIndex,
+                deckCardsViewModel::onTypeIndexChanged
+            )
+            RangersSearchOutlinedField(
+                query = searchQuery,
+                R.string.search_for_card,
+                onQueryChanged = deckCardsViewModel::onSearchQueryChanged,
+                onClearClicked = deckCardsViewModel::clearSearchQuery
+            )
+            LazyColumn(
+                modifier = modifier
+                    .background(CustomTheme.colors.l30)
+                    .fillMaxSize(),
+                state = listState
+            ) {
+                if (cardsLazyItems.itemCount == 0 && cardsLazyItems.loadState.isIdle) item {
+                    Column(
+                        verticalArrangement = Arrangement.Center,
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        modifier = Modifier
+                            .padding(16.dp)
+                            .fillMaxWidth()
+                    ) {
+                        Text(
+                            text = if (searchQuery.isEmpty())
+                                stringResource(R.string.no_matching_cards_filtered)
+                            else stringResource(id = R.string.no_matching_cards, searchQuery),
+                            color = CustomTheme.colors.d30,
+                            fontFamily = Jost,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 18.sp,
+                            lineHeight = 24.sp,
+                            letterSpacing = 0.2.sp,
+                        )
+                    }
+                }
+                item {
+                    if (deck!!.previousId == null) Column(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = stringResource(when(typeIndex) {
+                                0 -> R.string.personality_text
+                                1 -> R.string.background_text
+                                2 -> R.string.specialty_text
+                                else -> R.string.outside_interest_text
+                            }),
+                            color = CustomTheme.colors.d10,
+                            fontFamily = Jost,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 16.sp,
+                            lineHeight = 18.sp,
+                            modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
+                        )
+                        HorizontalDivider(color = CustomTheme.colors.l10)
+                    } else if (typeIndex == 0) Row(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .padding(8.dp),
+                        horizontalArrangement = Arrangement.End
+                    ) {
+                        SettingsRadioButtonRow(
+                            text = stringResource(R.string.shaw_all_button),
+                            onClick = { deckCardsViewModel.updateShowAllSpoilers(!showAll) },
+                            modifier = Modifier,
+                            isSelected = showAll
+                        )
+                    } else if (typeIndex == 2) Column(modifier = Modifier.fillMaxWidth()) {
+                        Text(
+                            text = stringResource(R.string.collection_text),
+                            color = CustomTheme.colors.d10,
+                            fontFamily = Jost,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 16.sp,
+                            lineHeight = 18.sp,
+                            modifier = Modifier.padding(vertical = 4.dp, horizontal = 8.dp)
+                        )
+                        HorizontalDivider(color = CustomTheme.colors.l10)
+                    }
+                }
+                items(
+                    count = cardsLazyItems.itemCount,
+                    key = cardsLazyItems.itemKey(CardDeckListItemProjection::id),
+                    contentType = cardsLazyItems.itemContentType { it }
+                ) { index ->
+                    val item = cardsLazyItems[index] ?: return@items
+                    val showHeader = if (index == 0) true
+                    else cardsLazyItems[index - 1]?.setName != item.setName
+                    if (showHeader && (typeIndex in 0..2)) RowTypeDivider(text = item.setName.toString())
+                    val amount = values?.slots?.get(item.id) ?: 0
+                    CardListItem(
+                        aspectId = item.aspectId,
+                        aspectShortName = item.aspectShortName,
+                        cost = item.cost,
+                        imageSrc = item.realImageSrc,
+                        name = item.name.toString(),
+                        typeName = item.typeName,
+                        traits = item.traits,
+                        level = item.level,
+                        isDarkTheme = isDarkTheme,
+                        currentAmount = amount,
+                        onRemoveClick = { deckViewModel.removeCard(item.id, item.setId) },
+                        onRemoveEnabled = amount > 0,
+                        onAddClick = { deckViewModel.addCard(item.id) },
+                        onAddEnabled = amount != item.deckLimit,
+                        onClick = { navigateToCard.invoke(index) }
+                    )
+                }
+
+                // Handle load states: initial load and pagination load errors/loading.
+                cardsLazyItems.apply {
+                    when {
+                        loadState.refresh is LoadState.Loading -> {
+                            item {
+                                Column(
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                        .fillMaxWidth()
+                                ) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(32.dp),
+                                        color = CustomTheme.colors.m
+                                    )
+                                }
+                            }
+                        }
+
+                        loadState.append is LoadState.Loading -> {
+                            item {
+                                Column(
+                                    verticalArrangement = Arrangement.Center,
+                                    horizontalAlignment = Alignment.CenterHorizontally,
+                                    modifier = Modifier
+                                        .padding(16.dp)
+                                        .fillMaxWidth()
+                                ) {
+                                    CircularProgressIndicator(
+                                        modifier = Modifier.size(32.dp),
+                                        color = CustomTheme.colors.m
+                                    )
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+}
