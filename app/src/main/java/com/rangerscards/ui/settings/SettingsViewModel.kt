@@ -3,7 +3,6 @@ package com.rangerscards.ui.settings
 import android.content.Context
 import android.content.Intent
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
@@ -118,7 +117,6 @@ class SettingsViewModel(
                 user?.reauthenticate(EmailAuthProvider.getCredential(email, password))
                     ?.addOnCompleteListener {
                         if (it.isSuccessful) user.delete().addOnCompleteListener {
-                            Log.d("AUTH", "User account deleted.")
                             Toast.makeText(
                                 context,
                                 context.getString(R.string.account_successfully_deleted_toast),

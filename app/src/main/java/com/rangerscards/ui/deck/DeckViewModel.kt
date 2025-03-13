@@ -1,6 +1,5 @@
 package com.rangerscards.ui.deck
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.ApolloClient
@@ -465,7 +464,6 @@ class DeckViewModel(
             if (editableDeck.value!!.uploaded) {
                 val values = updatableValues.value!!
                 val token = user!!.getIdToken(true).await().token
-                Log.d("test1", token.toString())
                 val newDeck = apolloClient.mutation(SaveDeckMutation(
                     id = editableDeck.value!!.id.toInt(),
                     name = editableDeck.value!!.name,
@@ -489,7 +487,6 @@ class DeckViewModel(
                         values.extraSlots.forEach { (key, value) -> put(key, value) } },
                 )).addHttpHeader("Authorization", "Bearer $token").execute()
                 if (newDeck.data != null) {
-                    Log.d("test", newDeck.data!!.update_rangers_deck_by_pk!!.deck.name)
                     deckRepository.updateDeck(
                         newDeck.data!!.update_rangers_deck_by_pk!!.deck.toDeck(true)
                     )
