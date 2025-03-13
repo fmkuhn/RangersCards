@@ -12,6 +12,7 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -34,6 +35,7 @@ fun CardsCard(
 ) {
     var openLanguagePickerDialog by rememberSaveable { mutableStateOf(false) }
     val selectedLocale = AppCompatDelegate.getApplicationLocales()[0] ?: Locale.getDefault()
+    val context = LocalContext.current.applicationContext
     if (openLanguagePickerDialog) {
         Dialog(
             onDismissRequest = { openLanguagePickerDialog = false },
@@ -61,7 +63,7 @@ fun CardsCard(
                     text = Locale.forLanguageTag("en").displayLanguage,
                     onClick = { openLanguagePickerDialog = false
                         if (selectedLocale.language != "en")
-                            settingsViewModel.updateLocale("en") },
+                            settingsViewModel.updateLocale("en", context) },
                     isSelected = selectedLocale.language == "en"
                 )
                 HorizontalDivider(
@@ -72,7 +74,7 @@ fun CardsCard(
                     text = Locale.forLanguageTag("ru").displayLanguage,
                     onClick = { openLanguagePickerDialog = false
                         if (selectedLocale.language != "ru")
-                            settingsViewModel.updateLocale("ru") },
+                            settingsViewModel.updateLocale("ru", context) },
                     isSelected = selectedLocale.language == "ru"
                 )
                 HorizontalDivider(
@@ -83,7 +85,7 @@ fun CardsCard(
                     text = Locale.forLanguageTag("de").displayLanguage,
                     onClick = { openLanguagePickerDialog = false
                         if (selectedLocale.language != "de")
-                            settingsViewModel.updateLocale("de") },
+                            settingsViewModel.updateLocale("de", context) },
                     isSelected = selectedLocale.language == "de"
                 )
                 HorizontalDivider(
@@ -94,7 +96,7 @@ fun CardsCard(
                     text = Locale.forLanguageTag("fr").displayLanguage,
                     onClick = { openLanguagePickerDialog = false
                         if (selectedLocale.language != "fr")
-                            settingsViewModel.updateLocale("fr") },
+                            settingsViewModel.updateLocale("fr", context) },
                     isSelected = selectedLocale.language == "fr"
                 )
                 HorizontalDivider(
@@ -105,7 +107,7 @@ fun CardsCard(
                     text = Locale.forLanguageTag("it").displayLanguage,
                     onClick = { openLanguagePickerDialog = false
                         if (selectedLocale.language != "it")
-                            settingsViewModel.updateLocale("it") },
+                            settingsViewModel.updateLocale("it", context) },
                     isSelected = selectedLocale.language == "it"
                 )
             }
@@ -145,7 +147,7 @@ fun CardsCard(
         SquareButton(
             stringId = R.string.update_cards_button,
             leadingIcon = R.drawable.reshuffle,
-            onClick = { settingsViewModel.updateCardsIfNotUpdated() }
+            onClick = { settingsViewModel.updateCardsIfNotUpdated(context) }
         )
         SquareButton(
             stringId = R.string.rules_button,

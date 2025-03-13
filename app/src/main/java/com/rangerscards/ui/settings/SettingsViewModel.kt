@@ -214,15 +214,16 @@ class SettingsViewModel(
         }
     }
 
-    fun updateLocale(locale: String) {
+    fun updateLocale(locale: String, context: Context) {
         AppCompatDelegate.setApplicationLocales(LocaleListCompat.forLanguageTags(locale))
         _userUiState.update { userUIState ->
             userUIState.copy(language = locale)
         }
-        downloadCards()
+        downloadCards(context)
     }
 
-    private fun downloadCards() {
+    private fun downloadCards(context: Context) {
+        if (!isConnected(context)) return
         _isCardsLoading.update { true }
         viewModelScope.launch {
             val language = _userUiState.value.language
@@ -246,7 +247,8 @@ class SettingsViewModel(
         }
     }
 
-    fun updateCardsIfNotUpdated() {
+    fun updateCardsIfNotUpdated(context: Context) {
+        if (!isConnected(context)) return
         _isCardsLoading.update { true }
         viewModelScope.launch {
            val response = apolloClient.query(GetCardsUpdatedAtQuery(_userUiState.value.language))
@@ -257,7 +259,7 @@ class SettingsViewModel(
                            it,
                            response.data!!.card_updated_at[0].updated_at.toString()
                        )) {
-                       downloadCards()
+                       downloadCards(context)
                    }
                    else {
                        _isCardsLoading.update { false }
@@ -267,11 +269,11 @@ class SettingsViewModel(
         }
     }
 
-    fun downloadCardsIfDatabaseNotExists() {
+    fun downloadCardsIfDatabaseNotExists(context: Context) {
         viewModelScope.launch {
             val exists = cardsRepository.isExists()
             if (!exists) {
-                downloadCards()
+                downloadCards(context)
             }
         }
     }

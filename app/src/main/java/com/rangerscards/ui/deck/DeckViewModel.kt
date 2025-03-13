@@ -259,7 +259,7 @@ class DeckViewModel(
         var splashCount = 0
         var splashResId: Int? = 0
         val deckSize = cards.associateWith { updatableValues.value!!.slots[it.id] }
-            .entries.sumOf { it.value ?: 0 }
+            .entries.sumOf { if (it.key.setId != "malady") it.value ?: 0 else 0 }
         cards.forEach { card ->
             val cardCount = updatableValues.value!!.slots[card.id] ?: 0
             if (cardCount > 2) {
@@ -517,7 +517,7 @@ class DeckViewModel(
         editableDeck.update { null }
     }
 
-    private fun isConnected(context: Context): Boolean {
+    fun isConnected(context: Context): Boolean {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork) != null
