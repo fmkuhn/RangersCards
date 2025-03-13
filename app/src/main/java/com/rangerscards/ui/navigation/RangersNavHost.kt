@@ -82,7 +82,7 @@ fun RangersNavHost(
         // Hide the topBar and bottomBar when in the full-screen flow.
         !route.startsWith("deck/")
     } ?: true
-    val context = LocalContext.current
+    val context = LocalContext.current.applicationContext
     var title by rememberSaveable { mutableStateOf(context.getString(BottomNavScreen.Settings.label)) }
     var actions: @Composable (RowScope.() -> Unit)? by remember { mutableStateOf(null) }
     var switch: @Composable (RowScope.() -> Unit)? = null

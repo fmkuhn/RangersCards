@@ -1,6 +1,7 @@
 package com.rangerscards.ui.decks
 
 import android.content.Context
+import android.net.ConnectivityManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -58,11 +59,12 @@ class DecksViewModel(
     private val _searchQuery = MutableStateFlow("")
     val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
 
-    fun getAllNetworkDecks(user: FirebaseUser?) {
+    fun getAllNetworkDecks(user: FirebaseUser?, context: Context) {
         viewModelScope.launch {
             _isRefreshing.update { true }
             if (user != null) {
-                val token = user.getIdToken(true).await().token
+                val token = user.getIdToken(isConnected(context))
+                    .await().token
                 val response = apolloClient.query(GetMyDecksQuery(user.uid))
                     .addHttpHeader("Authorization", "Bearer $token")
                     .fetchPolicy(FetchPolicy.NetworkOnly).execute()
@@ -73,6 +75,12 @@ class DecksViewModel(
             }
             else decksRepository.deleteAllUploadedDecks()
         }.invokeOnCompletion { _isRefreshing.update { false } }
+    }
+
+    fun isConnected(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork) != null
     }
 
     // Exposes the paginated search results as PagingData.

@@ -25,6 +25,7 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -58,6 +59,7 @@ fun AccountCard(
     var openAuthDialog by rememberSaveable { mutableStateOf(false) }
     var openHandleDialog by rememberSaveable { mutableStateOf(false) }
     var userHandle by remember { mutableStateOf("") }
+    val context = LocalContext.current.applicationContext
 
     LaunchedEffect(user.currentUser) {
         if (user.currentUser != null) settingsViewModel.getUserInfo(user.currentUser.uid)
@@ -180,7 +182,7 @@ fun AccountCard(
                                 R.string.delete_account_button,
                                 R.drawable.delete_32dp,
                                 onClick = {
-                                    settingsViewModel.deleteUser(mainActivity, email, password)
+                                    settingsViewModel.deleteUser(context, email, password)
                                     openAuthDialog = false
                                     isDeleting = false
                                     email = ""
@@ -302,7 +304,7 @@ fun AccountCard(
                                 onClick = {
                                     isLoading = true
                                     coroutineScope.launch {
-                                        settingsViewModel.updateHandle(mainActivity, userHandle)
+                                        settingsViewModel.updateHandle(context, userHandle)
                                     }.invokeOnCompletion {
                                         isLoading = false
                                         openHandleDialog = false

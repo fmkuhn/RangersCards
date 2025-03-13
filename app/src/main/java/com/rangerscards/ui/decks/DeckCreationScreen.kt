@@ -333,7 +333,8 @@ fun DeckCreationScreen(
                         }
                     }
                 }
-                if (user.currentUser != null) Row(
+                val context = LocalContext.current.applicationContext
+                if (user.currentUser != null && decksViewModel.isConnected(context)) Row(
                     modifier = Modifier
                         .padding(horizontal = 16.dp, vertical = 4.dp)
                         .clickable { isUploading = !isUploading },
@@ -377,7 +378,7 @@ fun DeckCreationScreen(
                     modifier = Modifier.weight(1f)
                 )
                 val postfix = stringResource(R.string.starter_deck_name_postfix)
-                val context = LocalContext.current
+                val context = LocalContext.current.applicationContext
                 SquareButton(
                     stringId = R.string.create_deck_button,
                     leadingIcon = R.drawable.add_32dp,

@@ -1,5 +1,7 @@
 package com.rangerscards.ui.deck
 
+import android.content.Context
+import android.net.ConnectivityManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.ApolloClient
@@ -20,6 +22,7 @@ import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
+import kotlinx.coroutines.flow.combine
 import kotlinx.coroutines.flow.distinctUntilChanged
 import kotlinx.coroutines.flow.filterNotNull
 import kotlinx.coroutines.flow.flatMapLatest
@@ -120,10 +123,14 @@ class DeckViewModel(
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
-    val deckProblemsFlow: Flow<Pair<List<String>, Pair<Int, Int?>>> = slotsCardsFlow
-        .flatMapLatest {
-            parseDeckForErrors(it)
-        }
+    val deckProblemsFlow: Flow<Pair<List<String>, Pair<Int, Int?>>> =
+        combine(_updatableValues, slotsCardsFlow) { values, slots -> values to slots }
+            .flatMapLatest { (values, slots) ->
+                parseDeckForErrors(
+                    listOfNotNull(values?.awa, values?.spi, values?.fit, values?.foc),
+                    slots
+                )
+            }
 
     fun loadDeck(id: String) {
         viewModelScope.launch {
@@ -231,17 +238,24 @@ class DeckViewModel(
     }
 
     private fun parseDeckForErrors(
+        statsList: List<Int>,
         cards: List<CardDeckListItemProjection>
     ): Flow<Pair<List<String>, Pair<Int, Int?>>> {
         val isUpgrade = originalDeck.value?.previousId != null
         val problems = mutableListOf<String>()
         // Build stats mapping
         val stats = mapOf(
-            "AWA" to updatableValues.value!!.awa,
-            "FIT" to updatableValues.value!!.fit,
-            "FOC" to updatableValues.value!!.foc,
-            "SPI" to updatableValues.value!!.spi
+            "AWA" to statsList[0],
+            "SPI" to statsList[1],
+            "FIT" to statsList[2],
+            "FOC" to statsList[3],
         )
+        val checkStats = mutableListOf(0, 0)
+        stats.values.forEach {
+            if (it == 1) checkStats[0] += 1
+            if (it == 3) checkStats[1] += 1
+        }
+        if (checkStats[0] != 1 || checkStats[1] != 1) problems.add("invalid_aspects")
         var splashCount = 0
         var splashResId: Int? = 0
         val deckSize = cards.associateWith { updatableValues.value!!.slots[it.id] }
@@ -249,15 +263,16 @@ class DeckViewModel(
         cards.forEach { card ->
             val cardCount = updatableValues.value!!.slots[card.id] ?: 0
             if (cardCount > 2) {
-                if (card.setId != "malady") {
+                if (card.setId != "malady" && !problems.contains("too_many_duplicates")) {
                     problems.add("too_many_duplicates")
                 }
-            }else if (!isUpgrade && cardCount != 2) {
+            } else if (!isUpgrade && cardCount != 2 && !problems.contains("need_two_cards")) {
                 problems.add("need_two_cards")
             }
             if (card.aspectId != null && card.level != null) {
-                if ((stats[card.aspectId] ?: 0) < card.level) {
-                    problems.add("invalid_aspect_levels")
+                if ((stats[card.aspectId] ?: 0) < card.level &&
+                    !problems.contains("invalid_aspect_levels")) {
+                        problems.add("invalid_aspect_levels")
                 }
             }
         }
@@ -459,11 +474,11 @@ class DeckViewModel(
                 editableDeck.value != null && backupOftenValues != null
     }
 
-    suspend fun saveChanges(user: FirebaseUser?, problems: List<String>?) {
+    suspend fun saveChanges(user: FirebaseUser?, problems: List<String>?, context: Context) {
         if (checkChanges()) {
             if (editableDeck.value!!.uploaded) {
                 val values = updatableValues.value!!
-                val token = user!!.getIdToken(true).await().token
+                val token = user!!.getIdToken(isConnected(context)).await().token
                 val newDeck = apolloClient.mutation(SaveDeckMutation(
                     id = editableDeck.value!!.id.toInt(),
                     name = editableDeck.value!!.name,
@@ -502,6 +517,12 @@ class DeckViewModel(
         editableDeck.update { null }
     }
 
+    private fun isConnected(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork) != null
+    }
+
     fun discardChanges() {
         editableDeck.update { null }
         _updatableValues.update {
@@ -515,6 +536,17 @@ class DeckViewModel(
         viewModelScope.launch {
             val role = deckRepository.getRole(id)
             _role.update { role }
+        }
+    }
+
+    fun changeStat(index: Int, newValue: Int) {
+        _updatableValues.update {
+            when(index) {
+                0 -> it!!.copy(awa = newValue)
+                1 -> it!!.copy(spi = newValue)
+                2 -> it!!.copy(fit = newValue)
+                else -> it!!.copy(foc = newValue)
+            }
         }
     }
 }

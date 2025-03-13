@@ -18,6 +18,7 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
@@ -43,6 +44,7 @@ fun SettingsFriendsScreen(
     val searchQuery by settingsViewModel.searchQuery.collectAsState()
     val user by settingsViewModel.userUiState.collectAsState()
     val searchResults by settingsViewModel.searchResults.collectAsState()
+    val context = LocalContext.current.applicationContext
     LaunchedEffect(searchQuery) {
         snapshotFlow { searchQuery }
             .debounce(400)
@@ -84,7 +86,7 @@ fun SettingsFriendsScreen(
                         handle = friend.user?.userInfo?.handle ?: "",
                         isToAdd = false,
                         onClick = {
-                            settingsViewModel.rejectFriendRequest(friend.user?.id.toString())
+                            settingsViewModel.rejectFriendRequest(friend.user?.id.toString(), context)
                         }
                     )
                     HorizontalDivider(color = CustomTheme.colors.l10)
@@ -100,7 +102,7 @@ fun SettingsFriendsScreen(
                         handle = friend.user?.userInfo?.handle ?: "",
                         isToAdd = false,
                         onClick = {
-                            settingsViewModel.rejectFriendRequest(friend.user?.id.toString())
+                            settingsViewModel.rejectFriendRequest(friend.user?.id.toString(), context)
                         }
                     )
                     HorizontalDivider(color = CustomTheme.colors.l10)
@@ -116,10 +118,10 @@ fun SettingsFriendsScreen(
                         handle = friend.user?.userInfo?.handle ?: "",
                         isToAdd = true,
                         onClick = {
-                            settingsViewModel.acceptFriendRequest(friend.user?.id.toString())
+                            settingsViewModel.acceptFriendRequest(friend.user?.id.toString(), context)
                         }
                     ) {
-                        settingsViewModel.rejectFriendRequest(friend.user?.id.toString())
+                        settingsViewModel.rejectFriendRequest(friend.user?.id.toString(), context)
                     }
                     HorizontalDivider(color = CustomTheme.colors.l10)
                 }
@@ -140,7 +142,7 @@ fun SettingsFriendsScreen(
                         handle = result.userInfo.handle ?: "",
                         isToAdd = true,
                         onClick = {
-                            settingsViewModel.sendFriendRequest(result.id)
+                            settingsViewModel.sendFriendRequest(result.id, context)
                         }
                     )
                     HorizontalDivider(color = CustomTheme.colors.l10)

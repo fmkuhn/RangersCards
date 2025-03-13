@@ -38,6 +38,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.pluralStringResource
 import androidx.compose.ui.res.stringResource
@@ -108,6 +109,7 @@ fun DeckScreen(
     var showLoadingInDialog by rememberSaveable { mutableStateOf(false) }
     var showNameDialog by rememberSaveable { mutableStateOf(false) }
     val coroutine = rememberCoroutineScope()
+    val context = LocalContext.current.applicationContext
     LaunchedEffect(needLoadDeck) {
         delay(500L)
         if (needLoadDeck) {
@@ -244,7 +246,7 @@ fun DeckScreen(
                         coroutine.launch {
                             showLoadingInDialog = true
                             showActionDialog = null
-                            deckViewModel.saveChanges(user, deckProblems.value.first)
+                            deckViewModel.saveChanges(user, deckProblems.value.first, context)
                         }.invokeOnCompletion {
                             showLoadingInDialog = false
                             navController.navigateUp()
@@ -316,7 +318,12 @@ fun DeckScreen(
                             campaignName = deck.campaignName
                         )
                         val stats = listOf(values!!.awa, values!!.spi, values!!.fit, values!!.foc)
-                        FullDeckStatsItem(stats, isDarkTheme)
+                        FullDeckStatsItem(
+                            stats = stats,
+                            isDarkTheme = isDarkTheme,
+                            isEditing = isEditing,
+                            isUpgrade = deck.previousId != null,
+                            onStatChange = deckViewModel::changeStat)
                     }
                 }
                 if (!deckProblems.value.first.isNullOrEmpty())
@@ -330,7 +337,7 @@ fun DeckScreen(
                             else {
                                 coroutine.launch {
                                     showLoadingInDialog = true
-                                    deckViewModel.saveChanges(user, deckProblems.value.first)
+                                    deckViewModel.saveChanges(user, deckProblems.value.first, context)
                                 }.invokeOnCompletion {
                                     showLoadingInDialog = false
                                     showActionDialog = null

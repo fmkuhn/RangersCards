@@ -69,7 +69,7 @@ fun SettingsAboutScreen(
     }
 
     // Get the current context for launching intents.
-    val context = LocalContext.current
+    val context = LocalContext.current.applicationContext
     LazyColumn(
         modifier = modifier
             .background(CustomTheme.colors.l30)

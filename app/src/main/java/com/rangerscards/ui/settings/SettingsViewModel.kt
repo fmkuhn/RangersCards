@@ -2,6 +2,7 @@ package com.rangerscards.ui.settings
 
 import android.content.Context
 import android.content.Intent
+import android.net.ConnectivityManager
 import android.net.Uri
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
@@ -109,8 +110,7 @@ class SettingsViewModel(
         }
     }
 
-    fun deleteUser(mainActivity: MainActivity, email: String, password: String) {
-        val context = mainActivity.baseContext
+    fun deleteUser(context: Context, email: String, password: String) {
         if (userAuthRepository.validateEmail(email)) {
             if (userAuthRepository.validatePassword(password)) {
                 val user = _userUiState.value.currentUser
@@ -147,8 +147,14 @@ class SettingsViewModel(
             .lowercase(Locale.ENGLISH).trim()
     }
 
-    private suspend fun getCurrentToken(refresh: Boolean?): String? {
-        return userUiState.value.currentUser?.getIdToken(refresh ?: false)?.await()?.token
+    private suspend fun getCurrentToken(context: Context): String? {
+        return userUiState.value.currentUser?.getIdToken(isConnected(context))?.await()?.token
+    }
+
+    private fun isConnected(context: Context): Boolean {
+        val connectivityManager =
+            context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
+        return connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork) != null
     }
 
     fun getUserInfo(id: String) {
@@ -164,11 +170,10 @@ class SettingsViewModel(
         }
     }
 
-    suspend fun updateHandle(mainActivity: MainActivity, handle: String) {
+    suspend fun updateHandle(context: Context, handle: String) {
         if (handle == (userUiState.value.userInfo?.profile?.userProfile?.handle ?: "")) return
         var isTaken: Boolean
         viewModelScope.launch {
-            val context = mainActivity.baseContext
             if (handle.length !in 3..22) {
                 Toast.makeText(
                     context,
@@ -190,7 +195,7 @@ class SettingsViewModel(
                     isTaken = false
                 }
                 if (!isTaken) {
-                    val token = getCurrentToken(true)
+                    val token = getCurrentToken(context)
                     val response = apolloClient.mutation(UpdateHandleMutation(
                         userUiState.value.currentUser!!.uid,
                         handle.trim(),
@@ -316,28 +321,28 @@ class SettingsViewModel(
         }
     }
 
-    fun sendFriendRequest(toUserId: String) {
+    fun sendFriendRequest(toUserId: String, context: Context) {
         val userId = userUiState.value.currentUser?.uid!!
         viewModelScope.launch {
-            val token = getCurrentToken(true)
+            val token = getCurrentToken(context)
             apolloClient.mutation(SendFriendRequestMutation(userId, toUserId))
                 .addHttpHeader("Authorization", "Bearer $token").execute()
             getUserInfo(userId)
         }
     }
-    fun acceptFriendRequest(toUserId: String) {
+    fun acceptFriendRequest(toUserId: String, context: Context) {
         val userId = userUiState.value.currentUser?.uid!!
         viewModelScope.launch {
-            val token = getCurrentToken(true)
+            val token = getCurrentToken(context)
             apolloClient.mutation(AcceptFriendRequestMutation(userId, toUserId))
                 .addHttpHeader("Authorization", "Bearer $token").execute()
             getUserInfo(userId)
         }
     }
-    fun rejectFriendRequest(toUserId: String) {
+    fun rejectFriendRequest(toUserId: String, context: Context) {
         val userId = userUiState.value.currentUser?.uid!!
         viewModelScope.launch {
-            val token = getCurrentToken(true)
+            val token = getCurrentToken(context)
             apolloClient.mutation(RejectFriendRequestMutation(userId, toUserId))
                 .addHttpHeader("Authorization", "Bearer $token").execute()
             getUserInfo(userId)

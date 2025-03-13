@@ -28,6 +28,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
@@ -65,9 +66,10 @@ fun DecksScreen(
     LaunchedEffect(Unit) {
         settingsViewModel.downloadCardsIfDatabaseNotExists()
     }
+    val context = LocalContext.current.applicationContext
     LaunchedEffect(user.currentUser) {
         if (userId != user.currentUser?.uid.toString()) {
-            decksViewModel.getAllNetworkDecks(user.currentUser)
+            decksViewModel.getAllNetworkDecks(user.currentUser, context)
             userId = user.currentUser?.uid.toString()
         }
     }
@@ -107,7 +109,7 @@ fun DecksScreen(
         PullToRefreshBox(
             isRefreshing = isRefreshing,
             state = refreshState,
-            onRefresh = { decksViewModel.getAllNetworkDecks(user.currentUser) },
+            onRefresh = { decksViewModel.getAllNetworkDecks(user.currentUser, context) },
             indicator = {
                 PullToRefreshDefaults.Indicator(
                     modifier = Modifier.align(Alignment.TopCenter),
