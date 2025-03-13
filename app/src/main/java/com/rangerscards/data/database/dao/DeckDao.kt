@@ -104,8 +104,9 @@ interface DeckDao {
 
     @Query("SELECT id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, " +
             "type_name, traits, level, set_id, set_type_id, deck_limit FROM card " +
-            "WHERE set_id != :background AND set_id != :specialty AND type_id != 'role' AND " +
-            "real_traits NOT LIKE '%expert%' ORDER BY (set_type_id IS NULL), set_type_id, set_id, set_position")
+            "WHERE set_id != :background AND set_id != :specialty AND set_id != 'personality' " +
+            "AND type_id != 'role' AND real_traits NOT LIKE '%expert%' " +
+            "ORDER BY (set_type_id IS NULL), set_type_id, set_id, set_position")
     fun getOutsideInterestCards(background: String, specialty: String): PagingSource<Int, CardDeckListItemProjection>
 
     @Query("SELECT id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, " +
@@ -162,7 +163,7 @@ interface DeckDao {
             "card.real_image_src, card.name, card.type_name, card.traits, card.level, card.set_id, " +
             "card.set_type_id, card.deck_limit FROM card JOIN card_fts ON (card.id = card_fts.id)" +
             "WHERE set_id != :background AND set_id != :specialty AND type_id != 'role' AND " +
-            "real_traits NOT LIKE '%expert%' AND (card_fts MATCH :query) " +
+            "set_id != 'personality' AND real_traits NOT LIKE '%expert%' AND (card_fts MATCH :query) " +
             "ORDER BY (set_type_id IS NULL), set_type_id, set_id, set_position")
     fun searchOutsideInterestCards(query: String, background: String, specialty: String): PagingSource<Int, CardDeckListItemProjection>
 
