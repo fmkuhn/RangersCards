@@ -58,6 +58,7 @@ import com.rangerscards.ui.deck.DeckFullCardScreen
 import com.rangerscards.ui.deck.DeckScreen
 import com.rangerscards.ui.deck.DeckViewModel
 import com.rangerscards.ui.deck.DeckCardsViewModel
+import com.rangerscards.ui.deck.DeckFullCardWithPagerScreen
 import com.rangerscards.ui.decks.DeckCreationScreen
 import com.rangerscards.ui.decks.DecksScreen
 import com.rangerscards.ui.decks.DecksViewModel
@@ -410,7 +411,10 @@ fun RangersNavHost(
                         isEditing = isEditing
                     )
                 }
-                composable(route = "deck/cardsList") { backStackEntry ->
+                composable(route = "deck/cardsList",
+                    enterTransition = { EnterTransition.None },
+                    exitTransition = { ExitTransition.None }
+                ) { backStackEntry ->
                     val parentEntry = remember(backStackEntry) {
                         navController.getBackStackEntry("deck/{$deckIdArgument}")
                     }
@@ -434,6 +438,41 @@ fun RangersNavHost(
                                 launchSingleTop = true
                             }
                         }
+                    )
+                }
+                val cardIndexArgument = "cardIndex"
+                composable(
+                    route = "deck/cardsList/card/{$cardIndexArgument}",
+                    arguments = listOf(navArgument(cardIndexArgument) { type = NavType.IntType })
+                ) { backStackEntry ->
+                    val parentGraphEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("deck/{$deckIdArgument}")
+                    }
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("deck/cardsList")
+                    }
+                    val deckViewModel: DeckViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentGraphEntry
+                    )
+                    val deckCardsViewModel: DeckCardsViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val cardsViewModel: CardsViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = backStackEntry
+                    )
+                    val cardIndex = backStackEntry.arguments?.getInt(cardIndexArgument)
+                        ?: error("cardIndexArgument cannot be null")
+                    DeckFullCardWithPagerScreen(
+                        navigateUp = { navController.navigateUp() },
+                        deckViewModel = deckViewModel,
+                        cardsViewModel = cardsViewModel,
+                        deckCardsViewModel = deckCardsViewModel,
+                        cardIndex = cardIndex,
+                        isDarkTheme = isDarkTheme,
+                        contentPadding = innerPadding,
                     )
                 }
             }
