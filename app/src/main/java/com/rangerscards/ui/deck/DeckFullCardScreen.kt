@@ -119,13 +119,13 @@ fun DeckFullCardScreen(
                     isDarkTheme = isDarkTheme
                 )
                 // Overlay custom FABs in the bottom-end corner
-                Row(
+                if (slotInfo?.realTraits != null) Row(
                     modifier = Modifier
                         .align(Alignment.BottomEnd)
                         .padding(16.dp)
                         .height(IntrinsicSize.Max)
                 ) {
-                    if (isEditing){
+                    if (isEditing) {
                         IconButton(
                             onClick = {
                                 if (isInExtraCards) deckViewModel.removeExtraCard(cardId)

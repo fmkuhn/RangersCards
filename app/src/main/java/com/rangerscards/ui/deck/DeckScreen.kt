@@ -315,7 +315,12 @@ fun DeckScreen(
                             imageSrc = role?.realImageSrc,
                             name = role?.name.toString(),
                             text = CardTextParser.parseCustomText(role?.text.toString(), null),
-                            campaignName = deck.campaignName
+                            campaignName = deck.campaignName,
+                            onClick = { navController.navigate(
+                                "deck/card/${deck.roleId}"
+                            ) {
+                                launchSingleTop = true
+                            } }
                         )
                         val stats = listOf(values!!.awa, values!!.spi, values!!.fit, values!!.foc)
                         FullDeckStatsItem(
