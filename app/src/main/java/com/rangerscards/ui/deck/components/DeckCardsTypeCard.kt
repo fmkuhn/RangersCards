@@ -49,7 +49,7 @@ fun DeckCardsTypeCard(
                         RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
                     )
                     .fillMaxWidth()
-                    .clickable { onClick?.invoke() },
+                    .clickable { if (showIcon) onClick?.invoke() },
             ) {
                 Box(
                     modifier = Modifier.fillMaxWidth().padding(vertical = 4.dp, horizontal = 8.dp),

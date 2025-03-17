@@ -167,4 +167,21 @@
     <string name="specialty_text">Выберите 5 уникальных карт из карт вашей специализации.</string>
     <string name="outside_interest_text">Выберите 1 карту из любой квалификации или специализации как ваше хобби.\nПримечание: карты из выбранной вами специальности/квалификации здесь не показаны, но ваше хобби может быть из выбранного вами класса, если вы используете другие вкладки для его выбора.</string>
     <string name="collection_text">Некоторые события кампании могут позволить вам навсегда поменять карты из своей колоды на карты из коллекции.\nВыбрав новую карту коллекции и удалив одну из своей колоды, вы можете "вернуть" ее в коллекцию, используя вкладку отложенные карты.</string>
+    <string name="deck_section_header">Колода</string>
+    <string name="deck_section_deck_id">Колода №%s</string>
+    <string name="deck_section_notes">Заметки</string>
+    <string name="tools_section_header">Утилиты</string>
+    <string name="tools_section_charts">Диаграммы</string>
+    <string name="campaign_section_header">Кампания</string>
+    <string name="campaign_section_camp">Разбить лагерь</string>
+    <string name="campaign_section_camp_warning">Ошибка: Ваша колода содержит ошибки!</string>
+    <string name="campaign_section_previous_deck">Предыдущая колода</string>
+    <string name="campaign_section_next_deck">Следующая колода</string>
+    <string name="options_section_header">Опции</string>
+    <string name="options_section_clone_deck">Копировать колоду</string>
+    <string name="clone_deck_name_postfix">(Копия)</string>
+    <string name="options_section_upload_deck">Загрузить на RangersDB</string>
+    <string name="coptions_section_upload_deck_warning">Ошибка: Колода содержит улучшения!</string>
+    <string name="options_section_delete_deck">Удалить колоду</string>
+    <string name="delete_deck_text">Вы уверены, что хотите удалить эту колоду? Версия: %d.</string>
 </resources>

@@ -5,9 +5,16 @@ import android.net.ConnectivityManager
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.api.Optional
+import com.apollographql.apollo.cache.normalized.FetchPolicy
+import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.google.firebase.auth.FirebaseUser
+import com.rangerscards.CreateDeckMutation
+import com.rangerscards.DeleteDeckMutation
+import com.rangerscards.GetDeckQuery
 import com.rangerscards.R
 import com.rangerscards.SaveDeckMutation
+import com.rangerscards.UpgradeDeckMutation
 import com.rangerscards.data.database.card.CardDeckListItemProjection
 import com.rangerscards.data.database.deck.Deck
 import com.rangerscards.data.database.deck.RoleCardProjection
@@ -40,6 +47,8 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
+import kotlin.uuid.ExperimentalUuidApi
+import kotlin.uuid.Uuid
 
 data class FullDeckState(
     val id: String,
@@ -82,6 +91,9 @@ class DeckViewModel(
     private val apolloClient: ApolloClient,
     private val deckRepository: DeckRepository,
 ) : ViewModel() {
+
+    var deckToOpen = MutableStateFlow<String?>(null)
+        private set
 
     // Holds the original deck loaded from the database.
     private val _originalDeck = MutableStateFlow<FullDeckState?>(null)
@@ -257,7 +269,7 @@ class DeckViewModel(
         }
         if (checkStats[0] != 1 || checkStats[1] != 1) problems.add("invalid_aspects")
         var splashCount = 0
-        var splashResId: Int? = 0
+        var splashResId: Int? = null
         val deckSize = cards.associateWith { updatableValues.value!!.slots[it.id] }
             .entries.sumOf { if (it.key.setId != "malady") it.value ?: 0 else 0 }
         cards.forEach { card ->
@@ -517,7 +529,7 @@ class DeckViewModel(
         editableDeck.update { null }
     }
 
-    fun isConnected(context: Context): Boolean {
+    private fun isConnected(context: Context): Boolean {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork) != null
@@ -546,6 +558,181 @@ class DeckViewModel(
                 1 -> it!!.copy(spi = newValue)
                 2 -> it!!.copy(fit = newValue)
                 else -> it!!.copy(foc = newValue)
+            }
+        }
+    }
+
+    @OptIn(ExperimentalUuidApi::class)
+    suspend fun camp(user: FirebaseUser?, problems: List<String>?) {
+        if (originalDeck.value!!.uploaded) {
+            val token = user!!.getIdToken(true).await().token
+            val deckId = apolloClient.mutation(UpgradeDeckMutation(originalDeck.value!!.id.toInt()))
+                .addHttpHeader("Authorization", "Bearer $token").execute()
+            if (deckId.data != null) {
+                val deck = apolloClient.query(GetDeckQuery(deckId.data!!.deck!!.id))
+                    .fetchPolicy(FetchPolicy.NetworkOnly).execute()
+                deckRepository.updateDeck(deck.data!!.deck!!.deck.toDeck(true))
+                val newDeck = apolloClient.query(GetDeckQuery(deck.data!!.deck!!.deck.next_deck!!.id))
+                    .fetchPolicy(FetchPolicy.NetworkOnly).execute()
+                if (newDeck.data != null) {
+                    deckRepository.insertDeck(newDeck.data!!.deck!!.deck.toDeck(true))
+                    deckToOpen.update { newDeck.data!!.deck!!.deck.id.toString() }
+                }
+            }
+        } else {
+            val newUuid = Uuid.random().toString()
+            val values = updatableValues.value!!
+            val deck = originalDeck.value!!.toDeck(values, problems)
+            deckRepository.updateDeck(deck.copy(nextId = newUuid))
+            deckRepository.insertDeck(deck.copy(
+                id = newUuid,
+                previousId = originalDeck.value!!.id,
+                version = originalDeck.value!!.version + 1,
+                previousSlots = buildJsonObject {
+                    values.slots.forEach { (key, value) -> put(key, value) } },
+                previousSideSlots = buildJsonObject {
+                    values.sideSlots.forEach { (key, value) -> put(key, value) } },
+            ))
+            deckToOpen.update { newUuid }
+        }
+    }
+
+    @OptIn(ExperimentalUuidApi::class)
+    suspend fun cloneDeck(user: FirebaseUser?, problems: List<String>?, context: Context) {
+        if (originalDeck.value!!.uploaded) {
+            val token = user!!.getIdToken(true).await().token
+            val deck = originalDeck.value!!
+            val values = updatableValues.value!!
+            val newDeck = apolloClient.mutation(CreateDeckMutation(
+                name = "${deck.name} ${context.getString(R.string.clone_deck_name_postfix)}",
+                foc = values.foc,
+                fit = values.fit,
+                awa = values.awa,
+                spi = values.spi,
+                meta = buildJsonObject {
+                    put("role", deck.roleId)
+                    put("background", deck.background)
+                    put("specialty", deck.specialty)
+                },
+                slots = buildJsonObject {
+                    values.slots.forEach { (key, value) -> put(key, value) } },
+                extraSlots = buildJsonObject {
+                    values.extraSlots.forEach { (key, value) -> put(key, value) } },
+            )).addHttpHeader("Authorization", "Bearer $token").execute()
+            if (newDeck.data != null) {
+                deckRepository.insertDeck(newDeck.data!!.deck!!.deck.toDeck(true))
+                deckToOpen.update { newDeck.data!!.deck!!.deck.id.toString() }
+            }
+        } else {
+            val newUuid = Uuid.random().toString()
+            val deck = originalDeck.value!!.toDeck(updatableValues.value!!, problems)
+            deckRepository.insertDeck(deck.copy(
+                id = newUuid,
+                name = "${deck.name} ${context.getString(R.string.clone_deck_name_postfix)}",
+                version = 1,
+                createdAt = getCurrentDateTime(),
+                updatedAt = getCurrentDateTime(),
+                campaignId = null,
+                campaignName = null,
+                campaignRewards = null,
+                previousId = null,
+                previousSlots = null,
+                previousSideSlots = null,
+                nextId = null,
+            ))
+            deckToOpen.update { newUuid }
+        }
+    }
+
+    suspend fun updateDeckName(user: FirebaseUser?, problems: List<String>?, newName: String) {
+        if (originalDeck.value!!.name != newName) {
+            if (originalDeck.value!!.uploaded) {
+                val values = updatableValues.value!!
+                val token = user!!.getIdToken(true).await().token
+                val newDeck = apolloClient.mutation(SaveDeckMutation(
+                    id = originalDeck.value!!.id.toInt(),
+                    name = newName,
+                    foc = values.foc,
+                    fit = values.fit,
+                    awa = values.awa,
+                    spi = values.spi,
+                    meta = buildJsonObject {
+                        put("role", originalDeck.value!!.roleId)
+                        if (!problems.isNullOrEmpty()) put("problem", buildJsonArray {
+                            problems.forEach { add(it) }
+                        })
+                        put("background", originalDeck.value!!.background)
+                        put("specialty", originalDeck.value!!.specialty)
+                    },
+                    slots = buildJsonObject {
+                        values.slots.forEach { (key, value) -> put(key, value) } },
+                    sideSlots = buildJsonObject {
+                        values.sideSlots.forEach { (key, value) -> put(key, value) } },
+                    extraSlots = buildJsonObject {
+                        values.extraSlots.forEach { (key, value) -> put(key, value) } },
+                )).addHttpHeader("Authorization", "Bearer $token").execute()
+                if (newDeck.data != null) {
+                    deckRepository.updateDeck(
+                        newDeck.data!!.update_rangers_deck_by_pk!!.deck.toDeck(true)
+                    )
+                }
+            } else {
+                deckRepository.updateDeck(originalDeck.value!!.toDeck(
+                    updatableValues.value!!, problems
+                ).copy(name = newName))
+            }
+        }
+    }
+
+    suspend fun uploadDeck(user: FirebaseUser?) {
+        val token = user!!.getIdToken(true).await().token
+        val deck = originalDeck.value!!
+        val values = updatableValues.value!!
+        val newDeck = apolloClient.mutation(CreateDeckMutation(
+            name = deck.name,
+            foc = values.foc,
+            fit = values.fit,
+            awa = values.awa,
+            spi = values.spi,
+            meta = buildJsonObject {
+                put("role", deck.roleId)
+                put("background", deck.background)
+                put("specialty", deck.specialty)
+            },
+            slots = buildJsonObject {
+                values.slots.forEach { (key, value) -> put(key, value) } },
+            extraSlots = buildJsonObject {
+                values.extraSlots.forEach { (key, value) -> put(key, value) } },
+            description = Optional.present(deck.description)
+        )).addHttpHeader("Authorization", "Bearer $token").execute()
+        if (newDeck.data != null) {
+            deckRepository.insertDeck(newDeck.data!!.deck!!.deck.toDeck(true))
+            deckRepository.deleteDeckById(originalDeck.value!!.id)
+            deckToOpen.update { newDeck.data!!.deck!!.deck.id.toString() }
+        }
+    }
+
+    suspend fun deleteDeck(user: FirebaseUser?) {
+        if (originalDeck.value!!.uploaded) {
+            val token = user!!.getIdToken(true).await().token
+            val response = apolloClient.mutation(DeleteDeckMutation(originalDeck.value!!.id.toInt()))
+                .addHttpHeader("Authorization", "Bearer $token").execute()
+            if (response.data != null) {
+                deckRepository.deleteDeckById(originalDeck.value!!.id)
+                val previousId = originalDeck.value!!.previousId
+                if (previousId != null) {
+                    val previousDeck = deckRepository.getDeck(previousId)
+                    deckRepository.updateDeck(previousDeck.copy(nextId = null))
+                    deckToOpen.update { previousId }
+                }
+            }
+        } else {
+            deckRepository.deleteDeckById(originalDeck.value!!.id)
+            val previousId = originalDeck.value!!.previousId
+            if (previousId != null) {
+                val previousDeck = deckRepository.getDeck(previousId)
+                deckRepository.updateDeck(previousDeck.copy(nextId = null))
+                deckToOpen.update { previousId }
             }
         }
     }

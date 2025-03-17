@@ -8,16 +8,12 @@ import androidx.compose.ui.text.font.Font
 import androidx.compose.ui.text.font.FontFamily
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextIndent
 import androidx.compose.ui.unit.sp
 import com.rangerscards.R
 
 @Immutable
 data class CustomTypography(
     val headline: TextStyle,
-    val cardsAmount: TextStyle,
-    val flavor: TextStyle,
-    val flavorBold: TextStyle,
 )
 
 val Montserrat = FontFamily(
@@ -39,24 +35,6 @@ val typography = CustomTypography(
         fontWeight = FontWeight.Medium,
         fontSize = 22.sp,
         lineHeight = 28.sp,
-    ),
-    cardsAmount = TextStyle(
-        fontFamily = Montserrat,
-        fontWeight = FontWeight.Medium,
-        fontSize = 16.sp,
-        lineHeight = 18.sp,
-    ),
-    flavor = TextStyle(
-        fontFamily = Montserrat,
-        fontWeight = FontWeight.Normal,
-        fontSize = 16.sp,
-        lineHeight = 22.sp,
-    ),
-    flavorBold = TextStyle(
-        fontFamily = Montserrat,
-        fontWeight = FontWeight.Bold,
-        fontSize = 16.sp,
-        lineHeight = 22.sp,
     )
 )
 

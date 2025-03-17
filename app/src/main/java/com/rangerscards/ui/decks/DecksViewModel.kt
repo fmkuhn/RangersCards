@@ -62,9 +62,8 @@ class DecksViewModel(
     fun getAllNetworkDecks(user: FirebaseUser?, context: Context) {
         viewModelScope.launch {
             _isRefreshing.update { true }
-            if (user != null) {
-                val token = user.getIdToken(isConnected(context))
-                    .await().token
+            if (isConnected(context) && user != null) {
+                val token = user.getIdToken(true).await().token
                 val response = apolloClient.query(GetMyDecksQuery(user.uid))
                     .addHttpHeader("Authorization", "Bearer $token")
                     .fetchPolicy(FetchPolicy.NetworkOnly).execute()
@@ -72,8 +71,7 @@ class DecksViewModel(
                     if (response.data?.decks?.isEmpty() == true) decksRepository.syncDecks(emptyList())
                     else decksRepository.syncDecks(response.data!!.decks.toDecks(true))
                 }
-            }
-            else decksRepository.deleteAllUploadedDecks()
+            } else decksRepository.deleteAllUploadedDecks()
         }.invokeOnCompletion { _isRefreshing.update { false } }
     }
 
@@ -200,7 +198,11 @@ class DecksViewModel(
                         deckName = name.ifEmpty { "${context.getString(backgroundLocalized!!)} - " +
                                 "${context.getString(specialtyLocalized!!)} $postfix" },
                         meta = starterDeck.meta,
-                        slots = starterDeck.slots
+                        slots = starterDeck.slots,
+                        awa = starterDeck.awa,
+                        spi = starterDeck.spi,
+                        fit = starterDeck.fit,
+                        foc = starterDeck.foc
                     )
                 )
                 _deckIdToOpen.update { uuid }
@@ -228,6 +230,10 @@ class DecksViewModel(
         deckName: String,
         slots: JsonElement?,
         meta: JsonElement,
+        awa: Int? = null,
+        spi: Int? = null,
+        fit: Int? = null,
+        foc: Int? = null,
     ): Deck {
         return Deck(
             id = id,
@@ -240,10 +246,10 @@ class DecksViewModel(
             version = 1,
             name = deckName,
             description = null,
-            awa = 3,
-            spi = 3,
-            fit = 3,
-            foc = 3,
+            awa = awa ?: 3,
+            spi = spi ?: 3,
+            fit = fit ?: 3,
+            foc = foc ?: 3,
             createdAt = getCurrentDateTime(),
             updatedAt = getCurrentDateTime(),
             meta = meta,
