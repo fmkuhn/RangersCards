@@ -53,6 +53,10 @@ fun CardListItem(
     aspectShortName: String?,
     cost: Int?,
     imageSrc: String?,
+    approachConflict: Int?,
+    approachReason: Int?,
+    approachExploration: Int?,
+    approachConnection: Int?,
     name: String,
     typeName: String?,
     traits: String?,
@@ -92,8 +96,17 @@ fun CardListItem(
                     Modifier.align(Alignment.CenterVertically)
                 )
                 CardListItemTextContainer(name, typeName, traits, Modifier.weight(1f))
-                if (level != null)
-                    CardListItemLevelContainer(aspectId, aspectShortName, level, isDarkTheme)
+                Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(2.dp)) {
+                    CardListItemApproachContainer(
+                        approachConflict,
+                        approachReason,
+                        approachExploration,
+                        approachConnection,
+                        isDarkTheme
+                    )
+                    if (level != null)
+                        CardListItemLevelContainer(aspectId, aspectShortName, level, isDarkTheme)
+                }
                 CardListItemDeckInfo(
                     charForAmount,
                     currentAmount,
@@ -236,6 +249,49 @@ fun CardListItemTextContainer(
 }
 
 @Composable
+fun CardListItemApproachContainer(
+    approachConflict: Int?,
+    approachReason: Int?,
+    approachExploration: Int?,
+    approachConnection: Int?,
+    isDarkTheme: Boolean
+) {
+    val approachMap = mapOf(
+        R.drawable.conflict to approachConflict,
+        R.drawable.reason to approachReason,
+        R.drawable.exploration to approachExploration,
+        R.drawable.connection to approachConnection
+    ).mapNotNull { (res, value) ->
+        value?.let { res to it }
+    }.toMap()
+    Row(
+        horizontalArrangement = Arrangement.spacedBy(2.dp),
+    ) {
+        approachMap.forEach { approach ->
+            for (i in 1..approach.value) {
+                Surface(
+                    color = Color.Black,
+                    shape = CustomTheme.shapes.small
+                ) {
+                    Column(
+                        modifier = Modifier.padding(horizontal = 2.dp, vertical = 2.dp),
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.Center
+                    ) {
+                        Icon(
+                            painter = painterResource(approach.key),
+                            contentDescription = null,
+                            tint = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
+                            modifier = Modifier.size(14.dp)
+                        )
+                    }
+                }
+            }
+        }
+    }
+}
+
+@Composable
 fun CardListItemLevelContainer(
     aspectId: String?,
     aspectShortName: String?,
@@ -341,6 +397,10 @@ fun CardListItemScreenPreview() {
                 aspectShortName = "AWA",
                 cost = 2,
                 imageSrc = null,
+                approachConflict = 1,
+                approachReason = 1,
+                approachExploration = 1,
+                approachConnection = 1,
                 name = "Scuttler g Tunnel",
                 typeName = "Attachment",
                 traits = "Being / Companion / Mammal",

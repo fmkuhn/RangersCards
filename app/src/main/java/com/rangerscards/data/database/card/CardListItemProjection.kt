@@ -5,6 +5,14 @@ import androidx.room.ColumnInfo
 data class CardListItemProjection(
     val id: String,
     val name: String?,
+    @ColumnInfo(name = "approach_conflict")
+    val approachConflict: Int?,
+    @ColumnInfo(name = "approach_reason")
+    val approachReason: Int?,
+    @ColumnInfo(name = "approach_exploration")
+    val approachExploration: Int?,
+    @ColumnInfo(name = "approach_connection")
+    val approachConnection: Int?,
     val traits: String?,
     @ColumnInfo(name = "set_name")
     val setName: String?,
