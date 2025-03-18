@@ -13,9 +13,9 @@ interface DecksRepository {
 
     suspend fun syncDecks(networkDecks: List<Deck>)
 
-    fun getAllDecks(): Flow<PagingData<DeckListItemProjection>>
+    fun getAllDecks(userId: String): Flow<PagingData<DeckListItemProjection>>
 
-    fun searchDecks(query: String): Flow<PagingData<DeckListItemProjection>>
+    fun searchDecks(query: String, userId: String): Flow<PagingData<DeckListItemProjection>>
 
     fun getCard(id: String): Flow<CardListItemProjection>
 

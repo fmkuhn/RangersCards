@@ -15,7 +15,7 @@ class OfflineDecksRepository(private val deckDao: DeckDao) : DecksRepository {
 
     override suspend fun syncDecks(networkDecks: List<Deck>) = deckDao.syncDecks(networkDecks)
 
-    override fun getAllDecks(): Flow<PagingData<DeckListItemProjection>> {
+    override fun getAllDecks(userId: String): Flow<PagingData<DeckListItemProjection>> {
         // Create a Pager that wraps the PagingSource from the DAO.
         return Pager(
             config = PagingConfig(
@@ -23,17 +23,17 @@ class OfflineDecksRepository(private val deckDao: DeckDao) : DecksRepository {
                 enablePlaceholders = false,
                 initialLoadSize = 20
             ),
-            pagingSourceFactory = { deckDao.getAllDecks() }
+            pagingSourceFactory = { deckDao.getAllDecks(userId) }
         ).flow
     }
 
-    override fun searchDecks(query: String): Flow<PagingData<DeckListItemProjection>> {
+    override fun searchDecks(query: String, userId: String): Flow<PagingData<DeckListItemProjection>> {
         val newQuery = query
             .lowercase()
             .replace("\"(\\[\"]|.*)?\"".toRegex(), " ")
             .split("[^\\p{Alpha}]+".toRegex())
             .filter { it.isNotBlank() }
-            .joinToString(separator = " ", transform = { "$it%" })
+            .joinToString(separator = " ", transform = { "%$it%" })
         // Create a Pager that wraps the PagingSource from the DAO.
         return Pager(
             config = PagingConfig(
@@ -41,7 +41,7 @@ class OfflineDecksRepository(private val deckDao: DeckDao) : DecksRepository {
                 enablePlaceholders = false,
                 initialLoadSize = 20
             ),
-            pagingSourceFactory = { deckDao.searchDecks(newQuery) }
+            pagingSourceFactory = { deckDao.searchDecks(newQuery, userId) }
         ).flow
     }
 

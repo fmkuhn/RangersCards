@@ -1,0 +1,67 @@
+package com.rangerscards.data.database.dao
+
+import androidx.paging.PagingSource
+import androidx.room.Dao
+import androidx.room.Insert
+import androidx.room.OnConflictStrategy
+import androidx.room.Query
+import androidx.room.Transaction
+import androidx.room.Update
+import androidx.room.Upsert
+import com.rangerscards.data.database.campaign.Campaign
+import com.rangerscards.data.database.campaign.CampaignListItemProjection
+import com.rangerscards.data.database.card.CardListItemProjection
+import com.rangerscards.data.database.deck.Deck
+import com.rangerscards.data.database.deck.DeckListItemProjection
+import kotlinx.coroutines.flow.Flow
+
+@Dao
+interface CampaignDao {
+
+    @Update(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun updateCampaign(campaign: Campaign)
+
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
+    suspend fun insertCampaign(campaign: Campaign)
+
+    @Query("DELETE FROM campaign WHERE id = :id")
+    suspend fun deleteCampaignById(id: String)
+
+    @Upsert
+    suspend fun upsertAllCampaigns(campaigns: List<Campaign>)
+
+    @Query("DELETE FROM campaign WHERE id NOT IN (:ids) AND uploaded = 1")
+    suspend fun deleteNotIn(ids: List<String>)
+
+    @Query("DELETE FROM campaign WHERE uploaded = 1")
+    suspend fun deleteAllUploadedCampaigns()
+
+    @Query("SELECT id, name, day, current_location, latest_decks, access FROM campaign " +
+            "ORDER BY updated_at DESC"
+    )
+    fun getAllCampaigns(): PagingSource<Int, CampaignListItemProjection>
+
+    @Query("SELECT id, name, day, current_location, latest_decks, access FROM campaign " +
+            "WHERE name LIKE :query ORDER BY updated_at DESC"
+    )
+    fun searchCampaigns(query: String): PagingSource<Int, CampaignListItemProjection>
+
+    @Query("Select real_image_src FROM card WHERE id IN (:ids)")
+    fun getRolesImages(ids: List<String>): Flow<List<String>>
+
+    @Transaction
+    suspend fun syncCampaigns(networkData: List<Campaign>) {
+        // Insert or update all the network data.
+        upsertAllCampaigns(networkData)
+
+        if (networkData.isEmpty()) {
+            // If the network data is empty, clear the rows with uploaded = true.
+            deleteAllUploadedCampaigns()
+        } else {
+            // Otherwise, delete any rows not present in the network data.
+            val networkIds = networkData.map { it.id }
+            deleteNotIn(networkIds)
+        }
+    }
+
+}

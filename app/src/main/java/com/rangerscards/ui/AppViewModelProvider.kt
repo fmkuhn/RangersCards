@@ -6,9 +6,10 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.rangerscards.RangersApplication
+import com.rangerscards.ui.campaigns.CampaignsViewModel
 import com.rangerscards.ui.cards.CardsViewModel
-import com.rangerscards.ui.deck.DeckViewModel
 import com.rangerscards.ui.deck.DeckCardsViewModel
+import com.rangerscards.ui.deck.DeckViewModel
 import com.rangerscards.ui.decks.DecksViewModel
 import com.rangerscards.ui.settings.SettingsViewModel
 
@@ -48,11 +49,12 @@ object AppViewModelProvider {
             DeckCardsViewModel(rangersApplication().container.deckRepository,
                 rangersApplication().container.userPreferencesRepository)
         }
-//
-//        //Initializer for CampaignsViewModel
-//        initializer {
-//            CampaignsViewModel()
-//        }
+
+        //Initializer for CampaignsViewModel
+        initializer {
+            CampaignsViewModel(rangersApplication().container.apolloClient,
+                rangersApplication().container.campaignsRepository)
+        }
     }
 }
 

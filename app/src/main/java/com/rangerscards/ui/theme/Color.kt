@@ -18,10 +18,12 @@ val Dark30 = Color(0xFF24303C)
 // Light colors
 val WarnLight = Color(0xFFFB4135)
 val InfoLight = Color(0xFFE48F0F)
+val CampaignBlueLight = Color(0xFF25B7CB)
 
 // Dark colors
 val WarnDark = Color(0xFFFC2323)
 val InfoDark = Color(0xFFFF922E)
+val CampaignBlueDark = Color(0xFF179BAD)
 
 // Permanent colors
 val Blue = Color(0xFF1072C2)
@@ -50,6 +52,7 @@ data class CustomColors(
     val gold: Color = Gold,
     val warn: Color,
     val info: Color,
+    val campaignBlue: Color
 )
 
 val DarkColorScheme = CustomColors(
@@ -63,7 +66,8 @@ val DarkColorScheme = CustomColors(
     d20 = Light20,
     d30 = Light30,
     warn = WarnDark,
-    info = InfoDark
+    info = InfoDark,
+    campaignBlue = CampaignBlueDark
 )
 
 val LightColorScheme = CustomColors(
@@ -77,7 +81,8 @@ val LightColorScheme = CustomColors(
     d20 = Dark20,
     d30 = Dark30,
     warn = WarnLight,
-    info = InfoLight
+    info = InfoLight,
+    campaignBlue = CampaignBlueLight
 )
 
 val LocalCustomColors = staticCompositionLocalOf { LightColorScheme }

@@ -10,6 +10,8 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.google.firebase.auth.FirebaseUser
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.rangerscards.CreateDeckMutation
 import com.rangerscards.GetMyDecksQuery
 import com.rangerscards.data.database.card.CardListItemProjection
@@ -86,15 +88,16 @@ class DecksViewModel(
     val searchResults: Flow<PagingData<DeckListItemProjection>> =
         _searchQuery.flatMapLatest { query ->
             // When the search query or include flag changes, perform a new search.
+            val userId = Firebase.auth.currentUser?.uid ?: ""
             if (query.trim().isEmpty()) {
-                decksRepository.getAllDecks().catch { throwable ->
+                decksRepository.getAllDecks(userId).catch { throwable ->
                     // Log the error.
                     throwable.printStackTrace()
                     // Return an empty PagingData on error so that the flow continues.
                     emit(PagingData.empty())
                 }
             } else {
-                decksRepository.searchDecks(query.trim()).catch { throwable ->
+                decksRepository.searchDecks(query.trim(), userId).catch { throwable ->
                     // Log the error.
                     throwable.printStackTrace()
                     // Return an empty PagingData on error so that the flow continues.

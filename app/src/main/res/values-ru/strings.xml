@@ -184,4 +184,13 @@
     <string name="coptions_section_upload_deck_warning">Ошибка: Колода содержит улучшения!</string>
     <string name="options_section_delete_deck">Удалить колоду</string>
     <string name="delete_deck_text">Вы уверены, что хотите удалить эту колоду? Версия: %d.</string>
+    <string name="campaigns_current_day">День %d</string>
+    <string name="search_campaigns">Поиск по кампаниям</string>
+    <string name="no_matching_campaigns">По запросу «%s» кампаний не найдено</string>
+    <string name="no_campaigns">Пока у вас нет кампаний.\n\nНажмите кнопку +, чтобы создать новую.</string>
+    <string name="new_campaign">Ноая кампания</string>
+    <string name="campaign_creation_name_placeholder">Введите название этой кампании.</string>
+    <string name="create_campaign_button">Создать кампанию</string>
+    <string name="campaign">Кампания</string>
+    <string name="campaign_placeholder">Выберите кампанию</string>
 </resources>

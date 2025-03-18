@@ -48,6 +48,8 @@ import androidx.navigation.navArgument
 import com.rangerscards.MainActivity
 import com.rangerscards.R
 import com.rangerscards.ui.AppViewModelProvider
+import com.rangerscards.ui.campaigns.CampaignsScreen
+import com.rangerscards.ui.campaigns.CampaignsViewModel
 import com.rangerscards.ui.cards.CardsScreen
 import com.rangerscards.ui.cards.CardsViewModel
 import com.rangerscards.ui.cards.FullCardScreen
@@ -482,33 +484,50 @@ fun RangersNavHost(
             ) {
                 composable(BottomNavScreen.Campaigns.startDestination,
                     enterTransition = { EnterTransition.None },
-                    exitTransition = { ExitTransition.None }) {
+                    exitTransition = { ExitTransition.None }) { backStackEntry ->
+                    val campaignsViewModel: CampaignsViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = backStackEntry
+                    )
                     if (!isCardsLoading) {
-                        SettingsScreen(
-                            mainActivity = mainActivity,
-                            isDarkTheme = isDarkTheme,
-                            navigateToAbout = {
+                        CampaignsScreen(
+                            navigateToCampaign = { campaignId ->
                                 navController.navigate(
-                                    "${BottomNavScreen.Settings.route}/about"
+                                    "${BottomNavScreen.Campaigns.route}/campaign/$campaignId"
                                 ) {
                                     launchSingleTop = true
                                 }
                             },
-                            navigateToFriends = {
-                                navController.navigate(
-                                    "${BottomNavScreen.Settings.route}/friends"
-                                ) {
-                                    launchSingleTop = true
-                                }
-                            },
+                            campaignsViewModel = campaignsViewModel,
                             settingsViewModel = settingsViewModel,
+                            isDarkTheme = isDarkTheme,
                             contentPadding = innerPadding
                         )
                     } else {
                         CardsDownloadingCircularProgressIndicator()
                     }
                     title = stringResource(BottomNavScreen.Campaigns.label)
-                    actions = {/*TODO: Implement action buttons*/}
+                    actions = {
+                        IconButton(
+                            onClick = {
+                                navController.navigate(
+                                    "${BottomNavScreen.Campaigns.route}/creation"
+                                ) {
+                                    launchSingleTop = true
+                                }
+                            },
+                            colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
+                            modifier = Modifier.size(32.dp),
+                            enabled = !isCardsLoading
+                        ) {
+                            Icon(
+                                painterResource(id = R.drawable.add_32dp),
+                                contentDescription = null,
+                                tint = CustomTheme.colors.m,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                    }
                     switch = null
                 }
             }

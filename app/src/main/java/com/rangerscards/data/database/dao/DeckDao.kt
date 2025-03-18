@@ -37,14 +37,14 @@ interface DeckDao {
     suspend fun deleteAllUploadedDecks()
 
     @Query("SELECT id, user_handle, name, meta, campaign_name FROM deck WHERE next_id IS NULL " +
-            "ORDER BY updated_at DESC"
+            "AND (user_id = :userId OR user_id = '') ORDER BY updated_at DESC"
     )
-    fun getAllDecks(): PagingSource<Int, DeckListItemProjection>
+    fun getAllDecks(userId: String): PagingSource<Int, DeckListItemProjection>
 
     @Query("SELECT id, user_handle, name, meta, campaign_name FROM deck WHERE next_id IS NULL " +
-            "AND name LIKE :query ORDER BY updated_at DESC"
+            "AND name LIKE :query AND (user_id = :userId OR user_id = '') ORDER BY updated_at DESC"
     )
-    fun searchDecks(query: String): PagingSource<Int, DeckListItemProjection>
+    fun searchDecks(query: String, userId: String): PagingSource<Int, DeckListItemProjection>
 
     @Query("Select id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, " +
             "type_name, traits, level FROM card WHERE id = :id")

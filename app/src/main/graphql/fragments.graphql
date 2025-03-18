@@ -19,6 +19,8 @@ fragment Campaign on rangers_campaign {
   removed
   history
   calendar
+  created_at
+  updated_at
   latest_decks {
     deck {
       ...Deck

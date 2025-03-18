@@ -2,29 +2,12 @@
 
 query getMyCampaigns(
   $userId: String!
-  $limit: Int!,
-  $offset: Int!
 ) {
   campaigns: rangers_user_campaign(
     where: { user_id: { _eq: $userId }}
-    order_by: { updated_at: desc }
-    limit: $limit
-    offset: $offset
   ) {
     campaign {
       ...Campaign
-    }
-  }
-}
-
-query getMyCampaignsTotal(
-  $userId: String!
-) {
-  campaigns: rangers_user_campaign_aggregate(
-    where: { user_id: { _eq: $userId }}
-  ) {
-    aggregate {
-      count
     }
   }
 }
