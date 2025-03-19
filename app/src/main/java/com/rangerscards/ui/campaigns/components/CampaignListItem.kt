@@ -139,12 +139,12 @@ fun CampaignListItem(
                 Icon(
                     painterResource(R.drawable.ranger),
                     contentDescription = null,
-                    tint = CustomTheme.colors.d20,
+                    tint = CustomTheme.colors.d15,
                     modifier = Modifier.size(24.dp)
                 )
                 Text(
                     text = names,
-                    color = CustomTheme.colors.d20,
+                    color = CustomTheme.colors.d10,
                     fontFamily = Jost,
                     fontWeight = FontWeight.Normal,
                     fontSize = 16.sp,

@@ -71,6 +71,8 @@ fun DecksScreen(
         if (userId != user.currentUser?.uid.toString()) {
             decksViewModel.getAllNetworkDecks(user.currentUser, context)
             userId = user.currentUser?.uid.toString()
+            decksViewModel.onSearchQueryChanged(" ")
+            decksViewModel.clearSearchQuery()
         }
     }
 
