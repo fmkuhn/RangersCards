@@ -222,5 +222,57 @@
     <string name="create_campaign_button">Create campaign</string>
     <string name="campaign">Campaign</string>
     <string name="campaign_placeholder">Choose campaign</string>
+    <string name="core_cycle">Core</string>
+    <string name="general_set_general">General</string>
+    <string name="general_set_the_valley">The Valley</string>
+
+    //Path types
+    <string name="old_growth">Old-growth</string>
+    <string name="mountain_pass">Mountain Pass</string>
+    <string name="woods">Woods</string>
+    <string name="lakeshore">Lakeshore</string>
+    <string name="grassland">Grassland</string>
+    <string name="ravine">Ravine</string>
+    <string name="swamp">Swamp</string>
+    <string name="river">River</string>
+
+    //Locations
+    <string name="atrox_mountain">Atrox Mountain</string>
+    <string name="northern_outpost">Northern Outpost</string>
+    <string name="lone_tree_station">Lone Tree Station</string>
+    <string name="white_sky">White Sky</string>
+    <string name="golden_shore">Golden Shore</string>
+    <string name="mount_nim">Mount Nim</string>
+    <string name="ancestors_grove">Ancestor\'s Grove</string>
+    <string name="kobos_market">Kobo\'s Market</string>
+    <string name="boulder_field">Boulder Field</string>
+    <string name="the_fractured_wall">The Fractured Wall</string>
+    <string name="the_philosophers_garden">The Philosopher\'s Garden</string>
+    <string name="the_high_basin">The High Basin</string>
+    <string name="branch">Branch</string>
+    <string name="spire">Spire</string>
+    <string name="crossroads_station">Crossroads Station</string>
+    <string name="the_furrow">The Furrow</string>
+    <string name="biologists_outpost">Biological Outpost</string>
+    <string name="terravore">Terravore</string>
+    <string name="mound_of_the_navigator">Mound of the Navigator</string>
+    <string name="the_greenbridge">The Greenbridge</string>
+    <string name="michaels_bog">Michael\'s Bog</string>
+    <string name="the_cypress_citadel">The Cypress Citadel</string>
+    <string name="marsh_of_rebirth">Marsh of Rebirth</string>
+    <string name="sunken_outpost">Sunken Outpost</string>
+    <string name="the_frowning_gate">The Frowning Gate</string>
+    <string name="bowl_of_the_sun">Bowl of the Sun</string>
+    <string name="the_alluvial_ruins">The Alluvial Ruins</string>
+    <string name="the_tumbledown">The Tumbledown</string>
+    <string name="watchers_rock">Watcher\'s Rock</string>
+    <string name="archeological_outpost">Archeological Outpost</string>
+    <string name="rings_of_the_moon">Rings of the Moon</string>
+    <string name="the_concordant_ziggurats">The Concordant Ziggurats</string>
+    <string name="meadow">Meadow</string>
+    <string name="stoneweaver_bridge">Stoneweaver Bridge</string>
+    <string name="greenbriar_knoll">Greenbriar Knoll</string>
+    <string name="the_plummet">The Plummet</string>
+    <string name="headwaters_station">Headwaters Station</string>
 
 </resources>

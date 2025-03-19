@@ -14,6 +14,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -21,6 +22,7 @@ import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rangerscards.R
+import com.rangerscards.data.objects.CampaignMaps
 import com.rangerscards.ui.decks.components.DeckListItemImageContainer
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
@@ -90,28 +92,31 @@ fun CampaignListItem(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        Icon(
-                            painterResource(R.drawable.guide),
-                            contentDescription = null,
-                            tint = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
-                            modifier = Modifier.size(32.dp)
-                        )
-                        Text(
-                            text = currentLocation,
-                            color = if (isDarkTheme) CustomTheme.colors.d20 else CustomTheme.colors.l20,
-                            fontFamily = Jost,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 16.sp,
-                            lineHeight = 18.sp,
-                        )
-                        Text(
-                            text = "\u2022",  // Unicode for bullet
-                            color = if (isDarkTheme) CustomTheme.colors.d20 else CustomTheme.colors.l20,
-                            fontFamily = Jost,
-                            fontWeight = FontWeight.Bold,
-                            fontSize = 24.sp,
-                            modifier = Modifier.offset(y = 2.dp)
-                        )
+                        val location = CampaignMaps.getMapLocations(false)[currentLocation]
+                        if (location != null) {
+                            Icon(
+                                painterResource(location.iconResId),
+                                contentDescription = null,
+                                tint = Color.Unspecified,
+                                modifier = Modifier.size(32.dp)
+                            )
+                            Text(
+                                text = stringResource(location.nameResId),
+                                color = if (isDarkTheme) CustomTheme.colors.d20 else CustomTheme.colors.l20,
+                                fontFamily = Jost,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 16.sp,
+                                lineHeight = 18.sp,
+                            )
+                            Text(
+                                text = "\u2022",  // Unicode for bullet
+                                color = if (isDarkTheme) CustomTheme.colors.d20 else CustomTheme.colors.l20,
+                                fontFamily = Jost,
+                                fontWeight = FontWeight.Bold,
+                                fontSize = 24.sp,
+                                modifier = Modifier.offset(y = 2.dp)
+                            )
+                        }
                         Text(
                             text = stringResource(R.string.campaigns_current_day, day),
                             color = if (isDarkTheme) CustomTheme.colors.d20 else CustomTheme.colors.l20,
@@ -123,7 +128,10 @@ fun CampaignListItem(
                     }
                 }
             }
-            Row(
+            val names = access.jsonObject.values.joinToString(separator = ", ") {
+                it.jsonPrimitive.contentOrNull ?: ""
+            }
+            if (names.isNotEmpty()) Row(
                 modifier = Modifier.fillMaxWidth().padding(8.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                 verticalAlignment = Alignment.CenterVertically
@@ -131,15 +139,12 @@ fun CampaignListItem(
                 Icon(
                     painterResource(R.drawable.ranger),
                     contentDescription = null,
-                    tint = if (isDarkTheme) CustomTheme.colors.l20 else CustomTheme.colors.d20,
+                    tint = CustomTheme.colors.d20,
                     modifier = Modifier.size(24.dp)
                 )
-                val names = access.jsonObject.values.joinToString(separator = ", ") {
-                    it.jsonPrimitive.contentOrNull ?: ""
-                }
-                if (names.isNotEmpty()) Text(
+                Text(
                     text = names,
-                    color = if (isDarkTheme) CustomTheme.colors.l20 else CustomTheme.colors.d20,
+                    color = CustomTheme.colors.d20,
                     fontFamily = Jost,
                     fontWeight = FontWeight.Normal,
                     fontSize = 16.sp,
