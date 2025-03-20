@@ -23,6 +23,12 @@ object CampaignMaps {
         )
     }
 
+    val startingLocations by lazy {
+        mapOf(
+            "core" to "lone_tree_station"
+        )
+    }
+
     val generalSetsMap by lazy {
         mapOf(
             "general" to MapLocation(

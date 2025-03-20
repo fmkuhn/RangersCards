@@ -48,6 +48,7 @@ import androidx.navigation.navArgument
 import com.rangerscards.MainActivity
 import com.rangerscards.R
 import com.rangerscards.ui.AppViewModelProvider
+import com.rangerscards.ui.campaigns.CampaignCreationScreen
 import com.rangerscards.ui.campaigns.CampaignsScreen
 import com.rangerscards.ui.campaigns.CampaignsViewModel
 import com.rangerscards.ui.cards.CardsScreen
@@ -529,6 +530,69 @@ fun RangersNavHost(
                         }
                     }
                     switch = null
+                }
+                composable(BottomNavScreen.Campaigns.route + "/creation") { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry(BottomNavScreen.Campaigns.startDestination)
+                    }
+                    val campaignsViewModel: CampaignsViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val user by settingsViewModel.userUiState.collectAsState()
+                    CampaignCreationScreen(
+                        onCancel = {
+                            navController.navigateUp()
+                        },
+                        onCreate = { campaignId ->
+                            navController.navigate(
+                                "${BottomNavScreen.Campaigns.route}/campaign/$campaignId"
+                            ) {
+                                popUpTo(BottomNavScreen.Campaigns.startDestination) {
+                                    inclusive = false
+                                }
+                                launchSingleTop = true
+                            }
+                        },
+                        campaignsViewModel = campaignsViewModel,
+                        user = user,
+                        isDarkTheme = isDarkTheme,
+                        contentPadding = innerPadding
+                    )
+                    title = stringResource(R.string.new_campaign)
+                    actions = null
+                    switch = null
+                }
+                val campaignIdArgument = "campaignId"
+                composable(
+                    route = "${BottomNavScreen.Campaigns.route}/campaign/{$campaignIdArgument}",
+                    enterTransition = {
+                        if (!initialState.destination.route.orEmpty().startsWith("${BottomNavScreen.Campaigns.route}/campaign/")) {
+                            fadeIn(
+                                animationSpec = tween(300, easing = LinearEasing)
+                            ) + slideIntoContainer(
+                                animationSpec = tween(300, easing = EaseIn),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Up
+                            )
+                        } else {
+                            EnterTransition.None
+                        }
+                    },
+                    exitTransition = {
+                        if (!targetState.destination.route.orEmpty().startsWith("${BottomNavScreen.Campaigns.route}/campaign/")) {
+                            fadeOut(
+                                animationSpec = tween(400, easing = LinearEasing)
+                            ) + slideOutOfContainer(
+                                animationSpec = tween(400, easing = EaseOut),
+                                towards = AnimatedContentTransitionScope.SlideDirection.Down
+                            )
+                        } else {
+                            ExitTransition.None
+                        }
+                    },
+                    arguments = listOf(navArgument(campaignIdArgument) { type = NavType.StringType }))
+                    { backStackEntry ->
+
                 }
             }
         }

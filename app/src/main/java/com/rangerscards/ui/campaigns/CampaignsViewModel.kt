@@ -14,7 +14,6 @@ import com.rangerscards.CreateCampaignMutation
 import com.rangerscards.GetMyCampaignsQuery
 import com.rangerscards.data.database.campaign.Campaign
 import com.rangerscards.data.database.campaign.CampaignListItemProjection
-import com.rangerscards.data.database.card.CardListItemProjection
 import com.rangerscards.data.database.repository.CampaignsRepository
 import com.rangerscards.data.objects.TimestampNormilizer
 import com.rangerscards.ui.decks.getCurrentDateTime
