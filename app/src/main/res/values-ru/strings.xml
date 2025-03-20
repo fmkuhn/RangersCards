@@ -181,8 +181,9 @@
     <string name="options_section_clone_deck">Копировать колоду</string>
     <string name="clone_deck_name_postfix">(Копия)</string>
     <string name="options_section_upload_deck">Загрузить на RangersDB</string>
-    <string name="coptions_section_upload_deck_warning">Ошибка: Колода содержит улучшения!</string>
+    <string name="options_section_upload_deck_warning">Ошибка: Колода содержит улучшения!</string>
     <string name="options_section_delete_deck">Удалить колоду</string>
+    <string name="options_section_delete_deck_warning">Ошибка: Эта колода находится в кампании!</string>
     <string name="delete_deck_text">Вы уверены, что хотите удалить эту колоду? Версия: %d.</string>
     <string name="campaigns_current_day">День %d</string>
     <string name="search_campaigns">Поиск по кампаниям</string>

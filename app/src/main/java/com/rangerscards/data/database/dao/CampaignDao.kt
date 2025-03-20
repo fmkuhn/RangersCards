@@ -10,9 +10,6 @@ import androidx.room.Update
 import androidx.room.Upsert
 import com.rangerscards.data.database.campaign.Campaign
 import com.rangerscards.data.database.campaign.CampaignListItemProjection
-import com.rangerscards.data.database.card.CardListItemProjection
-import com.rangerscards.data.database.deck.Deck
-import com.rangerscards.data.database.deck.DeckListItemProjection
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -63,5 +60,11 @@ interface CampaignDao {
             deleteNotIn(networkIds)
         }
     }
+
+    @Query("SELECT * FROM campaign WHERE id = :id")
+    fun getCampaignFlowById(id: String): Flow<Campaign>
+
+    @Query("SELECT * FROM campaign WHERE id = :id")
+    suspend fun getCampaignById(id: String): Campaign
 
 }

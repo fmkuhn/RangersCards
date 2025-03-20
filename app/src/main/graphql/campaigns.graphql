@@ -36,6 +36,50 @@ mutation createCampaign(
   }
 }
 
+mutation uploadCampaign(
+  $name: String!,
+  $cycleId: String!,
+  $currentLocation: String!,
+  $currentPathTerrain: String,
+  $notes: jsonb!,
+  $day: Int!
+  $extendedCalendar: Boolean,
+  $missions: jsonb!,
+  $events: jsonb!,
+  $rewards: jsonb!,
+  $removed: jsonb!,
+  $history: jsonb!,
+  $calendar: jsonb!,
+) {
+  campaign: insert_rangers_campaign_one(
+    object: {
+      name: $name
+      cycle_id: $cycleId
+      current_location: $currentLocation
+      notes: $notes
+      day: $day
+      extended_calendar: $extendedCalendar
+      current_path_terrain: $currentPathTerrain
+      missions: $missions
+      events: $events
+      rewards: $rewards
+      removed: $removed
+      history: $history
+      calendar: $calendar
+    }
+  ) {
+    ...Campaign
+  }
+}
+
+subscription campaign(
+  $campaignId: Int!
+) {
+  campaign:rangers_campaign_by_pk(id: $campaignId) {
+    ...Campaign
+  }
+}
+
 mutation setCampaignTitle(
   $name: String!,
   $campaignId: Int!

@@ -6,6 +6,7 @@ import androidx.lifecycle.viewmodel.CreationExtras
 import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.rangerscards.RangersApplication
+import com.rangerscards.ui.campaigns.CampaignViewModel
 import com.rangerscards.ui.campaigns.CampaignsViewModel
 import com.rangerscards.ui.cards.CardsViewModel
 import com.rangerscards.ui.deck.DeckCardsViewModel
@@ -54,6 +55,12 @@ object AppViewModelProvider {
         initializer {
             CampaignsViewModel(rangersApplication().container.apolloClient,
                 rangersApplication().container.campaignsRepository)
+        }
+
+        //Initializer for CampaignViewModel
+        initializer {
+            CampaignViewModel(rangersApplication().container.apolloClient,
+                rangersApplication().container.campaignRepository)
         }
     }
 }

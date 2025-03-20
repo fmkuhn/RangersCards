@@ -12,8 +12,10 @@ import com.rangerscards.data.database.deck.Deck
 import com.rangerscards.data.database.deck.DeckListItemProjection
 import kotlinx.coroutines.flow.Flow
 
-class OfflineCampaignsRepository(private val campaignDao: CampaignDao,
-                                 private val deckDao: DeckDao) : CampaignsRepository {
+class OfflineCampaignsRepository(
+    private val campaignDao: CampaignDao,
+    private val deckDao: DeckDao
+) : CampaignsRepository {
     override suspend fun deleteAllUploadedCampaigns() = campaignDao.deleteAllUploadedCampaigns()
 
     override suspend fun syncCampaigns(networkCampaigns: List<Campaign>) =

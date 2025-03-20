@@ -47,8 +47,11 @@ import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
 import com.rangerscards.MainActivity
 import com.rangerscards.R
+import com.rangerscards.data.objects.CampaignMaps
 import com.rangerscards.ui.AppViewModelProvider
 import com.rangerscards.ui.campaigns.CampaignCreationScreen
+import com.rangerscards.ui.campaigns.CampaignScreen
+import com.rangerscards.ui.campaigns.CampaignViewModel
 import com.rangerscards.ui.campaigns.CampaignsScreen
 import com.rangerscards.ui.campaigns.CampaignsViewModel
 import com.rangerscards.ui.cards.CardsScreen
@@ -592,7 +595,25 @@ fun RangersNavHost(
                     },
                     arguments = listOf(navArgument(campaignIdArgument) { type = NavType.StringType }))
                     { backStackEntry ->
-
+                        val campaignViewModel: CampaignViewModel = viewModel(
+                            factory = AppViewModelProvider.Factory,
+                            viewModelStoreOwner = backStackEntry
+                        )
+                        val campaignId = backStackEntry.arguments?.getString(campaignIdArgument)
+                            ?: error("campaignIdArgument cannot be null")
+                        val user by settingsViewModel.userUiState.collectAsState()
+                        val campaign = campaignViewModel.getCampaignById(campaignId).collectAsState(null)
+                        CampaignScreen(
+                            campaignViewModel = campaignViewModel,
+                            campaign = campaign.value,
+                            user = user.currentUser,
+                            isDarkTheme = isDarkTheme,
+                            contentPadding = innerPadding
+                        )
+                        if (campaign.value != null) title = stringResource(CampaignMaps.campaignCyclesMap[campaign.value!!.cycleId]!!)
+                        else title = ""
+                        actions = { /*TODO:Implement undo and book page*/ }
+                        switch = null
                 }
             }
         }

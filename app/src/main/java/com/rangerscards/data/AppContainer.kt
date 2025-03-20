@@ -9,17 +9,25 @@ import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.apollographql.apollo.cache.normalized.normalizedCache
 import com.apollographql.apollo.cache.normalized.sql.SqlNormalizedCacheFactory
+import com.apollographql.apollo.network.ws.SubscriptionWsProtocol
+import com.apollographql.apollo.network.ws.WebSocketNetworkTransport
+import com.google.firebase.auth.ktx.auth
+import com.google.firebase.ktx.Firebase
 import com.rangerscards.data.database.RangersDatabase
+import com.rangerscards.data.database.repository.CampaignRepository
 import com.rangerscards.data.database.repository.CampaignsRepository
 import com.rangerscards.data.database.repository.CardsRepository
 import com.rangerscards.data.database.repository.DeckRepository
 import com.rangerscards.data.database.repository.DecksRepository
+import com.rangerscards.data.database.repository.OfflineCampaignRepository
 import com.rangerscards.data.database.repository.OfflineCampaignsRepository
 import com.rangerscards.data.database.repository.OfflineCardsRepository
 import com.rangerscards.data.database.repository.OfflineDeckRepository
 import com.rangerscards.data.database.repository.OfflineDecksRepository
 import com.rangerscards.data.objects.JsonElementAdapter
 import com.rangerscards.type.Jsonb
+import kotlinx.coroutines.delay
+import kotlinx.coroutines.tasks.await
 
 private const val PREFERENCE_NAME = "settings_preferences"
 private val Context.dataStore: DataStore<Preferences> by preferencesDataStore(
@@ -37,6 +45,7 @@ interface AppContainer {
     val decksRepository: DecksRepository
     val deckRepository: DeckRepository
     val campaignsRepository: CampaignsRepository
+    val campaignRepository: CampaignRepository
 }
 
 /**
@@ -49,6 +58,18 @@ class AppDataContainer(private val context: Context) : AppContainer {
     override val apolloClient: ApolloClient by lazy {
         ApolloClient.Builder()
             .serverUrl("https://gapi.rangersdb.com/v1/graphql")
+            .subscriptionNetworkTransport(WebSocketNetworkTransport.Builder()
+                .serverUrl("wss://gapi.rangersdb.com/v1/graphql")
+                .protocol(SubscriptionWsProtocol.Factory(connectionPayload = suspend {
+                    val token = Firebase.auth.currentUser?.getIdToken(true)?.await()?.token
+                    mapOf("headers" to mapOf("Authorization" to "Bearer $token"))
+                }))
+                .reopenWhen { _, attempt ->
+                    delay(attempt * 1000)
+                    attempt < 5
+                }
+                .build()
+            )
             .addCustomScalarAdapter(Jsonb.type, JsonElementAdapter)
             .normalizedCache(SqlNormalizedCacheFactory("apollo.db"))
             .fetchPolicy(FetchPolicy.CacheAndNetwork)
@@ -77,6 +98,11 @@ class AppDataContainer(private val context: Context) : AppContainer {
 
     override val campaignsRepository: CampaignsRepository by lazy {
         OfflineCampaignsRepository(RangersDatabase.getDatabase(context).campaignDao(),
+            RangersDatabase.getDatabase(context).deckDao())
+    }
+
+    override val campaignRepository: CampaignRepository by lazy {
+        OfflineCampaignRepository(RangersDatabase.getDatabase(context).campaignDao(),
             RangersDatabase.getDatabase(context).deckDao())
     }
 }
