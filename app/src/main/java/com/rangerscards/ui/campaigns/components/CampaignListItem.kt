@@ -43,7 +43,7 @@ fun CampaignListItem(
 ) {
     Surface(
         onClick = onClick,
-        modifier = Modifier.fillMaxWidth().padding(),
+        modifier = Modifier.fillMaxWidth(),
         color = CustomTheme.colors.l20,
         shape = CustomTheme.shapes.large,
         border = BorderStroke(1.dp, CustomTheme.colors.campaignBlue),

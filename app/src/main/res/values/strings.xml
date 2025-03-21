@@ -276,4 +276,10 @@
     <string name="the_plummet">The Plummet</string>
     <string name="headwaters_station">Headwaters Station</string>
 
+    //Campaign screen
+    <string name="current_location">Current location</string>
+    <string name="current_path_terrain">Current path terrain</string>
+    <string name="current_path_terrain_none">None</string>
+    <string name="recorded_journey_button">Recorded journey</string>
+
 </resources>

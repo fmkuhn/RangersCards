@@ -6,7 +6,7 @@ import com.rangerscards.R
 
 object CampaignMaps {
 
-    enum class Path(val value: String, @StringRes nameResId: Int, @DrawableRes iconResId: Int) {
+    enum class Path(val value: String, @StringRes val nameResId: Int, @DrawableRes val iconResId: Int) {
         WOODS("woods", R.string.woods, R.drawable.woods),
         MOUNTAIN_PASS("mountain_pass", R.string.mountain_pass, R.drawable.mountain_pass),
         OLD_GROWTH("old_growth", R.string.old_growth, R.drawable.old_growth),
@@ -14,7 +14,13 @@ object CampaignMaps {
         GRASSLAND("grassland", R.string.grassland, R.drawable.grassland),
         RAVINE("ravine", R.string.ravine, R.drawable.ravine),
         SWAMP("swamp", R.string.swamp, R.drawable.swamp),
-        RIVER("river", R.string.river, R.drawable.river)
+        RIVER("river", R.string.river, R.drawable.river);
+
+        companion object {
+            fun fromValue(value: String): Path? {
+                return values().firstOrNull { it.value == value }
+            }
+        }
     }
 
     val campaignCyclesMap by lazy {
