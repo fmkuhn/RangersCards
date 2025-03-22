@@ -18,6 +18,7 @@ import com.rangerscards.UpgradeDeckMutation
 import com.rangerscards.data.database.card.CardDeckListItemProjection
 import com.rangerscards.data.database.deck.Deck
 import com.rangerscards.data.database.deck.RoleCardProjection
+import com.rangerscards.data.database.repository.CampaignRepository
 import com.rangerscards.data.database.repository.DeckRepository
 import com.rangerscards.ui.decks.getCurrentDateTime
 import com.rangerscards.ui.decks.toDeck
@@ -39,6 +40,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
@@ -64,7 +66,7 @@ data class FullDeckState(
     val background: String,
     val specialty: String,
     val problems: List<String>?,
-    val campaignId: Int?,
+    val campaignId: String?,
     val campaignName: String?,
     val campaignRewards: List<String>?,
     val previousId: String?,
@@ -90,6 +92,7 @@ data class OftenUpdatableDeckValues(
 class DeckViewModel(
     private val apolloClient: ApolloClient,
     private val deckRepository: DeckRepository,
+    private val campaignRepository: CampaignRepository
 ) : ViewModel() {
 
     var deckToOpen = MutableStateFlow<String?>(null)
@@ -529,7 +532,7 @@ class DeckViewModel(
         editableDeck.update { null }
     }
 
-    private fun isConnected(context: Context): Boolean {
+    fun isConnected(context: Context): Boolean {
         val connectivityManager =
             context.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
         return connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork) != null
@@ -583,6 +586,30 @@ class DeckViewModel(
             val newUuid = Uuid.random().toString()
             val values = updatableValues.value!!
             val deck = originalDeck.value!!.toDeck(values, problems)
+            if (deck.campaignId != null) {
+                val campaign = campaignRepository.getCampaignById(deck.campaignId.toString())
+                val newDeck = buildJsonObject {
+                    put(newUuid, buildJsonArray {
+                        add(deck.name)
+                        add(deck.meta)
+                        add(campaign.latestDecks.jsonObject[deck.id]?.jsonArray?.get(2)?.jsonObject
+                            ?: JsonObject(emptyMap()
+                        ))
+                    })
+                }
+                val newDeckValues = buildJsonObject {
+                    campaign.latestDecks.jsonObject.forEach { (key, value) ->
+                        if (key == deck.id) {
+                            put(key, newDeck)  // Replace the target key
+                        } else {
+                            put(key, value)  // Keep other keys unchanged
+                        }
+                    }
+                }
+                campaignRepository.updateCampaign(campaign.copy(
+                    latestDecks = newDeckValues
+                ))
+            }
             deckRepository.updateDeck(deck.copy(nextId = newUuid))
             deckRepository.insertDeck(deck.copy(
                 id = newUuid,
@@ -598,13 +625,20 @@ class DeckViewModel(
     }
 
     @OptIn(ExperimentalUuidApi::class)
-    suspend fun cloneDeck(user: FirebaseUser?, problems: List<String>?, context: Context) {
-        if (originalDeck.value!!.uploaded) {
+    suspend fun cloneDeck(
+        user: FirebaseUser?,
+        problems: List<String>?,
+        isUpload: Boolean,
+        newName: String,
+        context: Context
+    ) {
+        if (isUpload) {
             val token = user!!.getIdToken(true).await().token
             val deck = originalDeck.value!!
             val values = updatableValues.value!!
             val newDeck = apolloClient.mutation(CreateDeckMutation(
-                name = "${deck.name} ${context.getString(R.string.clone_deck_name_postfix)}",
+                name = if (newName.trim() == deck.name) "${deck.name} ${context.getString(R.string.clone_deck_name_postfix)}"
+                else newName,
                 foc = values.foc,
                 fit = values.fit,
                 awa = values.awa,
@@ -628,8 +662,10 @@ class DeckViewModel(
             val deck = originalDeck.value!!.toDeck(updatableValues.value!!, problems)
             deckRepository.insertDeck(deck.copy(
                 id = newUuid,
-                name = "${deck.name} ${context.getString(R.string.clone_deck_name_postfix)}",
+                name = if (newName.trim() == deck.name) "${deck.name} ${context.getString(R.string.clone_deck_name_postfix)}"
+                else newName,
                 version = 1,
+                uploaded = false,
                 createdAt = getCurrentDateTime(),
                 updatedAt = getCurrentDateTime(),
                 campaignId = null,
@@ -733,6 +769,39 @@ class DeckViewModel(
                 val previousDeck = deckRepository.getDeck(previousId)
                 deckRepository.updateDeck(previousDeck.copy(nextId = null))
                 deckToOpen.update { previousId }
+                if (originalDeck.value!!.campaignId != null) {
+                    val deck = originalDeck.value!!
+                    val campaign = campaignRepository.getCampaignById(deck.campaignId.toString())
+                    val oldDeckValue = campaign.latestDecks.jsonObject[deck.id]!!.jsonArray
+                    val newDeck = buildJsonObject {
+                        put(previousId, oldDeckValue)
+                    }
+                    val newDeckValues = buildJsonObject {
+                        campaign.latestDecks.jsonObject.forEach { (key, value) ->
+                            if (key == previousId) {
+                                put(previousId, newDeck)  // Replace the target key
+                            } else {
+                                put(key, value)  // Keep other keys unchanged
+                            }
+                        }
+                    }
+                    campaignRepository.updateCampaign(campaign.copy(
+                        latestDecks = newDeckValues
+                    ))
+                }
+            } else if (originalDeck.value!!.campaignId != null) {
+                val deck = originalDeck.value!!
+                val campaign = campaignRepository.getCampaignById(deck.campaignId.toString())
+                val newDeckValues = buildJsonObject {
+                    campaign.latestDecks.jsonObject.forEach { (key, value) ->
+                        if (key != deck.id) {
+                            put(key, value)  // Keep other keys unchanged
+                        }
+                    }
+                }
+                campaignRepository.updateCampaign(campaign.copy(
+                    latestDecks = newDeckValues
+                ))
             }
         }
     }
@@ -757,7 +826,7 @@ fun Deck.toDeckState(): FullDeckState {
         background = this.meta.jsonObject["background"]!!.jsonPrimitive.content,
         specialty = this.meta.jsonObject["specialty"]!!.jsonPrimitive.content,
         problems = this.meta.jsonObject["problem"]?.jsonArray?.map { it.jsonPrimitive.content },
-        campaignId = this.campaignId,
+        campaignId = this.campaignId.toString(),
         campaignName = this.campaignName,
         campaignRewards = this.campaignRewards?.jsonArray?.map { it.jsonPrimitive.content },
         previousId = this.previousId,
@@ -794,7 +863,7 @@ fun FullDeckState.toDeck(values: OftenUpdatableDeckValues, problems: List<String
             put("background", deckState.background)
             put("specialty", deckState.specialty)
         },
-        campaignId = this.campaignId,
+        campaignId = this.campaignId.toString(),
         campaignName = this.campaignName,
         campaignRewards = buildJsonArray { deckState.campaignRewards?.forEach { add(it) } },
         previousId = this.previousId,

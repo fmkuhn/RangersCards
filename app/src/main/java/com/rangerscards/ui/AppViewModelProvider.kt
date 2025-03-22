@@ -42,7 +42,8 @@ object AppViewModelProvider {
         //Initializer for DeckViewModel
         initializer {
             DeckViewModel(rangersApplication().container.apolloClient,
-                rangersApplication().container.deckRepository)
+                rangersApplication().container.deckRepository,
+                rangersApplication().container.campaignRepository)
         }
 
         //Initializer for DeckCardsViewModel

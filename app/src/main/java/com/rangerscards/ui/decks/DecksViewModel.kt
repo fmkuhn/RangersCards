@@ -305,7 +305,7 @@ fun com.rangerscards.fragment.Deck.toDeck(uploaded: Boolean): Deck {
         createdAt = TimestampNormilizer.fixFraction(this.created_at),
         updatedAt = TimestampNormilizer.fixFraction(this.updated_at),
         meta = this.meta,
-        campaignId = this.campaign?.id,
+        campaignId = this.campaign?.id.toString(),
         campaignName = this.campaign?.name,
         campaignRewards = this.campaign?.rewards,
         previousId = this.previous_deck?.id?.toString(),

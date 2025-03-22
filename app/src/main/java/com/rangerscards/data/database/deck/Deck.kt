@@ -32,7 +32,7 @@ data class Deck(
     val updatedAt: String?,
     val meta: JsonElement,
     @ColumnInfo(name = "campaign_id")
-    val campaignId: Int?,
+    val campaignId: String?,
     @ColumnInfo(name = "campaign_name")
     val campaignName: String?,
     @ColumnInfo(name = "campaign_rewards")

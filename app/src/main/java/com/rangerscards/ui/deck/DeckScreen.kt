@@ -3,6 +3,7 @@ package com.rangerscards.ui.deck
 import android.widget.Toast
 import androidx.activity.compose.BackHandler
 import androidx.annotation.StringRes
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -26,6 +27,8 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -84,6 +87,11 @@ enum class DialogType {
     Delete,
 }
 
+enum class DialogWithInputType {
+    Name,
+    Clone
+}
+
 @Composable
 fun DeckScreen(
     navController: NavHostController,
@@ -116,16 +124,23 @@ fun DeckScreen(
     val deckProblems = deckViewModel.deckProblemsFlow.collectAsState(deck?.problems to (0 to null))
     var showActionDialog by rememberSaveable { mutableStateOf<DialogType?>(null) }
     var showLoadingDialog by rememberSaveable { mutableStateOf(false) }
-    var showNameDialog by rememberSaveable { mutableStateOf(false) }
+    var showInputDialog by rememberSaveable { mutableStateOf<DialogWithInputType?>(null) }
     val coroutine = rememberCoroutineScope()
     val context = LocalContext.current.applicationContext
     var drawerOpen by remember { mutableStateOf(false) }
     var deckNameEditing by rememberSaveable { mutableStateOf("") }
+    var isUploadClone by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(needLoadDeck) {
         delay(500L)
         if (needLoadDeck) {
             deckViewModel.loadDeck(deckId)
             needLoadDeck = false
+        }
+    }
+    LaunchedEffect(deck) {
+        if (deck != null) {
+            if (deckNameEditing.isEmpty()) deckNameEditing = deck.name
+            isUploadClone = deck.uploaded
         }
     }
     BackHandler {
@@ -336,8 +351,10 @@ fun DeckScreen(
                 }
             }
         }
-        if (showNameDialog) Dialog(
-            onDismissRequest = { showNameDialog = false },
+        if (showInputDialog != null) Dialog(
+            onDismissRequest = { showInputDialog = null
+                deckNameEditing = deck?.name ?: ""
+                               },
             properties = DialogProperties(
                 dismissOnBackPress = false,
                 dismissOnClickOutside = false,
@@ -348,7 +365,6 @@ fun DeckScreen(
                 isDarkTheme = isDarkTheme,
                 labelIdRes = R.string.deck_creation_name_label
             ) {
-                if (deckNameEditing.isEmpty()) deckNameEditing = deck?.name ?: ""
                 SettingsInputField(
                     leadingIcon = R.drawable.badge_32dp,
                     placeholder = null,
@@ -359,6 +375,34 @@ fun DeckScreen(
                         imeAction = ImeAction.Done,
                     )
                 )
+                if (showInputDialog == DialogWithInputType.Clone && deckViewModel.isConnected(context)) {
+                    Row(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp, vertical = 4.dp)
+                            .clickable { isUploadClone = !isUploadClone },
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Text(
+                            text = stringResource(R.string.upload_to_rangersdb),
+                            color = CustomTheme.colors.d30,
+                            fontFamily = Jost,
+                            fontWeight = FontWeight.Medium,
+                            fontSize = 20.sp,
+                            lineHeight = 22.sp,
+                            modifier = Modifier.weight(1f)
+                        )
+                        RadioButton(
+                            selected = isUploadClone,
+                            onClick = { isUploadClone = !isUploadClone },
+                            colors = RadioButtonDefaults.colors().copy(
+                                selectedColor = CustomTheme.colors.m,
+                                unselectedColor = CustomTheme.colors.m
+                            ),
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
+                }
                 Row(
                     modifier = Modifier.fillMaxWidth(),
                     horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -366,8 +410,8 @@ fun DeckScreen(
                     SquareButton(
                         stringId = R.string.cancel_button,
                         leadingIcon = R.drawable.close_32dp,
-                        onClick = { showNameDialog = false
-                                  deckNameEditing = ""
+                        onClick = { showInputDialog = null
+                                  deckNameEditing = deck?.name ?: ""
                                   },
                         buttonColor = ButtonDefaults.buttonColors().copy(
                             CustomTheme.colors.d30,
@@ -380,16 +424,31 @@ fun DeckScreen(
                     SquareButton(
                         stringId = R.string.done_button,
                         leadingIcon = R.drawable.done_32dp,
-                        onClick = {
-                            coroutine.launch {
-                                showNameDialog = false
+                        onClick = when(showInputDialog) {
+                            DialogWithInputType.Name -> {{ coroutine.launch {
+                                showInputDialog = null
                                 showLoadingDialog = true
                                 deckViewModel.updateDeckName(user, deckProblems.value.first, deckNameEditing)
                             }.invokeOnCompletion {
                                 deckNameEditing = ""
                                 showLoadingDialog = false
-                                deckViewModel.loadDeck(deckId)
-                            }
+                                deckViewModel.loadDeck(deckId) }
+                            }}
+                            else -> {{coroutine.launch { showLoadingDialog = true
+                                deckViewModel.cloneDeck(
+                                    user, deckProblems.value.first, isUploadClone,
+                                    deckNameEditing, context)
+                            }.invokeOnCompletion { showLoadingDialog = false
+                                if (deckViewModel.deckToOpen.value != null) navController.navigate(
+                                    "deck/${deckViewModel.deckToOpen.value}"
+                                ) {
+                                    popUpTo(BottomNavScreen.Decks.startDestination) {
+                                        inclusive = false
+                                    }
+                                    launchSingleTop = true
+                                }
+                                else navController.navigateUp() }
+                            }}
                         },
                         buttonColor = ButtonDefaults.buttonColors().copy(
                             CustomTheme.colors.d10,
@@ -397,6 +456,7 @@ fun DeckScreen(
                         ),
                         iconColor = CustomTheme.colors.l15,
                         textColor = CustomTheme.colors.l30,
+                        isEnabled = deckNameEditing.isNotEmpty(),
                         modifier = Modifier.weight(0.5f),
                     )
                 }
@@ -1066,7 +1126,7 @@ fun DeckScreen(
                     onClick = { drawerOpen = !drawerOpen },
                     deckName = deck.name,
                     deckId = if (deck.uploaded) deckId else null,
-                    changeName = { showNameDialog = true },
+                    changeName = { showInputDialog = DialogWithInputType.Name },
                     toNotes = { /*TODO:Implement notes*/ },
                     toCharts = { /*TODO:Implement charts*/ },
                     camp = if (deck.nextId == null) {{ if (deckProblems.value.first.orEmpty().isNotEmpty()) {
@@ -1104,18 +1164,7 @@ fun DeckScreen(
                         }
                         launchSingleTop = true
                     } }} else null,
-                    cloneDeck = { coroutine.launch { showLoadingDialog = true
-                            deckViewModel.cloneDeck(user, deckProblems.value.first, context)
-                        }.invokeOnCompletion { showLoadingDialog = false
-                            if (deckViewModel.deckToOpen.value != null) navController.navigate(
-                                "deck/${deckViewModel.deckToOpen.value}"
-                            ) {
-                                popUpTo(BottomNavScreen.Decks.startDestination) {
-                                    inclusive = false
-                                }
-                                launchSingleTop = true
-                            }
-                            else navController.navigateUp() } },
+                    cloneDeck = { showInputDialog = DialogWithInputType.Clone },
                     upload = if (deck.uploaded) null else {{
                         if (deck.nextId != null || deck.previousId != null) {
                             Toast.makeText(
