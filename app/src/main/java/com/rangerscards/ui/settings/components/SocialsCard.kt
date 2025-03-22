@@ -37,7 +37,7 @@ fun SocialsCard(
             letterSpacing = 0.2.sp,
             modifier = modifier.padding(horizontal = 8.dp)
         )
-        val context = LocalContext.current.applicationContext
+        val context = LocalContext.current
         when(language) {
             "en" -> SquareButton(
                 stringId = R.string.discord_button,
