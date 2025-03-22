@@ -46,7 +46,9 @@ import com.rangerscards.ui.settings.SettingsViewModel
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
 import kotlinx.coroutines.flow.drop
+import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
+import kotlinx.serialization.json.jsonPrimitive
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
@@ -154,7 +156,9 @@ fun CampaignsScreen(
                 ) { index ->
                     val item = campaignsLazyItems[index] ?: return@items
                     val roleImages = campaignsViewModel.getRolesImages(
-                        item.latestDecks.jsonObject.values.flatMap { it.jsonObject.keys }
+                        item.latestDecks.jsonObject.values.mapNotNull { jsonArray ->
+                            jsonArray.jsonArray.getOrNull(1)?.jsonObject?.get("role")?.jsonPrimitive?.content
+                        }
                     ).collectAsState(null)
                     CampaignListItem(
                         name = item.name,

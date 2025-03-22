@@ -31,6 +31,8 @@ import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonObject
+import kotlinx.serialization.json.add
+import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
@@ -209,8 +211,12 @@ fun com.rangerscards.fragment.Campaign.toCampaign(uploaded: Boolean): Campaign {
         createdAt = TimestampNormilizer.fixFraction(this.created_at),
         updatedAt = TimestampNormilizer.fixFraction(this.updated_at),
         latestDecks = buildJsonObject { campaign.latest_decks.forEach {
-            put(it.deck!!.deck.id.toString(), buildJsonObject {
-                put(it.deck.deck.meta.jsonObject["role"]!!.jsonPrimitive.content, it.deck.deck.user.userInfo.handle)
+            put(it.deck!!.deck.id.toString(), buildJsonArray {
+                add(it.deck.deck.name)
+                add(it.deck.deck.meta)
+                add(buildJsonObject {
+                    put(it.deck.deck.user_id, it.deck.deck.user.userInfo.handle)
+                })
             })
         } },
         access = buildJsonObject { campaign.access.forEach {
