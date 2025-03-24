@@ -282,4 +282,10 @@
     <string name="current_path_terrain_none">None</string>
     <string name="recorded_journey_button">Recorded journey</string>
 
+    //Weather
+    <string name="weather_perfect_day">A Perfect Day</string>
+    <string name="weather_downpour">Downpour</string>
+    <string name="weather_howling_winds">Howling Winds</string>
+
+
 </resources>

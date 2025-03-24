@@ -48,6 +48,7 @@ fun CampaignScreen(
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     val isSubscriptionStarted by campaignViewModel.isSubscriptionStarted.collectAsState()
+    val campaignState by campaignViewModel.campaign.collectAsState()
     var showLoadingDialog by rememberSaveable { mutableStateOf(false) }
     var showNameDialog by rememberSaveable { mutableStateOf(false) }
     var campaignNameEditing by rememberSaveable { mutableStateOf("") }
@@ -55,6 +56,7 @@ fun CampaignScreen(
     LaunchedEffect(campaign) {
         if (user != null && !isSubscriptionStarted && campaign?.uploaded == true)
             campaignViewModel.startSubscription(campaign.id)
+        if (campaign != null) campaignViewModel.parseCampaign(campaign)
     }
     Column(
         modifier = Modifier
@@ -99,7 +101,7 @@ fun CampaignScreen(
                 isDarkTheme = isDarkTheme,
                 labelIdRes = R.string.deck_creation_name_label
             ) {
-                if (campaignNameEditing.isEmpty()) campaignNameEditing = campaign?.name ?: ""
+                if (campaignNameEditing.isEmpty()) campaignNameEditing = campaignState?.name ?: ""
                 SettingsInputField(
                     leadingIcon = R.drawable.badge_32dp,
                     placeholder = null,
@@ -132,13 +134,13 @@ fun CampaignScreen(
                         stringId = R.string.done_button,
                         leadingIcon = R.drawable.done_32dp,
                         onClick = {
-                            if (campaignNameEditing != campaign!!.name) coroutine.launch {
+                            if (campaignNameEditing != campaignState!!.name) coroutine.launch {
                                 showNameDialog = false
                                 showLoadingDialog = true
                                 campaignViewModel.updateCampaignName(
-                                    campaign.id,
+                                    campaignState!!.id,
                                     campaignNameEditing,
-                                    campaign.uploaded,
+                                    campaignState!!.uploaded,
                                     user
                                 )
                             }.invokeOnCompletion {
@@ -160,7 +162,7 @@ fun CampaignScreen(
                 }
             }
         }
-        if (campaign == null) {
+        if (campaignState == null) {
             Column(
                 modifier = Modifier.fillMaxSize(),
                 verticalArrangement = Arrangement.Center,
@@ -180,12 +182,12 @@ fun CampaignScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 item {
-                    CampaignTitleRow(campaign.name) { showNameDialog = true }
+                    CampaignTitleRow(campaignState!!.name) { showNameDialog = true }
                 }
                 item {
                     CampaignCurrentPositionCard(
-                        campaign.currentLocation,
-                        campaign.currentPathTerrain
+                        campaignState!!.currentLocation,
+                        campaignState!!.currentPathTerrain
                     ) { /*TODO:Implement recorded journey*/ }
                 }
             }
