@@ -170,24 +170,6 @@ mutation addCampaignEvent(
 }
 
 
-mutation addCampaignNote(
-  $campaignId: Int!,
-  $note: jsonb!
-) {
-  update_rangers_campaign_by_pk(
-    pk_columns: {
-	    id: $campaignId
-    }
-    _append: {
-      notes: $note
-    }
-  ) {
-    id
-    notes
-  }
-}
-
-
 mutation updateCampaignRemoved(
   $campaignId: Int!,
   $removed: jsonb!

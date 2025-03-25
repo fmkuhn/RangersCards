@@ -28,12 +28,15 @@ import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.navigation.NavHostController
 import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.R
 import com.rangerscards.data.database.campaign.Campaign
 import com.rangerscards.ui.campaigns.components.CampaignCurrentPositionCard
 import com.rangerscards.ui.campaigns.components.CampaignTitleRow
+import com.rangerscards.ui.campaigns.components.TimeLineLazyRow
 import com.rangerscards.ui.components.SquareButton
+import com.rangerscards.ui.navigation.BottomNavScreen
 import com.rangerscards.ui.settings.components.SettingsBaseCard
 import com.rangerscards.ui.settings.components.SettingsInputField
 import com.rangerscards.ui.theme.CustomTheme
@@ -45,6 +48,7 @@ fun CampaignScreen(
     campaign: Campaign?,
     user: FirebaseUser?,
     isDarkTheme: Boolean,
+    navController: NavHostController,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
     val isSubscriptionStarted by campaignViewModel.isSubscriptionStarted.collectAsState()
@@ -183,6 +187,16 @@ fun CampaignScreen(
             ) {
                 item {
                     CampaignTitleRow(campaignState!!.name) { showNameDialog = true }
+                }
+                item {
+                    TimeLineLazyRow(
+                        campaignViewModel.groupDaysByWeather(),
+                        campaignState!!.currentDay
+                    ) { navController.navigate(
+                        "${BottomNavScreen.Campaigns.route}/campaign/dayInfo/$it"
+                    ) {
+                        launchSingleTop = true
+                    } }
                 }
                 item {
                     CampaignCurrentPositionCard(

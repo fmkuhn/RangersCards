@@ -287,5 +287,10 @@
     <string name="weather_downpour">Downpour</string>
     <string name="weather_howling_winds">Howling Winds</string>
 
+    //DayInfo
+    <string name="guide_entries">Guide entries:</string>
+    <string name="guide_entry">Guide entry</string>
+    <string name="add_guide_entry_button">Add guide entry</string>
+
 
 </resources>

@@ -249,4 +249,7 @@
     <string name="weather_perfect_day">Ясный день</string>
     <string name="weather_downpour">Ливень</string>
     <string name="weather_howling_winds">Шквальный ветер</string>
+    <string name="guide_entries">Записи в путеводителе:</string>
+    <string name="guide_entry">Запись в путеводителе</string>
+    <string name="add_guide_entry_button">Добавить запись</string>
 </resources>

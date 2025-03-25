@@ -42,6 +42,7 @@ import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.currentBackStackEntryAsState
+import androidx.navigation.compose.dialog
 import androidx.navigation.compose.navigation
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
@@ -54,6 +55,7 @@ import com.rangerscards.ui.campaigns.CampaignScreen
 import com.rangerscards.ui.campaigns.CampaignViewModel
 import com.rangerscards.ui.campaigns.CampaignsScreen
 import com.rangerscards.ui.campaigns.CampaignsViewModel
+import com.rangerscards.ui.campaigns.DayInfoDialog
 import com.rangerscards.ui.cards.CardsScreen
 import com.rangerscards.ui.cards.CardsViewModel
 import com.rangerscards.ui.cards.FullCardScreen
@@ -570,7 +572,7 @@ fun RangersNavHost(
                 composable(
                     route = "${BottomNavScreen.Campaigns.route}/campaign/{$campaignIdArgument}",
                     enterTransition = {
-                        if (!initialState.destination.route.orEmpty().startsWith("${BottomNavScreen.Campaigns.route}/campaign/")) {
+                        if (initialState.destination.route == BottomNavScreen.Campaigns.startDestination) {
                             fadeIn(
                                 animationSpec = tween(300, easing = LinearEasing)
                             ) + slideIntoContainer(
@@ -582,7 +584,7 @@ fun RangersNavHost(
                         }
                     },
                     exitTransition = {
-                        if (!targetState.destination.route.orEmpty().startsWith("${BottomNavScreen.Campaigns.route}/campaign/")) {
+                        if (targetState.destination.route == BottomNavScreen.Campaigns.startDestination) {
                             fadeOut(
                                 animationSpec = tween(400, easing = LinearEasing)
                             ) + slideOutOfContainer(
@@ -608,12 +610,35 @@ fun RangersNavHost(
                             campaign = campaign.value,
                             user = user.currentUser,
                             isDarkTheme = isDarkTheme,
+                            navController = navController,
                             contentPadding = innerPadding
                         )
-                        if (campaign.value != null) title = stringResource(CampaignMaps.campaignCyclesMap[campaign.value!!.cycleId]!!)
-                        else title = ""
+                        title = if (campaign.value != null) stringResource(CampaignMaps.campaignCyclesMap[campaign.value!!.cycleId]!!)
+                        else ""
                         actions = { /*TODO:Implement undo and book page*/ }
                         switch = null
+                }
+                val dayInfoIdArgument = "dayInfoId"
+                dialog("${BottomNavScreen.Campaigns.route}/campaign/dayInfo/{$dayInfoIdArgument}",
+                    arguments = listOf(navArgument(dayInfoIdArgument) { type = NavType.IntType }))
+                { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("${BottomNavScreen.Campaigns.route}/campaign/{$campaignIdArgument}")
+                    }
+                    val campaignViewModel: CampaignViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val dayInfoId = backStackEntry.arguments?.getInt(dayInfoIdArgument)
+                        ?: error("campaignIdArgument cannot be null")
+                    val user by settingsViewModel.userUiState.collectAsState()
+                    DayInfoDialog(
+                        campaignViewModel = campaignViewModel,
+                        dayId = dayInfoId,
+                        isDarkTheme = isDarkTheme,
+                        onBack = { navController.popBackStack() },
+                        user = user.currentUser
+                    )
                 }
             }
         }

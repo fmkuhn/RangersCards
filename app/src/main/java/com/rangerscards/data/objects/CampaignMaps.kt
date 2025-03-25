@@ -203,6 +203,41 @@ object CampaignMaps {
             )
         )
     }
+
+    val moonIconsMap by lazy {
+        mapOf(
+            1 to R.drawable.day_1,
+            2 to R.drawable.day_2,
+            3 to R.drawable.day_3,
+            4 to R.drawable.day_4,
+            5 to R.drawable.day_5,
+            6 to R.drawable.day_6,
+            7 to R.drawable.day_7,
+            8 to R.drawable.day_8,
+            9 to R.drawable.day_9,
+            10 to R.drawable.day_10,
+            11 to R.drawable.day_11,
+            12 to R.drawable.day_12,
+            13 to R.drawable.day_13,
+            14 to R.drawable.day_13,
+            15 to R.drawable.day_15,
+            16 to R.drawable.day_16,
+            17 to R.drawable.day_17,
+            18 to R.drawable.day_18,
+            19 to R.drawable.day_19,
+            20 to R.drawable.day_20,
+            21 to R.drawable.day_21,
+            22 to R.drawable.day_22,
+            23 to R.drawable.day_23,
+            24 to R.drawable.day_24,
+            25 to R.drawable.day_25,
+            26 to R.drawable.day_26,
+            27 to R.drawable.day_27,
+            28 to R.drawable.day_28,
+            29 to R.drawable.day_28,
+            30 to R.drawable.day_30,
+        )
+    }
 }
 
 data class Connection(
