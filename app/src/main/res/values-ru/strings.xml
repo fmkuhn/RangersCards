@@ -189,9 +189,9 @@
     <string name="search_campaigns">Поиск по кампаниям</string>
     <string name="no_matching_campaigns">По запросу «%s» кампаний не найдено</string>
     <string name="no_campaigns">Пока у вас нет кампаний.\n\nНажмите кнопку +, чтобы создать новую.</string>
-    <string name="new_campaign">Ноая кампания</string>
+    <string name="new_campaign">Новая кампания</string>
     <string name="campaign_creation_name_placeholder">Введите название этой кампании.</string>
-    <string name="create_campaign_button">Создать кампанию</string>
+    <string name="create_campaign_button">Создать</string>
     <string name="campaign">Кампания</string>
     <string name="campaign_placeholder">Выберите кампанию</string>
     <string name="core_cycle">База</string>

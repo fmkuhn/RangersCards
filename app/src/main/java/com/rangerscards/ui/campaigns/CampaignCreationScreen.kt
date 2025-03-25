@@ -128,7 +128,7 @@ fun CampaignCreationScreen(
                 )
                 DataPicker(
                     onClick = { showDialogPicker = true },
-                    type = R.string.background
+                    type = R.string.campaign
                 ) {
                     Text(
                         text = stringResource(if (cycle.isEmpty())
