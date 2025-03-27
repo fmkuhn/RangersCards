@@ -17,6 +17,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -198,11 +199,62 @@ fun CampaignScreen(
                         launchSingleTop = true
                     } }
                 }
+                if (campaignState!!.currentDay == 30 && !campaignState!!.extendedCalendar) item {
+                    SquareButton(
+                        stringId = R.string.extend_campaign_button,
+                        leadingIcon = R.drawable.add_32dp,
+                        onClick = { coroutine.launch { campaignViewModel.extendCampaign(user) } },
+                        modifier = Modifier.padding(8.dp)
+                    )
+                }
                 item {
                     CampaignCurrentPositionCard(
                         campaignState!!.currentLocation,
                         campaignState!!.currentPathTerrain
-                    ) { /*TODO:Implement recorded journey*/ }
+                    ) { navController.navigate(
+                        "${BottomNavScreen.Campaigns.route}/campaign/journey"
+                    ) {
+                        launchSingleTop = true
+                    } }
+                }
+                item {
+                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                        key("travelButton") {
+                            SquareButton(
+                                stringId = R.string.travel_button,
+                                leadingIcon = R.drawable.travel_32dp,
+                                iconColor = CustomTheme.colors.m,
+                                textColor = CustomTheme.colors.d30,
+                                buttonColor = ButtonDefaults.buttonColors().copy(
+                                    containerColor = CustomTheme.colors.l20
+                                ),
+                                onClick = { navController.navigate(
+                                    "${BottomNavScreen.Campaigns.route}/campaign/travel"
+                                ) {
+                                    launchSingleTop = true
+                                } },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                        if ((campaignState!!.currentDay != 30 || campaignState!!.extendedCalendar)
+                            && campaignState!!.currentDay != 60) key("endDayButton") {
+                            SquareButton(
+                                stringId = R.string.end_the_day,
+                                leadingIcon = R.drawable.camp_32dp,
+                                iconColor = CustomTheme.colors.d20,
+                                textColor = CustomTheme.colors.d30,
+                                buttonColor = ButtonDefaults.buttonColors().copy(
+                                    containerColor = CustomTheme.colors.l10
+                                ),
+                                onClick = { navController.navigate(
+                                    "${BottomNavScreen.Campaigns.route}/campaign/endDay"
+                                ) {
+                                    launchSingleTop = true
+                                } },
+                                modifier = Modifier.weight(1f)
+                            )
+                        }
+                    }
                 }
             }
         }

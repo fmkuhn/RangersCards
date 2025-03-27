@@ -7,7 +7,9 @@ import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.ApolloClient
 import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.CampaignSubscription
+import com.rangerscards.ExtendCampaignMutation
 import com.rangerscards.SetCampaignCalendarMutation
+import com.rangerscards.SetCampaignDayMutation
 import com.rangerscards.SetCampaignTitleMutation
 import com.rangerscards.data.database.campaign.Campaign
 import com.rangerscards.data.database.repository.CampaignRepository
@@ -71,6 +73,12 @@ data class CampaignHistory(
     val camped: Boolean,
     val location: String,
     val pathTerrain: String,
+)
+
+data class CampaignTravelDay(
+    val day: Int,
+    val startingLocation: String?,
+    val travel: List<CampaignHistory>
 )
 
 data class CampaignDeck(
@@ -232,6 +240,70 @@ class CampaignViewModel(
         } else {
             val campaignEntry = campaignRepository.getCampaignById(campaign.id)
             campaignRepository.updateCampaign(campaignEntry.copy(calendar = newCalendar))
+        }
+    }
+
+    /**
+     * Computes a list of TravelDay objects based on the campaign history.
+     */
+    fun buildTravelHistory(history: List<CampaignHistory>): List<CampaignTravelDay> {
+        val campaign = campaign.value!!
+        // Group entries by day
+        val daysMap = history.groupBy { it.day }
+        val result = mutableListOf<CampaignTravelDay>()
+        // Determine the starting live location using a constant lookup.
+        var liveLocation: String? = CampaignMaps.startingLocations[campaign.cycleId]
+        // For each day from 1 to campaign.day, build the travel day object.
+        for (day in 1..campaign.currentDay) {
+            val travel = daysMap[day] ?: emptyList()
+            result.add(
+                CampaignTravelDay(
+                    day = day,
+                    startingLocation = liveLocation,
+                    travel = travel
+                )
+            )
+            if (travel.isNotEmpty()) {
+                // Update liveLocation to the location from the last entry
+                liveLocation = travel.lastOrNull()?.location ?: liveLocation
+            }
+        }
+        return result
+    }
+
+    fun getWeatherResId(day: Int): Int {
+        val campaign = campaign.value!!
+        val weatherList = CampaignMaps.weather[campaign.cycleId]!!
+        return (weatherList.firstOrNull { day in it.start..it.end }
+            ?: weatherList.firstOrNull { day in (it.start + 30)..(it.end + 30) })?.nameResId!!
+    }
+
+    suspend fun extendCampaign(user: FirebaseUser?) {
+        val campaign = campaign.value!!
+        if (campaign.uploaded) {
+            val token = user!!.getIdToken(true).await().token
+            apolloClient.mutation(
+                ExtendCampaignMutation(campaignId = campaign.id.toInt())
+            ).addHttpHeader("Authorization", "Bearer $token").execute()
+        } else {
+            val campaignEntry = campaignRepository.getCampaignById(campaign.id)
+            campaignRepository.updateCampaign(campaignEntry.copy(extendedCalendar = true))
+        }
+    }
+
+    suspend fun setCampaignDay(user: FirebaseUser?) {
+        val campaign = campaign.value!!
+        if (campaign.uploaded) {
+            val token = user!!.getIdToken(true).await().token
+            apolloClient.mutation(
+                SetCampaignDayMutation(
+                    campaignId = campaign.id.toInt(),
+                    day = campaign.currentDay + 1
+                )
+            ).addHttpHeader("Authorization", "Bearer $token").execute()
+        } else {
+            val campaignEntry = campaignRepository.getCampaignById(campaign.id)
+            campaignRepository.updateCampaign(campaignEntry.copy(day = campaign.currentDay + 1))
         }
     }
 }

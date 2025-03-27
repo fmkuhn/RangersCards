@@ -246,10 +246,18 @@
     <string name="current_path_terrain">Текущий тип местности</string>
     <string name="current_path_terrain_none">Отсутствует</string>
     <string name="recorded_journey_button">Путевые заметки</string>
+    <string name="extend_campaign_button">Расширить кампанию</string>
     <string name="weather_perfect_day">Ясный день</string>
     <string name="weather_downpour">Ливень</string>
     <string name="weather_howling_winds">Шквальный ветер</string>
     <string name="guide_entries">Записи в путеводителе:</string>
     <string name="guide_entry">Запись в путеводителе</string>
     <string name="add_guide_entry_button">Добавить запись</string>
+    <string name="journey_title">Путешествие</string>
+    <string name="en_route_to">По пути к %s</string>
+    <string name="stayed_at">Останавливались в %s</string>
+    <string name="end_the_day">Закончить день</string>
+    <string name="ending_day_number">Это завершит день %d.</string>
+    <string name="ending_day_warning">Эту опцию следует использовать, если рейнджер слишком устал, слишком ранен, а также по указанию руководства кампании или задания.\nЕсли вы собираетесь разбить лагерь во время путешествия в новое место, воспользуйтесь кнопкой «Путешествие».</string>
+    <string name="travel_button">Путешествие</string>
 </resources>

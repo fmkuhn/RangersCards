@@ -51,11 +51,13 @@ import com.rangerscards.R
 import com.rangerscards.data.objects.CampaignMaps
 import com.rangerscards.ui.AppViewModelProvider
 import com.rangerscards.ui.campaigns.CampaignCreationScreen
+import com.rangerscards.ui.campaigns.CampaignJourneyScreen
 import com.rangerscards.ui.campaigns.CampaignScreen
 import com.rangerscards.ui.campaigns.CampaignViewModel
 import com.rangerscards.ui.campaigns.CampaignsScreen
 import com.rangerscards.ui.campaigns.CampaignsViewModel
 import com.rangerscards.ui.campaigns.DayInfoDialog
+import com.rangerscards.ui.campaigns.EndTheDayDialog
 import com.rangerscards.ui.cards.CardsScreen
 import com.rangerscards.ui.cards.CardsViewModel
 import com.rangerscards.ui.cards.FullCardScreen
@@ -635,6 +637,39 @@ fun RangersNavHost(
                     DayInfoDialog(
                         campaignViewModel = campaignViewModel,
                         dayId = dayInfoId,
+                        isDarkTheme = isDarkTheme,
+                        onBack = { navController.popBackStack() },
+                        user = user.currentUser
+                    )
+                }
+                composable(route = "${BottomNavScreen.Campaigns.route}/campaign/journey") { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("${BottomNavScreen.Campaigns.route}/campaign/{$campaignIdArgument}")
+                    }
+                    val campaignViewModel: CampaignViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    CampaignJourneyScreen(
+                        campaignViewModel = campaignViewModel,
+                        contentPadding = innerPadding
+                    )
+                    title = stringResource(R.string.journey_title)
+                    actions = null
+                    switch = null
+                }
+                dialog("${BottomNavScreen.Campaigns.route}/campaign/endDay")
+                { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("${BottomNavScreen.Campaigns.route}/campaign/{$campaignIdArgument}")
+                    }
+                    val campaignViewModel: CampaignViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val user by settingsViewModel.userUiState.collectAsState()
+                    EndTheDayDialog(
+                        campaignViewModel = campaignViewModel,
                         isDarkTheme = isDarkTheme,
                         onBack = { navController.popBackStack() },
                         user = user.currentUser

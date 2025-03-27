@@ -281,6 +281,7 @@
     <string name="current_path_terrain">Current path terrain</string>
     <string name="current_path_terrain_none">None</string>
     <string name="recorded_journey_button">Recorded journey</string>
+    <string name="extend_campaign_button">Extend campaign</string>
 
     //Weather
     <string name="weather_perfect_day">A Perfect Day</string>
@@ -292,5 +293,17 @@
     <string name="guide_entry">Guide entry</string>
     <string name="add_guide_entry_button">Add guide entry</string>
 
+    //Journey
+    <string name="journey_title">Journey</string>
+    <string name="en_route_to">En route to %s</string>
+    <string name="stayed_at">Stayed at %s</string>
+
+    //End the day
+    <string name="end_the_day">End the day</string>
+    <string name="ending_day_number">This will end day %d.</string>
+    <string name="ending_day_warning">This option should be used if a ranger is too fatigued, too injured, or if instructed by the campaign guide or a mission.\nIf you intend to Camp while travelling to a new location, please use the Travel button instead.</string>
+
+    //Travel
+    <string name="travel_button">Travel</string>
 
 </resources>
