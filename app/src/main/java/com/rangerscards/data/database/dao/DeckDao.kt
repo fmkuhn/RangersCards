@@ -47,7 +47,8 @@ interface DeckDao {
     fun searchDecks(query: String, userId: String): PagingSource<Int, DeckListItemProjection>
 
     @Query("Select id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, " +
-            "type_name, traits, level FROM card WHERE id = :id")
+            "type_name, traits, level, approach_conflict, approach_reason, approach_exploration, " +
+            "approach_connection FROM card WHERE id = :id")
     fun getCard(id: String): Flow<CardListItemProjection>
 
     @Query("SELECT id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, " +
@@ -74,7 +75,7 @@ interface DeckDao {
     @Query("SELECT * FROM deck WHERE id = :id")
     suspend fun getDeckById(id: String): Deck
 
-    @Query("Select id, name, text, real_image_src FROM card WHERE id = :id")
+    @Query("Select id, name, text, real_image_src, traits FROM card WHERE id = :id")
     suspend fun getRole(id: String): RoleCardProjection
 
     @Query("SELECT id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, " +

@@ -14,7 +14,7 @@ import com.rangerscards.data.database.dao.DeckDao
 import com.rangerscards.data.database.deck.Deck
 import com.rangerscards.data.objects.JsonElementConverter
 
-@Database(entities = [Card::class, CardFts::class, Deck::class, Campaign::class], version = 1, exportSchema = true)
+@Database(entities = [Card::class, CardFts::class, Deck::class, Campaign::class], version = 1, exportSchema = false)
 @TypeConverters(JsonElementConverter::class)
 abstract class RangersDatabase : RoomDatabase() {
     abstract fun cardDao(): CardDao
