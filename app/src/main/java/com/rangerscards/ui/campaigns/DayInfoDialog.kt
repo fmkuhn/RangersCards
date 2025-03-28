@@ -1,7 +1,5 @@
 package com.rangerscards.ui.campaigns
 
-import androidx.compose.foundation.BorderStroke
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -9,14 +7,12 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -39,6 +35,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.R
+import com.rangerscards.ui.campaigns.components.CampaignDialog
 import com.rangerscards.ui.components.SquareButton
 import com.rangerscards.ui.settings.components.SettingsBaseCard
 import com.rangerscards.ui.settings.components.SettingsInputField
@@ -66,120 +63,89 @@ fun DayInfoDialog(
     val coroutine = rememberCoroutineScope()
     var guideEntryEditing by rememberSaveable { mutableStateOf("") }
     var guideEntryPrevious by rememberSaveable { mutableStateOf("") }
-    Dialog(
-        onDismissRequest = onBack,
-        properties = DialogProperties(
-            dismissOnBackPress = true,
-            dismissOnClickOutside = true,
-            usePlatformDefaultWidth = false
-        )
+    CampaignDialog(
+        header = stringResource(id = R.string.campaigns_current_day, dayId),
+        isDarkTheme = isDarkTheme,
+        onBack = onBack
     ) {
-        Surface(
-            modifier = Modifier
-                .fillMaxWidth()
-                .padding(8.dp),
-            shape = CustomTheme.shapes.large,
-            color = CustomTheme.colors.l30,
-            border = BorderStroke(1.dp, if (isDarkTheme) Color.Transparent else CustomTheme.colors.d15),
-            shadowElevation = 4.dp
+        LazyColumn(
+            modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
+            verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
-            Column {
-                Row(
-                    horizontalArrangement = Arrangement.Center,
-                    modifier = Modifier
-                        .background(
-                            if (isDarkTheme) CustomTheme.colors.l15 else CustomTheme.colors.d15,
-                            RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
-                        )
-                        .fillMaxWidth()
-                        .padding(vertical = 4.dp),
-                ) {
-                    Text(
-                        text = stringResource(id = R.string.campaigns_current_day, dayId),
-                        color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
-                        style = CustomTheme.typography.headline,
-                    )
-                }
-                LazyColumn(
-                    modifier = Modifier.padding(vertical = 8.dp, horizontal = 16.dp),
-                    verticalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    item {
+            item {
+                Text(
+                    text = stringResource(R.string.guide_entries),
+                    color = CustomTheme.colors.d30,
+                    fontFamily = Jost,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 16.sp,
+                    lineHeight = 18.sp,
+                )
+            }
+            dayInfo?.guides?.forEach { guideEntry ->
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         Text(
-                            text = stringResource(R.string.guide_entries),
+                            text = guideEntry,
                             color = CustomTheme.colors.d30,
                             fontFamily = Jost,
-                            fontWeight = FontWeight.Medium,
+                            fontWeight = FontWeight.Normal,
                             fontSize = 16.sp,
                             lineHeight = 18.sp,
+                            modifier = Modifier.weight(1f)
                         )
-                    }
-                    dayInfo?.guides?.forEach { guideEntry ->
-                        item {
-                            Row(
-                                modifier = Modifier.fillMaxWidth(),
-                                horizontalArrangement = Arrangement.spacedBy(8.dp)
-                            ) {
-                                Text(
-                                    text = guideEntry,
-                                    color = CustomTheme.colors.d30,
-                                    fontFamily = Jost,
-                                    fontWeight = FontWeight.Normal,
-                                    fontSize = 16.sp,
-                                    lineHeight = 18.sp,
-                                    modifier = Modifier.weight(1f)
+                        IconButton(
+                            onClick = { guideEntryEditing = guideEntry
+                                guideEntryPrevious = guideEntry
+                                showInputDialog = DayInfoDialog.Edit
+                            },
+                            colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
+                            modifier = Modifier.size(28.dp),
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.edit_32dp),
+                                contentDescription = null,
+                                tint = CustomTheme.colors.m,
+                                modifier = Modifier.size(24.dp)
+                            )
+                        }
+                        IconButton(
+                            onClick = { coroutine.launch { showInputDialog = null
+                                showLoadingDialog = true
+                                val newGuides = campaign!!.calendar[dayId]?.toMutableList()
+                                newGuides?.remove(guideEntry)
+                                campaignViewModel.setCampaignCalendar(
+                                    dayId,
+                                    newGuides ?: emptyList(),
+                                    user
                                 )
-                                IconButton(
-                                    onClick = { guideEntryEditing = guideEntry
-                                        guideEntryPrevious = guideEntry
-                                        showInputDialog = DayInfoDialog.Edit
-                                    },
-                                    colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
-                                    modifier = Modifier.size(28.dp),
-                                ) {
-                                    Icon(
-                                        painterResource(R.drawable.edit_32dp),
-                                        contentDescription = null,
-                                        tint = CustomTheme.colors.m,
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                }
-                                IconButton(
-                                    onClick = { coroutine.launch { showInputDialog = null
-                                        showLoadingDialog = true
-                                        val newGuides = campaign!!.calendar[dayId]?.toMutableList()
-                                        newGuides?.remove(guideEntry)
-                                        campaignViewModel.setCampaignCalendar(
-                                            dayId,
-                                            newGuides ?: emptyList(),
-                                            user
-                                        )
-                                    }.invokeOnCompletion { guideEntryEditing = ""
-                                        showLoadingDialog = false
-                                        onBack.invoke() }
-                                    },
-                                    colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
-                                    modifier = Modifier.size(28.dp),
-                                ) {
-                                    Icon(
-                                        painterResource(R.drawable.delete_32dp),
-                                        contentDescription = null,
-                                        tint = CustomTheme.colors.warn,
-                                        modifier = Modifier.size(24.dp)
-                                    )
-                                }
-                            }
+                            }.invokeOnCompletion { guideEntryEditing = ""
+                                showLoadingDialog = false
+                                onBack.invoke() }
+                            },
+                            colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
+                            modifier = Modifier.size(28.dp),
+                        ) {
+                            Icon(
+                                painterResource(R.drawable.delete_32dp),
+                                contentDescription = null,
+                                tint = CustomTheme.colors.warn,
+                                modifier = Modifier.size(24.dp)
+                            )
                         }
                     }
                 }
-                SquareButton(
-                    stringId = R.string.add_guide_entry_button,
-                    leadingIcon = R.drawable.add_32dp,
-                    onClick = { showInputDialog = DayInfoDialog.Add },
-                    modifier = Modifier.padding(8.dp)
-                )
             }
         }
+        SquareButton(
+            stringId = R.string.add_guide_entry_button,
+            leadingIcon = R.drawable.add_32dp,
+            onClick = { showInputDialog = DayInfoDialog.Add },
+            modifier = Modifier.padding(8.dp)
+        )
     }
     if (showLoadingDialog) Dialog(
         onDismissRequest = { showLoadingDialog = false },
