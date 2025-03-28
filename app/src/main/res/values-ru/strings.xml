@@ -161,7 +161,7 @@
     <string name="maladies_search_tab">Недуги</string>
     <string name="collection_search_tab">Коллекция</string>
     <string name="displaced_search_tab">Отложенные карты</string>
-    <string name="shaw_all_button">Показать все</string>
+    <string name="show_all_button">Показать все</string>
     <string name="personality_text">Выберите 4 уникальных карт личности: по 1 карте от каждой из 4 разных черт.</string>
     <string name="background_text">Выберите 5 уникальных карт из карт вашей квалификации.</string>
     <string name="specialty_text">Выберите 5 уникальных карт из карт вашей специализации.</string>
@@ -260,4 +260,13 @@
     <string name="ending_day_number">Это завершит день %d.</string>
     <string name="ending_day_warning">Эту опцию следует использовать, если рейнджер слишком устал, слишком ранен, а также по указанию руководства кампании или задания.\nЕсли вы собираетесь разбить лагерь во время путешествия в новое место, воспользуйтесь кнопкой «Путешествие».</string>
     <string name="travel_button">Путешествие</string>
+    <string name="travel_header">Отправление — %s</string>
+    <string name="show_all_locations_radio_button">Показать все локации</string>
+    <string name="location_data_type">Локация</string>
+    <string name="travel_location_placeholder">Выберите локацию</string>
+    <string name="path_terrain_data_type">Тип местности</string>
+    <string name="travel_path_terrain_placeholder">Выберите тип местности</string>
+    <string name="camp_radio_button">Разбить лагерь</string>
+    <string name="travel_without_camp_text">Рейнджеры продолжат играть %d день с текущими колодами.</string>
+    <string name="travel_with_camp">Решение разбить лагерь закончит день %d и позволит обменять карты из колоды на заработанные награды.</string>
 </resources>

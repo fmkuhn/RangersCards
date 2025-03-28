@@ -186,7 +186,7 @@
     <string name="maladies_search_tab">Maladies</string>
     <string name="collection_search_tab">Collection</string>
     <string name="displaced_search_tab">Displaced cards</string>
-    <string name="shaw_all_button">Show all</string>
+    <string name="show_all_button">Show all</string>
     <string name="personality_text">Select 4 different personality cards, 1 from each aspect.</string>
     <string name="background_text">Select 5 different cards from your chosen background.</string>
     <string name="specialty_text">Select 5 different cards from your chosen specialty.</string>
@@ -305,5 +305,14 @@
 
     //Travel
     <string name="travel_button">Travel</string>
+    <string name="travel_header">Departing %s</string>
+    <string name="show_all_locations_radio_button">Show all locations</string>
+    <string name="location_data_type">Location</string>
+    <string name="travel_location_placeholder">Choose location</string>
+    <string name="path_terrain_data_type">Path terrain</string>
+    <string name="travel_path_terrain_placeholder">Choose path terrain</string>
+    <string name="camp_radio_button">Camp</string>
+    <string name="travel_without_camp_text">Rangers will continue playing day %d with their current decks.</string>
+    <string name="travel_with_camp">Camping will end day %d and allow any earned rewards to be swapped into decks.</string>
 
 </resources>

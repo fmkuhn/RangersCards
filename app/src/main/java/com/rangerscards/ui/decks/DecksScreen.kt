@@ -125,8 +125,8 @@ fun DecksScreen(
             LazyColumn(
                 modifier = modifier
                     .background(CustomTheme.colors.l30)
-                    .fillMaxSize()
-                    .padding(vertical = 8.dp),
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(vertical = 8.dp),
                 state = listState
             ) {
                 if (decksLazyItems.itemCount == 0 && decksLazyItems.loadState.isIdle) item {

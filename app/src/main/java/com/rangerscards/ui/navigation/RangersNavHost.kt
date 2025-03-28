@@ -58,6 +58,7 @@ import com.rangerscards.ui.campaigns.CampaignsScreen
 import com.rangerscards.ui.campaigns.CampaignsViewModel
 import com.rangerscards.ui.campaigns.DayInfoDialog
 import com.rangerscards.ui.campaigns.EndTheDayDialog
+import com.rangerscards.ui.campaigns.TravelDialog
 import com.rangerscards.ui.cards.CardsScreen
 import com.rangerscards.ui.cards.CardsViewModel
 import com.rangerscards.ui.cards.FullCardScreen
@@ -669,6 +670,23 @@ fun RangersNavHost(
                     )
                     val user by settingsViewModel.userUiState.collectAsState()
                     EndTheDayDialog(
+                        campaignViewModel = campaignViewModel,
+                        isDarkTheme = isDarkTheme,
+                        onBack = { navController.popBackStack() },
+                        user = user.currentUser
+                    )
+                }
+                dialog("${BottomNavScreen.Campaigns.route}/campaign/travel")
+                { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("${BottomNavScreen.Campaigns.route}/campaign/{$campaignIdArgument}")
+                    }
+                    val campaignViewModel: CampaignViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val user by settingsViewModel.userUiState.collectAsState()
+                    TravelDialog(
                         campaignViewModel = campaignViewModel,
                         isDarkTheme = isDarkTheme,
                         onBack = { navController.popBackStack() },
