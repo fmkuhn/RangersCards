@@ -180,10 +180,8 @@ fun CampaignScreen(
             }
         } else {
             LazyColumn(
-                modifier = Modifier.fillMaxSize().padding(
-                    start = 8.dp,
-                    end = 8.dp
-                ),
+                modifier = Modifier.fillMaxSize(),
+                contentPadding = PaddingValues(8.dp),
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 item {

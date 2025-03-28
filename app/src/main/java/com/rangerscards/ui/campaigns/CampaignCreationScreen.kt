@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
@@ -154,7 +155,7 @@ fun CampaignCreationScreen(
                         isDarkTheme = isDarkTheme,
                         labelIdRes = R.string.campaign
                     ) {
-                        LazyColumn {
+                        LazyColumn(modifier = Modifier.sizeIn(maxHeight = 400.dp)) {
                             CampaignMaps.campaignCyclesMap.forEach { (key, value) ->
                                 item {
                                     Text(

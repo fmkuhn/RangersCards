@@ -15,7 +15,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
-import androidx.compose.foundation.layout.wrapContentWidth
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.HorizontalDivider
@@ -31,11 +30,8 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.rememberTextMeasurer
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rangerscards.R
@@ -62,11 +58,8 @@ fun CampaignJourneyScreen(
             ),
     ) {
         LazyColumn(
-            modifier = Modifier.fillMaxSize().padding(
-                top = 8.dp,
-                start = 8.dp,
-                end = 8.dp
-            ),
+            modifier = Modifier.fillMaxSize(),
+            contentPadding = PaddingValues(8.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp),
         ) {
             items(travelHistory, CampaignTravelDay::day) { travelDay ->
@@ -111,13 +104,18 @@ fun TravelDayRow(
     val camped = lastEntry?.camped ?: false
     val locationsMap = CampaignMaps.getMapLocations(false)
     FlowRow(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
+        modifier = Modifier
+            .fillMaxWidth()
+            .padding(horizontal = 8.dp),
         horizontalArrangement = Arrangement.spacedBy(8.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         // Starting location icon
         if (start != null) Column(
-            modifier = Modifier.width(IntrinsicSize.Max).sizeIn(maxWidth = 110.dp).align(Alignment.CenterVertically),
+            modifier = Modifier
+                .width(IntrinsicSize.Max)
+                .sizeIn(maxWidth = 110.dp)
+                .align(Alignment.CenterVertically),
             horizontalAlignment = Alignment.CenterHorizontally
         ) {
             val location = locationsMap[start]!!
@@ -143,7 +141,9 @@ fun TravelDayRow(
                 painterResource(R.drawable.arrow_forward_32dp),
                 contentDescription = "Arrow",
                 tint = CustomTheme.colors.m,
-                modifier = Modifier.size(24.dp).align(Alignment.CenterVertically)
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(Alignment.CenterVertically)
             )
             val path = CampaignMaps.Path.fromValue(entry.pathTerrain)
             if (path != null) {
@@ -151,7 +151,9 @@ fun TravelDayRow(
                     painter = painterResource(id = path.iconResId),
                     contentDescription = path.name,
                     tint = Color.Unspecified,
-                    modifier = Modifier.size(48.dp).align(Alignment.CenterVertically)
+                    modifier = Modifier
+                        .size(48.dp)
+                        .align(Alignment.CenterVertically)
                 )
             }
             // If not camped, show an arrow and location icon.
@@ -160,12 +162,17 @@ fun TravelDayRow(
                     painterResource(R.drawable.arrow_forward_32dp),
                     contentDescription = "Arrow",
                     tint = CustomTheme.colors.m,
-                    modifier = Modifier.size(24.dp).align(Alignment.CenterVertically)
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.CenterVertically)
                 )
                 val current = locationsMap[entry.location]
                 if (current != null) {
                     Column(
-                        modifier = Modifier.width(IntrinsicSize.Max).sizeIn(maxWidth = 110.dp).align(Alignment.CenterVertically),
+                        modifier = Modifier
+                            .width(IntrinsicSize.Max)
+                            .sizeIn(maxWidth = 110.dp)
+                            .align(Alignment.CenterVertically),
                         horizontalAlignment = Alignment.CenterHorizontally
                     ) {
                         Icon(
@@ -193,11 +200,16 @@ fun TravelDayRow(
                 painterResource(R.drawable.arrow_forward_32dp),
                 contentDescription = "Arrow",
                 tint = CustomTheme.colors.m,
-                modifier = Modifier.size(24.dp).align(Alignment.CenterVertically)
+                modifier = Modifier
+                    .size(24.dp)
+                    .align(Alignment.CenterVertically)
             )
             val finalLocationName = stringResource(locationsMap[finalLocation]!!.nameResId)
             Column(
-                modifier = Modifier.width(IntrinsicSize.Max).sizeIn(maxWidth = 110.dp).align(Alignment.CenterVertically),
+                modifier = Modifier
+                    .width(IntrinsicSize.Max)
+                    .sizeIn(maxWidth = 110.dp)
+                    .align(Alignment.CenterVertically),
                 horizontalAlignment = Alignment.CenterHorizontally
             ) {
                 Icon(

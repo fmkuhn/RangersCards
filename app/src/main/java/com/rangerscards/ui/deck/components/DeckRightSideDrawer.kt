@@ -10,6 +10,7 @@ import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
@@ -95,7 +96,7 @@ fun BoxScope.DeckRightSideDrawer(
             .background(CustomTheme.colors.l30)
     ) {
         LazyColumn(
-            modifier = Modifier.padding(horizontal = 8.dp, vertical = 16.dp),
+            contentPadding = PaddingValues(horizontal = 8.dp, vertical = 16.dp),
             verticalArrangement = Arrangement.spacedBy(16.dp)
         ) {
             item {

@@ -73,6 +73,7 @@ fun SettingsFriendsScreen(
             modifier = modifier
                 .background(CustomTheme.colors.l30)
                 .fillMaxSize(),
+            contentPadding = PaddingValues(bottom = 8.dp),
             verticalArrangement = Arrangement.spacedBy(8.dp)
         ) {
             val userProfile = user.userInfo?.profile?.userProfile

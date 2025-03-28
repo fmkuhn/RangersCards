@@ -486,12 +486,7 @@ fun DeckScreen(
                 .padding(top = innerPadding.calculateTopPadding())
             ) {
                 LazyColumn(
-                    modifier = Modifier.padding(
-                        top = 8.dp,
-                        bottom = 8.dp,
-                        start = 8.dp,
-                        end = 8.dp
-                    ),
+                    contentPadding = PaddingValues(8.dp),
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     item(key = "description/${deckId}") {

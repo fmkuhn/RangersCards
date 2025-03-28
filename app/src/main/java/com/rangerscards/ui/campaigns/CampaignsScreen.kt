@@ -122,8 +122,8 @@ fun CampaignsScreen(
             LazyColumn(
                 modifier = modifier
                     .background(CustomTheme.colors.l30)
-                    .fillMaxSize()
-                    .padding(8.dp),
+                    .fillMaxSize(),
+                contentPadding = PaddingValues(8.dp),
                 state = listState,
                 verticalArrangement = Arrangement.spacedBy(16.dp)
             ) {

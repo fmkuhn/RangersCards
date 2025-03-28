@@ -75,11 +75,10 @@ fun SettingsAboutScreen(
             .background(CustomTheme.colors.l30)
             .fillMaxSize()
             .padding(
-                top = contentPadding.calculateTopPadding() + 8.dp,
+                top = contentPadding.calculateTopPadding(),
                 bottom = contentPadding.calculateBottomPadding(),
-                start = 16.dp,
-                end = 16.dp
             ),
+        contentPadding = PaddingValues(vertical = 8.dp, horizontal = 16.dp),
         verticalArrangement = Arrangement.spacedBy(8.dp)
     ) {
         item {
