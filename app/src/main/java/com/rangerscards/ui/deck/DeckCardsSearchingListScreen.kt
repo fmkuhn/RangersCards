@@ -171,7 +171,7 @@ fun DeckCardsSearchingListScreen(
                         horizontalArrangement = Arrangement.End
                     ) {
                         SettingsRadioButtonRow(
-                            text = stringResource(R.string.shaw_all_button),
+                            text = stringResource(R.string.show_all_button),
                             onClick = { deckCardsViewModel.updateShowAllSpoilers(!showAll) },
                             modifier = Modifier,
                             isSelected = showAll
