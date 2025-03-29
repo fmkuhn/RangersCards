@@ -319,7 +319,7 @@ fun TravelDialog(
             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 when(showDialogPicker) {
                     TravelDataDialog.Location -> if (showAllLocations) locationsMap.forEach { (key, value) ->
-                        if (key != currentLocation.id) item {
+                        if (key != currentLocation.id) item(key) {
                             Row(
                                 modifier = Modifier.fillMaxWidth().clickable {
                                     selectedLocation = key
@@ -332,7 +332,7 @@ fun TravelDialog(
                                     painterResource(value.iconResId),
                                     contentDescription = null,
                                     tint = Color.Unspecified,
-                                    modifier = Modifier.size(32.dp)
+                                    modifier = Modifier.size(40.dp)
                                 )
                                 Text(
                                     text = stringResource(value.nameResId),
@@ -348,7 +348,7 @@ fun TravelDialog(
                             HorizontalDivider(color = CustomTheme.colors.l10)
                         }
                     } else currentLocation.connections.forEach { location ->
-                        item {
+                        item(location.id) {
                             Row(
                                 modifier = Modifier.fillMaxWidth().clickable {
                                     selectedLocation = location.id
@@ -363,7 +363,7 @@ fun TravelDialog(
                                     painterResource(displayedLocation.iconResId),
                                     contentDescription = null,
                                     tint = Color.Unspecified,
-                                    modifier = Modifier.size(32.dp)
+                                    modifier = Modifier.size(40.dp)
                                 )
                                 Text(
                                     text = stringResource(displayedLocation.nameResId),
@@ -380,7 +380,7 @@ fun TravelDialog(
                         }
                     }
                     else -> CampaignMaps.Path.entries.forEach { path ->
-                        item {
+                        item(path.value) {
                             Row(
                                 modifier = Modifier.fillMaxWidth().clickable {
                                     selectedPathTerrain = path.value
@@ -393,7 +393,7 @@ fun TravelDialog(
                                     painterResource(path.iconResId),
                                     contentDescription = null,
                                     tint = Color.Unspecified,
-                                    modifier = Modifier.size(32.dp)
+                                    modifier = Modifier.size(40.dp)
                                 )
                                 Text(
                                     text = stringResource(path.nameResId),

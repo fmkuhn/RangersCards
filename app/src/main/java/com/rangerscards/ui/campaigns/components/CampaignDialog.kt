@@ -50,7 +50,7 @@ fun CampaignDialog(
                     modifier = Modifier.background(
                         if (isDarkTheme) CustomTheme.colors.l15 else CustomTheme.colors.d15,
                         RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
-                    ).fillMaxWidth().padding(vertical = 4.dp),
+                    ).fillMaxWidth().padding(vertical = 4.dp, horizontal = 8.dp),
                 ) {
                     Text(
                         text = header,

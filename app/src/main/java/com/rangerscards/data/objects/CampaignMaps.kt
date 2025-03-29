@@ -169,8 +169,10 @@ object CampaignMaps {
             val locA = results[connection.locA]
             val locB = results[connection.locB]
             if (locA != null && locB != null) {
-                locA.connections.add(MapConnection(connection.locB, connection.path))
-                locB.connections.add(MapConnection(connection.locA, connection.path))
+                val connectionB = MapConnection(connection.locB, connection.path)
+                val connectionA = MapConnection(connection.locA, connection.path)
+                if (!locA.connections.contains(connectionB)) locA.connections.add(connectionB)
+                if (!locB.connections.contains(connectionA)) locB.connections.add(connectionA)
             }
         }
         return results

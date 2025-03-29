@@ -315,18 +315,6 @@ class CampaignViewModel(
         user: FirebaseUser?
     ) {
         val campaign = campaign.value!!
-        val newHistory = campaign.history + CampaignHistory(
-            campaign.currentDay,
-            isCamping,
-            selectedLocation,
-            selectedPathTerrain
-        )
-        val newHistoryJson = buildJsonArray { newHistory.forEach { add(buildJsonObject {
-            put("day", it.day)
-            put("camped", it.camped)
-            put("location", it.location)
-            put("path_terrain", it.pathTerrain)
-        }) } }
         if (campaign.uploaded) {
             val token = user!!.getIdToken(true).await().token
             apolloClient.mutation(
@@ -335,12 +323,34 @@ class CampaignViewModel(
                     day = campaign.currentDay + if (isCamping) 1 else 0,
                     currentLocation = selectedLocation,
                     currentPathTerrain = selectedPathTerrain,
-                    history = newHistoryJson
+                    history = buildJsonObject {
+                        put("day", campaign.currentDay)
+                        put("camped", isCamping)
+                        put("location", selectedLocation)
+                        put("path_terrain", selectedPathTerrain)
+                    }
                 )
             ).addHttpHeader("Authorization", "Bearer $token").execute()
         } else {
+            val newHistory = campaign.history + CampaignHistory(
+                campaign.currentDay,
+                isCamping,
+                selectedLocation,
+                selectedPathTerrain
+            )
+            val newHistoryJson = buildJsonArray { newHistory.forEach { add(buildJsonObject {
+                put("day", it.day)
+                put("camped", it.camped)
+                put("location", it.location)
+                put("path_terrain", it.pathTerrain)
+            }) } }
             val campaignEntry = campaignRepository.getCampaignById(campaign.id)
-            campaignRepository.updateCampaign(campaignEntry.copy(history = newHistoryJson))
+            campaignRepository.updateCampaign(campaignEntry.copy(
+                day = campaign.currentDay + if (isCamping) 1 else 0,
+                currentLocation = selectedLocation,
+                currentPathTerrain = selectedPathTerrain,
+                history = newHistoryJson
+            ))
         }
     }
 }
