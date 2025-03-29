@@ -5,23 +5,35 @@ import androidx.annotation.DrawableRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.cache.normalized.FetchPolicy
+import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.CampaignSubscription
 import com.rangerscards.CampaignTravelMutation
 import com.rangerscards.ExtendCampaignMutation
+import com.rangerscards.GetDeckQuery
+import com.rangerscards.RemoveDeckCampaignMutation
 import com.rangerscards.SetCampaignCalendarMutation
 import com.rangerscards.SetCampaignDayMutation
 import com.rangerscards.SetCampaignTitleMutation
+import com.rangerscards.SetDeckCampaignMutation
 import com.rangerscards.data.database.campaign.Campaign
+import com.rangerscards.data.database.deck.RoleCardProjection
 import com.rangerscards.data.database.repository.CampaignRepository
+import com.rangerscards.data.database.repository.DeckRepository
 import com.rangerscards.data.objects.CampaignMaps
 import com.rangerscards.data.objects.Weather
+import com.rangerscards.ui.decks.getCurrentDateTime
+import com.rangerscards.ui.decks.toDeck
+import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
@@ -85,9 +97,8 @@ data class CampaignTravelDay(
 data class CampaignDeck(
     val id: String,
     val name: String,
-    val role: Int,
-    val background: String,
-    val specialty: String,
+    val role: String,
+    val meta: JsonElement,
     val userId: String,
     val userName: String,
 )
@@ -99,7 +110,8 @@ data class DayInfo(
 
 class CampaignViewModel(
     private val apolloClient: ApolloClient,
-    private val campaignRepository: CampaignRepository
+    private val campaignRepository: CampaignRepository,
+    private val deckRepository: DeckRepository,
 ) : ViewModel() {
 
     fun getCampaignById(id: String) = campaignRepository.getCampaignFlowById(id)
@@ -160,7 +172,8 @@ class CampaignViewModel(
             ).addHttpHeader("Authorization", "Bearer $token").execute()
         } else {
             val campaign = campaignRepository.getCampaignById(campaignId)
-            campaignRepository.updateCampaign(campaign.copy(name = newName))
+            campaignRepository.updateCampaign(campaign.copy(name = newName,
+                updatedAt = getCurrentDateTime()))
         }
     }
 
@@ -240,7 +253,8 @@ class CampaignViewModel(
             ).addHttpHeader("Authorization", "Bearer $token").execute()
         } else {
             val campaignEntry = campaignRepository.getCampaignById(campaign.id)
-            campaignRepository.updateCampaign(campaignEntry.copy(calendar = newCalendar))
+            campaignRepository.updateCampaign(campaignEntry.copy(calendar = newCalendar,
+                updatedAt = getCurrentDateTime()))
         }
     }
 
@@ -288,7 +302,9 @@ class CampaignViewModel(
             ).addHttpHeader("Authorization", "Bearer $token").execute()
         } else {
             val campaignEntry = campaignRepository.getCampaignById(campaign.id)
-            campaignRepository.updateCampaign(campaignEntry.copy(extendedCalendar = true))
+            campaignRepository.updateCampaign(campaignEntry.copy(
+                extendedCalendar = true,
+                updatedAt = getCurrentDateTime()))
         }
     }
 
@@ -304,7 +320,9 @@ class CampaignViewModel(
             ).addHttpHeader("Authorization", "Bearer $token").execute()
         } else {
             val campaignEntry = campaignRepository.getCampaignById(campaign.id)
-            campaignRepository.updateCampaign(campaignEntry.copy(day = campaign.currentDay + 1))
+            campaignRepository.updateCampaign(campaignEntry.copy(
+                day = campaign.currentDay + 1,
+                updatedAt = getCurrentDateTime()))
         }
     }
 
@@ -349,7 +367,75 @@ class CampaignViewModel(
                 day = campaign.currentDay + if (isCamping) 1 else 0,
                 currentLocation = selectedLocation,
                 currentPathTerrain = selectedPathTerrain,
-                history = newHistoryJson
+                history = newHistoryJson,
+                updatedAt = getCurrentDateTime()
+            ))
+        }
+    }
+
+    fun getRole(id: String): Flow<RoleCardProjection> = campaignRepository.getRole(id)
+
+    suspend fun removeDeckCampaign(deckId: String, user: FirebaseUser?) {
+        val campaign = campaign.value!!
+        if (campaign.uploaded) {
+            val token = user!!.getIdToken(true).await().token
+            apolloClient.mutation(
+                RemoveDeckCampaignMutation(
+                    deckId = deckId.toInt(),
+                    campaignId = campaign.id.toInt(),
+                )
+            ).addHttpHeader("Authorization", "Bearer $token").execute()
+            val response = apolloClient.query(GetDeckQuery(deckId.toInt()))
+                .addHttpHeader("Authorization", "Bearer $token")
+                .fetchPolicy(FetchPolicy.NetworkOnly).execute()
+            if (response.data != null) deckRepository.updateDeck(response.data!!.deck!!.deck.toDeck(true))
+        } else {
+            val deck = deckRepository.getDeck(deckId)
+            deckRepository.updateDeck(deck.copy(
+                campaignId = null,
+                campaignName = null,
+                campaignRewards = null
+            ))
+            val campaignEntry = campaignRepository.getCampaignById(campaign.id)
+            campaignRepository.updateCampaign(campaignEntry.copy(
+                latestDecks = JsonObject(campaignEntry.latestDecks.jsonObject.filterKeys { it != deckId }),
+                updatedAt = getCurrentDateTime()
+            ))
+        }
+    }
+
+    suspend fun addDeckCampaign(deckId: String, user: FirebaseUser?) {
+        val campaign = campaign.value!!
+        if (campaign.uploaded) {
+            val token = user!!.getIdToken(true).await().token
+            apolloClient.mutation(
+                SetDeckCampaignMutation(
+                    deckId = deckId.toInt(),
+                    campaignId = campaign.id.toInt(),
+                )
+            ).addHttpHeader("Authorization", "Bearer $token").execute()
+            val response = apolloClient.query(GetDeckQuery(deckId.toInt()))
+                .addHttpHeader("Authorization", "Bearer $token")
+                .fetchPolicy(FetchPolicy.NetworkOnly).execute()
+            if (response.data != null) deckRepository.updateDeck(response.data!!.deck!!.deck.toDeck(true))
+        } else {
+            val deck = deckRepository.getDeck(deckId)
+            deckRepository.updateDeck(deck.copy(
+                campaignId = campaign.id,
+                campaignName = campaign.name,
+                campaignRewards = buildJsonArray { campaign.rewards.forEach { add(it) } }
+            ))
+            val campaignEntry = campaignRepository.getCampaignById(campaign.id)
+            val newDeckJson = buildJsonArray {
+                add(deck.name)
+                add(deck.meta)
+                add(buildJsonObject {
+                    put(deck.userId, deck.userHandle)
+                })
+            }
+            campaignRepository.updateCampaign(campaignEntry.copy(
+                latestDecks = JsonObject(campaignEntry.latestDecks.jsonObject + (deckId to newDeckJson)),
+                updatedAt = getCurrentDateTime()
             ))
         }
     }
@@ -413,9 +499,8 @@ fun Campaign.toCampaignState(): CampaignState {
             CampaignDeck(
                 it.key,
                 value[0].jsonPrimitive.content,
-                meta["role"]!!.jsonPrimitive.content.toInt(),
-                meta["background"]!!.jsonPrimitive.content,
-                meta["specialty"]!!.jsonPrimitive.content,
+                meta["role"]!!.jsonPrimitive.content,
+                meta,
                 user.keys.first(),
                 user.values.first().jsonPrimitive.content
             )

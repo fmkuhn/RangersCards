@@ -50,26 +50,28 @@ import com.rangerscards.MainActivity
 import com.rangerscards.R
 import com.rangerscards.data.objects.CampaignMaps
 import com.rangerscards.ui.AppViewModelProvider
+import com.rangerscards.ui.campaigns.AddDeckToCampaignScreen
 import com.rangerscards.ui.campaigns.CampaignCreationScreen
+import com.rangerscards.ui.campaigns.CampaignDecksViewModel
 import com.rangerscards.ui.campaigns.CampaignJourneyScreen
 import com.rangerscards.ui.campaigns.CampaignScreen
 import com.rangerscards.ui.campaigns.CampaignViewModel
 import com.rangerscards.ui.campaigns.CampaignsScreen
 import com.rangerscards.ui.campaigns.CampaignsViewModel
-import com.rangerscards.ui.campaigns.DayInfoDialog
-import com.rangerscards.ui.campaigns.EndTheDayDialog
-import com.rangerscards.ui.campaigns.TravelDialog
+import com.rangerscards.ui.campaigns.dialogs.DayInfoDialog
+import com.rangerscards.ui.campaigns.dialogs.EndTheDayDialog
+import com.rangerscards.ui.campaigns.dialogs.TravelDialog
 import com.rangerscards.ui.cards.CardsScreen
 import com.rangerscards.ui.cards.CardsViewModel
 import com.rangerscards.ui.cards.FullCardScreen
 import com.rangerscards.ui.cards.components.RangersSpoilerSwitch
 import com.rangerscards.ui.components.RangersTopAppBar
 import com.rangerscards.ui.deck.DeckCardsSearchingListScreen
+import com.rangerscards.ui.deck.DeckCardsViewModel
 import com.rangerscards.ui.deck.DeckFullCardScreen
+import com.rangerscards.ui.deck.DeckFullCardWithPagerScreen
 import com.rangerscards.ui.deck.DeckScreen
 import com.rangerscards.ui.deck.DeckViewModel
-import com.rangerscards.ui.deck.DeckCardsViewModel
-import com.rangerscards.ui.deck.DeckFullCardWithPagerScreen
 import com.rangerscards.ui.decks.DeckCreationScreen
 import com.rangerscards.ui.decks.DecksScreen
 import com.rangerscards.ui.decks.DecksViewModel
@@ -692,6 +694,31 @@ fun RangersNavHost(
                         onBack = { navController.popBackStack() },
                         user = user.currentUser
                     )
+                }
+                composable(route = "${BottomNavScreen.Campaigns.route}/campaign/addRanger") { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("${BottomNavScreen.Campaigns.route}/campaign/{$campaignIdArgument}")
+                    }
+                    val campaignViewModel: CampaignViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val campaignDecksViewModel: CampaignDecksViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = backStackEntry
+                    )
+                    val user by settingsViewModel.userUiState.collectAsState()
+                    AddDeckToCampaignScreen(
+                        navController = navController,
+                        campaignViewModel = campaignViewModel,
+                        campaignDecksViewModel = campaignDecksViewModel,
+                        user = user.currentUser,
+                        isDarkTheme = isDarkTheme,
+                        contentPadding = innerPadding,
+                    )
+                    title = stringResource(R.string.add_ranger_button)
+                    actions = null
+                    switch = null
                 }
             }
         }

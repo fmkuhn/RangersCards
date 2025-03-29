@@ -315,4 +315,9 @@
     <string name="travel_without_camp_text">Rangers will continue playing day %d with their current decks.</string>
     <string name="travel_with_camp">Camping will end day %d and allow any earned rewards to be swapped into decks.</string>
 
+    //Rangers section
+    <string name="rangers_section_header">— Rangers —</string>
+    <string name="add_ranger_button">Add ranger</string>
+    <string name="no_decks_for_add">No eligible decks.</string>
+
 </resources>

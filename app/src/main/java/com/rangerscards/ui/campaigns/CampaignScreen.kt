@@ -13,6 +13,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
@@ -24,9 +25,12 @@ import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
@@ -37,10 +41,12 @@ import com.rangerscards.ui.campaigns.components.CampaignCurrentPositionCard
 import com.rangerscards.ui.campaigns.components.CampaignTitleRow
 import com.rangerscards.ui.campaigns.components.TimeLineLazyRow
 import com.rangerscards.ui.components.SquareButton
+import com.rangerscards.ui.decks.components.DeckListItem
 import com.rangerscards.ui.navigation.BottomNavScreen
 import com.rangerscards.ui.settings.components.SettingsBaseCard
 import com.rangerscards.ui.settings.components.SettingsInputField
 import com.rangerscards.ui.theme.CustomTheme
+import com.rangerscards.ui.theme.Jost
 import kotlinx.coroutines.launch
 
 @Composable
@@ -252,6 +258,57 @@ fun CampaignScreen(
                                 modifier = Modifier.weight(1f)
                             )
                         }
+                    }
+                }
+                item {
+                    Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+                        Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.Center) {
+                            Text(
+                                text = stringResource(R.string.rangers_section_header),
+                                color = CustomTheme.colors.d10,
+                                fontFamily = Jost,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 18.sp,
+                                lineHeight = 20.sp,
+                            )
+                        }
+                        if (campaignState!!.decks.isNotEmpty()) campaignState!!.decks.forEach { deck ->
+                            val role = campaignViewModel.getRole(deck.role).collectAsState(null).value
+                            if (role != null) DeckListItem(
+                                meta = deck.meta,
+                                imageSrc = role.realImageSrc!!,
+                                name = deck.name,
+                                role = role.name!!,
+                                onClick = { if (!campaignState!!.uploaded || user?.uid == deck.userId)
+                                    navController.navigate(
+                                        "deck/${deck.id}"
+                                    ) {
+                                        launchSingleTop = true
+                                    }
+                                },
+                                isCampaign = false,
+                                userName = if (deck.userName == "null") "" else deck.userName,
+                                onRemoveDeck = if (!campaignState!!.uploaded || user?.uid == deck.userId) {
+                                    { coroutine.launch { showLoadingDialog = true
+                                        campaignViewModel.removeDeckCampaign(deck.id, user)
+                                    }.invokeOnCompletion { showLoadingDialog = false } }
+                                } else null
+                            )
+                        }
+                        SquareButton(
+                            stringId = R.string.add_ranger_button,
+                            leadingIcon = R.drawable.add_32dp,
+                            iconColor = CustomTheme.colors.m,
+                            textColor = CustomTheme.colors.d30,
+                            buttonColor = ButtonDefaults.buttonColors().copy(
+                                containerColor = CustomTheme.colors.l20
+                            ),
+                            onClick = { navController.navigate(
+                                "${BottomNavScreen.Campaigns.route}/campaign/addRanger"
+                            ) {
+                                launchSingleTop = true
+                            } },
+                        )
                     }
                 }
             }

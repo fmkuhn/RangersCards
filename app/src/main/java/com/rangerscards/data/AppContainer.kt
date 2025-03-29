@@ -102,7 +102,6 @@ class AppDataContainer(private val context: Context) : AppContainer {
     }
 
     override val campaignRepository: CampaignRepository by lazy {
-        OfflineCampaignRepository(RangersDatabase.getDatabase(context).campaignDao(),
-            RangersDatabase.getDatabase(context).deckDao())
+        OfflineCampaignRepository(RangersDatabase.getDatabase(context).campaignDao())
     }
 }

@@ -10,6 +10,8 @@ import androidx.room.Update
 import androidx.room.Upsert
 import com.rangerscards.data.database.campaign.Campaign
 import com.rangerscards.data.database.campaign.CampaignListItemProjection
+import com.rangerscards.data.database.deck.DeckListItemProjection
+import com.rangerscards.data.database.deck.RoleCardProjection
 import kotlinx.coroutines.flow.Flow
 
 @Dao
@@ -67,4 +69,16 @@ interface CampaignDao {
     @Query("SELECT * FROM campaign WHERE id = :id")
     suspend fun getCampaignById(id: String): Campaign
 
+    @Query("Select id, name, text, real_image_src, traits FROM card WHERE id = :id")
+    fun getRole(id: String): Flow<RoleCardProjection>
+
+    @Query("SELECT id, user_handle, name, meta, campaign_name FROM deck WHERE next_id IS NULL AND uploaded = :uploaded " +
+            " AND campaign_id IS NULL AND (user_id = :userId OR user_id = '') ORDER BY updated_at DESC"
+    )
+    fun getAllDecks(userId: String, uploaded: Boolean): PagingSource<Int, DeckListItemProjection>
+
+    @Query("SELECT id, user_handle, name, meta, campaign_name FROM deck WHERE next_id IS NULL AND uploaded = :uploaded " +
+            " AND campaign_id IS NULL AND name LIKE :query AND (user_id = :userId OR user_id = '') ORDER BY updated_at DESC"
+    )
+    fun searchDecks(query: String, userId: String, uploaded: Boolean): PagingSource<Int, DeckListItemProjection>
 }

@@ -269,4 +269,7 @@
     <string name="camp_radio_button">Разбить лагерь</string>
     <string name="travel_without_camp_text">Рейнджеры продолжат играть %d день с текущими колодами.</string>
     <string name="travel_with_camp">Решение разбить лагерь закончит день %d и позволит обменять карты из колоды на заработанные награды.</string>
+    <string name="rangers_section_header">— Рейнджеры —</string>
+    <string name="add_ranger_button">Добавить рейнджера</string>
+    <string name="no_decks_for_add">У вас нет подходящих колод.</string>
 </resources>
