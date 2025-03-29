@@ -92,7 +92,7 @@ fun DeckListItem(
                     IconButton(
                         onClick = onRemoveDeck,
                         colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
-                        modifier = Modifier.size(32.dp)
+                        modifier = Modifier.size(32.dp).align(Alignment.CenterVertically)
                     ) {
                         Icon(
                             painterResource(R.drawable.cancel_32dp),

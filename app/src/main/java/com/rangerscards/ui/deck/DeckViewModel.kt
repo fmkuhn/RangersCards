@@ -524,7 +524,7 @@ class DeckViewModel(
             } else {
                 deckRepository.updateDeck(editableDeck.value!!.toDeck(
                     updatableValues.value!!, problems
-                ))
+                ).copy(updatedAt = getCurrentDateTime()))
             }
         }
         backupOftenValues = null
@@ -607,7 +607,8 @@ class DeckViewModel(
                     }
                 }
                 campaignRepository.updateCampaign(campaign.copy(
-                    latestDecks = newDeckValues
+                    latestDecks = newDeckValues,
+                    updatedAt = getCurrentDateTime()
                 ))
             }
             deckRepository.updateDeck(deck.copy(nextId = newUuid))
@@ -619,6 +620,8 @@ class DeckViewModel(
                     values.slots.forEach { (key, value) -> put(key, value) } },
                 previousSideSlots = buildJsonObject {
                     values.sideSlots.forEach { (key, value) -> put(key, value) } },
+                createdAt = getCurrentDateTime(),
+                updatedAt = getCurrentDateTime(),
             ))
             deckToOpen.update { newUuid }
         }
@@ -715,7 +718,10 @@ class DeckViewModel(
             } else {
                 deckRepository.updateDeck(originalDeck.value!!.toDeck(
                     updatableValues.value!!, problems
-                ).copy(name = newName))
+                ).copy(
+                    name = newName,
+                    updatedAt = getCurrentDateTime()
+                ))
             }
         }
     }
@@ -758,7 +764,8 @@ class DeckViewModel(
                 val previousId = originalDeck.value!!.previousId
                 if (previousId != null) {
                     val previousDeck = deckRepository.getDeck(previousId)
-                    deckRepository.updateDeck(previousDeck.copy(nextId = null))
+                    deckRepository.updateDeck(previousDeck.copy(nextId = null,
+                        updatedAt = getCurrentDateTime()))
                     deckToOpen.update { previousId }
                 }
             }
@@ -767,7 +774,8 @@ class DeckViewModel(
             val previousId = originalDeck.value!!.previousId
             if (previousId != null) {
                 val previousDeck = deckRepository.getDeck(previousId)
-                deckRepository.updateDeck(previousDeck.copy(nextId = null))
+                deckRepository.updateDeck(previousDeck.copy(nextId = null,
+                    updatedAt = getCurrentDateTime()))
                 deckToOpen.update { previousId }
                 if (originalDeck.value!!.campaignId != null) {
                     val deck = originalDeck.value!!
@@ -786,7 +794,8 @@ class DeckViewModel(
                         }
                     }
                     campaignRepository.updateCampaign(campaign.copy(
-                        latestDecks = newDeckValues
+                        latestDecks = newDeckValues,
+                        updatedAt = getCurrentDateTime()
                     ))
                 }
             } else if (originalDeck.value!!.campaignId != null) {
@@ -800,7 +809,8 @@ class DeckViewModel(
                     }
                 }
                 campaignRepository.updateCampaign(campaign.copy(
-                    latestDecks = newDeckValues
+                    latestDecks = newDeckValues,
+                    updatedAt = getCurrentDateTime()
                 ))
             }
         }
