@@ -1,9 +1,9 @@
 # Rangers Cards
 
-Create and edit decks — it will even check the deck-building rules to keep you honest. You can also group together decks into campaigns to track your progress. The app can be used with local decks, or you can link your RangersDB account to sync changes on the go.
+Create and edit decks — it will even check the deck-building rules to keep you honest. You can also group together decks into campaigns to track your progress. The app can be used with local decks and/or campaigns, or you can link your RangersDB account to sync changes on the go.
 
 * Edit and upgrade your decks, either offline or by linking your RangersDB account.
-* Track scenario results and keep the campaign log up to date. (Campaigns supports RangersDB too)
+* Track scenario results and keep the campaign log up to date, either offline or by linking your RangersDB account.
 * Use the advanced card search.
 
 ## Translations
