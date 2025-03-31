@@ -5,13 +5,16 @@ import androidx.annotation.DrawableRes
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.api.Optional
 import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.CampaignSubscription
 import com.rangerscards.CampaignTravelMutation
+import com.rangerscards.CreateCampaignMutation
 import com.rangerscards.DeleteCampaignMutation
 import com.rangerscards.ExtendCampaignMutation
+import com.rangerscards.GetCampaignQuery
 import com.rangerscards.GetDeckQuery
 import com.rangerscards.LeaveCampaignMutation
 import com.rangerscards.RemoveDeckCampaignMutation
@@ -19,6 +22,7 @@ import com.rangerscards.SetCampaignCalendarMutation
 import com.rangerscards.SetCampaignDayMutation
 import com.rangerscards.SetCampaignTitleMutation
 import com.rangerscards.SetDeckCampaignMutation
+import com.rangerscards.UpdateUploadedMutation
 import com.rangerscards.data.database.campaign.Campaign
 import com.rangerscards.data.database.deck.RoleCardProjection
 import com.rangerscards.data.database.repository.CampaignRepository
@@ -123,6 +127,8 @@ class CampaignViewModel(
 
     private val _campaign = MutableStateFlow<CampaignState?>(null)
     val campaign: StateFlow<CampaignState?> = _campaign.asStateFlow()
+
+    val uploadedCampaignIdToOpen = MutableStateFlow<String?>(null)
 
     fun startSubscription(campaignId: String) {
         viewModelScope.launch {
@@ -439,6 +445,62 @@ class CampaignViewModel(
                 latestDecks = JsonObject(campaignEntry.latestDecks.jsonObject + (deckId to newDeckJson)),
                 updatedAt = getCurrentDateTime()
             ))
+        }
+    }
+
+    suspend fun uploadCampaign(user: FirebaseUser?) {
+        val campaign = campaign.value!!
+        val token = user!!.getIdToken(true).await().token
+        val uploadedCampaign = apolloClient.mutation(
+            CreateCampaignMutation(
+                name = campaign.name,
+                cycleId = campaign.cycleId,
+                currentLocation = campaign.currentLocation,
+            )
+        ).addHttpHeader("Authorization", "Bearer $token").execute()
+        if (uploadedCampaign.data != null) {
+            val newCampaignId = uploadedCampaign.data!!.campaign!!.campaign.id
+            apolloClient.mutation(
+                UpdateUploadedMutation(
+                    campaignId = newCampaignId,
+                    currentPathTerrain = Optional.present(campaign.currentPathTerrain),
+                    day = campaign.currentDay,
+                    extendedCalendar = Optional.present(campaign.extendedCalendar),
+                    rewards = buildJsonArray { campaign.rewards.forEach { add(it) } },
+                    missions = buildJsonArray { campaign.missions.forEach { add(buildJsonObject {
+                        put("day", it.day)
+                        put("name", it.name)
+                        put("checks", buildJsonArray { it.checks.forEach { check -> add(check) } })
+                        put("completed", it.completed)
+                    }) } },
+                    events = buildJsonArray { campaign.events.forEach { add(buildJsonObject {
+                        put("event", it.name)
+                        put("crossed_out", it.crossedOut)
+                    }) } },
+                    removed = buildJsonArray { campaign.removed.forEach { add(buildJsonObject {
+                        put("name", it.name)
+                        put("set_id", it.setId)
+                    }) } },
+                    history = buildJsonArray { campaign.history.forEach { add(buildJsonObject {
+                        put("day", it.day)
+                        put("camped", it.camped)
+                        put("location", it.location)
+                        put("path_terrain", it.pathTerrain)
+                    }) } },
+                    calendar = buildJsonArray { campaign.calendar.forEach { add(buildJsonObject {
+                        put("day", it.key)
+                        put("guides", buildJsonArray { it.value.forEach { guide -> add(guide) } })
+                    }) } }
+                )
+            ).addHttpHeader("Authorization", "Bearer $token").execute()
+            val newCampaign = apolloClient.query(GetCampaignQuery(newCampaignId)).fetchPolicy(FetchPolicy.NetworkOnly)
+                .addHttpHeader("Authorization", "Bearer $token").execute()
+            if (newCampaign.data != null) {
+                val uploadedData = newCampaign.data!!.campaign!!.campaign
+                campaignRepository.insertCampaign(uploadedData.toCampaign(true))
+                uploadedCampaignIdToOpen.update { uploadedData.id.toString() }
+                campaignRepository.deleteCampaign(campaign.id)
+            }
         }
     }
 

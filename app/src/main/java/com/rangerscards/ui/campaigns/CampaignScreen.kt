@@ -1,5 +1,6 @@
 package com.rangerscards.ui.campaigns
 
+import android.widget.Toast
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -17,14 +18,17 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
@@ -38,6 +42,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.R
 import com.rangerscards.data.database.campaign.Campaign
 import com.rangerscards.ui.campaigns.components.CampaignCurrentPositionCard
+import com.rangerscards.ui.campaigns.components.CampaignDialog
 import com.rangerscards.ui.campaigns.components.CampaignSettingsSection
 import com.rangerscards.ui.campaigns.components.CampaignTitleRow
 import com.rangerscards.ui.campaigns.components.TimeLineLazyRow
@@ -64,7 +69,12 @@ fun CampaignScreen(
     var showLoadingDialog by rememberSaveable { mutableStateOf(false) }
     var showNameDialog by rememberSaveable { mutableStateOf(false) }
     var campaignNameEditing by rememberSaveable { mutableStateOf("") }
+    var showConfirmationDialog by rememberSaveable { mutableStateOf(false) }
     val coroutine = rememberCoroutineScope()
+    val context = LocalContext.current.applicationContext
+    val isOwner by remember { derivedStateOf {
+        campaignState!!.userId == user?.uid || campaignState!!.userId.isEmpty()
+    } }
     LaunchedEffect(campaign) {
         if (user != null && !isSubscriptionStarted && campaign?.uploaded == true)
             campaignViewModel.startSubscription(campaign.id)
@@ -172,6 +182,58 @@ fun CampaignScreen(
                         modifier = Modifier.weight(0.5f),
                     )
                 }
+            }
+        }
+        if (showConfirmationDialog) CampaignDialog(
+            header = stringResource(id = R.string.delete_campaign_button),
+            isDarkTheme = isDarkTheme,
+            onBack = { showConfirmationDialog = false }
+        ) {
+            Column(
+                modifier = Modifier.padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = stringResource(if (isOwner) R.string.delete_campaign_confirmation
+                    else R.string.leave_campaign_confirmation),
+                    color = CustomTheme.colors.d30,
+                    fontFamily = Jost,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 18.sp,
+                    lineHeight = 20.sp,
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                )
+                SquareButton(
+                    stringId = R.string.cancel_button,
+                    leadingIcon = R.drawable.close_32dp,
+                    iconColor = CustomTheme.colors.warn,
+                    buttonColor = ButtonDefaults.buttonColors().copy(
+                        containerColor = CustomTheme.colors.d30
+                    ),
+                    onClick = { showConfirmationDialog = false },
+                )
+                SquareButton(
+                    stringId = if (isOwner) R.string.delete_campaign_button else R.string.leave_campaign_button,
+                    leadingIcon = R.drawable.delete_32dp,
+                    iconColor = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
+                    textColor = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
+                    buttonColor = ButtonDefaults.buttonColors().copy(
+                        containerColor = CustomTheme.colors.warn
+                    ),
+                    onClick = if (isOwner) { { coroutine.launch {
+                        showLoadingDialog = true
+                        showConfirmationDialog = false
+                        campaignViewModel.deleteCampaign(user)
+                    }.invokeOnCompletion {
+                        showLoadingDialog = false
+                        navController.navigateUp()
+                    } } } else { { coroutine.launch { showLoadingDialog = true
+                        showConfirmationDialog = false
+                        campaignViewModel.leaveCampaign(user)
+                    }.invokeOnCompletion { showLoadingDialog = false
+                        navController.navigateUp()
+                    } } },
+                )
             }
         }
         if (campaignState == null) {
@@ -313,23 +375,28 @@ fun CampaignScreen(
                     }
                 }
                 item {
-                    val isOwner = campaignState!!.userId == user?.uid || campaignState!!.userId.isEmpty()
                     CampaignSettingsSection(
                         onAddOrRemovePlayers = {},
-                        onUploadCampaign = if (!campaignState!!.uploaded) {
-                            {}
-                        } else null,
-                        onDeleteOrLeaveCampaign = if (isOwner) { { coroutine.launch {
+                        onUploadCampaign = if (!campaignState!!.uploaded) { { if (campaignState!!.decks.isNotEmpty())
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.upload_campaign_warning),
+                                Toast.LENGTH_SHORT,
+                            ).show()
+                            else coroutine.launch {
                             showLoadingDialog = true
-                            campaignViewModel.deleteCampaign(user)
-                        }.invokeOnCompletion {
-                            showLoadingDialog = false
-                            navController.navigateUp()
-                        } } } else { { coroutine.launch { showLoadingDialog = true
-                            campaignViewModel.leaveCampaign(user)
+                            campaignViewModel.uploadCampaign(user)
                         }.invokeOnCompletion { showLoadingDialog = false
-                            navController.navigateUp()
-                        } } },
+                            if (campaignViewModel.uploadedCampaignIdToOpen.value != null) navController.navigate(
+                                "${BottomNavScreen.Campaigns.route}/campaign/${campaignViewModel.uploadedCampaignIdToOpen.value}"
+                            ) {
+                                popUpTo(BottomNavScreen.Campaigns.startDestination) {
+                                    inclusive = false
+                                }
+                                launchSingleTop = true
+                            } else navController.navigateUp()
+                        } } } else null,
+                        onDeleteOrLeaveCampaign = { showConfirmationDialog = true },
                         isOwner = isOwner
                     )
                 }

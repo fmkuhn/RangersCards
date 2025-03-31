@@ -5,7 +5,6 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.rangerscards.data.database.campaign.Campaign
 import com.rangerscards.data.database.dao.CampaignDao
-import com.rangerscards.data.database.dao.DeckDao
 import com.rangerscards.data.database.deck.DeckListItemProjection
 import com.rangerscards.data.database.deck.RoleCardProjection
 import kotlinx.coroutines.flow.Flow
@@ -15,6 +14,8 @@ class OfflineCampaignRepository(
 ) : CampaignRepository {
 
     override suspend fun updateCampaign(campaign: Campaign) = campaignDao.updateCampaign(campaign)
+
+    override suspend fun insertCampaign(campaign: Campaign) = campaignDao.insertCampaign(campaign)
 
     override fun getCampaignFlowById(id: String): Flow<Campaign> = campaignDao.getCampaignFlowById(id)
 

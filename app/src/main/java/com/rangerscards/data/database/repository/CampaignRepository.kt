@@ -10,6 +10,8 @@ interface CampaignRepository {
 
     suspend fun updateCampaign(campaign: Campaign)
 
+    suspend fun insertCampaign(campaign: Campaign)
+
     fun getCampaignFlowById(id: String): Flow<Campaign>
 
     suspend fun getCampaignById(id: String): Campaign

@@ -324,7 +324,10 @@
     <string name="settings_section_header">— Settings —</string>
     <string name="add_remove_players_button">Add/remove players</string>
     <string name="upload_campaign_button">Upload to RangersDB</string>
+    <string name="upload_campaign_warning">Error: This campaign contains decks!</string>
     <string name="delete_campaign_button">Delete campaign</string>
+    <string name="delete_campaign_confirmation">Are you sure you want to delete this campaign?</string>
+    <string name="leave_campaign_confirmation">Are you sure you want to leave this campaign?</string>
     <string name="leave_campaign_button">Leave campaign</string>
 
 </resources>

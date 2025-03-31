@@ -36,12 +36,9 @@ mutation createCampaign(
   }
 }
 
-mutation uploadCampaign(
-  $name: String!,
-  $cycleId: String!,
-  $currentLocation: String!,
+mutation updateUploaded(
+  $campaignId: Int!,
   $currentPathTerrain: String,
-  $notes: jsonb!,
   $day: Int!
   $extendedCalendar: Boolean,
   $missions: jsonb!,
@@ -51,12 +48,9 @@ mutation uploadCampaign(
   $history: jsonb!,
   $calendar: jsonb!,
 ) {
-  campaign: insert_rangers_campaign_one(
-    object: {
-      name: $name
-      cycle_id: $cycleId
-      current_location: $currentLocation
-      notes: $notes
+  update_rangers_campaign_by_pk(
+    pk_columns: { id: $campaignId }
+    _set: {
       day: $day
       extended_calendar: $extendedCalendar
       current_path_terrain: $currentPathTerrain
@@ -68,7 +62,7 @@ mutation uploadCampaign(
       calendar: $calendar
     }
   ) {
-    ...Campaign
+    id
   }
 }
 
@@ -204,23 +198,6 @@ mutation addCampaignRemoved(
   }
 }
 
-mutation updateCampaignNotes(
-  $campaignId: Int!,
-  $notes: jsonb!
-) {
-  update_rangers_campaign_by_pk(
-    pk_columns: {
-	    id: $campaignId
-    }
-    _set: {
-      notes: $notes
-    }
-  ) {
-    id
-    notes
-  }
-}
-
 mutation extendCampaign(
   $campaignId: Int!,
 ) {
@@ -251,40 +228,6 @@ mutation updateCampaignEvents(
   ) {
     id
     events
-  }
-}
-
-mutation setCampaignLocation(
-  $campaignId: Int!,
-  $location: String!
-) {
-  update_rangers_campaign_by_pk(
-    pk_columns: {
-	    id: $campaignId
-    }
-    _set: {
-      current_location: $location
-    }
-  ) {
-    id
-    current_location
-  }
-}
-
-mutation setCampaignPathTerrain(
-  $campaignId: Int!,
-  $terrain: String!
-) {
-  update_rangers_campaign_by_pk(
-    pk_columns: {
-	    id: $campaignId
-    }
-    _set: {
-      current_path_terrain: $terrain
-    }
-  ) {
-    id
-    current_path_terrain
   }
 }
 
@@ -354,27 +297,6 @@ mutation setCampaignDay(
   ) {
     id
     day
-  }
-}
-
-mutation addCampaignHistory(
-  $campaignId: Int!,
-  $history: jsonb!
-  $day: Int!
-) {
-  campaign: update_rangers_campaign_by_pk(
-    pk_columns: {
-	    id: $campaignId
-    }
-    _set: {
-      day: $day
-    }
-    _append: {
-      history: $history
-    }
-  ) {
-    id
-    history
   }
 }
 
