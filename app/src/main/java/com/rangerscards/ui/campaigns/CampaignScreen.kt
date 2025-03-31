@@ -38,6 +38,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.R
 import com.rangerscards.data.database.campaign.Campaign
 import com.rangerscards.ui.campaigns.components.CampaignCurrentPositionCard
+import com.rangerscards.ui.campaigns.components.CampaignSettingsSection
 import com.rangerscards.ui.campaigns.components.CampaignTitleRow
 import com.rangerscards.ui.campaigns.components.TimeLineLazyRow
 import com.rangerscards.ui.components.SquareButton
@@ -310,6 +311,27 @@ fun CampaignScreen(
                             } },
                         )
                     }
+                }
+                item {
+                    val isOwner = campaignState!!.userId == user?.uid || campaignState!!.userId.isEmpty()
+                    CampaignSettingsSection(
+                        onAddOrRemovePlayers = {},
+                        onUploadCampaign = if (!campaignState!!.uploaded) {
+                            {}
+                        } else null,
+                        onDeleteOrLeaveCampaign = if (isOwner) { { coroutine.launch {
+                            showLoadingDialog = true
+                            campaignViewModel.deleteCampaign(user)
+                        }.invokeOnCompletion {
+                            showLoadingDialog = false
+                            navController.navigateUp()
+                        } } } else { { coroutine.launch { showLoadingDialog = true
+                            campaignViewModel.leaveCampaign(user)
+                        }.invokeOnCompletion { showLoadingDialog = false
+                            navController.navigateUp()
+                        } } },
+                        isOwner = isOwner
+                    )
                 }
             }
         }

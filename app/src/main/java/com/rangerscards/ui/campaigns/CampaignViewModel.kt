@@ -10,8 +10,10 @@ import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.CampaignSubscription
 import com.rangerscards.CampaignTravelMutation
+import com.rangerscards.DeleteCampaignMutation
 import com.rangerscards.ExtendCampaignMutation
 import com.rangerscards.GetDeckQuery
+import com.rangerscards.LeaveCampaignMutation
 import com.rangerscards.RemoveDeckCampaignMutation
 import com.rangerscards.SetCampaignCalendarMutation
 import com.rangerscards.SetCampaignDayMutation
@@ -438,6 +440,52 @@ class CampaignViewModel(
                 updatedAt = getCurrentDateTime()
             ))
         }
+    }
+
+    suspend fun deleteCampaign(user: FirebaseUser?) {
+        val campaign = campaign.value!!
+        val deckIds = campaign.decks.map { it.id }
+        if (campaign.uploaded) {
+            val token = user!!.getIdToken(true).await().token
+            apolloClient.mutation(
+                DeleteCampaignMutation(
+                    campaignId = campaign.id.toInt(),
+                )
+            ).addHttpHeader("Authorization", "Bearer $token").execute()
+            deckIds.forEach {
+                val response = apolloClient.query(GetDeckQuery(it.toInt()))
+                    .addHttpHeader("Authorization", "Bearer $token")
+                    .fetchPolicy(FetchPolicy.NetworkOnly).execute()
+                if (response.data != null) deckRepository.updateDeck(response.data!!.deck!!.deck.toDeck(true))
+            }
+            campaignRepository.deleteCampaign(campaign.id)
+        } else {
+            deckIds.forEach {
+                val deck = deckRepository.getDeck(it)
+                deckRepository.updateDeck(deck.copy(
+                    campaignId = null,
+                    campaignName = null,
+                    campaignRewards = null
+                ))
+            }
+            campaignRepository.deleteCampaign(campaign.id)
+        }
+    }
+
+    suspend fun leaveCampaign(user: FirebaseUser?) {
+        val campaign = campaign.value!!
+        val deckIds = campaign.decks.filter { user?.uid == it.userId }.map { it.id }
+        val token = user!!.getIdToken(true).await().token
+        apolloClient.mutation(
+            LeaveCampaignMutation(
+                campaignId = campaign.id.toInt(),
+                userId = user.uid
+            )
+        ).addHttpHeader("Authorization", "Bearer $token").execute()
+        deckIds.forEach {
+            removeDeckCampaign(it, user)
+        }
+        campaignRepository.deleteCampaign(campaign.id)
     }
 }
 

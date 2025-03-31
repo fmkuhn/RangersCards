@@ -320,4 +320,11 @@
     <string name="add_ranger_button">Add ranger</string>
     <string name="no_decks_for_add">No eligible decks.</string>
 
+    //Settings section
+    <string name="settings_section_header">— Settings —</string>
+    <string name="add_remove_players_button">Add/remove players</string>
+    <string name="upload_campaign_button">Upload to RangersDB</string>
+    <string name="delete_campaign_button">Delete campaign</string>
+    <string name="leave_campaign_button">Leave campaign</string>
+
 </resources>

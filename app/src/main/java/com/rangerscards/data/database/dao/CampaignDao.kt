@@ -81,4 +81,7 @@ interface CampaignDao {
             " AND campaign_id IS NULL AND name LIKE :query AND (user_id = :userId OR user_id = '') ORDER BY updated_at DESC"
     )
     fun searchDecks(query: String, userId: String, uploaded: Boolean): PagingSource<Int, DeckListItemProjection>
+
+    @Query("DELETE FROM campaign WHERE id = :id")
+    suspend fun deleteCampaign(id: String)
 }

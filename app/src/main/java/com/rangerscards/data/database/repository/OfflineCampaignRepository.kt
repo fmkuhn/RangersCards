@@ -51,4 +51,6 @@ class OfflineCampaignRepository(
             pagingSourceFactory = { campaignDao.searchDecks(newQuery, userId, uploaded) }
         ).flow
     }
+
+    override suspend fun deleteCampaign(id: String) = campaignDao.deleteCampaign(id)
 }

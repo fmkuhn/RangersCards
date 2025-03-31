@@ -19,4 +19,6 @@ interface CampaignRepository {
     fun getAllDecks(userId: String, uploaded: Boolean): Flow<PagingData<DeckListItemProjection>>
 
     fun searchDecks(query: String, userId: String, uploaded: Boolean): Flow<PagingData<DeckListItemProjection>>
+
+    suspend fun deleteCampaign(id: String)
 }
