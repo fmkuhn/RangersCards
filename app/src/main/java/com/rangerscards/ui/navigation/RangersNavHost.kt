@@ -1,5 +1,6 @@
 package com.rangerscards.ui.navigation
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -51,6 +52,7 @@ import com.rangerscards.R
 import com.rangerscards.data.objects.CampaignMaps
 import com.rangerscards.ui.AppViewModelProvider
 import com.rangerscards.ui.campaigns.AddDeckToCampaignScreen
+import com.rangerscards.ui.campaigns.AddPlayersToCampaign
 import com.rangerscards.ui.campaigns.CampaignCreationScreen
 import com.rangerscards.ui.campaigns.CampaignDecksViewModel
 import com.rangerscards.ui.campaigns.CampaignJourneyScreen
@@ -717,6 +719,26 @@ fun RangersNavHost(
                         contentPadding = innerPadding,
                     )
                     title = stringResource(R.string.add_ranger_button)
+                    actions = null
+                    switch = null
+                }
+                composable(route = "${BottomNavScreen.Campaigns.route}/campaign/addPlayer") { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("${BottomNavScreen.Campaigns.route}/campaign/{$campaignIdArgument}")
+                    }
+                    val campaignViewModel: CampaignViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val user by settingsViewModel.userUiState.collectAsState()
+                    AddPlayersToCampaign(
+                        navigateBack = { navController.navigateUp() },
+                        campaignViewModel = campaignViewModel,
+                        userState = user,
+                        isDarkTheme = isDarkTheme,
+                        contentPadding = innerPadding,
+                    )
+                    title = stringResource(R.string.your_friends)
                     actions = null
                     switch = null
                 }

@@ -102,14 +102,7 @@ mutation addFriendToCampaign(
       constraint: campaign_access_pkey
     }
   ) {
-    campaign {
-      id
-      access {
-        user {
-          ...UserInfo
-        }
-      }
-    }
+    user_id
   }
 }
 

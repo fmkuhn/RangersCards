@@ -376,7 +376,11 @@ fun CampaignScreen(
                 }
                 item {
                     CampaignSettingsSection(
-                        onAddOrRemovePlayers = {},
+                        onAddOrRemovePlayers = { navController.navigate(
+                            "${BottomNavScreen.Campaigns.route}/campaign/addPlayer"
+                        ) {
+                            launchSingleTop = true
+                        } },
                         onUploadCampaign = if (!campaignState!!.uploaded) { { if (campaignState!!.decks.isNotEmpty())
                             Toast.makeText(
                                 context,
@@ -397,7 +401,8 @@ fun CampaignScreen(
                             } else navController.navigateUp()
                         } } } else null,
                         onDeleteOrLeaveCampaign = { showConfirmationDialog = true },
-                        isOwner = isOwner
+                        isOwner = isOwner,
+                        isUploaded = campaignState!!.uploaded
                     )
                 }
             }

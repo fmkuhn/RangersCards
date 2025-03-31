@@ -23,6 +23,7 @@ fun CampaignSettingsSection(
     onUploadCampaign: (() -> Unit)?,
     onDeleteOrLeaveCampaign: () -> Unit,
     isOwner: Boolean,
+    isUploaded: Boolean,
 ) {
     Column(modifier = Modifier.fillMaxWidth(), verticalArrangement = Arrangement.spacedBy(8.dp)) {
         Row(
@@ -38,7 +39,7 @@ fun CampaignSettingsSection(
                 lineHeight = 20.sp,
             )
         }
-        SquareButton(
+        if (isUploaded) SquareButton(
             stringId = R.string.add_remove_players_button,
             leadingIcon = R.drawable.add_circle_32dp,
             iconColor = CustomTheme.colors.m,

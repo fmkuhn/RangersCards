@@ -9,6 +9,7 @@ import com.apollographql.apollo.api.Optional
 import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.google.firebase.auth.FirebaseUser
+import com.rangerscards.AddFriendToCampaignMutation
 import com.rangerscards.CampaignSubscription
 import com.rangerscards.CampaignTravelMutation
 import com.rangerscards.CreateCampaignMutation
@@ -18,6 +19,7 @@ import com.rangerscards.GetCampaignQuery
 import com.rangerscards.GetDeckQuery
 import com.rangerscards.LeaveCampaignMutation
 import com.rangerscards.RemoveDeckCampaignMutation
+import com.rangerscards.RemoveFriendFromCampaignMutation
 import com.rangerscards.SetCampaignCalendarMutation
 import com.rangerscards.SetCampaignDayMutation
 import com.rangerscards.SetCampaignTitleMutation
@@ -446,6 +448,28 @@ class CampaignViewModel(
                 updatedAt = getCurrentDateTime()
             ))
         }
+    }
+
+    suspend fun addFriendToCampaign(user: FirebaseUser?, friendId: String) {
+        val campaign = campaign.value!!
+        val token = user!!.getIdToken(true).await().token
+        apolloClient.mutation(
+            AddFriendToCampaignMutation(
+                campaignId = campaign.id.toInt(),
+                userId = friendId
+            )
+        ).addHttpHeader("Authorization", "Bearer $token").execute()
+    }
+
+    suspend fun removeFriendFromCampaign(user: FirebaseUser?, friendId: String) {
+        val campaign = campaign.value!!
+        val token = user!!.getIdToken(true).await().token
+        apolloClient.mutation(
+            RemoveFriendFromCampaignMutation(
+                campaignId = campaign.id.toInt(),
+                userId = friendId
+            )
+        ).addHttpHeader("Authorization", "Bearer $token").execute()
     }
 
     suspend fun uploadCampaign(user: FirebaseUser?) {
