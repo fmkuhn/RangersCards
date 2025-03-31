@@ -722,6 +722,32 @@ class DeckViewModel(
                     name = newName,
                     updatedAt = getCurrentDateTime()
                 ))
+                if (originalDeck.value!!.campaignId != null) {
+                    val deck = originalDeck.value!!.toDeck(updatableValues.value!!, problems)
+                    val campaign = campaignRepository.getCampaignById(deck.campaignId.toString())
+                    val newDeck = buildJsonObject {
+                        put(deck.id, buildJsonArray {
+                            add(newName)
+                            add(deck.meta)
+                            add(campaign.latestDecks.jsonObject[deck.id]?.jsonArray?.get(2)?.jsonObject
+                                ?: JsonObject(emptyMap()
+                                ))
+                        })
+                    }
+                    val newDeckValues = buildJsonObject {
+                        campaign.latestDecks.jsonObject.forEach { (key, value) ->
+                            if (key == deck.id) {
+                                put(key, newDeck)  // Replace the target key
+                            } else {
+                                put(key, value)  // Keep other keys unchanged
+                            }
+                        }
+                    }
+                    campaignRepository.updateCampaign(campaign.copy(
+                        latestDecks = newDeckValues,
+                        updatedAt = getCurrentDateTime()
+                    ))
+                }
             }
         }
     }

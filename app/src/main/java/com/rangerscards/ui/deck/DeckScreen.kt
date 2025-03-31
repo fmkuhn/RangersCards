@@ -297,7 +297,7 @@ fun DeckScreen(
                 } else SquareButton(
                     stringId = R.string.options_section_delete_deck,
                     leadingIcon = R.drawable.delete_32dp,
-                    onClick = { if (deck?.campaignId != null && !deck.uploaded) {
+                    onClick = { if (deck?.campaignId != null) {
                         Toast.makeText(
                             context,
                             context.getString(R.string.options_section_delete_deck_warning),
@@ -312,7 +312,7 @@ fun DeckScreen(
                             if (deckViewModel.deckToOpen.value != null) navController.navigate(
                                 "deck/${deckViewModel.deckToOpen.value}"
                             ) {
-                                popUpTo(BottomNavScreen.Decks.startDestination) {
+                                popUpTo(navController.previousBackStackEntry?.destination?.id!!) {
                                     inclusive = false
                                 }
                                 launchSingleTop = true
@@ -1136,7 +1136,7 @@ fun DeckScreen(
                             if (deckViewModel.deckToOpen.value != null) navController.navigate(
                                 "deck/${deckViewModel.deckToOpen.value}"
                             ) {
-                                popUpTo(BottomNavScreen.Decks.startDestination) {
+                                popUpTo(navController.previousBackStackEntry?.destination?.id!!) {
                                     inclusive = false
                                 }
                                 launchSingleTop = true
@@ -1146,7 +1146,7 @@ fun DeckScreen(
                     toPreviousDeck = if (deck.previousId != null) {{ navController.navigate(
                         "deck/${deck.previousId}"
                     ) {
-                        popUpTo(BottomNavScreen.Decks.startDestination) {
+                        popUpTo(navController.previousBackStackEntry?.destination?.id!!) {
                             inclusive = false
                         }
                         launchSingleTop = true
@@ -1154,7 +1154,7 @@ fun DeckScreen(
                     toNextDeck = if (deck.nextId != null) {{ navController.navigate(
                         "deck/${deck.nextId}"
                     ) {
-                        popUpTo(BottomNavScreen.Decks.startDestination) {
+                        popUpTo(navController.previousBackStackEntry?.destination?.id!!) {
                             inclusive = false
                         }
                         launchSingleTop = true
@@ -1165,6 +1165,12 @@ fun DeckScreen(
                             Toast.makeText(
                                 context,
                                 context.getString(R.string.options_section_upload_deck_warning),
+                                Toast.LENGTH_SHORT,
+                            ).show()
+                        } else if (deck.campaignId != null) {
+                            Toast.makeText(
+                                context,
+                                context.getString(R.string.options_section_delete_deck_warning),
                                 Toast.LENGTH_SHORT,
                             ).show()
                         } else coroutine.launch { showLoadingDialog = true
