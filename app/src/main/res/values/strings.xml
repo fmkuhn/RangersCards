@@ -335,4 +335,14 @@
     <string name="undo_available_text">If you made a mistake when travelling or ending the day, you can undo your recent edits here. Decks will not be changed.</string>
     <string name="undo_unavailable_text">There are no travel changes that can be undone.</string>
 
+    //Campaign log section
+    <string name="campaign_log_header">Campaign log</string>
+    <string name="missions_campaign_log_tab">Missions</string>
+    <string name="events_campaign_log_tab">Notable Events</string>
+    <string name="removed_campaign_log_tab">Removed cards</string>
+    <string name="remove_card_button">Remove card</string>
+    <string name="removed_set_header">Set</string>
+    <string name="removed_select_set_text">Select card set</string>
+    <string name="removed_campaign_log_text">Track cards that are removed permanently from the path deck here.</string>
+
 </resources>

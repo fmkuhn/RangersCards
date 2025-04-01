@@ -283,4 +283,12 @@
     <string name="undo_travel_header">Откатить путешествие</string>
     <string name="undo_available_text">Если вы допустили ошибку во время путешествия или завершения дня, вы можете откатить свои последние изменения здесь. Колоды не будут изменены.</string>
     <string name="undo_unavailable_text">Нету путешествий, которые можно откатить.</string>
+    <string name="campaign_log_header">Журнал кампании</string>
+    <string name="missions_campaign_log_tab">Миссии</string>
+    <string name="events_campaign_log_tab">Важные события</string>
+    <string name="removed_campaign_log_tab">Удалённые карты</string>
+    <string name="remove_card_button">Удалить карту</string>
+    <string name="removed_set_header">Набор</string>
+    <string name="removed_select_set_text">Выберите набор карт</string>
+    <string name="removed_campaign_log_text">Отслеживайте здесь карты, которые навсегда убираются из колоды пути.</string>
 </resources>

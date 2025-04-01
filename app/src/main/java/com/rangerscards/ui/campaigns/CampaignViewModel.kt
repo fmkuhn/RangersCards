@@ -9,6 +9,7 @@ import com.apollographql.apollo.api.Optional
 import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.google.firebase.auth.FirebaseUser
+import com.rangerscards.AddCampaignRemovedMutation
 import com.rangerscards.AddFriendToCampaignMutation
 import com.rangerscards.CampaignSubscription
 import com.rangerscards.CampaignTravelMutation
@@ -25,8 +26,11 @@ import com.rangerscards.SetCampaignCalendarMutation
 import com.rangerscards.SetCampaignDayMutation
 import com.rangerscards.SetCampaignTitleMutation
 import com.rangerscards.SetDeckCampaignMutation
+import com.rangerscards.UpdateCampaignRemovedMutation
+import com.rangerscards.UpdateCampaignRewardsMutation
 import com.rangerscards.UpdateUploadedMutation
 import com.rangerscards.data.database.campaign.Campaign
+import com.rangerscards.data.database.card.CardListItemProjection
 import com.rangerscards.data.database.deck.RoleCardProjection
 import com.rangerscards.data.database.repository.CampaignRepository
 import com.rangerscards.data.database.repository.DeckRepository
@@ -41,6 +45,7 @@ import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.serialization.json.JsonArray
 import kotlinx.serialization.json.JsonElement
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.add
@@ -653,6 +658,124 @@ class CampaignViewModel(
                     updatedAt = getCurrentDateTime()
                 ))
             }
+        }
+    }
+
+    fun getRewardsCards(): Flow<List<CardListItemProjection>> = campaignRepository.getRewards()
+
+    suspend fun addCampaignReward(id: String, user: FirebaseUser?) {
+        val campaign = campaign.value!!
+        val newList = campaign.rewards + id
+        val newJsonRewards = buildJsonArray { newList.forEach { add(it) } }
+        if (campaign.uploaded) {
+            val token = user!!.getIdToken(true).await().token
+            apolloClient.mutation(
+                UpdateCampaignRewardsMutation(
+                    campaignId = campaign.id.toInt(),
+                    rewards = newJsonRewards
+                )
+            ).addHttpHeader("Authorization", "Bearer $token").execute()
+        } else {
+            val campaignEntry = campaignRepository.getCampaignById(campaign.id)
+            campaignRepository.updateCampaign(campaignEntry.copy(
+                rewards = newJsonRewards,
+                updatedAt = getCurrentDateTime()
+            ))
+        }
+    }
+
+    suspend fun removeCampaignReward(id: String, user: FirebaseUser?) {
+        val campaign = campaign.value!!
+        val newList = campaign.rewards.filterNot { it == id }
+        val newJsonRewards = buildJsonArray { newList.forEach { add(it) } }
+        if (campaign.uploaded) {
+            val token = user!!.getIdToken(true).await().token
+            apolloClient.mutation(
+                UpdateCampaignRewardsMutation(
+                    campaignId = campaign.id.toInt(),
+                    rewards = newJsonRewards
+                )
+            ).addHttpHeader("Authorization", "Bearer $token").execute()
+        } else {
+            val campaignEntry = campaignRepository.getCampaignById(campaign.id)
+            campaignRepository.updateCampaign(campaignEntry.copy(
+                rewards = newJsonRewards,
+                updatedAt = getCurrentDateTime()
+            ))
+        }
+    }
+
+    fun getRemovedSetsInfo(): Map<String, Pair<Int, Int>> {
+        val campaign = campaign.value!!
+        val maps = CampaignMaps.generalSetsMap + CampaignMaps.getMapLocations(false)
+        val removedSets = mutableMapOf<String, Pair<Int, Int>>()
+        campaign.removed.forEach { removed ->
+            val fromPath = CampaignMaps.Path.fromValue(removed.setId)
+            val fromMaps = maps[removed.setId]
+            if (fromPath != null) removedSets[removed.setId] = fromPath.iconResId to fromPath.nameResId
+            else removedSets[removed.setId] = fromMaps!!.iconResId to fromMaps.nameResId
+        }
+        return removedSets
+    }
+
+    suspend fun updateCampaignRemoved(name: String, user: FirebaseUser?) {
+        val campaign = campaign.value!!
+        val newList = campaign.removed.filterNot { it.name == name }
+        val newJsonRemoved = buildJsonArray { newList.forEach { add(buildJsonObject {
+            put("name", it.name)
+            put("set_id", it.setId)
+        }) } }
+        if (campaign.uploaded) {
+            val token = user!!.getIdToken(true).await().token
+            apolloClient.mutation(
+                UpdateCampaignRemovedMutation(
+                    campaignId = campaign.id.toInt(),
+                    removed = newJsonRemoved
+                )
+            ).addHttpHeader("Authorization", "Bearer $token").execute()
+        } else {
+            val campaignEntry = campaignRepository.getCampaignById(campaign.id)
+            campaignRepository.updateCampaign(campaignEntry.copy(
+                removed = newJsonRemoved,
+                updatedAt = getCurrentDateTime()
+            ))
+        }
+    }
+
+    fun getAllRemovedSets(): Map<String, Pair<Int, Int>> {
+        val campaign = campaign.value!!
+        val maps = CampaignMaps.generalSetsMap + CampaignMaps.getMapLocations(false)
+        val paths = CampaignMaps.Path.entries
+        val sets = mutableMapOf<String, Pair<Int, Int>>()
+        maps.forEach { (key, value) ->
+            sets[key] = value.iconResId to value.nameResId
+        }
+        paths.forEach {
+            sets[it.value] = it.iconResId to it.nameResId
+        }
+        return sets
+    }
+
+    suspend fun addCampaignRemoved(setId: String, name: String, user: FirebaseUser?) {
+        val campaign = campaign.value!!
+        val newJsonRemoved = buildJsonObject {
+            put("name", name)
+            put("set_id", setId)
+        }
+        if (campaign.uploaded) {
+            val token = user!!.getIdToken(true).await().token
+            apolloClient.mutation(
+                AddCampaignRemovedMutation(
+                    campaignId = campaign.id.toInt(),
+                    removed = newJsonRemoved
+                )
+            ).addHttpHeader("Authorization", "Bearer $token").execute()
+        } else {
+            val campaignEntry = campaignRepository.getCampaignById(campaign.id)
+            campaignRepository.updateCampaign(campaignEntry.copy(
+                removed = JsonArray(campaignEntry.removed.jsonArray + newJsonRemoved),
+                updatedAt = getCurrentDateTime()
+            ))
         }
     }
 }

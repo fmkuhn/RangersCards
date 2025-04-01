@@ -10,6 +10,7 @@ import androidx.room.Update
 import androidx.room.Upsert
 import com.rangerscards.data.database.campaign.Campaign
 import com.rangerscards.data.database.campaign.CampaignListItemProjection
+import com.rangerscards.data.database.card.CardListItemProjection
 import com.rangerscards.data.database.deck.DeckListItemProjection
 import com.rangerscards.data.database.deck.RoleCardProjection
 import kotlinx.coroutines.flow.Flow
@@ -84,4 +85,9 @@ interface CampaignDao {
 
     @Query("DELETE FROM campaign WHERE id = :id")
     suspend fun deleteCampaign(id: String)
+
+    @Query("SELECT id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, " +
+            "type_name, traits, level, approach_connection, approach_reason, approach_conflict, " +
+            "approach_exploration FROM card WHERE set_id == 'reward' ORDER BY (set_type_id IS NULL), set_type_id, set_id, set_position")
+    fun getAllRewards(): Flow<List<CardListItemProjection>>
 }

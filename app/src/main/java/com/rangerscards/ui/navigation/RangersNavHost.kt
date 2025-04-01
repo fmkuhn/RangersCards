@@ -60,6 +60,7 @@ import com.rangerscards.ui.campaigns.CampaignScreen
 import com.rangerscards.ui.campaigns.CampaignViewModel
 import com.rangerscards.ui.campaigns.CampaignsScreen
 import com.rangerscards.ui.campaigns.CampaignsViewModel
+import com.rangerscards.ui.campaigns.dialogs.AddRemovedDialog
 import com.rangerscards.ui.campaigns.dialogs.DayInfoDialog
 import com.rangerscards.ui.campaigns.dialogs.EndTheDayDialog
 import com.rangerscards.ui.campaigns.dialogs.TravelDialog
@@ -776,6 +777,22 @@ fun RangersNavHost(
                     )
                     val user by settingsViewModel.userUiState.collectAsState()
                     UndoTravelDialog(
+                        campaignViewModel = campaignViewModel,
+                        isDarkTheme = isDarkTheme,
+                        onBack = { navController.popBackStack() },
+                        user = user.currentUser
+                    )
+                }
+                dialog("${BottomNavScreen.Campaigns.route}/campaign/removeCard") { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("${BottomNavScreen.Campaigns.route}/campaign/{$campaignIdArgument}")
+                    }
+                    val campaignViewModel: CampaignViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val user by settingsViewModel.userUiState.collectAsState()
+                    AddRemovedDialog(
                         campaignViewModel = campaignViewModel,
                         isDarkTheme = isDarkTheme,
                         onBack = { navController.popBackStack() },

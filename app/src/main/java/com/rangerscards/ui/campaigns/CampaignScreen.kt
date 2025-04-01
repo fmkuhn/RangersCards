@@ -1,8 +1,12 @@
 package com.rangerscards.ui.campaigns
 
 import android.widget.Toast
+import androidx.compose.animation.animateContentSize
+import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
@@ -10,10 +14,14 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
@@ -21,6 +29,7 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
@@ -29,10 +38,12 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
+import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -43,9 +54,12 @@ import com.rangerscards.R
 import com.rangerscards.data.database.campaign.Campaign
 import com.rangerscards.ui.campaigns.components.CampaignCurrentPositionCard
 import com.rangerscards.ui.campaigns.components.CampaignDialog
+import com.rangerscards.ui.campaigns.components.CampaignRemovedCards
 import com.rangerscards.ui.campaigns.components.CampaignSettingsSection
 import com.rangerscards.ui.campaigns.components.CampaignTitleRow
 import com.rangerscards.ui.campaigns.components.TimeLineLazyRow
+import com.rangerscards.ui.cards.components.CardListItem
+import com.rangerscards.ui.components.ScrollableRangersTabs
 import com.rangerscards.ui.components.SquareButton
 import com.rangerscards.ui.decks.components.DeckListItem
 import com.rangerscards.ui.navigation.BottomNavScreen
@@ -75,6 +89,8 @@ fun CampaignScreen(
     val isOwner by remember { derivedStateOf {
         campaignState!!.userId == user?.uid || campaignState!!.userId.isEmpty()
     } }
+    var isCampaignLogExpanded by rememberSaveable { mutableStateOf(false) }
+    var campaignLogTypeIndex by rememberSaveable { mutableIntStateOf(0) }
     LaunchedEffect(campaign) {
         if (user != null && !isSubscriptionStarted && campaign?.uploaded == true)
             campaignViewModel.startSubscription(campaign.id)
@@ -320,6 +336,120 @@ fun CampaignScreen(
                                 } },
                                 modifier = Modifier.weight(1f)
                             )
+                        }
+                    }
+                }
+                item {
+                    Surface(
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .animateContentSize(),
+                        border = BorderStroke(1.dp, CustomTheme.colors.d15),
+                        color = CustomTheme.colors.l30,
+                        shape = CustomTheme.shapes.large
+                    ) {
+                        Column(modifier = Modifier.fillMaxWidth()) {
+                            Row(
+                                horizontalArrangement = Arrangement.Center,
+                                modifier = Modifier
+                                    .background(
+                                        CustomTheme.colors.d15,
+                                        RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
+                                    )
+                                    .fillMaxWidth()
+                                    .padding(vertical = 4.dp, horizontal = 8.dp)
+                                    .clickable { isCampaignLogExpanded = !isCampaignLogExpanded },
+                            ) {
+                                Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
+                                    Text(
+                                        text = stringResource(R.string.campaign_log_header),
+                                        color = CustomTheme.colors.l30,
+                                        fontFamily = Jost,
+                                        fontWeight = FontWeight.Medium,
+                                        fontSize = 20.sp,
+                                        lineHeight = 22.sp,
+                                        modifier = Modifier.fillMaxWidth().padding(horizontal = 28.dp),
+                                        textAlign = TextAlign.Center
+                                    )
+                                    Icon(
+                                        painterResource(if (isCampaignLogExpanded) R.drawable.arrow_drop_up_32dp
+                                        else R.drawable.arrow_drop_down_32dp),
+                                        contentDescription = null,
+                                        tint = CustomTheme.colors.l10,
+                                        modifier = Modifier.size(24.dp)
+                                    )
+                                }
+                            }
+                            if (isCampaignLogExpanded) Column(modifier = Modifier.fillMaxWidth().sizeIn(maxHeight = 450.dp)) {
+                                ScrollableRangersTabs(
+                                    listOf(
+                                        R.string.missions_campaign_log_tab,
+                                        R.string.rewards_search_tab,
+                                        R.string.events_campaign_log_tab,
+                                        R.string.removed_campaign_log_tab
+                                    ),
+                                    campaignLogTypeIndex,
+                                ) { campaignLogTypeIndex = it }
+                                when(campaignLogTypeIndex) {
+                                    0 -> Column {
+                                        //TODO:add 'add button'
+                                        campaignState!!.missions.forEach {
+                                        }
+                                    }
+                                    1 -> {
+                                        val rewards = campaignViewModel.getRewardsCards().collectAsState(emptyList())
+                                        LazyColumn(modifier = Modifier.fillMaxWidth()) {
+                                            rewards.value.forEach { reward ->
+                                                val isAdded = campaignState!!.rewards.contains(reward.id)
+                                                item(reward.id) {
+                                                    CardListItem(
+                                                        aspectId = reward.aspectId,
+                                                        aspectShortName = reward.aspectShortName,
+                                                        cost = reward.cost,
+                                                        imageSrc = reward.realImageSrc,
+                                                        approachConflict = reward.approachConflict,
+                                                        approachConnection = reward.approachConnection,
+                                                        approachReason = reward.approachReason,
+                                                        approachExploration = reward.approachExploration,
+                                                        name = reward.name.toString(),
+                                                        typeName = reward.typeName,
+                                                        traits = reward.traits,
+                                                        level = reward.level,
+                                                        isDarkTheme = isDarkTheme,
+                                                        currentAmount = if (isAdded) 2 else 0,
+                                                        onRemoveClick = { coroutine.launch { showLoadingDialog = true
+                                                            campaignViewModel.removeCampaignReward(reward.id, user)
+                                                        }.invokeOnCompletion { showLoadingDialog = false }  },
+                                                        onRemoveEnabled = isAdded,
+                                                        onAddClick = { coroutine.launch { showLoadingDialog = true
+                                                            campaignViewModel.addCampaignReward(reward.id, user)
+                                                        }.invokeOnCompletion { showLoadingDialog = false }  },
+                                                        onAddEnabled = !isAdded,
+                                                        onClick = {}
+                                                    )
+                                                }
+                                            }
+                                        }
+                                    }
+                                    2 -> Column {
+                                        //TODO:add 'add button'
+                                        campaignState!!.events.forEach {
+                                        }
+                                    }
+                                    3 -> CampaignRemovedCards(
+                                        onAdd = { navController.navigate(
+                                            "${BottomNavScreen.Campaigns.route}/campaign/removeCard"
+                                        ) {
+                                            launchSingleTop = true
+                                        } },
+                                        removedSets = campaignViewModel.getRemovedSetsInfo(),
+                                        removed = campaignState!!.removed,
+                                        onRemove = { removedName -> coroutine.launch { showLoadingDialog = true
+                                            campaignViewModel.updateCampaignRemoved(removedName, user)
+                                        }.invokeOnCompletion { showLoadingDialog = false }}
+                                    )
+                                }
+                            }
                         }
                     }
                 }

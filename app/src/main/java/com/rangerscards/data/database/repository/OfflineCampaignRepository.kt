@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import com.rangerscards.data.database.campaign.Campaign
+import com.rangerscards.data.database.card.CardListItemProjection
 import com.rangerscards.data.database.dao.CampaignDao
 import com.rangerscards.data.database.deck.DeckListItemProjection
 import com.rangerscards.data.database.deck.RoleCardProjection
@@ -54,4 +55,6 @@ class OfflineCampaignRepository(
     }
 
     override suspend fun deleteCampaign(id: String) = campaignDao.deleteCampaign(id)
+
+    override fun getRewards(): Flow<List<CardListItemProjection>> = campaignDao.getAllRewards()
 }
