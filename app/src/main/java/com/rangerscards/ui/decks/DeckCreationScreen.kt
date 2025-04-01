@@ -13,12 +13,16 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.RadioButton
 import androidx.compose.material3.RadioButtonDefaults
+import androidx.compose.material3.TabRow
+import androidx.compose.material3.TabRowDefaults
+import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -50,8 +54,8 @@ import com.rangerscards.R
 import com.rangerscards.data.database.card.CardListItemProjection
 import com.rangerscards.data.objects.DeckMetaMaps
 import com.rangerscards.data.objects.StarterDecks
+import com.rangerscards.ui.components.CustomTab
 import com.rangerscards.ui.components.DataPicker
-import com.rangerscards.ui.components.RangersTabs
 import com.rangerscards.ui.components.SquareButton
 import com.rangerscards.ui.decks.components.StarterDeck
 import com.rangerscards.ui.settings.UserUIState
@@ -111,15 +115,38 @@ fun DeckCreationScreen(
                     .weight(1f),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                RangersTabs(
+                TabRow(
+                    modifier = Modifier.fillMaxWidth(),
+                    selectedTabIndex = tabIndex,
+                    containerColor = CustomTheme.colors.l20,
+                    contentColor = CustomTheme.colors.d30,
+                    // Custom indicator
+                    indicator = { tabPositions ->
+                        TabRowDefaults.PrimaryIndicator(
+                            modifier = Modifier
+                                .tabIndicatorOffset(tabPositions[tabIndex]),
+                            color = CustomTheme.colors.d30,
+                            shape = AbsoluteRoundedCornerShape(topLeft = 50.dp, topRight = 50.dp),
+                            width = tabPositions[tabIndex].contentWidth
+                        )
+                    },
+                    divider = {
+                        HorizontalDivider(color = CustomTheme.colors.l10)
+                    }
+                ) {
                     listOf(
                         R.string.custom_deck_tab,
                         R.string.starter_deck_tab
-                    ),
-                    tabIndex
-                ) {
-                    tabIndex = it
-                    if (it == 0) selectedStarterDeck = -1
+                    ).forEachIndexed { index, titleResId ->
+                        CustomTab(
+                            titleResId = titleResId,
+                            selected = tabIndex == index,
+                            onClick = {
+                                tabIndex = index
+                                if (index == 0) selectedStarterDeck = -1
+                            }
+                        )
+                    }
                 }
                 OutlinedTextField(
                     modifier = Modifier

@@ -5,12 +5,13 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.selection.selectable
 import androidx.compose.foundation.shape.AbsoluteRoundedCornerShape
 import androidx.compose.material3.HorizontalDivider
-import androidx.compose.material3.TabRow
+import androidx.compose.material3.ScrollableTabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
@@ -34,15 +35,17 @@ import com.rangerscards.ui.theme.Jost
 import com.rangerscards.ui.theme.RangersCardsTheme
 
 @Composable
-fun RangersTabs(
+fun ScrollableRangersTabs(
     tabs: List<Int>,
     selectedTabIndex: Int,
     onTabSelected: (Int) -> Unit
 ) {
-    TabRow(
+    ScrollableTabRow(
+        modifier = Modifier.fillMaxWidth(),
         selectedTabIndex = selectedTabIndex,
         containerColor = CustomTheme.colors.l20,
         contentColor = CustomTheme.colors.d30,
+        edgePadding = 8.dp,
         // Custom indicator
         indicator = { tabPositions ->
             TabRowDefaults.PrimaryIndicator(
@@ -105,7 +108,7 @@ fun RangersTabsPreview() {
                 .background(CustomTheme.colors.l30)
                 .fillMaxSize()
         ) {
-            RangersTabs(
+            ScrollableRangersTabs(
                 listOf(
                     R.string.custom_deck_tab,
                     R.string.starter_deck_tab,

@@ -34,7 +34,7 @@ import com.rangerscards.R
 import com.rangerscards.data.database.card.CardDeckListItemProjection
 import com.rangerscards.ui.cards.components.CardListItem
 import com.rangerscards.ui.components.RangersSearchOutlinedField
-import com.rangerscards.ui.components.RangersTabs
+import com.rangerscards.ui.components.ScrollableRangersTabs
 import com.rangerscards.ui.components.RangersTopAppBar
 import com.rangerscards.ui.components.RowTypeDivider
 import com.rangerscards.ui.settings.components.SettingsRadioButtonRow
@@ -99,7 +99,7 @@ fun DeckCardsSearchingListScreen(
                     bottom = innerPadding.calculateBottomPadding()
                 ),
         ) {
-            RangersTabs(
+            ScrollableRangersTabs(
                 if (deck!!.previousId != null) listOf(
                     R.string.rewards_search_tab,
                     R.string.maladies_search_tab,
