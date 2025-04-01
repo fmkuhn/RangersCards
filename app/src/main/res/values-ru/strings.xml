@@ -280,4 +280,7 @@
     <string name="delete_campaign_confirmation">Вы уверены, что хотите удалить эту кампанию?</string>
     <string name="leave_campaign_confirmation">Вы уверены, что хотите покинуть эту кампанию?</string>
     <string name="leave_campaign_button">Покинуть кампанию</string>
+    <string name="undo_travel_header">Откатить путешествие</string>
+    <string name="undo_available_text">Если вы допустили ошибку во время путешествия или завершения дня, вы можете откатить свои последние изменения здесь. Колоды не будут изменены.</string>
+    <string name="undo_unavailable_text">Нету путешествий, которые можно откатить.</string>
 </resources>

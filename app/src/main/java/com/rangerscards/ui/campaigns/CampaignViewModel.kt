@@ -12,6 +12,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.AddFriendToCampaignMutation
 import com.rangerscards.CampaignSubscription
 import com.rangerscards.CampaignTravelMutation
+import com.rangerscards.CampaignUndoTravelMutation
 import com.rangerscards.CreateCampaignMutation
 import com.rangerscards.DeleteCampaignMutation
 import com.rangerscards.ExtendCampaignMutation
@@ -572,6 +573,87 @@ class CampaignViewModel(
             removeDeckCampaign(it, user)
         }
         campaignRepository.deleteCampaign(campaign.id)
+    }
+
+    fun checkIfCanUndo(): Boolean {
+        val campaign = campaign.value!!
+        // Get the last travel record (if any)
+        val lastTravel = campaign.history.lastOrNull()
+        // Compute whether we can undo an "end day"
+        val canUndoEndDay = campaign.currentDay > 1 && (
+                lastTravel == null ||
+                        (if (lastTravel.camped) lastTravel.day + 1 else lastTravel.day) < campaign.currentDay
+                )
+        return lastTravel != null || canUndoEndDay
+    }
+
+    suspend fun undoTravel(user: FirebaseUser?) {
+        val campaign = campaign.value!!
+        // Get the last travel record (if any)
+        val lastTravel = campaign.history.lastOrNull()
+        // Compute whether we can undo an "end day"
+        val canUndoEndDay = campaign.currentDay > 1 && (
+                lastTravel == null ||
+                        (if (lastTravel.camped) lastTravel.day + 1 else lastTravel.day) < campaign.currentDay
+                )
+        if (canUndoEndDay) {
+            if (campaign.uploaded) {
+                val token = user!!.getIdToken(true).await().token
+                apolloClient.mutation(
+                    SetCampaignDayMutation(
+                        campaignId = campaign.id.toInt(),
+                        day = campaign.currentDay - 1
+                    )
+                ).addHttpHeader("Authorization", "Bearer $token").execute()
+            } else {
+                val campaignEntry = campaignRepository.getCampaignById(campaign.id)
+                campaignRepository.updateCampaign(campaignEntry.copy(
+                    day = campaign.currentDay - 1,
+                    updatedAt = getCurrentDateTime()
+                ))
+            }
+        } else if (lastTravel != null) {
+            var previousLocation = CampaignMaps.startingLocations[campaign.cycleId]!!
+            var previousPathTerrain: String? = null
+            if (campaign.history.size >= 2) {
+                val penultimateEntry = campaign.history[campaign.history.size - 2]
+                if (penultimateEntry.location.isNotEmpty()) {
+                    previousLocation = penultimateEntry.location
+                }
+                previousPathTerrain = penultimateEntry.pathTerrain
+            }
+            // Remove the last entry from history.
+            val newHistory = campaign.history.dropLast(1)
+            val newHistoryJson = buildJsonArray { newHistory.forEach { add(buildJsonObject {
+                put("day", it.day)
+                put("camped", it.camped)
+                put("location", it.location)
+                put("path_terrain", it.pathTerrain)
+            }) } }
+            // Adjust previous day depending on whether the last travel had 'camped'
+            val previousDay = campaign.currentDay - if (lastTravel.camped) 1 else 0
+            if (campaign.uploaded) {
+                val token = user!!.getIdToken(true).await().token
+                apolloClient.mutation(
+                    CampaignUndoTravelMutation(
+                        campaignId = campaign.id.toInt(),
+                        history = newHistoryJson,
+                        previousDay = previousDay,
+                        previousLocation = previousLocation,
+                        previousPathTerrain = Optional.present(previousPathTerrain)
+                    )
+                ).addHttpHeader("Authorization", "Bearer $token").execute()
+            } else {
+                val campaignEntry = campaignRepository.getCampaignById(campaign.id)
+                campaignRepository.updateCampaign(campaignEntry.copy(
+                    day = previousDay,
+                    history = newHistoryJson,
+                    currentLocation = previousLocation,
+                    currentPathTerrain = previousPathTerrain,
+                    updatedAt = getCurrentDateTime()
+                ))
+            }
+        }
     }
 }
 

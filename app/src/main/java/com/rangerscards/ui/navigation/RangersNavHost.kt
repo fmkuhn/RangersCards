@@ -63,6 +63,7 @@ import com.rangerscards.ui.campaigns.CampaignsViewModel
 import com.rangerscards.ui.campaigns.dialogs.DayInfoDialog
 import com.rangerscards.ui.campaigns.dialogs.EndTheDayDialog
 import com.rangerscards.ui.campaigns.dialogs.TravelDialog
+import com.rangerscards.ui.campaigns.dialogs.UndoTravelDialog
 import com.rangerscards.ui.cards.CardsScreen
 import com.rangerscards.ui.cards.CardsViewModel
 import com.rangerscards.ui.cards.FullCardScreen
@@ -612,17 +613,42 @@ fun RangersNavHost(
                             ?: error("campaignIdArgument cannot be null")
                         val user by settingsViewModel.userUiState.collectAsState()
                         val campaign = campaignViewModel.getCampaignById(campaignId).collectAsState(null)
-                        CampaignScreen(
-                            campaignViewModel = campaignViewModel,
-                            campaign = campaign.value,
-                            user = user.currentUser,
-                            isDarkTheme = isDarkTheme,
-                            navController = navController,
-                            contentPadding = innerPadding
-                        )
+                        if (!isCardsLoading) {
+                            CampaignScreen(
+                                campaignViewModel = campaignViewModel,
+                                campaign = campaign.value,
+                                user = user.currentUser,
+                                isDarkTheme = isDarkTheme,
+                                navController = navController,
+                                contentPadding = innerPadding
+                            )
+                        } else {
+                            CardsDownloadingCircularProgressIndicator()
+                        }
                         title = if (campaign.value != null) stringResource(CampaignMaps.campaignCyclesMap[campaign.value!!.cycleId]!!)
                         else ""
-                        actions = { /*TODO:Implement undo and book page*/ }
+                        actions = {
+                            IconButton(
+                                onClick = {
+                                    navController.navigate(
+                                        "${BottomNavScreen.Campaigns.route}/campaign/undo"
+                                    ) {
+                                        launchSingleTop = true
+                                    }
+                                },
+                                colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
+                                modifier = Modifier.size(32.dp),
+                                enabled = !isCardsLoading
+                            ) {
+                                Icon(
+                                    painterResource(id = R.drawable.undo_32dp),
+                                    contentDescription = null,
+                                    tint = CustomTheme.colors.m,
+                                    modifier = Modifier.size(32.dp)
+                                )
+                            }
+                            //TODO:Add navigation to campaign guide screen
+                        }
                         switch = null
                 }
                 val dayInfoIdArgument = "dayInfoId"
@@ -663,8 +689,7 @@ fun RangersNavHost(
                     actions = null
                     switch = null
                 }
-                dialog("${BottomNavScreen.Campaigns.route}/campaign/endDay")
-                { backStackEntry ->
+                dialog("${BottomNavScreen.Campaigns.route}/campaign/endDay") { backStackEntry ->
                     val parentEntry = remember(backStackEntry) {
                         navController.getBackStackEntry("${BottomNavScreen.Campaigns.route}/campaign/{$campaignIdArgument}")
                     }
@@ -680,8 +705,7 @@ fun RangersNavHost(
                         user = user.currentUser
                     )
                 }
-                dialog("${BottomNavScreen.Campaigns.route}/campaign/travel")
-                { backStackEntry ->
+                dialog("${BottomNavScreen.Campaigns.route}/campaign/travel") { backStackEntry ->
                     val parentEntry = remember(backStackEntry) {
                         navController.getBackStackEntry("${BottomNavScreen.Campaigns.route}/campaign/{$campaignIdArgument}")
                     }
@@ -741,6 +765,22 @@ fun RangersNavHost(
                     title = stringResource(R.string.your_friends)
                     actions = null
                     switch = null
+                }
+                dialog("${BottomNavScreen.Campaigns.route}/campaign/undo") { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("${BottomNavScreen.Campaigns.route}/campaign/{$campaignIdArgument}")
+                    }
+                    val campaignViewModel: CampaignViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val user by settingsViewModel.userUiState.collectAsState()
+                    UndoTravelDialog(
+                        campaignViewModel = campaignViewModel,
+                        isDarkTheme = isDarkTheme,
+                        onBack = { navController.popBackStack() },
+                        user = user.currentUser
+                    )
                 }
             }
         }
