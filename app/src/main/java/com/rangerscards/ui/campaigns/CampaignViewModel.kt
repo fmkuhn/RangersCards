@@ -10,6 +10,7 @@ import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.AddCampaignEventMutation
+import com.rangerscards.AddCampaignMissionMutation
 import com.rangerscards.AddCampaignRemovedMutation
 import com.rangerscards.AddFriendToCampaignMutation
 import com.rangerscards.CampaignSubscription
@@ -25,6 +26,7 @@ import com.rangerscards.RemoveDeckCampaignMutation
 import com.rangerscards.RemoveFriendFromCampaignMutation
 import com.rangerscards.SetCampaignCalendarMutation
 import com.rangerscards.SetCampaignDayMutation
+import com.rangerscards.SetCampaignMissionsMutation
 import com.rangerscards.SetCampaignTitleMutation
 import com.rangerscards.SetDeckCampaignMutation
 import com.rangerscards.UpdateCampaignEventsMutation
@@ -796,13 +798,13 @@ class CampaignViewModel(
         } else {
             val campaignEntry = campaignRepository.getCampaignById(campaign.id)
             campaignRepository.updateCampaign(campaignEntry.copy(
-                events = JsonArray(campaignEntry.removed.jsonArray + newJsonEvent),
+                events = JsonArray(campaignEntry.events.jsonArray + newJsonEvent),
                 updatedAt = getCurrentDateTime()
             ))
         }
     }
 
-    suspend fun updateCampaignEvent(oldName: String, newName: String, crossedOut: Boolean, user: FirebaseUser?) {
+    suspend fun updateCampaignEvents(oldName: String, newName: String, crossedOut: Boolean, user: FirebaseUser?) {
         val campaign = campaign.value!!
         val newEventsList = campaign.events.map { if (it.name == oldName) CampaignEvent(newName, crossedOut) else it }
         val newJsonList = buildJsonArray { newEventsList.forEach { add(buildJsonObject {
@@ -821,6 +823,94 @@ class CampaignViewModel(
             val campaignEntry = campaignRepository.getCampaignById(campaign.id)
             campaignRepository.updateCampaign(campaignEntry.copy(
                 events = newJsonList,
+                updatedAt = getCurrentDateTime()
+            ))
+        }
+    }
+
+    suspend fun addCampaignMission(day: Int, name: String, user: FirebaseUser?) {
+        val campaign = campaign.value!!
+        val newJsonMission = buildJsonObject {
+            put("day", day)
+            put("name", name)
+        }
+        if (campaign.uploaded) {
+            val token = user!!.getIdToken(true).await().token
+            apolloClient.mutation(
+                AddCampaignMissionMutation(
+                    campaignId = campaign.id.toInt(),
+                    mission = newJsonMission
+                )
+            ).addHttpHeader("Authorization", "Bearer $token").execute()
+        } else {
+            val campaignEntry = campaignRepository.getCampaignById(campaign.id)
+            campaignRepository.updateCampaign(campaignEntry.copy(
+                missions = JsonArray(campaignEntry.missions.jsonArray + newJsonMission),
+                updatedAt = getCurrentDateTime()
+            ))
+        }
+    }
+
+    suspend fun setCampaignMissions(
+        oldName: String,
+        newName: String,
+        day: Int,
+        checks: List<Boolean>,
+        completed: Boolean,
+        user: FirebaseUser?
+    ) {
+        val campaign = campaign.value!!
+        val newMissionsList = campaign.missions.map { if (it.name == oldName)
+            CampaignMission(
+                day,
+                newName,
+                checks,
+                completed
+            ) else it }
+        val newJsonList = buildJsonArray { newMissionsList.forEach { add(buildJsonObject {
+            put("day", it.day)
+            put("name", it.name)
+            put("checks", buildJsonArray { it.checks.forEach { check -> add(check) } })
+            put("completed", it.completed)
+        }) } }
+        if (campaign.uploaded) {
+            val token = user!!.getIdToken(true).await().token
+            apolloClient.mutation(
+                SetCampaignMissionsMutation(
+                    campaignId = campaign.id.toInt(),
+                    missions = newJsonList
+                )
+            ).addHttpHeader("Authorization", "Bearer $token").execute()
+        } else {
+            val campaignEntry = campaignRepository.getCampaignById(campaign.id)
+            campaignRepository.updateCampaign(campaignEntry.copy(
+                missions = newJsonList,
+                updatedAt = getCurrentDateTime()
+            ))
+        }
+    }
+
+    suspend fun deleteCampaignMission(name: String, user: FirebaseUser?) {
+        val campaign = campaign.value!!
+        val newMissionsList = campaign.missions.filterNot { it.name == name }
+        val newJsonList = buildJsonArray { newMissionsList.forEach { add(buildJsonObject {
+            put("day", it.day)
+            put("name", it.name)
+            put("checks", buildJsonArray { it.checks.forEach { check -> add(check) } })
+            put("completed", it.completed)
+        }) } }
+        if (campaign.uploaded) {
+            val token = user!!.getIdToken(true).await().token
+            apolloClient.mutation(
+                SetCampaignMissionsMutation(
+                    campaignId = campaign.id.toInt(),
+                    missions = newJsonList
+                )
+            ).addHttpHeader("Authorization", "Bearer $token").execute()
+        } else {
+            val campaignEntry = campaignRepository.getCampaignById(campaign.id)
+            campaignRepository.updateCampaign(campaignEntry.copy(
+                missions = newJsonList,
                 updatedAt = getCurrentDateTime()
             ))
         }

@@ -338,9 +338,16 @@
     //Campaign log section
     <string name="campaign_log_header">Campaign log</string>
     <string name="missions_campaign_log_tab">Missions</string>
+    <string name="add_mission_button">Add mission</string>
+    <string name="mission_header">Mission</string>
+    <string name="mission_day_input">Day</string>
+    <string name="mission_progress">Progress</string>
+    <string name="mission_completed">Completed</string>
+    <string name="delete_mission_button">Delete mission</string>
     <string name="events_campaign_log_tab">Notable Events</string>
     <string name="record_event_button">Record event</string>
     <string name="event_name_input">What happened?</string>
+    <string name="event_header">Notable event</string>
     <string name="event_crossed_out">Crossed-out</string>
     <string name="removed_campaign_log_tab">Removed cards</string>
     <string name="remove_card_button">Remove card</string>

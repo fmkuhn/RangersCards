@@ -1,6 +1,5 @@
 package com.rangerscards.ui.navigation
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -60,8 +59,10 @@ import com.rangerscards.ui.campaigns.CampaignScreen
 import com.rangerscards.ui.campaigns.CampaignViewModel
 import com.rangerscards.ui.campaigns.CampaignsScreen
 import com.rangerscards.ui.campaigns.CampaignsViewModel
+import com.rangerscards.ui.campaigns.dialogs.AddMissionDialog
 import com.rangerscards.ui.campaigns.dialogs.AddRemovedDialog
 import com.rangerscards.ui.campaigns.dialogs.CampaignEventDialog
+import com.rangerscards.ui.campaigns.dialogs.CampaignMissionDialog
 import com.rangerscards.ui.campaigns.dialogs.DayInfoDialog
 import com.rangerscards.ui.campaigns.dialogs.EndTheDayDialog
 import com.rangerscards.ui.campaigns.dialogs.RecordEventDialog
@@ -834,6 +835,44 @@ fun RangersNavHost(
                     CampaignEventDialog(
                         campaignViewModel = campaignViewModel,
                         eventName = eventName,
+                        isDarkTheme = isDarkTheme,
+                        onBack = { navController.popBackStack() },
+                        user = user.currentUser
+                    )
+                }
+                dialog("${BottomNavScreen.Campaigns.route}/campaign/addMission") { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("${BottomNavScreen.Campaigns.route}/campaign/{$campaignIdArgument}")
+                    }
+                    val campaignViewModel: CampaignViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val user by settingsViewModel.userUiState.collectAsState()
+                    AddMissionDialog(
+                        campaignViewModel = campaignViewModel,
+                        isDarkTheme = isDarkTheme,
+                        onBack = { navController.popBackStack() },
+                        user = user.currentUser
+                    )
+                }
+                val missionNameArgument = "missionNameArgument"
+                dialog("${BottomNavScreen.Campaigns.route}/campaign/mission/{$missionNameArgument}",
+                    arguments = listOf(navArgument(missionNameArgument) { type = NavType.StringType }))
+                { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("${BottomNavScreen.Campaigns.route}/campaign/{$campaignIdArgument}")
+                    }
+                    val campaignViewModel: CampaignViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val missionName = backStackEntry.arguments?.getString(missionNameArgument)
+                        ?: error("missionNameArgument cannot be null")
+                    val user by settingsViewModel.userUiState.collectAsState()
+                    CampaignMissionDialog(
+                        campaignViewModel = campaignViewModel,
+                        missionName = missionName,
                         isDarkTheme = isDarkTheme,
                         onBack = { navController.popBackStack() },
                         user = user.currentUser

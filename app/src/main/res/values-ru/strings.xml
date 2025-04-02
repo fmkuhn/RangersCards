@@ -285,9 +285,16 @@
     <string name="undo_unavailable_text">Нету путешествий, которые можно откатить.</string>
     <string name="campaign_log_header">Журнал кампании</string>
     <string name="missions_campaign_log_tab">Миссии</string>
+    <string name="add_mission_button">Добавить миссию</string>
+    <string name="mission_header">Миссия</string>
+    <string name="mission_day_input">День</string>
+    <string name="mission_progress">Прогресс</string>
+    <string name="mission_completed">Завершена</string>
+    <string name="delete_mission_button">Удалить миссию</string>
     <string name="events_campaign_log_tab">Важные события</string>
     <string name="record_event_button">Записать событие</string>
     <string name="event_name_input">Что произошло?</string>
+    <string name="event_header">Важное событие</string>
     <string name="event_crossed_out">Зачёркнуто</string>
     <string name="removed_campaign_log_tab">Удалённые карты</string>
     <string name="remove_card_button">Удалить карту</string>

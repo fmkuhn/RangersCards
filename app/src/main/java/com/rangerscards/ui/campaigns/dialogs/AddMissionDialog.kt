@@ -1,23 +1,21 @@
 package com.rangerscards.ui.campaigns.dialogs
 
-import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
@@ -45,21 +43,22 @@ import com.rangerscards.ui.theme.Jost
 import kotlinx.coroutines.launch
 
 @Composable
-fun CampaignEventDialog(
+fun AddMissionDialog(
     campaignViewModel: CampaignViewModel,
-    eventName: String,
     isDarkTheme: Boolean,
     onBack: () -> Unit,
     user: FirebaseUser?
 ) {
     val campaign by campaignViewModel.campaign.collectAsState()
-    val event = campaign!!.events.firstOrNull { it.name == eventName }!!
     var showLoadingDialog by rememberSaveable { mutableStateOf(false) }
-    var name by rememberSaveable { mutableStateOf(event.name) }
-    var crossedOut by rememberSaveable { mutableStateOf(event.crossedOut) }
+    var day by rememberSaveable { mutableStateOf("${campaign!!.currentDay}") }
+    var name by rememberSaveable { mutableStateOf("") }
     val coroutine = rememberCoroutineScope()
+    val isLegitAdding by remember { derivedStateOf {
+        day.isNotEmpty() && name.isNotEmpty()
+    } }
     CampaignDialog(
-        header = stringResource(id = R.string.event_header),
+        header = stringResource(id = R.string.add_mission_button),
         isDarkTheme = isDarkTheme,
         onBack = onBack
     ) {
@@ -69,11 +68,11 @@ fun CampaignEventDialog(
         ) {
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                value = name,
-                onValueChange = { name = it },
+                value = day,
+                onValueChange = { day = it },
                 label = {
                     Text(text = buildAnnotatedString {
-                        append(stringResource(R.string.event_name_input))
+                        append(stringResource(R.string.mission_day_input))
                         withStyle(style = SpanStyle(color = CustomTheme.colors.warn)) {
                             append("*")
                         }
@@ -99,45 +98,52 @@ fun CampaignEventDialog(
                     unfocusedContainerColor = Color.Transparent
                 )
             )
-            Row(
-                modifier = Modifier.padding(horizontal = 8.dp).clickable {
-                    crossedOut = !crossedOut
+            OutlinedTextField(
+                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                value = name,
+                onValueChange = { name = it },
+                label = {
+                    Text(text = buildAnnotatedString {
+                        append(stringResource(R.string.deck_creation_name_label))
+                        withStyle(style = SpanStyle(color = CustomTheme.colors.warn)) {
+                            append("*")
+                        }
+                    })
                 },
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
-            ) {
-                Text(
-                    text = stringResource(R.string.event_crossed_out),
+                textStyle = TextStyle(
                     color = CustomTheme.colors.d30,
                     fontFamily = Jost,
                     fontWeight = FontWeight.Medium,
-                    fontSize = 20.sp,
-                    lineHeight = 22.sp,
-                    modifier = Modifier.weight(1f)
+                    fontSize = 16.sp,
+                    lineHeight = 18.sp,
+                ),
+                singleLine = true,
+                shape = CustomTheme.shapes.small,
+                colors = TextFieldDefaults.colors().copy(
+                    focusedIndicatorColor = CustomTheme.colors.m,
+                    unfocusedIndicatorColor = CustomTheme.colors.m,
+                    unfocusedLabelColor = CustomTheme.colors.d30,
+                    focusedLabelColor = CustomTheme.colors.d30,
+                    unfocusedPlaceholderColor = CustomTheme.colors.d30,
+                    focusedPlaceholderColor = CustomTheme.colors.d30,
+                    focusedContainerColor = Color.Transparent,
+                    unfocusedContainerColor = Color.Transparent
                 )
-                RadioButton(
-                    selected = crossedOut,
-                    onClick = { crossedOut = !crossedOut },
-                    colors = RadioButtonDefaults.colors().copy(
-                        selectedColor = CustomTheme.colors.m,
-                        unselectedColor = CustomTheme.colors.m
-                    ),
-                    modifier = Modifier.size(32.dp)
-                )
-            }
+            )
         }
         SquareButton(
-            stringId = R.string.save_deck_changes_button,
-            leadingIcon = R.drawable.done_32dp,
+            stringId = R.string.add_mission_button,
+            leadingIcon = R.drawable.add_circle_32dp,
             buttonColor = ButtonDefaults.buttonColors().copy(
                 containerColor = CustomTheme.colors.d10,
                 disabledContainerColor = CustomTheme.colors.d10.copy(alpha = 0.3f)
             ),
             onClick = { coroutine.launch { showLoadingDialog = true
-                campaignViewModel.updateCampaignEvents(eventName, name, crossedOut, user)
+                campaignViewModel.addCampaignMission(day.toInt(), name, user)
             }.invokeOnCompletion { showLoadingDialog = false
                 onBack.invoke()
             } },
+            isEnabled = isLegitAdding,
             modifier = Modifier.padding(8.dp)
         )
     }
