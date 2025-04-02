@@ -286,6 +286,9 @@
     <string name="campaign_log_header">Журнал кампании</string>
     <string name="missions_campaign_log_tab">Миссии</string>
     <string name="events_campaign_log_tab">Важные события</string>
+    <string name="record_event_button">Записать событие</string>
+    <string name="event_name_input">Что произошло?</string>
+    <string name="event_crossed_out">Зачёркнуто</string>
     <string name="removed_campaign_log_tab">Удалённые карты</string>
     <string name="remove_card_button">Удалить карту</string>
     <string name="removed_set_header">Набор</string>

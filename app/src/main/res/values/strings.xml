@@ -339,6 +339,9 @@
     <string name="campaign_log_header">Campaign log</string>
     <string name="missions_campaign_log_tab">Missions</string>
     <string name="events_campaign_log_tab">Notable Events</string>
+    <string name="record_event_button">Record event</string>
+    <string name="event_name_input">What happened?</string>
+    <string name="event_crossed_out">Crossed-out</string>
     <string name="removed_campaign_log_tab">Removed cards</string>
     <string name="remove_card_button">Remove card</string>
     <string name="removed_set_header">Set</string>

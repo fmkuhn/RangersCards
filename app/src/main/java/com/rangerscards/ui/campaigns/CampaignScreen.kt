@@ -10,8 +10,10 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
@@ -20,6 +22,7 @@ import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -44,6 +47,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -368,7 +372,9 @@ fun CampaignScreen(
                                         fontWeight = FontWeight.Medium,
                                         fontSize = 20.sp,
                                         lineHeight = 22.sp,
-                                        modifier = Modifier.fillMaxWidth().padding(horizontal = 28.dp),
+                                        modifier = Modifier
+                                            .fillMaxWidth()
+                                            .padding(horizontal = 28.dp),
                                         textAlign = TextAlign.Center
                                     )
                                     Icon(
@@ -380,7 +386,9 @@ fun CampaignScreen(
                                     )
                                 }
                             }
-                            if (isCampaignLogExpanded) Column(modifier = Modifier.fillMaxWidth().sizeIn(maxHeight = 450.dp)) {
+                            if (isCampaignLogExpanded) Column(modifier = Modifier
+                                .fillMaxWidth()
+                                .sizeIn(maxHeight = 450.dp)) {
                                 ScrollableRangersTabs(
                                     listOf(
                                         R.string.missions_campaign_log_tab,
@@ -432,8 +440,49 @@ fun CampaignScreen(
                                         }
                                     }
                                     2 -> Column {
-                                        //TODO:add 'add button'
-                                        campaignState!!.events.forEach {
+                                        SquareButton(
+                                            stringId = R.string.record_event_button,
+                                            leadingIcon = R.drawable.add_circle_32dp,
+                                            iconColor = CustomTheme.colors.m,
+                                            textColor = CustomTheme.colors.d30,
+                                            buttonColor = ButtonDefaults.buttonColors().copy(
+                                                containerColor = CustomTheme.colors.l20
+                                            ),
+                                            onClick = { navController.navigate(
+                                                "${BottomNavScreen.Campaigns.route}/campaign/recordEvent"
+                                            ) {
+                                                launchSingleTop = true
+                                            } },
+                                            modifier = Modifier.padding(8.dp)
+                                        )
+                                        LazyColumn(
+                                            modifier = Modifier.fillMaxWidth(),
+                                            verticalArrangement = Arrangement.spacedBy(8.dp),
+                                            contentPadding = PaddingValues(8.dp)
+                                        ) {
+                                            campaignState!!.events.forEach { event ->
+                                                item(event.name) {
+                                                    Column(
+                                                        modifier = Modifier.fillMaxWidth().clickable { navController.navigate(
+                                                            "${BottomNavScreen.Campaigns.route}/campaign/event/${event.name}"
+                                                        ) {
+                                                            launchSingleTop = true
+                                                        } }
+                                                    ) {
+                                                        Text(
+                                                            text = event.name,
+                                                            color = CustomTheme.colors.d30,
+                                                            fontFamily = Jost,
+                                                            fontWeight = FontWeight.Medium,
+                                                            fontSize = 16.sp,
+                                                            lineHeight = 18.sp,
+                                                            textDecoration = if (event.crossedOut) TextDecoration.LineThrough else TextDecoration.None
+                                                        )
+                                                        Spacer(Modifier.height(8.dp))
+                                                        HorizontalDivider(color = CustomTheme.colors.l10)
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                     3 -> CampaignRemovedCards(

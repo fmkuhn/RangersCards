@@ -61,8 +61,10 @@ import com.rangerscards.ui.campaigns.CampaignViewModel
 import com.rangerscards.ui.campaigns.CampaignsScreen
 import com.rangerscards.ui.campaigns.CampaignsViewModel
 import com.rangerscards.ui.campaigns.dialogs.AddRemovedDialog
+import com.rangerscards.ui.campaigns.dialogs.CampaignEventDialog
 import com.rangerscards.ui.campaigns.dialogs.DayInfoDialog
 import com.rangerscards.ui.campaigns.dialogs.EndTheDayDialog
+import com.rangerscards.ui.campaigns.dialogs.RecordEventDialog
 import com.rangerscards.ui.campaigns.dialogs.TravelDialog
 import com.rangerscards.ui.campaigns.dialogs.UndoTravelDialog
 import com.rangerscards.ui.cards.CardsScreen
@@ -664,7 +666,7 @@ fun RangersNavHost(
                         viewModelStoreOwner = parentEntry
                     )
                     val dayInfoId = backStackEntry.arguments?.getInt(dayInfoIdArgument)
-                        ?: error("campaignIdArgument cannot be null")
+                        ?: error("dayInfoId cannot be null")
                     val user by settingsViewModel.userUiState.collectAsState()
                     DayInfoDialog(
                         campaignViewModel = campaignViewModel,
@@ -794,6 +796,44 @@ fun RangersNavHost(
                     val user by settingsViewModel.userUiState.collectAsState()
                     AddRemovedDialog(
                         campaignViewModel = campaignViewModel,
+                        isDarkTheme = isDarkTheme,
+                        onBack = { navController.popBackStack() },
+                        user = user.currentUser
+                    )
+                }
+                dialog("${BottomNavScreen.Campaigns.route}/campaign/recordEvent") { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("${BottomNavScreen.Campaigns.route}/campaign/{$campaignIdArgument}")
+                    }
+                    val campaignViewModel: CampaignViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val user by settingsViewModel.userUiState.collectAsState()
+                    RecordEventDialog(
+                        campaignViewModel = campaignViewModel,
+                        isDarkTheme = isDarkTheme,
+                        onBack = { navController.popBackStack() },
+                        user = user.currentUser
+                    )
+                }
+                val eventNameArgument = "eventNameArgument"
+                dialog("${BottomNavScreen.Campaigns.route}/campaign/event/{$eventNameArgument}",
+                    arguments = listOf(navArgument(eventNameArgument) { type = NavType.StringType }))
+                { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("${BottomNavScreen.Campaigns.route}/campaign/{$campaignIdArgument}")
+                    }
+                    val campaignViewModel: CampaignViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val eventName = backStackEntry.arguments?.getString(eventNameArgument)
+                        ?: error("eventNameArgument cannot be null")
+                    val user by settingsViewModel.userUiState.collectAsState()
+                    CampaignEventDialog(
+                        campaignViewModel = campaignViewModel,
+                        eventName = eventName,
                         isDarkTheme = isDarkTheme,
                         onBack = { navController.popBackStack() },
                         user = user.currentUser
