@@ -44,6 +44,7 @@ const val icons8 = "Icons8"
 
 @Composable
 fun SettingsAboutScreen(
+    settingsViewModel: SettingsViewModel,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
@@ -54,7 +55,7 @@ fun SettingsAboutScreen(
         // Append text before the email.
         append(emailText.substring(0, startIndex))
         // Mark the email part as clickable by pushing an annotation.
-        pushStringAnnotation(tag = "URL", annotation = "mailto:$email")
+        pushStringAnnotation(tag = "URL", annotation = "email")
         // Optionally, style the email to look like a link.
         withStyle(
             style = SpanStyle(
@@ -113,9 +114,7 @@ fun SettingsAboutScreen(
                                 end = tappedOffset
                             ).firstOrNull()?.let { annotation ->
                                 // When the email is tapped, open the email client.
-                                val uri = Uri.parse(annotation.item)
-                                val intent = Intent(Intent.ACTION_SENDTO, uri)
-                                context.startActivity(intent)
+                                settingsViewModel.openEmail(annotation.item, context)
                             }
                         }
                     }

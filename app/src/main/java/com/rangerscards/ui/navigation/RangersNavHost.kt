@@ -191,6 +191,7 @@ fun RangersNavHost(
                 }
                 composable(BottomNavScreen.Settings.route + "/about") {
                     SettingsAboutScreen(
+                        settingsViewModel = settingsViewModel,
                         contentPadding = innerPadding
                     )
                     title = stringResource(R.string.about_button)
