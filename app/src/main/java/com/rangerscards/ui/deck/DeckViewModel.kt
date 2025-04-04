@@ -862,7 +862,7 @@ fun Deck.toDeckState(): FullDeckState {
         background = this.meta.jsonObject["background"]!!.jsonPrimitive.content,
         specialty = this.meta.jsonObject["specialty"]!!.jsonPrimitive.content,
         problems = this.meta.jsonObject["problem"]?.jsonArray?.map { it.jsonPrimitive.content },
-        campaignId = this.campaignId.toString(),
+        campaignId = this.campaignId,
         campaignName = this.campaignName,
         campaignRewards = this.campaignRewards?.jsonArray?.map { it.jsonPrimitive.content },
         previousId = this.previousId,
