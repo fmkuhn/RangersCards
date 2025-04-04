@@ -57,8 +57,11 @@ android {
 }
 
 dependencies {
+    //Import splash screen
+    implementation("androidx.core:core-splashscreen:1.0.1")
+
     // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:33.10.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
     implementation("com.google.firebase:firebase-auth")
 
     // Import Apollo Kotlin

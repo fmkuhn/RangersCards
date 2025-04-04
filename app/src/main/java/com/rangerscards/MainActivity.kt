@@ -5,16 +5,11 @@ import android.widget.Toast
 import androidx.activity.compose.setContent
 import androidx.appcompat.app.AppCompatActivity
 import androidx.compose.foundation.isSystemInDarkTheme
-import androidx.compose.foundation.layout.Arrangement
-import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.size
-import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Surface
 import androidx.compose.runtime.collectAsState
-import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.unit.dp
+import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
@@ -28,6 +23,9 @@ class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var viewModel: SettingsViewModel
     override fun onCreate(savedInstanceState: Bundle?) {
+        val splashScreen = installSplashScreen()
+        var isDataLoaded = false
+        splashScreen.setKeepOnScreenCondition { !isDataLoaded }
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
         setContent {
@@ -39,28 +37,15 @@ class MainActivity : AppCompatActivity() {
                 2 -> isSystemInDarkTheme()
                 else -> null
             }
-            if (currentTheme != null) RangersCardsTheme(currentTheme) {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = CustomTheme.colors.l30
-                ) {
-                    RangersApp(this, currentTheme, viewModel)
-                }
-            }
-            else RangersCardsTheme(isSystemInDarkTheme()) {
-                // A surface container using the 'background' color from the theme
-                Surface(
-                    modifier = Modifier.fillMaxSize(),
-                    color = CustomTheme.colors.l30
-                ) {
-                    Column(
-                        verticalArrangement = Arrangement.Center,
-                        horizontalAlignment = Alignment.CenterHorizontally
+            if (currentTheme != null) {
+                isDataLoaded = true
+                RangersCardsTheme(currentTheme) {
+                    // A surface container using the 'background' color from the theme
+                    Surface(
+                        modifier = Modifier.fillMaxSize(),
+                        color = CustomTheme.colors.l30
                     ) {
-                        CircularProgressIndicator(
-                            modifier = Modifier.size(32.dp),
-                            color = CustomTheme.colors.m)
+                        RangersApp(this, currentTheme, viewModel)
                     }
                 }
             }
