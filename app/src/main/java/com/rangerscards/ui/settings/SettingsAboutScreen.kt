@@ -37,7 +37,7 @@ import com.rangerscards.R
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
 
-const val email = "rangerscards@gmail.com"
+const val email = "rangerscardsapp@gmail.com"
 const val telegramIcon = "Telegram App"
 const val discordIcon = "Discord New"
 const val icons8 = "Icons8"
@@ -55,7 +55,7 @@ fun SettingsAboutScreen(
         // Append text before the email.
         append(emailText.substring(0, startIndex))
         // Mark the email part as clickable by pushing an annotation.
-        pushStringAnnotation(tag = "URL", annotation = "email")
+        pushStringAnnotation(tag = "URL", annotation = email)
         // Optionally, style the email to look like a link.
         withStyle(
             style = SpanStyle(
