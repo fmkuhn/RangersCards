@@ -36,6 +36,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rangerscards.R
 import com.rangerscards.data.objects.CampaignMaps
+import com.rangerscards.data.objects.Path
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
 
@@ -145,7 +146,7 @@ fun TravelDayRow(
                     .size(24.dp)
                     .align(Alignment.CenterVertically)
             )
-            val path = CampaignMaps.Path.fromValue(entry.pathTerrain)
+            val path = Path.fromValue(entry.pathTerrain)
             if (path != null) {
                 Icon(
                     painter = painterResource(id = path.iconResId),

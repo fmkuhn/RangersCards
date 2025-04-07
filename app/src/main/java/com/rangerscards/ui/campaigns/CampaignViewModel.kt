@@ -39,6 +39,7 @@ import com.rangerscards.data.database.deck.RoleCardProjection
 import com.rangerscards.data.database.repository.CampaignRepository
 import com.rangerscards.data.database.repository.DeckRepository
 import com.rangerscards.data.objects.CampaignMaps
+import com.rangerscards.data.objects.Path
 import com.rangerscards.data.objects.Weather
 import com.rangerscards.ui.decks.getCurrentDateTime
 import com.rangerscards.ui.decks.toDeck
@@ -200,7 +201,7 @@ class CampaignViewModel(
     // This function creates an extended weather list when needed.
     // It returns the original list for a normal 30-day calendar, or a list of 60 days weather entries for extended mode.
     private fun getExtendedWeatherList(): List<Weather> {
-        val weathers = CampaignMaps.weather[campaign.value!!.cycleId]!!
+        val weathers = CampaignMaps.weather(campaign.value!!.cycleId)
         return if (campaign.value!!.extendedCalendar) {
             // For extended calendars, create a second block with start and end values increased by 30.
             weathers + weathers.map { original ->
@@ -229,7 +230,7 @@ class CampaignViewModel(
                 guidesMap[key] = value
             }
         }
-        val iconsId = CampaignMaps.moonIconsMap
+        val iconsId = CampaignMaps.moonIconsMap()
         // Determine the maximum day based on calendar mode
         val maxDay = if (campaign.extendedCalendar) 60 else 30
         val result = mutableMapOf<Weather, MutableList<Int>>()
@@ -308,7 +309,7 @@ class CampaignViewModel(
 
     fun getWeatherResId(day: Int): Int {
         val campaign = campaign.value!!
-        val weatherList = CampaignMaps.weather[campaign.cycleId]!!
+        val weatherList = CampaignMaps.weather(campaign.cycleId)
         return (weatherList.firstOrNull { day in it.start..it.end }
             ?: weatherList.firstOrNull { day in (it.start + 30)..(it.end + 30) })?.nameResId!!
     }
@@ -714,7 +715,7 @@ class CampaignViewModel(
         val maps = CampaignMaps.generalSetsMap + CampaignMaps.getMapLocations(false)
         val removedSets = mutableMapOf<String, Pair<Int, Int>>()
         campaign.removed.forEach { removed ->
-            val fromPath = CampaignMaps.Path.fromValue(removed.setId)
+            val fromPath = Path.fromValue(removed.setId)
             val fromMaps = maps[removed.setId]
             if (fromPath != null) removedSets[removed.setId] = fromPath.iconResId to fromPath.nameResId
             else removedSets[removed.setId] = fromMaps!!.iconResId to fromMaps.nameResId
@@ -748,7 +749,7 @@ class CampaignViewModel(
 
     fun getAllRemovedSets(): Map<String, Pair<Int, Int>> {
         val maps = CampaignMaps.generalSetsMap + CampaignMaps.getMapLocations(false)
-        val paths = CampaignMaps.Path.entries
+        val paths = Path.entries
         val sets = mutableMapOf<String, Pair<Int, Int>>()
         maps.forEach { (key, value) ->
             sets[key] = value.iconResId to value.nameResId

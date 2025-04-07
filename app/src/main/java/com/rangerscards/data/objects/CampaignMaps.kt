@@ -6,23 +6,6 @@ import com.rangerscards.R
 
 object CampaignMaps {
 
-    enum class Path(val value: String, @StringRes val nameResId: Int, @DrawableRes val iconResId: Int) {
-        WOODS("woods", R.string.woods, R.drawable.woods),
-        MOUNTAIN_PASS("mountain_pass", R.string.mountain_pass, R.drawable.mountain_pass),
-        OLD_GROWTH("old_growth", R.string.old_growth, R.drawable.old_growth),
-        LAKESHORE("lakeshore", R.string.lakeshore, R.drawable.lakeshore),
-        GRASSLAND("grassland", R.string.grassland, R.drawable.grassland),
-        RAVINE("ravine", R.string.ravine, R.drawable.ravine),
-        SWAMP("swamp", R.string.swamp, R.drawable.swamp),
-        RIVER("river", R.string.river, R.drawable.river);
-
-        companion object {
-            fun fromValue(value: String): Path? {
-                return values().firstOrNull { it.value == value }
-            }
-        }
-    }
-
     val campaignCyclesMap by lazy {
         mapOf(
             "core" to R.string.core_cycle
@@ -50,8 +33,8 @@ object CampaignMaps {
         )
     }
 
-    private val connections by lazy {
-        listOf(
+    private fun connections(): List<Connection> {
+        return listOf(
             Connection("atrox_mountain", "northern_outpost", Path.WOODS),
             Connection("atrox_mountain", "golden_shore", Path.LAKESHORE),
             Connection("atrox_mountain", "lone_tree_station", Path.MOUNTAIN_PASS),
@@ -118,8 +101,8 @@ object CampaignMaps {
         )
     }
 
-    private val paths by lazy {
-        listOf(
+    private fun paths(): List<MapLocation> {
+        return listOf(
             MapLocation("atrox_mountain", R.string.atrox_mountain, R.drawable.atrox_mountain),
             MapLocation("northern_outpost", R.string.northern_outpost, R.drawable.northern_outpost),
             MapLocation("lone_tree_station", R.string.lone_tree_station, R.drawable.lone_tree_station),
@@ -161,11 +144,8 @@ object CampaignMaps {
     }
 
     fun getMapLocations(needConnections: Boolean): Map<String, MapLocation> {
-        val results = mutableMapOf<String, MapLocation>()
-        paths.forEach {
-            results[it.id] = it
-        }
-        if (needConnections) connections.forEach { connection ->
+        val results = paths().associateBy { it.id }
+        if (needConnections) connections().forEach { connection ->
             val locA = results[connection.locA]
             val locB = results[connection.locB]
             if (locA != null && locB != null) {
@@ -188,9 +168,9 @@ object CampaignMaps {
         )
     }
 
-    val weather by lazy {
-        mapOf(
-            "core" to listOf(
+    fun weather(cycleId: String): List<Weather> {
+        return when(cycleId) {
+            "core" -> listOf(
                 Weather(1, 3, R.string.weather_perfect_day),
                 Weather(4, 7, R.string.weather_downpour),
                 Weather(8, 9, R.string.weather_perfect_day),
@@ -203,11 +183,12 @@ object CampaignMaps {
                 Weather(26, 28, R.string.weather_howling_winds),
                 Weather(29, 30, R.string.weather_perfect_day),
             )
-        )
+            else -> emptyList()
+        }
     }
 
-    val moonIconsMap by lazy {
-        mapOf(
+    fun moonIconsMap(): Map<Int, Int> {
+        return mapOf(
             1 to R.drawable.day_1,
             2 to R.drawable.day_2,
             3 to R.drawable.day_3,
@@ -242,15 +223,32 @@ object CampaignMaps {
     }
 }
 
+enum class Path(val value: String, @StringRes val nameResId: Int, @DrawableRes val iconResId: Int) {
+    WOODS("woods", R.string.woods, R.drawable.woods),
+    MOUNTAIN_PASS("mountain_pass", R.string.mountain_pass, R.drawable.mountain_pass),
+    OLD_GROWTH("old_growth", R.string.old_growth, R.drawable.old_growth),
+    LAKESHORE("lakeshore", R.string.lakeshore, R.drawable.lakeshore),
+    GRASSLAND("grassland", R.string.grassland, R.drawable.grassland),
+    RAVINE("ravine", R.string.ravine, R.drawable.ravine),
+    SWAMP("swamp", R.string.swamp, R.drawable.swamp),
+    RIVER("river", R.string.river, R.drawable.river);
+
+    companion object {
+        fun fromValue(value: String): Path? {
+            return entries.firstOrNull { it.value == value }
+        }
+    }
+}
+
 data class Connection(
     val locA: String,
     val locB: String,
-    val path: CampaignMaps.Path
+    val path: Path
 )
 
 data class MapConnection(
     val id: String,
-    val path: CampaignMaps.Path
+    val path: Path
 )
 
 data class MapLocation(

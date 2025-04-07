@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rangerscards.R
 import com.rangerscards.data.objects.CampaignMaps
+import com.rangerscards.data.objects.Path
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
 
@@ -89,7 +90,7 @@ fun CampaignCurrentPositionCard(
                             fontSize = 18.sp,
                             lineHeight = 20.sp,
                         )
-                        val currentPathTerrain = CampaignMaps.Path
+                        val currentPathTerrain = Path
                             .fromValue(pathTerrain.toString())
                         Row(
                             modifier = Modifier.fillMaxWidth(),

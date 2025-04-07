@@ -42,6 +42,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.R
 import com.rangerscards.data.objects.CampaignMaps
+import com.rangerscards.data.objects.Path
 import com.rangerscards.ui.campaigns.CampaignViewModel
 import com.rangerscards.ui.campaigns.components.CampaignDialog
 import com.rangerscards.ui.components.SquareButton
@@ -179,7 +180,7 @@ fun TravelDialog(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     if (selectedPathTerrain.isNotEmpty()) {
-                        val currentPathTerrain = CampaignMaps.Path
+                        val currentPathTerrain = Path
                             .fromValue(selectedPathTerrain)!!
                         Icon(
                             painterResource(currentPathTerrain.iconResId),
@@ -380,7 +381,7 @@ fun TravelDialog(
                             HorizontalDivider(color = CustomTheme.colors.l10)
                         }
                     }
-                    else -> CampaignMaps.Path.entries.forEach { path ->
+                    else -> Path.entries.forEach { path ->
                         item(path.value) {
                             Row(
                                 modifier = Modifier.fillMaxWidth().clickable {
