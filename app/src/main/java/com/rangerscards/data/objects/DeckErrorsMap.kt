@@ -3,8 +3,8 @@ package com.rangerscards.data.objects
 import com.rangerscards.R
 
 object DeckErrorsMap {
-    val deckErrorsMap by lazy {
-        mapOf(
+    fun deckErrorsMap(): Map<String, Int> {
+        return mapOf(
             "invalid_aspects" to R.string.invalid_aspects,
             "too_many_duplicates" to R.string.too_many_duplicates,
             "need_two_cards" to R.string.need_two_cards,

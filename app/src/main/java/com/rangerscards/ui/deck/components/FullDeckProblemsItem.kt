@@ -37,7 +37,7 @@ fun FullDeckProblemsItem(
                 )
                 append(" ${
                     stringResource(
-                    DeckErrorsMap.deckErrorsMap[problems[0]]!!
+                    DeckErrorsMap.deckErrorsMap()[problems[0]]!!
                 )
                 } ")
                 if (problems.size > 1) {

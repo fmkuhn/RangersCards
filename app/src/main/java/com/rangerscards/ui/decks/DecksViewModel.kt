@@ -144,7 +144,7 @@ class DecksViewModel(
         if (isUploading) {
             val token = user.currentUser!!.getIdToken(true).await().token
             if (starterDeckId >= 0) {
-                val starterDeck = StarterDecks.starterDecks[starterDeckId]
+                val starterDeck = StarterDecks.starterDecks()[starterDeckId]
                 val backgroundLocalized = DeckMetaMaps
                     .background[starterDeck.meta.jsonObject["background"]?.jsonPrimitive?.content]
                 val specialtyLocalized = DeckMetaMaps
@@ -190,7 +190,7 @@ class DecksViewModel(
         } else {
             val uuid = Uuid.random().toString()
             if (starterDeckId >= 0) {
-                val starterDeck = StarterDecks.starterDecks[starterDeckId]
+                val starterDeck = StarterDecks.starterDecks()[starterDeckId]
                 val backgroundLocalized = DeckMetaMaps
                     .background[starterDeck.meta.jsonObject["background"]?.jsonPrimitive?.content]
                 val specialtyLocalized = DeckMetaMaps

@@ -14,8 +14,8 @@ data class StarterDeck(
 )
 
 object StarterDecks {
-    val starterDecks by lazy {
-        listOf(
+    fun starterDecks(): List<StarterDeck> {
+        return listOf(
             StarterDeck(
                 meta = buildJsonObject {
                     put("role", "01037")

@@ -346,7 +346,7 @@ fun DeckCreationScreen(
                             fontSize = 20.sp,
                             lineHeight = 22.sp,
                         )
-                        StarterDecks.starterDecks.forEachIndexed { index, starterDeck ->
+                        StarterDecks.starterDecks().forEachIndexed { index, starterDeck ->
                             val starterRole by decksViewModel.getCard(
                                 starterDeck.meta.jsonObject["role"]?.jsonPrimitive?.content.toString()
                             ).collectAsState(null)
