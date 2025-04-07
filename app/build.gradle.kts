@@ -80,7 +80,8 @@ dependencies {
     implementation("androidx.paging:paging-compose:3.3.6")
 
     //Import Coil
-    implementation("io.coil-kt:coil-compose:2.7.0")
+    implementation("io.coil-kt.coil3:coil-compose:3.1.0")
+    implementation("io.coil-kt.coil3:coil-network-okhttp:3.1.0")
 
     //Import json serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.8.0")

@@ -39,8 +39,8 @@ import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import coil.compose.AsyncImage
-import coil.request.ImageRequest
+import coil3.compose.AsyncImage
+import coil3.request.ImageRequest
 import com.rangerscards.R
 import com.rangerscards.data.objects.ImageSrc
 import com.rangerscards.ui.theme.CustomTheme
