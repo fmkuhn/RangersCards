@@ -10,20 +10,16 @@ import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
-import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
-import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -48,13 +44,11 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
-import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
-import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.R
 import com.rangerscards.data.database.campaign.Campaign
 import com.rangerscards.ui.campaigns.components.CampaignCurrentPositionCard
@@ -70,6 +64,7 @@ import com.rangerscards.ui.components.ScrollableRangersTabs
 import com.rangerscards.ui.components.SquareButton
 import com.rangerscards.ui.decks.components.DeckListItem
 import com.rangerscards.ui.navigation.BottomNavScreen
+import com.rangerscards.ui.settings.UserUIState
 import com.rangerscards.ui.settings.components.SettingsBaseCard
 import com.rangerscards.ui.settings.components.SettingsInputField
 import com.rangerscards.ui.theme.CustomTheme
@@ -80,7 +75,7 @@ import kotlinx.coroutines.launch
 fun CampaignScreen(
     campaignViewModel: CampaignViewModel,
     campaign: Campaign?,
-    user: FirebaseUser?,
+    userUIState: UserUIState,
     isDarkTheme: Boolean,
     navController: NavHostController,
     contentPadding: PaddingValues = PaddingValues(0.dp)
@@ -94,14 +89,19 @@ fun CampaignScreen(
     val coroutine = rememberCoroutineScope()
     val context = LocalContext.current.applicationContext
     val isOwner by remember { derivedStateOf {
-        campaignState!!.userId == user?.uid || campaignState!!.userId.isEmpty()
+        campaignState!!.userId == userUIState.currentUser?.uid || campaignState!!.userId.isEmpty()
     } }
     var isCampaignLogExpanded by rememberSaveable { mutableStateOf(false) }
     var campaignLogTypeIndex by rememberSaveable { mutableIntStateOf(0) }
     LaunchedEffect(campaign) {
-        if (user != null && !isSubscriptionStarted && campaign?.uploaded == true)
+        if (userUIState.currentUser != null && !isSubscriptionStarted && campaign?.uploaded == true)
             campaignViewModel.startSubscription(campaign.id)
         if (campaign != null) campaignViewModel.parseCampaign(campaign)
+    }
+    LaunchedEffect(userUIState.userInfo, campaignState) {
+        val settings = userUIState.settings
+        campaignViewModel.setTaboo(settings.taboo)
+        campaignViewModel.setPackId(campaignState?.cycleId ?: "core")
     }
     Column(
         modifier = Modifier
@@ -186,7 +186,7 @@ fun CampaignScreen(
                                     campaignState!!.id,
                                     campaignNameEditing,
                                     campaignState!!.uploaded,
-                                    user
+                                    userUIState.currentUser
                                 )
                             }.invokeOnCompletion {
                                 campaignNameEditing = ""
@@ -246,13 +246,13 @@ fun CampaignScreen(
                     onClick = if (isOwner) { { coroutine.launch {
                         showLoadingDialog = true
                         showConfirmationDialog = false
-                        campaignViewModel.deleteCampaign(user)
+                        campaignViewModel.deleteCampaign(userUIState.currentUser)
                     }.invokeOnCompletion {
                         showLoadingDialog = false
                         navController.navigateUp()
                     } } } else { { coroutine.launch { showLoadingDialog = true
                         showConfirmationDialog = false
-                        campaignViewModel.leaveCampaign(user)
+                        campaignViewModel.leaveCampaign(userUIState.currentUser)
                     }.invokeOnCompletion { showLoadingDialog = false
                         navController.navigateUp()
                     } } },
@@ -293,7 +293,7 @@ fun CampaignScreen(
                     SquareButton(
                         stringId = R.string.extend_campaign_button,
                         leadingIcon = R.drawable.add_32dp,
-                        onClick = { coroutine.launch { campaignViewModel.extendCampaign(user) } },
+                        onClick = { coroutine.launch { campaignViewModel.extendCampaign(userUIState.currentUser) } },
                         modifier = Modifier.padding(8.dp)
                     )
                 }
@@ -422,6 +422,7 @@ fun CampaignScreen(
                                                 val isAdded = campaignState!!.rewards.contains(reward.id)
                                                 item(reward.id) {
                                                     CardListItem(
+                                                        tabooId = reward.tabooId,
                                                         aspectId = reward.aspectId,
                                                         aspectShortName = reward.aspectShortName,
                                                         cost = reward.cost,
@@ -437,11 +438,11 @@ fun CampaignScreen(
                                                         isDarkTheme = isDarkTheme,
                                                         currentAmount = if (isAdded) 2 else 0,
                                                         onRemoveClick = { coroutine.launch { showLoadingDialog = true
-                                                            campaignViewModel.removeCampaignReward(reward.id, user)
+                                                            campaignViewModel.removeCampaignReward(reward.id, userUIState.currentUser)
                                                         }.invokeOnCompletion { showLoadingDialog = false }  },
                                                         onRemoveEnabled = isAdded,
                                                         onAddClick = { coroutine.launch { showLoadingDialog = true
-                                                            campaignViewModel.addCampaignReward(reward.id, user)
+                                                            campaignViewModel.addCampaignReward(reward.id, userUIState.currentUser)
                                                         }.invokeOnCompletion { showLoadingDialog = false }  },
                                                         onAddEnabled = !isAdded,
                                                         onClick = {}
@@ -472,7 +473,7 @@ fun CampaignScreen(
                                         removedSets = campaignViewModel.getRemovedSetsInfo(),
                                         removed = campaignState!!.removed,
                                         onRemove = { removedName -> coroutine.launch { showLoadingDialog = true
-                                            campaignViewModel.updateCampaignRemoved(removedName, user)
+                                            campaignViewModel.updateCampaignRemoved(removedName, userUIState.currentUser)
                                         }.invokeOnCompletion { showLoadingDialog = false }}
                                     )
                                 }
@@ -499,7 +500,7 @@ fun CampaignScreen(
                                 imageSrc = role.realImageSrc!!,
                                 name = deck.name,
                                 role = role.name!!,
-                                onClick = { if (!campaignState!!.uploaded || user?.uid == deck.userId)
+                                onClick = { if (!campaignState!!.uploaded || userUIState.currentUser?.uid == deck.userId)
                                     navController.navigate(
                                         "deck/${deck.id}"
                                     ) {
@@ -508,9 +509,9 @@ fun CampaignScreen(
                                 },
                                 isCampaign = false,
                                 userName = if (deck.userName == "null") "" else deck.userName,
-                                onRemoveDeck = if (!campaignState!!.uploaded || user?.uid == deck.userId) {
+                                onRemoveDeck = if (!campaignState!!.uploaded || userUIState.currentUser?.uid == deck.userId) {
                                     { coroutine.launch { showLoadingDialog = true
-                                        campaignViewModel.removeDeckCampaign(deck.id, user)
+                                        campaignViewModel.removeDeckCampaign(deck.id, userUIState.currentUser)
                                     }.invokeOnCompletion { showLoadingDialog = false } }
                                 } else null
                             )
@@ -546,7 +547,7 @@ fun CampaignScreen(
                             ).show()
                             else coroutine.launch {
                             showLoadingDialog = true
-                            campaignViewModel.uploadCampaign(user)
+                            campaignViewModel.uploadCampaign(userUIState.currentUser)
                         }.invokeOnCompletion { showLoadingDialog = false
                             if (campaignViewModel.uploadedCampaignIdToOpen.value != null) navController.navigate(
                                 "${BottomNavScreen.Campaigns.route}/campaign/${campaignViewModel.uploadedCampaignIdToOpen.value}"

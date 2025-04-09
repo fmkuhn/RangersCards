@@ -39,6 +39,7 @@ fragment Campaign on rangers_campaign {
 fragment Deck on rangers_deck {
   id
   user_id
+  taboo_set_id
   slots
   side_slots
   extra_slots
@@ -74,12 +75,14 @@ fragment Deck on rangers_deck {
 
 fragment Card on rangers_card_localized {
   id
+  code
   name
   real_name
   real_traits
   traits
   equip
   presence
+  taboo_id
   token_id
   token_name
   token_plurals
@@ -116,4 +119,12 @@ fragment Card on rangers_card_localized {
   sun_challenge
   mountain_challenge
   crest_challenge
+  pack_id
+  pack_name
+  pack_short_name
+  pack_position
+  subset_id
+  subset_name
+  subset_position
+  subset_size
 }

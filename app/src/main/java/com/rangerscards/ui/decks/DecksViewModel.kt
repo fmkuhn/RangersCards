@@ -7,6 +7,7 @@ import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
 import com.apollographql.apollo.ApolloClient
+import com.apollographql.apollo.api.Optional
 import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.google.firebase.auth.FirebaseUser
@@ -45,6 +46,8 @@ import java.util.Locale
 import java.util.TimeZone
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
+
+const val CURRENT_TABOO_SET = "set_01"
 
 class DecksViewModel(
     private val apolloClient: ApolloClient,
@@ -106,8 +109,8 @@ class DecksViewModel(
             }
         }.cachedIn(viewModelScope)
 
-    fun getRoles(specialty: String): Flow<PagingData<CardListItemProjection>> =
-        decksRepository.getRoles(specialty).catch { throwable ->
+    fun getRoles(specialty: String, taboo: Boolean, packIds: List<String>): Flow<PagingData<CardListItemProjection>> =
+        decksRepository.getRoles(specialty, taboo, packIds).catch { throwable ->
             // Log the error.
             throwable.printStackTrace()
             // Return an empty PagingData on error so that the flow continues.
@@ -139,6 +142,7 @@ class DecksViewModel(
         starterDeckId: Int,
         postfix: String,
         user: UserUIState,
+        taboo: Boolean,
         context: Context
     ) {
         if (isUploading) {
@@ -159,6 +163,7 @@ class DecksViewModel(
                     meta = starterDeck.meta,
                     slots = starterDeck.slots,
                     extraSlots = JsonNull,
+                    tabooSetId = if (taboo) Optional.present(CURRENT_TABOO_SET) else Optional.absent()
                 )).addHttpHeader("Authorization", "Bearer $token").execute()
                 if (newDeck.data != null) {
                     decksRepository.insertDeck(newDeck.data!!.deck!!.deck.toDeck(true))
@@ -181,6 +186,7 @@ class DecksViewModel(
                     },
                     slots = JsonNull,
                     extraSlots = JsonNull,
+                    tabooSetId = if (taboo) Optional.present(CURRENT_TABOO_SET) else Optional.absent()
                 )).addHttpHeader("Authorization", "Bearer $token").execute()
                 if (newDeck.data != null) {
                     decksRepository.insertDeck(newDeck.data!!.deck!!.deck.toDeck(true))
@@ -205,7 +211,8 @@ class DecksViewModel(
                         awa = starterDeck.awa,
                         spi = starterDeck.spi,
                         fit = starterDeck.fit,
-                        foc = starterDeck.foc
+                        foc = starterDeck.foc,
+                        taboo = taboo
                     )
                 )
                 _deckIdToOpen.update { uuid }
@@ -221,7 +228,8 @@ class DecksViewModel(
                         put("background", background)
                         put("specialty", specialty)
                     },
-                    slots = null
+                    slots = null,
+                    taboo = taboo
                 ))
                 _deckIdToOpen.update { uuid }
             }
@@ -237,11 +245,13 @@ class DecksViewModel(
         spi: Int? = null,
         fit: Int? = null,
         foc: Int? = null,
+        taboo: Boolean,
     ): Deck {
         return Deck(
             id = id,
             uploaded = false,
             userId = "",
+            tabooSetId = if (taboo) CURRENT_TABOO_SET else null,
             userHandle = null,
             slots = slots ?: JsonObject(emptyMap()),
             sideSlots = JsonObject(emptyMap()),
@@ -291,6 +301,7 @@ fun com.rangerscards.fragment.Deck.toDeck(uploaded: Boolean): Deck {
         id = this.id.toString(),
         uploaded = uploaded,
         userId = this.user_id,
+        tabooSetId = this.taboo_set_id,
         userHandle = this.user.userInfo.handle,
         slots = this.slots,
         sideSlots = this.side_slots,

@@ -34,15 +34,19 @@ import com.rangerscards.data.database.card.CardListItemProjection
 import com.rangerscards.ui.cards.components.CardListItem
 import com.rangerscards.ui.components.RangersSearchOutlinedField
 import com.rangerscards.ui.components.RowTypeDivider
+import com.rangerscards.ui.settings.UserUIState
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
 import kotlinx.coroutines.flow.drop
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonPrimitive
 
 @Composable
 fun CardsScreen(
     isDarkTheme: Boolean,
     modifier: Modifier = Modifier,
     cardsViewModel: CardsViewModel,
+    userUIState: UserUIState,
     navigateToCard: (Int) -> Unit,
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
@@ -62,6 +66,11 @@ fun CardsScreen(
                 // Scroll to the first item
                 listState.animateScrollToItem(0)
             }
+    }
+    LaunchedEffect(userUIState.userInfo) {
+        val settings = userUIState.settings
+        cardsViewModel.setTabooId(settings.taboo)
+        cardsViewModel.setPackIds(settings.collection)
     }
 
     BackHandler {
@@ -119,6 +128,7 @@ fun CardsScreen(
                 else cardsLazyItems[index - 1]?.setName != item.setName
                 if (showHeader) RowTypeDivider(text = item.setName.toString())
                 CardListItem(
+                    tabooId = item.tabooId,
                     aspectId = item.aspectId,
                     aspectShortName = item.aspectShortName,
                     cost = item.cost,

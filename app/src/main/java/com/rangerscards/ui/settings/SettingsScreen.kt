@@ -52,7 +52,8 @@ fun SettingsScreen(
         item {
             CardsCard(
                 isDarkTheme = isDarkTheme,
-                settingsViewModel = settingsViewModel
+                settingsViewModel = settingsViewModel,
+                userUIState = user
             )
         }
         item {

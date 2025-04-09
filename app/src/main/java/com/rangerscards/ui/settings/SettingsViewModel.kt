@@ -27,6 +27,8 @@ import com.rangerscards.MainActivity
 import com.rangerscards.R
 import com.rangerscards.RejectFriendRequestMutation
 import com.rangerscards.SendFriendRequestMutation
+import com.rangerscards.SetAdhereTaboosMutation
+import com.rangerscards.SetPackCollectionMutation
 import com.rangerscards.UpdateHandleMutation
 import com.rangerscards.data.UserAuthRepository
 import com.rangerscards.data.UserPreferencesRepository
@@ -40,6 +42,10 @@ import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
+import kotlinx.serialization.json.add
+import kotlinx.serialization.json.buildJsonArray
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonPrimitive
 import java.util.Locale
 
 /**
@@ -49,6 +55,12 @@ data class UserUIState(
     val currentUser: FirebaseUser? = Firebase.auth.currentUser,
     val userInfo: GetProfileQuery.Data? = null,
     val language: String = Locale.getDefault().language.substring(0..1),
+    val settings: UserSettings = UserSettings()
+)
+
+data class UserSettings(
+    val taboo: Boolean = false,
+    val collection: List<String> = listOf("core")
 )
 
 /**
@@ -63,6 +75,28 @@ class SettingsViewModel(
 
     private val _userUiState = MutableStateFlow(UserUIState())
     var userUiState = _userUiState.asStateFlow()
+
+    init {
+        // Collect values from the data store
+        viewModelScope.launch {
+            userPreferencesRepository.isTabooSet.collect { taboo ->
+                _userUiState.update {
+                    it.copy(settings = it.settings.copy(taboo = taboo))
+                }
+            }
+        }
+    }
+
+    init {
+        // Collect values from the data store
+        viewModelScope.launch {
+            userPreferencesRepository.collection.collect { collection ->
+                _userUiState.update {
+                    it.copy(settings = it.settings.copy(collection = collection))
+                }
+            }
+        }
+    }
 
     // theme state
     val themeState: StateFlow<Int?> =
@@ -157,14 +191,22 @@ class SettingsViewModel(
         return connectivityManager.getNetworkCapabilities(connectivityManager.activeNetwork) != null
     }
 
-    fun getUserInfo(id: String) {
+    fun getUserInfo(context: Context, id: String) {
         viewModelScope.launch {
+            val token = getCurrentToken(context)
             apolloClient.query(GetProfileQuery(id))
+                .addHttpHeader("Authorization", "Bearer $token")
                 .toFlow()
                 .collect {
-                    val response = it
-                    if (response.data != null) _userUiState.update { uiState ->
-                        uiState.copy(userInfo = response.data)
+                    if (it.data != null) _userUiState.update { uiState ->
+                        uiState.copy(userInfo = it.data,
+                            settings = UserSettings(
+                                taboo = it.data!!.settings?.adhere_taboos ?: false,
+                                collection = it.data!!.settings?.pack_collection
+                                    ?.jsonArray?.map { element -> element.jsonPrimitive.content }
+                                    ?: listOf("core")
+                            )
+                        )
                     }
                 }
         }
@@ -202,7 +244,7 @@ class SettingsViewModel(
                         normalizeHandle(handle))
                     ).addHttpHeader("Authorization", "Bearer $token")
                         .execute()
-                    if (response.data != null) getUserInfo(userUiState.value.currentUser!!.uid)
+                    if (response.data != null) getUserInfo(context, userUiState.value.currentUser!!.uid)
                 }
             }
         }.join()
@@ -210,7 +252,53 @@ class SettingsViewModel(
 
     fun selectTheme(theme: Int) {
         viewModelScope.launch {
-            userPreferencesRepository.saveThemePreference(theme)
+            userPreferencesRepository.saveTabooPreference(theme)
+        }
+    }
+
+    suspend fun setTaboo(context: Context) {
+        val taboo = !userUiState.value.settings.taboo
+        if (userUiState.value.currentUser != null) {
+            val token = getCurrentToken(context)
+            val response = apolloClient.mutation(SetAdhereTaboosMutation(
+                userUiState.value.currentUser!!.uid,
+                taboo)
+            ).addHttpHeader("Authorization", "Bearer $token").execute()
+            if (response.data != null) getUserInfo(context, userUiState.value.currentUser!!.uid)
+        } else {
+            userPreferencesRepository.saveTabooPreference(taboo)
+            _userUiState.update {
+                it.copy(
+                    settings = it.settings.copy(taboo = taboo)
+                )
+            }
+        }
+    }
+
+    fun setCollection(collection: List<String>, context: Context) {
+        viewModelScope.launch {
+            if (userUiState.value.currentUser != null) {
+                val token = getCurrentToken(context)
+                val response = apolloClient.mutation(SetPackCollectionMutation(
+                    userUiState.value.currentUser!!.uid,
+                    buildJsonArray { collection.forEach { add(it) } })
+                ).addHttpHeader("Authorization", "Bearer $token")
+                    .execute()
+                if (response.data != null) getUserInfo(context, userUiState.value.currentUser!!.uid)
+                userPreferencesRepository.saveCollectionPreference(collection)
+                _userUiState.update {
+                    it.copy(
+                        settings = it.settings.copy(collection = collection)
+                    )
+                }
+            } else {
+                userPreferencesRepository.saveCollectionPreference(collection)
+                _userUiState.update {
+                    it.copy(
+                        settings = it.settings.copy(collection = collection)
+                    )
+                }
+            }
         }
     }
 
@@ -287,6 +375,12 @@ class SettingsViewModel(
         )
     }
 
+    fun openEmail(email: String, context: Context) {
+        val uri = Uri.parse("mailto:$email")
+        val intent = Intent(Intent.ACTION_SENDTO, uri)
+        context.startActivity(intent)
+    }
+
     fun setEnglishSearchResultsSetting(isInclude: Boolean) {
         viewModelScope.launch {
             userPreferencesRepository.saveIncludeEnglishSearchResults(isInclude)
@@ -327,27 +421,27 @@ class SettingsViewModel(
         val userId = userUiState.value.currentUser?.uid!!
         viewModelScope.launch {
             val token = getCurrentToken(context)
-            apolloClient.mutation(SendFriendRequestMutation(userId, toUserId))
+            apolloClient.mutation(SendFriendRequestMutation(toUserId))
                 .addHttpHeader("Authorization", "Bearer $token").execute()
-            getUserInfo(userId)
+            getUserInfo(context, userId)
         }
     }
     fun acceptFriendRequest(toUserId: String, context: Context) {
         val userId = userUiState.value.currentUser?.uid!!
         viewModelScope.launch {
             val token = getCurrentToken(context)
-            apolloClient.mutation(AcceptFriendRequestMutation(userId, toUserId))
+            apolloClient.mutation(AcceptFriendRequestMutation(toUserId))
                 .addHttpHeader("Authorization", "Bearer $token").execute()
-            getUserInfo(userId)
+            getUserInfo(context, userId)
         }
     }
     fun rejectFriendRequest(toUserId: String, context: Context) {
         val userId = userUiState.value.currentUser?.uid!!
         viewModelScope.launch {
             val token = getCurrentToken(context)
-            apolloClient.mutation(RejectFriendRequestMutation(userId, toUserId))
+            apolloClient.mutation(RejectFriendRequestMutation(toUserId))
                 .addHttpHeader("Authorization", "Bearer $token").execute()
-            getUserInfo(userId)
+            getUserInfo(context, userId)
         }
     }
 }
@@ -359,12 +453,14 @@ fun GetAllCardsQuery.Card.toCard(locale: String): Card? {
     return this.card.id?.let {
         Card(
             id = it,
+            code = this.card.code.toString(),
             name = this.card.name,
             realName = if (locale == "en") null else this.card.real_name,
             realTraits = this.card.real_traits,
             traits = this.card.traits,
             equip = this.card.equip,
             presence = this.card.presence,
+            tabooId = this.card.taboo_id,
             tokenId = this.card.token_id,
             tokenName = this.card.token_name,
             tokenPlurals = this.card.token_plurals,
@@ -401,6 +497,14 @@ fun GetAllCardsQuery.Card.toCard(locale: String): Card? {
             sunChallenge = this.card.sun_challenge,
             mountainChallenge = this.card.mountain_challenge,
             crestChallenge = this.card.crest_challenge,
+            packId = this.card.pack_id,
+            packName = this.card.pack_name,
+            packShortName = this.card.pack_short_name,
+            packPosition = this.card.pack_position,
+            subsetId = this.card.subset_id,
+            subsetName = this.card.set_name,
+            subsetPosition = this.card.subset_position,
+            subsetSize = this.card.subset_size,
             composite = listOfNotNull(
                 this.card.name, this.card.traits, this.card.text, this.card.flavor, this.card.type_name,
                 this.card.sun_challenge, this.card.mountain_challenge, this.card.crest_challenge

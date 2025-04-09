@@ -52,6 +52,8 @@ fun DeckFullCardWithPagerScreen(
     isDarkTheme: Boolean,
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
+    val deck by deckViewModel.originalDeck.collectAsState()
+    cardsViewModel.setTabooId(deck?.tabooSetId != null)
     val cardsLazyItems = deckCardsViewModel.searchResults.collectAsLazyPagingItems()
     val pagerState = rememberPagerState(initialPage = cardIndex) { cardsLazyItems.itemCount }
     val values by deckViewModel.updatableValues.collectAsState()
@@ -81,10 +83,10 @@ fun DeckFullCardWithPagerScreen(
                     bottom = innerPadding.calculateBottomPadding()
                 ),
         ) { page ->
-            val cardId = cardsLazyItems[page]!!.id
-            val fullCard by cardsViewModel.getCardById(cardId).collectAsState(null)
-            val slotInfo = slots.value?.firstOrNull { it.id == cardId }
-            val isInExtraCards = (values?.extraSlots?.get(cardId) ?: 0) >= 1
+            val cardCode = cardsLazyItems[page]!!.code
+            val fullCard by cardsViewModel.getCardById(cardCode).collectAsState(null)
+            val slotInfo = slots.value?.firstOrNull { it.code == cardCode }
+            val isInExtraCards = (values?.extraSlots?.get(cardCode) ?: 0) >= 1
             Box(modifier = Modifier.fillMaxSize()) {
                 if (fullCard == null) Column(
                     verticalArrangement = Arrangement.Center,
@@ -99,6 +101,7 @@ fun DeckFullCardWithPagerScreen(
                     )
                 } else {
                     FullCard(
+                        tabooId = fullCard!!.tabooId,
                         aspectId = fullCard!!.aspectId,
                         aspectShortName = fullCard!!.aspectShortName,
                         cost = fullCard!!.cost,
@@ -134,8 +137,8 @@ fun DeckFullCardWithPagerScreen(
                     ) {
                         IconButton(
                             onClick = {
-                                if (isInExtraCards) deckViewModel.removeExtraCard(cardId)
-                                else deckViewModel.addExtraCard(cardId)
+                                if (isInExtraCards) deckViewModel.removeExtraCard(cardCode)
+                                else deckViewModel.addExtraCard(cardCode)
                             },
                             modifier = Modifier.size(62.dp),
                             colors = IconButtonDefaults.iconButtonColors()
@@ -158,11 +161,11 @@ fun DeckFullCardWithPagerScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             IconButton(
-                                onClick = { deckViewModel.removeCard(cardId, slotInfo?.setId) },
+                                onClick = { deckViewModel.removeCard(cardCode, slotInfo?.setId) },
                                 colors = IconButtonDefaults.iconButtonColors()
                                     .copy(containerColor = Color.Transparent),
                                 modifier = Modifier.size(32.dp),
-                                enabled = (values?.slots?.get(cardId) ?: 0) > 0
+                                enabled = (values?.slots?.get(cardCode) ?: 0) > 0
                             ) {
                                 Icon(
                                     painterResource(id = R.drawable.remove_32dp),
@@ -183,7 +186,7 @@ fun DeckFullCardWithPagerScreen(
                                     contentAlignment = Alignment.Center
                                 ) {
                                     Text(
-                                        text = "×${values?.slots?.get(cardId) ?: 0}",
+                                        text = "×${values?.slots?.get(cardCode) ?: 0}",
                                         color = CustomTheme.colors.d10,
                                         fontFamily = Jost,
                                         fontWeight = FontWeight.Normal,
@@ -192,11 +195,11 @@ fun DeckFullCardWithPagerScreen(
                                 }
                             }
                             IconButton(
-                                onClick = { deckViewModel.addCard(cardId) },
+                                onClick = { deckViewModel.addCard(cardCode) },
                                 colors = IconButtonDefaults.iconButtonColors()
                                     .copy(containerColor = Color.Transparent),
                                 modifier = Modifier.size(32.dp),
-                                enabled = (values?.slots?.get(cardId)
+                                enabled = (values?.slots?.get(cardCode)
                                     ?: 0) != slotInfo?.deckLimit
                             ) {
                                 Icon(

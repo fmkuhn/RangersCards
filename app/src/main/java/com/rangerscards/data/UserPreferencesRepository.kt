@@ -45,14 +45,40 @@ class UserPreferencesRepository(
             preferences[INCLUDE_ENGLISH_SEARCH_RESULTS] ?: false
         }
 
+    val isTabooSet: Flow<Boolean> = dataStore.data
+        .catch {
+            if (it is IOException) {
+                Log.e(TAG, "Error reading preferences.", it)
+                emit(emptyPreferences())
+            } else {
+                throw it
+            }
+        }.map { preferences ->
+            preferences[TABOO] ?: false
+        }
+
+    val collection: Flow<List<String>> = dataStore.data
+        .catch {
+            if (it is IOException) {
+                Log.e(TAG, "Error reading preferences.", it)
+                emit(emptyPreferences())
+            } else {
+                throw it
+            }
+        }.map { preferences ->
+            preferences[COLLECTION]?.split(",")?.filter { it.isNotBlank() } ?: listOf("core")
+        }
+
     private companion object {
         val THEME = intPreferencesKey("theme")
         const val TAG = "UserPreferencesRepo"
         val CARDS_UPDATED_AT = stringPreferencesKey("cards_updated_at")
         val INCLUDE_ENGLISH_SEARCH_RESULTS = booleanPreferencesKey("english_results")
+        val TABOO = booleanPreferencesKey("taboo")
+        val COLLECTION = stringPreferencesKey("collection")
     }
 
-    suspend fun saveThemePreference(theme: Int) {
+    suspend fun saveTabooPreference(theme: Int) {
         dataStore.edit { preferences ->
             preferences[THEME] = theme
         }
@@ -67,6 +93,18 @@ class UserPreferencesRepository(
     suspend fun saveIncludeEnglishSearchResults(isIncludeEnglishSearchResults: Boolean) {
         dataStore.edit { preferences ->
             preferences[INCLUDE_ENGLISH_SEARCH_RESULTS] = isIncludeEnglishSearchResults
+        }
+    }
+
+    suspend fun saveTabooPreference(taboo: Boolean) {
+        dataStore.edit { preferences ->
+            preferences[TABOO] = taboo
+        }
+    }
+
+    suspend fun saveCollectionPreference(collection: List<String>) {
+        dataStore.edit { preferences ->
+            preferences[COLLECTION] = collection.joinToString(",")
         }
     }
 

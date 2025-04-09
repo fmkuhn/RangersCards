@@ -71,7 +71,8 @@ mutation createDeck(
   $meta: jsonb!,
   $slots: jsonb!,
   $extraSlots: jsonb!,
-  $description: String
+  $description: String,
+  $tabooSetId: String,
 ) {
   deck: insert_rangers_deck_one(
     object: {
@@ -84,6 +85,7 @@ mutation createDeck(
       slots: $slots
       extra_slots: $extraSlots
       description: $description
+      taboo_set_id: $tabooSetId
     }
   ) {
     ...Deck
@@ -128,17 +130,16 @@ mutation saveDeck(
   }
 }
 
-mutation saveDeckDescription(
+mutation saveDeckTabooSet(
   $id: Int!,
-  $description: String!
+  $tabooSetId: String
 ) {
   update_rangers_deck_by_pk(
     pk_columns: { id: $id }
     _set: {
-      description: $description
+      taboo_set_id: $tabooSetId
     }
   ) {
-    id
-    description
+    ...Deck
   }
 }

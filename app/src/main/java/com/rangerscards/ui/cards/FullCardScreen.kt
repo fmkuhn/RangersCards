@@ -43,7 +43,7 @@ fun FullCardScreen(
                     bottom = contentPadding.calculateBottomPadding()
                 )
         ) {
-            val fullCard by cardsViewModel.getCardById(cardsLazyItems[page]!!.id).collectAsState(null)
+            val fullCard by cardsViewModel.getCardById(cardsLazyItems[page]!!.code).collectAsState(null)
             if (fullCard == null) Column(
                 verticalArrangement = Arrangement.Center,
                 horizontalAlignment = Alignment.CenterHorizontally,
@@ -53,6 +53,7 @@ fun FullCardScreen(
                     modifier = Modifier.size(32.dp),
                     color = CustomTheme.colors.m)
             } else FullCard(
+                tabooId = fullCard!!.tabooId,
                 aspectId = fullCard!!.aspectId,
                 aspectShortName = fullCard!!.aspectShortName,
                 cost = fullCard!!.cost,

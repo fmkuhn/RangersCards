@@ -394,7 +394,18 @@ class CampaignViewModel(
         }
     }
 
-    fun getRole(id: String): Flow<RoleCardProjection> = campaignRepository.getRole(id)
+    private val _taboo = MutableStateFlow(false)
+    private val _packId = MutableStateFlow("core")
+
+    fun getRole(id: String): Flow<RoleCardProjection> = campaignRepository.getRole(id, _taboo.value)
+
+    fun setTaboo(taboo: Boolean?) {
+        _taboo.update { taboo ?: false }
+    }
+
+    fun setPackId(id: String) {
+        _packId.update { id }
+    }
 
     suspend fun removeDeckCampaign(deckId: String, user: FirebaseUser?) {
         val campaign = campaign.value!!
@@ -666,7 +677,7 @@ class CampaignViewModel(
         }
     }
 
-    fun getRewardsCards(): Flow<List<CardListItemProjection>> = campaignRepository.getRewards()
+    fun getRewardsCards(): Flow<List<CardListItemProjection>> = campaignRepository.getRewards(_taboo.value, _packId.value)
 
     suspend fun addCampaignReward(id: String, user: FirebaseUser?) {
         val campaign = campaign.value!!

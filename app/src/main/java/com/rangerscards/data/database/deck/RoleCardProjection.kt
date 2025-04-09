@@ -9,4 +9,6 @@ data class RoleCardProjection(
     val text: String?,
     @ColumnInfo(name = "real_image_src")
     val realImageSrc: String?,
+    @ColumnInfo(name = "taboo_id")
+    val tabooId: String?,
 )

@@ -50,10 +50,12 @@ fun DeckFullCardScreen(
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
+    val deck by deckViewModel.originalDeck.collectAsState()
+    cardsViewModel.setTabooId(deck?.tabooSetId != null)
     val fullCard by cardsViewModel.getCardById(cardId).collectAsState(null)
     val values by deckViewModel.updatableValues.collectAsState()
     val slots = deckViewModel.slotsCardsFlow.collectAsState(null)
-    val slotInfo = slots.value?.firstOrNull { it.id == cardId }
+    val slotInfo = slots.value?.firstOrNull { it.code == cardId }
     val isInExtraCards = (values?.extraSlots?.get(cardId) ?: 0) >= 1
     Scaffold(
         containerColor = CustomTheme.colors.l30,
@@ -66,7 +68,7 @@ fun DeckFullCardScreen(
                 title = "",
                 canNavigateBack = true,
                 navigateUp = navigateUp,
-                actions = {/*TODO: Implement action buttons*/},
+                actions = null,
                 switch = null
             )
         },
@@ -92,6 +94,7 @@ fun DeckFullCardScreen(
                 )
             } else {
                 FullCard(
+                    tabooId = fullCard!!.tabooId,
                     aspectId = fullCard!!.aspectId,
                     aspectShortName = fullCard!!.aspectShortName,
                     cost = fullCard!!.cost,
@@ -151,7 +154,7 @@ fun DeckFullCardScreen(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             IconButton(
-                                onClick = { deckViewModel.removeCard(cardId, slotInfo?.setId) },
+                                onClick = { deckViewModel.removeCard(cardId, slotInfo.setId) },
                                 colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
                                 modifier = Modifier.size(32.dp),
                                 enabled = (values?.slots?.get(cardId) ?: 0) > 0
@@ -186,7 +189,7 @@ fun DeckFullCardScreen(
                                 onClick = { deckViewModel.addCard(cardId) },
                                 colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
                                 modifier = Modifier.size(32.dp),
-                                enabled = (values?.slots?.get(cardId) ?: 0) != slotInfo?.deckLimit
+                                enabled = (values?.slots?.get(cardId) ?: 0) != slotInfo.deckLimit
                             ) {
                                 Icon(
                                     painterResource(id = R.drawable.add_32dp),

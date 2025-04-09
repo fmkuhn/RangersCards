@@ -8,6 +8,7 @@ import androidx.room.PrimaryKey
 data class Card (
     @PrimaryKey(autoGenerate = false)
     val id: String,
+    val code: String,
     val name: String?,
     @ColumnInfo(name = "real_name")
     val realName: String?,
@@ -16,6 +17,8 @@ data class Card (
     val traits: String?,
     val equip: Int?,
     val presence: Int?,
+    @ColumnInfo(name = "taboo_id")
+    val tabooId: String?,
     @ColumnInfo(name = "token_id")
     val tokenId: String?,
     @ColumnInfo(name = "token_name")
@@ -79,6 +82,22 @@ data class Card (
     val mountainChallenge: String?,
     @ColumnInfo(name = "crest_challenge")
     val crestChallenge: String?,
+    @ColumnInfo(name = "pack_id")
+    val packId: String?,
+    @ColumnInfo(name = "pack_name")
+    val packName: String?,
+    @ColumnInfo(name = "pack_short_name")
+    val packShortName: String?,
+    @ColumnInfo(name = "pack_position")
+    val packPosition: Int?,
+    @ColumnInfo(name = "subset_id")
+    val subsetId: String?,
+    @ColumnInfo(name = "subset_name")
+    val subsetName: String?,
+    @ColumnInfo(name = "subset_position")
+    val subsetPosition: Int?,
+    @ColumnInfo(name = "subset_size")
+    val subsetSize: Int?,
     val composite: String?,
     @ColumnInfo(name = "real_composite")
     val realComposite: String?

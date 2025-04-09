@@ -5263,7 +5263,7 @@ enum campaign_access_constraint {
   campaign_access_pkey
 
   """
-  unique or primary key constraint on columns "campaign_id", "user_id"
+  unique or primary key constraint on columns "user_id", "campaign_id"
   """
   campaign_access_user_id_campaign_id_key
 }
@@ -5894,12 +5894,12 @@ unique or primary key constraints on table "campaign_deck"
 """
 enum campaign_deck_constraint {
   """
-  unique or primary key constraint on columns "campaign_id", "arkhamdb_id"
+  unique or primary key constraint on columns "arkhamdb_id", "campaign_id"
   """
   deck_arkhamdb_id_campaign_id_key
 
   """
-  unique or primary key constraint on columns "campaign_id", "local_uuid"
+  unique or primary key constraint on columns "local_uuid", "campaign_id"
   """
   deck_local_uuid_campaign_id_key
 
@@ -18918,7 +18918,7 @@ unique or primary key constraints on table "friend_status"
 """
 enum friend_status_constraint {
   """
-  unique or primary key constraint on columns "user_id_a", "user_id_b"
+  unique or primary key constraint on columns "user_id_b", "user_id_a"
   """
   friend_status_pkey
 }
@@ -21297,7 +21297,7 @@ unique or primary key constraints on table "guide_achievement"
 """
 enum guide_achievement_constraint {
   """
-  unique or primary key constraint on columns "campaign_id", "id"
+  unique or primary key constraint on columns "id", "campaign_id"
   """
   guide_achievement_pkey
 }
@@ -21744,7 +21744,7 @@ unique or primary key constraints on table "guide_input"
 """
 enum guide_input_constraint {
   """
-  unique or primary key constraint on columns "campaign_id", "id"
+  unique or primary key constraint on columns "id", "campaign_id"
   """
   guide_input_pkey
 }
@@ -27268,6 +27268,56 @@ type mutation_root {
     """filter the rows returned"""
     where: rangers_campaign_bool_exp
   ): [rangers_campaign!]!
+
+  """
+  execute VOLATILE function "rangers.set_handle" which returns "rangers.users"
+  """
+  rangers_set_handle(
+    """
+    input parameters for function "rangers_set_handle"
+    """
+    args: rangers_set_handle_args!
+
+    """distinct select on columns"""
+    distinct_on: [rangers_users_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [rangers_users_order_by!]
+
+    """filter the rows returned"""
+    where: rangers_users_bool_exp
+  ): [rangers_users!]!
+
+  """
+  execute VOLATILE function "rangers.update_friend_request" which returns "rangers.users"
+  """
+  rangers_update_friend_request(
+    """
+    input parameters for function "rangers_update_friend_request"
+    """
+    args: rangers_update_friend_request_args!
+
+    """distinct select on columns"""
+    distinct_on: [rangers_users_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [rangers_users_order_by!]
+
+    """filter the rows returned"""
+    where: rangers_users_bool_exp
+  ): [rangers_users!]!
 
   """
   execute VOLATILE function "rangers.upgrade_deck" which returns "rangers.deck"
@@ -35720,6 +35770,56 @@ type query_root {
   rangers_pack_text_by_pk(id: String!, locale: String!): rangers_pack_text
 
   """
+  execute function "rangers.search_all_decks" which returns "rangers.search_deck"
+  """
+  rangers_search_all_decks(
+    """
+    input parameters for function "rangers_search_all_decks"
+    """
+    args: rangers_search_all_decks_args
+
+    """distinct select on columns"""
+    distinct_on: [rangers_search_deck_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [rangers_search_deck_order_by!]
+
+    """filter the rows returned"""
+    where: rangers_search_deck_bool_exp
+  ): [rangers_search_deck!]!
+
+  """
+  execute function "rangers.search_all_decks" and query aggregates on result of table type "rangers.search_deck"
+  """
+  rangers_search_all_decks_aggregate(
+    """
+    input parameters for function "rangers_search_all_decks_aggregate"
+    """
+    args: rangers_search_all_decks_args
+
+    """distinct select on columns"""
+    distinct_on: [rangers_search_deck_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [rangers_search_deck_order_by!]
+
+    """filter the rows returned"""
+    where: rangers_search_deck_bool_exp
+  ): rangers_search_deck_aggregate!
+
+  """
   fetch data from the table: "rangers.search_deck"
   """
   rangers_search_deck(
@@ -38189,7 +38289,7 @@ unique or primary key constraints on table "rangers.campaign_access"
 """
 enum rangers_campaign_access_constraint {
   """
-  unique or primary key constraint on columns "campaign_id", "user_id"
+  unique or primary key constraint on columns "user_id", "campaign_id"
   """
   campaign_access_pkey
 }
@@ -41375,7 +41475,7 @@ unique or primary key constraints on table "rangers.comment"
 """
 enum rangers_comment_constraint {
   """
-  unique or primary key constraint on columns "deck_id", "id"
+  unique or primary key constraint on columns "id", "deck_id"
   """
   comment_id_deck_id_key
 
@@ -43133,6 +43233,7 @@ type rangers_deck_rank_variance_fields {
 input rangers_deck_search_args {
   _limit: Int
   _offset: Int
+  _taboo_set_id: _text
   awa_eq: Int
   background: _text
   fit_eq: Int
@@ -43755,7 +43856,7 @@ unique or primary key constraints on table "rangers.friend_status"
 """
 enum rangers_friend_status_constraint {
   """
-  unique or primary key constraint on columns "user_id_a", "user_id_b"
+  unique or primary key constraint on columns "user_id_b", "user_id_a"
   """
   friend_status_pkey
 }
@@ -45234,6 +45335,20 @@ input rangers_remove_campaign_deck_args {
   old_campaign_id: Int
 }
 
+input rangers_search_all_decks_args {
+  _limit: Int
+  _offset: Int
+  _taboo_set_id: _text
+  awa_eq: Int
+  background: _text
+  fit_eq: Int
+  foc_eq: Int
+  role: _text
+  specialty: _text
+  spi_eq: Int
+  user_id_eq: String
+}
+
 """
 columns and relationships of "rangers.search_deck"
 """
@@ -45953,6 +46068,10 @@ enum rangers_set_constraint {
   unique or primary key constraint on columns "id"
   """
   set_pkey
+}
+
+input rangers_set_handle_args {
+  handle: String
 }
 
 """
@@ -49297,6 +49416,11 @@ input rangers_type_updates {
 
   """filter the rows which have to be updated"""
   where: rangers_type_bool_exp!
+}
+
+input rangers_update_friend_request_args {
+  action: String
+  target_user_id: String
 }
 
 input rangers_upgrade_deck_args {
@@ -55964,6 +56088,56 @@ type subscription_root {
     """filter the rows returned"""
     where: rangers_pack_text_bool_exp
   ): [rangers_pack_text!]!
+
+  """
+  execute function "rangers.search_all_decks" which returns "rangers.search_deck"
+  """
+  rangers_search_all_decks(
+    """
+    input parameters for function "rangers_search_all_decks"
+    """
+    args: rangers_search_all_decks_args
+
+    """distinct select on columns"""
+    distinct_on: [rangers_search_deck_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [rangers_search_deck_order_by!]
+
+    """filter the rows returned"""
+    where: rangers_search_deck_bool_exp
+  ): [rangers_search_deck!]!
+
+  """
+  execute function "rangers.search_all_decks" and query aggregates on result of table type "rangers.search_deck"
+  """
+  rangers_search_all_decks_aggregate(
+    """
+    input parameters for function "rangers_search_all_decks_aggregate"
+    """
+    args: rangers_search_all_decks_args
+
+    """distinct select on columns"""
+    distinct_on: [rangers_search_deck_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [rangers_search_deck_order_by!]
+
+    """filter the rows returned"""
+    where: rangers_search_deck_bool_exp
+  ): rangers_search_deck_aggregate!
 
   """
   fetch data from the table: "rangers.search_deck"

@@ -34,9 +34,9 @@ import com.rangerscards.R
 import com.rangerscards.data.database.card.CardDeckListItemProjection
 import com.rangerscards.ui.cards.components.CardListItem
 import com.rangerscards.ui.components.RangersSearchOutlinedField
-import com.rangerscards.ui.components.ScrollableRangersTabs
 import com.rangerscards.ui.components.RangersTopAppBar
 import com.rangerscards.ui.components.RowTypeDivider
+import com.rangerscards.ui.components.ScrollableRangersTabs
 import com.rangerscards.ui.settings.components.SettingsRadioButtonRow
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
@@ -198,8 +198,9 @@ fun DeckCardsSearchingListScreen(
                     val showHeader = if (index == 0) true
                     else cardsLazyItems[index - 1]?.setName != item.setName
                     if (showHeader && (typeIndex in 0..2)) RowTypeDivider(text = item.setName.toString())
-                    val amount = values?.slots?.get(item.id) ?: 0
+                    val amount = values?.slots?.get(item.code) ?: 0
                     CardListItem(
+                        tabooId = item.tabooId,
                         aspectId = item.aspectId,
                         aspectShortName = item.aspectShortName,
                         cost = item.cost,
@@ -214,9 +215,9 @@ fun DeckCardsSearchingListScreen(
                         level = item.level,
                         isDarkTheme = isDarkTheme,
                         currentAmount = amount,
-                        onRemoveClick = { deckViewModel.removeCard(item.id, item.setId) },
+                        onRemoveClick = { deckViewModel.removeCard(item.code, item.setId) },
                         onRemoveEnabled = amount > 0,
-                        onAddClick = { deckViewModel.addCard(item.id) },
+                        onAddClick = { deckViewModel.addCard(item.code) },
                         onAddEnabled = amount != item.deckLimit,
                         onClick = { navigateToCard.invoke(index) }
                     )

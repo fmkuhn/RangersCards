@@ -22,24 +22,3 @@ query getCardsUpdatedAt($locale: String!) {
     updated_at
   }
 }
-
-fragment SetType on rangers_set_type_localized {
-  id
-  name
-  sets {
-    id
-    name
-  }
-}
-
-query getSetNames($locale: String!) {
-  sets: rangers_set_type_localized(
-    where: {
-      locale: { _eq: $locale }
-
-    }
-    order_by: { id: desc }
-  ) {
-    ...SetType
-  }
-}

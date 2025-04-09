@@ -12,11 +12,9 @@ import androidx.compose.foundation.layout.BoxScope
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
-import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.offset
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
@@ -24,6 +22,8 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
+import androidx.compose.material3.RadioButton
+import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -51,6 +51,8 @@ fun BoxScope.DeckRightSideDrawer(
     deckName: String,
     deckId: String?,
     changeName: () -> Unit,
+    setTaboo: () -> Unit,
+    isTabooSet: Boolean,
     toNotes: () -> Unit,
     toCharts: () -> Unit,
     camp:  (() -> Unit)?,
@@ -64,7 +66,7 @@ fun BoxScope.DeckRightSideDrawer(
     val density = LocalDensity.current
 
     // Determine the target offset in Dp based on the switch state.
-    val targetOffsetDp = if (isOpen) 0.dp else 240.dp
+    val targetOffsetDp = if (isOpen) 0.dp else 280.dp
     // Convert the Dp value to pixels as an Int.
     val targetOffsetPx = with(density) { targetOffsetDp.toPx().toInt() }
 
@@ -91,7 +93,7 @@ fun BoxScope.DeckRightSideDrawer(
         modifier = Modifier
             .align(Alignment.CenterEnd) // Anchor to the right edge of the screen.
             .fillMaxHeight()
-            .width(240.dp)
+            .width(280.dp)
             .offset { offsetX } // Animate horizontally.
             .background(CustomTheme.colors.l30)
     ) {
@@ -107,6 +109,12 @@ fun BoxScope.DeckRightSideDrawer(
                         deckName,
                         changeName,
                         if (deckId != null) stringResource(R.string.deck_section_deck_id, deckId) else null
+                    )
+                    DrawerSectionButtonRow(
+                        R.drawable.uncommon_wisdom,
+                        stringResource(R.string.use_taboo),
+                        setTaboo,
+                        radioButton = isTabooSet
                     )
                     //TODO:Implement deck notes
 //                    HorizontalDivider(color = CustomTheme.colors.l10)
@@ -214,20 +222,21 @@ fun DrawerSectionButtonRow(
     @DrawableRes iconResId: Int,
     mainText: String,
     onClick: () -> Unit,
-    additionalText: String? = null
+    additionalText: String? = null,
+    radioButton: Boolean? = null,
 ) {
 
     Row(
         modifier = Modifier.fillMaxWidth().clickable { onClick() },
-        horizontalArrangement = Arrangement.spacedBy(4.dp),
-        verticalAlignment = Alignment.CenterVertically) {
+        verticalAlignment = Alignment.CenterVertically
+    ) {
         Icon(
             painterResource(id = iconResId),
             contentDescription = null,
             tint = CustomTheme.colors.m,
-            modifier = Modifier.size(32.dp)
+            modifier = Modifier.size(32.dp).padding(end = 4.dp)
         )
-        Column {
+        Column(modifier = Modifier.weight(1f)) {
             Text(
                 text = mainText,
                 color = CustomTheme.colors.d30,
@@ -248,5 +257,14 @@ fun DrawerSectionButtonRow(
                 )
             }
         }
+        if (radioButton != null) RadioButton(
+            selected = radioButton,
+            onClick = onClick,
+            colors = RadioButtonDefaults.colors().copy(
+                selectedColor = CustomTheme.colors.m,
+                unselectedColor = CustomTheme.colors.m
+            ),
+            modifier = Modifier.size(12.dp)
+        )
     }
 }

@@ -3,6 +3,8 @@ package com.rangerscards.data.database.card
 import androidx.room.ColumnInfo
 
 data class FullCardProjection(
+    @ColumnInfo(name = "taboo_id")
+    val tabooId: String?,
     @ColumnInfo(name = "aspect_id")
     val aspectId: String?,
     @ColumnInfo(name = "aspect_short_name")
@@ -41,6 +43,14 @@ data class FullCardProjection(
     val setSize: Int,
     @ColumnInfo(name = "set_position")
     val setPosition: Int,
+    @ColumnInfo(name = "pack_short_name")
+    val packShortName: String?,
+    @ColumnInfo(name = "subset_name")
+    val subsetName: String?,
+    @ColumnInfo(name = "subset_position")
+    val subsetPosition: Int?,
+    @ColumnInfo(name = "subset_size")
+    val subsetSize: Int?,
     @ColumnInfo(name = "sun_challenge")
     val sunChallenge: String?,
     @ColumnInfo(name = "mountain_challenge")

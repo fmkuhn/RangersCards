@@ -35,6 +35,7 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -86,6 +87,8 @@ fun DeckCreationScreen(
     var tabIndex by rememberSaveable { mutableIntStateOf(0) }
     var name by rememberSaveable { mutableStateOf("") }
     var isUploading by rememberSaveable { mutableStateOf(false) }
+    var taboo by rememberSaveable { mutableStateOf(user.settings.taboo) }
+    val packIds = remember { user.settings.collection.toMutableStateList() }
     var selectedStarterDeck by rememberSaveable { mutableIntStateOf(-1) }
     var background by rememberSaveable { mutableStateOf("") }
     var specialty by rememberSaveable { mutableStateOf("") }
@@ -182,7 +185,7 @@ fun DeckCreationScreen(
                 )
                 when (tabIndex) {
                     0 -> {
-                        val roles = decksViewModel.getRoles(specialty).collectAsLazyPagingItems()
+                        val roles = decksViewModel.getRoles(specialty, taboo, packIds).collectAsLazyPagingItems()
                         Column(
                             modifier = Modifier
                                 .fillMaxWidth()
@@ -315,7 +318,7 @@ fun DeckCreationScreen(
                                                 modifier = Modifier
                                                     .fillMaxWidth()
                                                     .clickable {
-                                                        role = item.id to item.name.toString()
+                                                        role = item.code to item.name.toString()
                                                         showDialogPicker = null
                                                     }
                                                     .padding(horizontal = 16.dp, vertical = 8.dp),
@@ -360,6 +363,32 @@ fun DeckCreationScreen(
                             )
                         }
                     }
+                }
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                        .clickable { taboo = !taboo },
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.use_taboo),
+                        color = CustomTheme.colors.d30,
+                        fontFamily = Jost,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 18.sp,
+                        lineHeight = 20.sp,
+                        modifier = Modifier.weight(1f)
+                    )
+                    RadioButton(
+                        selected = taboo,
+                        onClick = { taboo = !taboo },
+                        colors = RadioButtonDefaults.colors().copy(
+                            selectedColor = CustomTheme.colors.m,
+                            unselectedColor = CustomTheme.colors.m
+                        ),
+                        modifier = Modifier.size(32.dp)
+                    )
                 }
                 val context = LocalContext.current.applicationContext
                 if (user.currentUser != null && decksViewModel.isConnected(context)) Row(
@@ -422,6 +451,7 @@ fun DeckCreationScreen(
                                 starterDeckId = selectedStarterDeck,
                                 postfix = postfix,
                                 user = user,
+                                taboo = taboo,
                                 context = context
                             )
                         }.invokeOnCompletion {

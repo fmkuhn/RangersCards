@@ -12,6 +12,8 @@ data class Deck(
     val uploaded: Boolean,
     @ColumnInfo(name = "user_id")
     val userId: String,
+    @ColumnInfo(name = "taboo_set_id")
+    val tabooSetId: String?,
     @ColumnInfo(name = "user_handle")
     val userHandle: String?,
     val slots: JsonElement,

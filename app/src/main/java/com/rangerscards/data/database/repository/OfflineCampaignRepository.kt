@@ -22,7 +22,7 @@ class OfflineCampaignRepository(
 
     override suspend fun getCampaignById(id: String): Campaign = campaignDao.getCampaignById(id)
 
-    override fun getRole(id: String): Flow<RoleCardProjection> = campaignDao.getRole(id)
+    override fun getRole(id: String, taboo: Boolean): Flow<RoleCardProjection> = campaignDao.getRole(id, taboo)
 
     override fun getAllDecks(userId: String, uploaded: Boolean): Flow<PagingData<DeckListItemProjection>> {
         // Create a Pager that wraps the PagingSource from the DAO.
@@ -56,5 +56,5 @@ class OfflineCampaignRepository(
 
     override suspend fun deleteCampaign(id: String) = campaignDao.deleteCampaign(id)
 
-    override fun getRewards(): Flow<List<CardListItemProjection>> = campaignDao.getAllRewards()
+    override fun getRewards(taboo: Boolean, packId: String): Flow<List<CardListItemProjection>> = campaignDao.getAllRewards(taboo, packId)
 }

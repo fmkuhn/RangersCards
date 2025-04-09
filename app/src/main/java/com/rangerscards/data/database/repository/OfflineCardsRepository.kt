@@ -19,7 +19,7 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
 
     override suspend fun isExists(): Boolean = cardDao.isExists()
 
-    override fun getAllCards(spoiler: Boolean): Flow<PagingData<CardListItemProjection>> {
+    override fun getAllCards(spoiler: Boolean, taboo: Boolean, packIds: List<String>): Flow<PagingData<CardListItemProjection>> {
         // Create a Pager that wraps the PagingSource from the DAO.
         return Pager(
             config = PagingConfig(
@@ -27,7 +27,7 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
                 enablePlaceholders = false,
                 initialLoadSize = 40
             ),
-            pagingSourceFactory = { cardDao.getAllCards(spoiler) }
+            pagingSourceFactory = { cardDao.getAllCards(spoiler, taboo, packIds) }
         ).flow
     }
 
@@ -35,7 +35,9 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
         searchQuery: String,
         includeEnglish: Boolean,
         spoiler: Boolean,
-        language: String
+        language: String,
+        taboo: Boolean,
+        packIds: List<String>
     ): Flow<PagingData<CardListItemProjection>> {
         // Build the FTS query string
         val ftsQuery = if (language == "ru") {
@@ -62,7 +64,7 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
                 enablePlaceholders = false,
                 initialLoadSize = 40
             ),
-            pagingSourceFactory = { cardDao.searchCards(ftsQuery, spoiler) }
+            pagingSourceFactory = { cardDao.searchCards(ftsQuery, spoiler, taboo, packIds) }
         ).flow
     }
 
@@ -71,5 +73,6 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
         else "real_composite:($searchQuery)"
     }
 
-    override fun getCardById(cardId: String): Flow<FullCardProjection> = cardDao.getCardById(cardId)
+    override fun getCardById(cardCode: String, taboo: Boolean, packIds: List<String>): Flow<FullCardProjection> =
+        cardDao.getCardById(cardCode, taboo, packIds)
 }

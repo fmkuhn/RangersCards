@@ -1,5 +1,6 @@
 package com.rangerscards.ui.navigation
 
+import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -87,6 +88,8 @@ import com.rangerscards.ui.settings.SettingsFriendsScreen
 import com.rangerscards.ui.settings.SettingsScreen
 import com.rangerscards.ui.settings.SettingsViewModel
 import com.rangerscards.ui.theme.CustomTheme
+import kotlinx.serialization.json.jsonArray
+import kotlinx.serialization.json.jsonPrimitive
 
 @Composable
 fun RangersNavHost(
@@ -219,10 +222,12 @@ fun RangersNavHost(
                         factory = AppViewModelProvider.Factory,
                         viewModelStoreOwner = backStackEntry
                     )
+                    val user by settingsViewModel.userUiState.collectAsState()
                     if (!isCardsLoading) {
                         CardsScreen(
                             isDarkTheme = isDarkTheme,
                             cardsViewModel = cardsViewModel,
+                            userUIState = user,
                             contentPadding = innerPadding,
                             navigateToCard = { cardIndex ->
                                 navController.navigate(
@@ -263,7 +268,7 @@ fun RangersNavHost(
                         contentPadding = innerPadding
                     )
                     title = ""
-                    actions = {/*TODO: Implement action buttons*/}
+                    actions = null
                     switch = null
                 }
             }
@@ -447,6 +452,8 @@ fun RangersNavHost(
                         factory = AppViewModelProvider.Factory,
                         viewModelStoreOwner = backStackEntry
                     )
+                    val user by settingsViewModel.userUiState.collectAsState()
+                    deckCardsViewModel.setPackIds(user.settings.collection)
                     DeckCardsSearchingListScreen(
                         navigateUp = { navController.navigateUp() },
                         deckViewModel = deckViewModel,
@@ -622,7 +629,7 @@ fun RangersNavHost(
                             CampaignScreen(
                                 campaignViewModel = campaignViewModel,
                                 campaign = campaign.value,
-                                user = user.currentUser,
+                                userUIState = user,
                                 isDarkTheme = isDarkTheme,
                                 navController = navController,
                                 contentPadding = innerPadding

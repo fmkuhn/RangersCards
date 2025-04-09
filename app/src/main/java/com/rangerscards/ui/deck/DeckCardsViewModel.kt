@@ -7,6 +7,7 @@ import androidx.paging.cachedIn
 import com.rangerscards.data.UserPreferencesRepository
 import com.rangerscards.data.database.card.CardDeckListItemProjection
 import com.rangerscards.data.database.repository.DeckRepository
+import com.rangerscards.ui.cards.Quintuple
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,14 +27,8 @@ data class DeckInfo(
     val background: String,
     val specialty: String,
     val rewards: List<String>,
-    val extraSlots: List<String>
-)
-
-data class Quadruple<A, B, C, D>(
-    val first: A,
-    val second: B,
-    val third: C,
-    val forth: D,
+    val extraSlots: List<String>,
+    val taboo: String?,
 )
 
 class DeckCardsViewModel(
@@ -62,16 +57,18 @@ class DeckCardsViewModel(
     private val _typeIndex = MutableStateFlow(0)
     val typeIndex: StateFlow<Int> = _typeIndex.asStateFlow()
 
+    private val _packIds = MutableStateFlow(listOf("core"))
+
     // Exposes the paginated search results as PagingData.
     @OptIn(ExperimentalCoroutinesApi::class)
     val searchResults: Flow<PagingData<CardDeckListItemProjection>> =
-        combine(_searchQuery, _deckInfo, _typeIndex, _showAllSpoilers) { query, deckInfo, typeIndex, showAllSpoilers ->
-            Quadruple(query.trim(), deckInfo, typeIndex, showAllSpoilers)
-        }.flatMapLatest { (query, deckInfo, typeIndex, showAllSpoilers) ->
+        combine(_searchQuery, _deckInfo, _typeIndex, _showAllSpoilers, _packIds) { query, deckInfo, typeIndex, showAllSpoilers, packIds ->
+            Quintuple(query.trim(), deckInfo, typeIndex, showAllSpoilers, packIds)
+        }.flatMapLatest { (query, deckInfo, typeIndex, showAllSpoilers, packIds) ->
             // When the search query or include flag changes, perform a new search.
             if (deckInfo != null) {
                 if (query.isEmpty()) {
-                    deckRepository.getAllCards(deckInfo, typeIndex, showAllSpoilers)
+                    deckRepository.getAllCards(deckInfo, typeIndex, showAllSpoilers, packIds)
                         .catch { throwable ->
                             // Log the error.
                             throwable.printStackTrace()
@@ -85,7 +82,8 @@ class DeckCardsViewModel(
                         includeEnglish = _includeEnglish.value,
                         typeIndex = typeIndex,
                         showAllSpoilers = showAllSpoilers,
-                        language = Locale.getDefault().language.substring(0..1)
+                        language = Locale.getDefault().language.substring(0..1),
+                        packIds = packIds
                     ).catch { throwable ->
                         // Log the error.
                         throwable.printStackTrace()
@@ -116,7 +114,8 @@ class DeckCardsViewModel(
                 background = deck.background,
                 specialty = deck.specialty,
                 rewards = deck.campaignRewards ?: emptyList(),
-                extraSlots = extraSlots
+                extraSlots = extraSlots,
+                taboo = deck.tabooSetId,
             )
         }
     }
@@ -129,5 +128,9 @@ class DeckCardsViewModel(
         _typeIndex.update {
             newIndex
         }
+    }
+
+    fun setPackIds(packIds: List<String>) {
+        _packIds.update { packIds }
     }
 }

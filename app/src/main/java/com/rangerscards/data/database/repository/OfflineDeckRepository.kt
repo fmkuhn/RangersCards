@@ -16,7 +16,8 @@ class OfflineDeckRepository(private val deckDao: DeckDao) : DeckRepository {
 
     override suspend fun getDeck(id: String): Deck = deckDao.getDeckById(id)
 
-    override suspend fun getRole(id: String): RoleCardProjection = deckDao.getRole(id)
+    override suspend fun getRole(code: String, taboo: Boolean): RoleCardProjection =
+        deckDao.getRole(code, taboo)
 
     override suspend fun updateDeck(deck: Deck) = deckDao.updateDeck(deck)
 
@@ -24,32 +25,33 @@ class OfflineDeckRepository(private val deckDao: DeckDao) : DeckRepository {
 
     override suspend fun deleteDeckById(id: String) = deckDao.deleteDeckById(id)
 
-    override fun getCardsByIds(ids: List<String>): Flow<List<CardDeckListItemProjection>> =
-        deckDao.getCardsByIds(ids)
+    override fun getCardsByIds(ids: List<String>, tabooId: String?): Flow<List<CardDeckListItemProjection>> =
+        deckDao.getCardsByIds(ids, tabooId)
 
-    override suspend fun getChangedCardsByIds(ids: List<String>): List<CardDeckListItemProjection> =
-        deckDao.getChangedCardsByIds(ids)
+    override suspend fun getChangedCardsByIds(ids: List<String>, tabooId: String?): List<CardDeckListItemProjection> =
+        deckDao.getChangedCardsByIds(ids, tabooId)
 
     override fun getAllCards(
         deckInfo: DeckInfo,
         typeIndex: Int,
         showAllSpoilers: Boolean,
+        packIds: List<String>
     ): Flow<PagingData<CardDeckListItemProjection>> {
         // Create a Pager that wraps the PagingSource from the DAO.
         val pagingSourceFactory = if (!deckInfo.isUpgrade) {
             when(typeIndex) {
-                0 -> deckDao.getPersonalityCards()
-                1 -> deckDao.getBackgroundCards(deckInfo.background)
-                2 -> deckDao.getSpecialtyCards(deckInfo.specialty)
-                else -> deckDao.getOutsideInterestCards(deckInfo.background, deckInfo.specialty)
+                0 -> deckDao.getPersonalityCards(deckInfo.taboo, packIds)
+                1 -> deckDao.getBackgroundCards(deckInfo.background, deckInfo.taboo, packIds)
+                2 -> deckDao.getSpecialtyCards(deckInfo.specialty, deckInfo.taboo, packIds)
+                else -> deckDao.getOutsideInterestCards(deckInfo.background, deckInfo.specialty, deckInfo.taboo, packIds)
             }
         } else {
             when(typeIndex) {
-                0 -> if (showAllSpoilers) deckDao.getAllRewards()
-                else deckDao.getRewards(deckInfo.rewards)
-                1 -> deckDao.getAllMaladies()
-                2 -> deckDao.getAllCards()
-                else -> deckDao.getExtraCards(deckInfo.extraSlots)
+                0 -> if (showAllSpoilers) deckDao.getAllRewards(deckInfo.taboo, packIds)
+                else deckDao.getRewards(deckInfo.rewards, deckInfo.taboo)
+                1 -> deckDao.getAllMaladies(deckInfo.taboo, packIds)
+                2 -> deckDao.getAllCards(deckInfo.taboo, packIds)
+                else -> deckDao.getExtraCards(deckInfo.extraSlots, deckInfo.taboo)
             }
         }
         return Pager(
@@ -68,7 +70,8 @@ class OfflineDeckRepository(private val deckDao: DeckDao) : DeckRepository {
         includeEnglish: Boolean,
         typeIndex: Int,
         showAllSpoilers: Boolean,
-        language: String
+        language: String,
+        packIds: List<String>
     ): Flow<PagingData<CardDeckListItemProjection>> {
         // Build the FTS query string
         val ftsQuery = if (language == "ru") {
@@ -91,18 +94,18 @@ class OfflineDeckRepository(private val deckDao: DeckDao) : DeckRepository {
         // Create a Pager that wraps the PagingSource from the DAO.
         val pagingSourceFactory = if (!deckInfo.isUpgrade) {
             when(typeIndex) {
-                0 -> deckDao.searchPersonalityCards(ftsQuery)
-                1 -> deckDao.searchBackgroundCards(ftsQuery, deckInfo.background)
-                2 -> deckDao.searchSpecialtyCards(ftsQuery, deckInfo.specialty)
-                else -> deckDao.searchOutsideInterestCards(ftsQuery, deckInfo.background, deckInfo.specialty)
+                0 -> deckDao.searchPersonalityCards(ftsQuery, deckInfo.taboo, packIds)
+                1 -> deckDao.searchBackgroundCards(ftsQuery, deckInfo.background, deckInfo.taboo, packIds)
+                2 -> deckDao.searchSpecialtyCards(ftsQuery, deckInfo.specialty, deckInfo.taboo, packIds)
+                else -> deckDao.searchOutsideInterestCards(ftsQuery, deckInfo.background, deckInfo.specialty, deckInfo.taboo, packIds)
             }
         } else {
             when(typeIndex) {
-                0 -> if (showAllSpoilers) deckDao.searchAllRewards(ftsQuery)
-                else deckDao.searchRewards(ftsQuery, deckInfo.rewards)
-                1 -> deckDao.searchAllMaladies(ftsQuery)
-                2 -> deckDao.searchAllCards(ftsQuery)
-                else -> deckDao.searchExtraCards(ftsQuery, deckInfo.extraSlots)
+                0 -> if (showAllSpoilers) deckDao.searchAllRewards(ftsQuery, deckInfo.taboo, packIds)
+                else deckDao.searchRewards(ftsQuery, deckInfo.rewards, deckInfo.taboo)
+                1 -> deckDao.searchAllMaladies(ftsQuery, deckInfo.taboo, packIds)
+                2 -> deckDao.searchAllCards(ftsQuery, deckInfo.taboo, packIds)
+                else -> deckDao.searchExtraCards(ftsQuery, deckInfo.extraSlots, deckInfo.taboo)
             }
         }
         return Pager(

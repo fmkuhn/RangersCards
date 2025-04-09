@@ -14,14 +14,16 @@ interface CardsRepository {
 
     suspend fun isExists(): Boolean
 
-    fun getAllCards(spoiler: Boolean): Flow<PagingData<CardListItemProjection>>
+    fun getAllCards(spoiler: Boolean, taboo: Boolean, packIds: List<String>): Flow<PagingData<CardListItemProjection>>
 
     fun searchCards(
         searchQuery: String,
         includeEnglish: Boolean,
         spoiler: Boolean,
-        language: String
+        language: String,
+        taboo: Boolean,
+        packIds: List<String>
     ): Flow<PagingData<CardListItemProjection>>
 
-    fun getCardById(cardId: String): Flow<FullCardProjection>
+    fun getCardById(cardCode: String, taboo: Boolean, packIds: List<String>): Flow<FullCardProjection>
 }

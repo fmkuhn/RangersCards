@@ -19,7 +19,7 @@ interface DecksRepository {
 
     fun getCard(id: String): Flow<CardListItemProjection>
 
-    fun getRoles(specialty: String): Flow<PagingData<CardListItemProjection>>
+    fun getRoles(specialty: String, taboo: Boolean, packIds: List<String>): Flow<PagingData<CardListItemProjection>>
 
     suspend fun insertDeck(deck: Deck)
 }

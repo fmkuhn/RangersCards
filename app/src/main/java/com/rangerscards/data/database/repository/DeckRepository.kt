@@ -11,7 +11,7 @@ interface DeckRepository {
 
     suspend fun getDeck(id: String): Deck
 
-    suspend fun getRole(id: String): RoleCardProjection
+    suspend fun getRole(code: String, taboo: Boolean): RoleCardProjection
 
     suspend fun updateDeck(deck: Deck)
 
@@ -19,14 +19,15 @@ interface DeckRepository {
 
     suspend fun deleteDeckById(id: String)
 
-    fun getCardsByIds(ids: List<String>): Flow<List<CardDeckListItemProjection>>
+    fun getCardsByIds(ids: List<String>, tabooId: String?): Flow<List<CardDeckListItemProjection>>
 
-    suspend fun getChangedCardsByIds(ids: List<String>): List<CardDeckListItemProjection>
+    suspend fun getChangedCardsByIds(ids: List<String>, tabooId: String?): List<CardDeckListItemProjection>
 
     fun getAllCards(
         deckInfo: DeckInfo,
         typeIndex: Int,
         showAllSpoilers: Boolean,
+        packIds: List<String>
     ): Flow<PagingData<CardDeckListItemProjection>>
 
     fun searchCards(
@@ -35,6 +36,7 @@ interface DeckRepository {
         includeEnglish: Boolean,
         typeIndex: Int,
         showAllSpoilers: Boolean,
-        language: String
+        language: String,
+        packIds: List<String>
     ): Flow<PagingData<CardDeckListItemProjection>>
 }

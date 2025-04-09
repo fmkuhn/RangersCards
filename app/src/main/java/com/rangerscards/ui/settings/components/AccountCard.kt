@@ -62,7 +62,7 @@ fun AccountCard(
     val context = LocalContext.current.applicationContext
 
     LaunchedEffect(user.currentUser) {
-        if (user.currentUser != null) settingsViewModel.getUserInfo(user.currentUser.uid)
+        if (user.currentUser != null) settingsViewModel.getUserInfo(context, user.currentUser.uid)
         userHandle = user.userInfo?.profile?.userProfile?.handle ?: ""
     }
 

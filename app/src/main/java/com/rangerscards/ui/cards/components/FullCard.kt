@@ -18,6 +18,7 @@ import com.rangerscards.ui.theme.RangersCardsTheme
 
 @Composable
 fun FullCard(
+    tabooId: String?,
     aspectId: String?,
     aspectShortName: String?,
     cost: Int?,
@@ -96,6 +97,7 @@ fun FullCard(
             )
             //Set info
             FullCardSetInfo(
+                tabooId,
                 aspectId,
                 aspectShortName,
                 level,
@@ -118,6 +120,7 @@ fun FullCardScreenPreview() {
                 .fillMaxSize()
         ) {
             FullCard(
+                tabooId = "",
                 aspectId = "AWA",
                 aspectShortName = "AWA",
                 cost = 2,

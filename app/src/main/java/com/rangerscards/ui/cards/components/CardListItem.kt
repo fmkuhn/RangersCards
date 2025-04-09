@@ -49,6 +49,7 @@ import com.rangerscards.ui.theme.RangersCardsTheme
 
 @Composable
 fun CardListItem(
+    tabooId: String?,
     aspectId: String?,
     aspectShortName: String?,
     cost: Int?,
@@ -105,7 +106,7 @@ fun CardListItem(
                         isDarkTheme
                     )
                     if (level != null)
-                        CardListItemLevelContainer(aspectId, aspectShortName, level, isDarkTheme)
+                        CardListItemLevelContainer(tabooId, aspectId, aspectShortName, level, isDarkTheme)
                 }
                 CardListItemDeckInfo(
                     charForAmount,
@@ -293,6 +294,7 @@ fun CardListItemApproachContainer(
 
 @Composable
 fun CardListItemLevelContainer(
+    tabooId: String?,
     aspectId: String?,
     aspectShortName: String?,
     level: Int?,
@@ -309,15 +311,26 @@ fun CardListItemLevelContainer(
         },
         modifier = Modifier.padding(top = 4.dp)
     ) {
-        Text(
-            text = (level ?: 0).toString() + " " + aspectShortName.toString(),
-            color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
-            fontFamily = Jost,
-            fontWeight = FontWeight.Medium,
-            fontSize = 14.sp,
-            lineHeight = 16.sp,
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically,
             modifier = Modifier.padding(horizontal = 4.dp)
-        )
+        ) {
+            Text(
+                text = (level ?: 0).toString() + " " + aspectShortName.toString(),
+                color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
+                fontFamily = Jost,
+                fontWeight = FontWeight.Medium,
+                fontSize = 14.sp,
+                lineHeight = 16.sp,
+            )
+            if (tabooId != null) Icon(
+                painterResource(R.drawable.uncommon_wisdom),
+                contentDescription = null,
+                tint = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
+                modifier = Modifier.size(14.dp)
+            )
+        }
     }
 }
 
@@ -393,6 +406,7 @@ fun CardListItemScreenPreview() {
                 .fillMaxSize()
         ) {
             CardListItem(
+                tabooId = "",
                 aspectId = "AWA",
                 aspectShortName = "AWA",
                 cost = 2,

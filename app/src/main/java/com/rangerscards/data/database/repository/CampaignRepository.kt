@@ -17,7 +17,7 @@ interface CampaignRepository {
 
     suspend fun getCampaignById(id: String): Campaign
 
-    fun getRole(id: String): Flow<RoleCardProjection>
+    fun getRole(id: String, taboo: Boolean): Flow<RoleCardProjection>
 
     fun getAllDecks(userId: String, uploaded: Boolean): Flow<PagingData<DeckListItemProjection>>
 
@@ -25,5 +25,5 @@ interface CampaignRepository {
 
     suspend fun deleteCampaign(id: String)
 
-    fun getRewards(): Flow<List<CardListItemProjection>>
+    fun getRewards(taboo: Boolean, packId: String): Flow<List<CardListItemProjection>>
 }

@@ -22,6 +22,34 @@ query getProfile($id: String!) {
   profile: rangers_users_by_pk(id: $id) {
     ...UserProfile
   }
+  settings: rangers_user_settings_by_pk(user_id: $id) {
+    pack_collection
+    adhere_taboos
+  }
+}
+
+mutation setPackCollection($userId: String!, $pack_collection: jsonb!) {
+  update_rangers_user_settings_by_pk(
+    pk_columns: { user_id: $userId }
+    _set: {
+      pack_collection: $pack_collection
+    }
+  ) {
+    user_id
+    pack_collection
+  }
+}
+
+mutation setAdhereTaboos($userId: String!, $adhereTaboos: Boolean!) {
+  update_rangers_user_settings_by_pk(
+    pk_columns: { user_id: $userId }
+    _set: {
+      adhere_taboos: $adhereTaboos
+    }
+  ) {
+    user_id
+    adhere_taboos
+  }
 }
 
 query getUserInfoByHandle($handle: String!) {
@@ -36,73 +64,35 @@ query getUserInfoByHandle($handle: String!) {
   }
 }
 
-mutation sendFriendRequest($fromUserId:String!, $toUserId:String!) {
-  insert_rangers_friend_status(
-    objects: [
-      {
-        user_id_a: $fromUserId
-        user_id_b: $toUserId
-        status: sent
-      },
-      {
-        user_id_a: $toUserId
-        user_id_b: $fromUserId
-        status: received
-      }
-    ]
-    on_conflict: {
-      constraint: friend_status_pkey
-      update_columns: [status]
-      where: {
-        status: { _neq: friend }
-      }
+mutation sendFriendRequest($toUserId:String!) {
+  rangers_update_friend_request(
+    args: {
+      action: "request"
+      target_user_id: $toUserId
     }
   ) {
-    affected_rows
+    id
   }
 }
 
-mutation acceptFriendRequest($fromUserId:String!, $toUserId:String!) {
-  insert_rangers_friend_status(
-    objects: [
-      {
-        user_id_a: $fromUserId
-        user_id_b: $toUserId
-        status: friend
-      },
-      {
-        user_id_a: $toUserId
-        user_id_b: $fromUserId
-        status: friend
-      }
-    ]
-    on_conflict: {
-      constraint: friend_status_pkey
-      update_columns: [status]
-      where: {
-        status: { _neq: friend }
-      }
+mutation acceptFriendRequest($toUserId:String!) {
+  rangers_update_friend_request(
+    args: {
+      action: "request"
+      target_user_id: $toUserId
     }
   ) {
-    affected_rows
+    id
   }
 }
 
-mutation rejectFriendRequest($fromUserId:String!, $toUserId:String!) {
-  delete_rangers_friend_status(
-    where: {
-      _or: [
-        {
-          user_id_a: { _eq: $fromUserId }
-          user_id_b: { _eq: $toUserId }
-        },
-        {
-          user_id_a: { _eq: $toUserId }
-          user_id_b: { _eq: $fromUserId }
-        }
-      ]
+mutation rejectFriendRequest($toUserId:String!) {
+  rangers_update_friend_request(
+    args: {
+      action: "revoke"
+      target_user_id: $toUserId
     }
   ) {
-    affected_rows
+    id
   }
 }

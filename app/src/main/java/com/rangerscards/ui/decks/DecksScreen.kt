@@ -73,7 +73,7 @@ fun DecksScreen(
             userId = user.currentUser?.uid.toString()
             decksViewModel.onSearchQueryChanged(" ")
             decksViewModel.clearSearchQuery()
-            if (user.currentUser != null) settingsViewModel.getUserInfo(user.currentUser!!.uid)
+            if (user.currentUser != null) settingsViewModel.getUserInfo(context, user.currentUser!!.uid)
         }
     }
 

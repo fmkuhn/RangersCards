@@ -4,6 +4,9 @@ import androidx.room.ColumnInfo
 
 data class CardDeckListItemProjection(
     val id: String,
+    val code: String,
+    @ColumnInfo(name = "taboo_id")
+    val tabooId: String?,
     val name: String?,
     @ColumnInfo(name = "approach_conflict")
     val approachConflict: Int?,

@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.aspectRatio
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.InlineTextContent
@@ -40,6 +41,7 @@ import com.rangerscards.ui.theme.Jost
 
 @Composable
 fun FullDeckRoleItem(
+    tabooId: String?,
     imageSrc: String?,
     name: String,
     text: AnnotatedString,
@@ -79,15 +81,26 @@ fun FullDeckRoleItem(
         Column(
             modifier = Modifier.weight(1f),
         ) {
-            Text(
-                text = name,
-                color = CustomTheme.colors.d30,
-                fontFamily = Jost,
-                fontWeight = FontWeight.Medium,
-                fontSize = 18.sp,
-                maxLines = 1,
-                overflow = TextOverflow.Ellipsis,
-            )
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = name,
+                    color = CustomTheme.colors.d30,
+                    fontFamily = Jost,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 18.sp,
+                    maxLines = 1,
+                    overflow = TextOverflow.Ellipsis,
+                )
+                if (tabooId != null) Icon(
+                    painterResource(R.drawable.uncommon_wisdom),
+                    contentDescription = null,
+                    tint = CustomTheme.colors.d30,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
             Text(
                 text = text,
                 color = CustomTheme.colors.d20,

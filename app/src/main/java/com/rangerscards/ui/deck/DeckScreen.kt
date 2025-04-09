@@ -115,11 +115,11 @@ fun DeckScreen(
             it.setTypeId == "specialty" -> if (it.setId == deck!!.specialty) "specialty" else "outsideInterest"
             else -> "other"
         }
-    }?.mapValues { (_, cards) -> cards.associateWith { (values!!.slots[it.id] ?: 0) } }
+    }?.mapValues { (_, cards) -> cards.associateWith { (values!!.slots[it.code] ?: 0) } }
     val orderedSlots = listOf("personality", "background", "specialty", "outsideInterest", "other")
         .associateWith { key -> slots?.get(key) }
     val extraSlots = deckViewModel.extraSlotsCardsFlow.collectAsState(null).value
-        ?.associate { card -> card to (values!!.extraSlots[card.id] ?: 0) }
+        ?.associate { card -> card to (values!!.extraSlots[card.code] ?: 0) }
     val changedCards = deckViewModel.changedCards.collectAsState()
     val deckProblems = deckViewModel.deckProblemsFlow.collectAsState(deck?.problems to (0 to null))
     var showActionDialog by rememberSaveable { mutableStateOf<DialogType?>(null) }
@@ -490,12 +490,13 @@ fun DeckScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     item(key = "description/${deckId}") {
-                        if (role == null) deckViewModel.getRole(deck.roleId)
+                        if (role == null) deckViewModel.getRole(deck.roleId, deck.tabooSetId != null)
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
                         ) {
                             FullDeckRoleItem(
+                                tabooId = role?.tabooId,
                                 imageSrc = role?.realImageSrc,
                                 name = role?.name.toString(),
                                 text = CardTextParser.parseCustomText(role?.text.toString(), null),
@@ -626,6 +627,7 @@ fun DeckScreen(
                                     value?.forEach { (card, amount) ->
                                         key(card.id) {
                                             CardListItem(
+                                                tabooId = card.tabooId,
                                                 aspectId = card.aspectId,
                                                 aspectShortName = card.aspectShortName,
                                                 cost = card.cost,
@@ -643,19 +645,19 @@ fun DeckScreen(
                                                 onRemoveClick = if (isEditing) {
                                                     {
                                                         deckViewModel.removeCard(
-                                                            card.id,
+                                                            card.code,
                                                             card.setId
                                                         )
                                                     }
                                                 } else null,
                                                 onRemoveEnabled = amount > 0,
                                                 onAddClick = if (isEditing) {
-                                                    { deckViewModel.addCard(card.id) }
+                                                    { deckViewModel.addCard(card.code) }
                                                 } else null,
                                                 onAddEnabled = amount != card.deckLimit,
                                                 onClick = {
                                                     navController.navigate(
-                                                        "deck/card/${card.id}"
+                                                        "deck/card/${card.code}"
                                                     ) {
                                                         launchSingleTop = true
                                                     }
@@ -684,6 +686,7 @@ fun DeckScreen(
                                     value?.forEach { (card, amount) ->
                                         key(card.id) {
                                             CardListItem(
+                                                tabooId = card.tabooId,
                                                 aspectId = card.aspectId,
                                                 aspectShortName = card.aspectShortName,
                                                 cost = card.cost,
@@ -701,19 +704,19 @@ fun DeckScreen(
                                                 onRemoveClick = if (isEditing) {
                                                     {
                                                         deckViewModel.removeCard(
-                                                            card.id,
+                                                            card.code,
                                                             card.setId
                                                         )
                                                     }
                                                 } else null,
                                                 onRemoveEnabled = amount > 0,
                                                 onAddClick = if (isEditing) {
-                                                    { deckViewModel.addCard(card.id) }
+                                                    { deckViewModel.addCard(card.code) }
                                                 } else null,
                                                 onAddEnabled = amount != card.deckLimit,
                                                 onClick = {
                                                     navController.navigate(
-                                                        "deck/card/${card.id}"
+                                                        "deck/card/${card.code}"
                                                     ) {
                                                         launchSingleTop = true
                                                     }
@@ -742,6 +745,7 @@ fun DeckScreen(
                                     value?.forEach { (card, amount) ->
                                         key(card.id) {
                                             CardListItem(
+                                                tabooId = card.tabooId,
                                                 aspectId = card.aspectId,
                                                 aspectShortName = card.aspectShortName,
                                                 cost = card.cost,
@@ -759,19 +763,19 @@ fun DeckScreen(
                                                 onRemoveClick = if (isEditing) {
                                                     {
                                                         deckViewModel.removeCard(
-                                                            card.id,
+                                                            card.code,
                                                             card.setId
                                                         )
                                                     }
                                                 } else null,
                                                 onRemoveEnabled = amount > 0,
                                                 onAddClick = if (isEditing) {
-                                                    { deckViewModel.addCard(card.id) }
+                                                    { deckViewModel.addCard(card.code) }
                                                 } else null,
                                                 onAddEnabled = amount != card.deckLimit,
                                                 onClick = {
                                                     navController.navigate(
-                                                        "deck/card/${card.id}"
+                                                        "deck/card/${card.code}"
                                                     ) {
                                                         launchSingleTop = true
                                                     }
@@ -838,6 +842,7 @@ fun DeckScreen(
                                     value?.forEach { (card, amount) ->
                                         key(card.id) {
                                             CardListItem(
+                                                tabooId = card.tabooId,
                                                 aspectId = card.aspectId,
                                                 aspectShortName = card.aspectShortName,
                                                 cost = card.cost,
@@ -855,19 +860,19 @@ fun DeckScreen(
                                                 onRemoveClick = if (isEditing) {
                                                     {
                                                         deckViewModel.removeCard(
-                                                            card.id,
+                                                            card.code,
                                                             card.setId
                                                         )
                                                     }
                                                 } else null,
                                                 onRemoveEnabled = amount > 0,
                                                 onAddClick = if (isEditing) {
-                                                    { deckViewModel.addCard(card.id) }
+                                                    { deckViewModel.addCard(card.code) }
                                                 } else null,
                                                 onAddEnabled = amount != card.deckLimit,
                                                 onClick = {
                                                     navController.navigate(
-                                                        "deck/card/${card.id}"
+                                                        "deck/card/${card.code}"
                                                     ) {
                                                         launchSingleTop = true
                                                     }
@@ -895,6 +900,7 @@ fun DeckScreen(
                                     value?.forEach { (card, amount) ->
                                         key(card.id) {
                                             CardListItem(
+                                                tabooId = card.tabooId,
                                                 aspectId = card.aspectId,
                                                 aspectShortName = card.aspectShortName,
                                                 cost = card.cost,
@@ -912,19 +918,19 @@ fun DeckScreen(
                                                 onRemoveClick = if (isEditing) {
                                                     {
                                                         deckViewModel.removeCard(
-                                                            card.id,
+                                                            card.code,
                                                             card.setId
                                                         )
                                                     }
                                                 } else null,
                                                 onRemoveEnabled = amount > 0,
                                                 onAddClick = if (isEditing) {
-                                                    { deckViewModel.addCard(card.id) }
+                                                    { deckViewModel.addCard(card.code) }
                                                 } else null,
                                                 onAddEnabled = amount != card.deckLimit,
                                                 onClick = {
                                                     navController.navigate(
-                                                        "deck/card/${card.id}"
+                                                        "deck/card/${card.code}"
                                                     ) {
                                                         launchSingleTop = true
                                                     }
@@ -945,6 +951,7 @@ fun DeckScreen(
                                 key(card.id) {
                                     val currentAmount = values?.slots?.get(card.id) ?: 0
                                     CardListItem(
+                                        tabooId = card.tabooId,
                                         aspectId = card.aspectId,
                                         aspectShortName = card.aspectShortName,
                                         cost = card.cost,
@@ -960,16 +967,16 @@ fun DeckScreen(
                                         isDarkTheme = isDarkTheme,
                                         currentAmount = currentAmount,
                                         onRemoveClick = if (isEditing) {
-                                            { deckViewModel.removeCard(card.id, card.setId) }
+                                            { deckViewModel.removeCard(card.code, card.setId) }
                                         } else null,
                                         onRemoveEnabled = currentAmount > 0,
                                         onAddClick = if (isEditing) {
-                                            { deckViewModel.addCard(card.id) }
+                                            { deckViewModel.addCard(card.code) }
                                         } else null,
                                         onAddEnabled = currentAmount != card.deckLimit,
                                         onClick = {
                                             navController.navigate(
-                                                "deck/card/${card.id}"
+                                                "deck/card/${card.code}"
                                             ) {
                                                 launchSingleTop = true
                                             }
@@ -991,6 +998,7 @@ fun DeckScreen(
                                         cards.forEach { card ->
                                             key(card.id) {
                                                 CardListItem(
+                                                    tabooId = card.tabooId,
                                                     aspectId = card.aspectId,
                                                     aspectShortName = card.aspectShortName,
                                                     cost = card.cost,
@@ -1005,10 +1013,10 @@ fun DeckScreen(
                                                     level = card.level,
                                                     isDarkTheme = isDarkTheme,
                                                     charForAmount = "+",
-                                                    currentAmount = deck.addedCards[card.id],
+                                                    currentAmount = deck.addedCards[card.code],
                                                     onClick = {
                                                         navController.navigate(
-                                                            "deck/card/${card.id}"
+                                                            "deck/card/${card.code}"
                                                         ) {
                                                             launchSingleTop = true
                                                         }
@@ -1023,6 +1031,7 @@ fun DeckScreen(
                                         cards.forEach { card ->
                                             key(card.id) {
                                                 CardListItem(
+                                                    tabooId = card.tabooId,
                                                     aspectId = card.aspectId,
                                                     aspectShortName = card.aspectShortName,
                                                     cost = card.cost,
@@ -1036,10 +1045,10 @@ fun DeckScreen(
                                                     traits = card.typeName,
                                                     level = card.level,
                                                     isDarkTheme = isDarkTheme,
-                                                    currentAmount = deck.removedCards[card.id],
+                                                    currentAmount = deck.removedCards[card.code],
                                                     onClick = {
                                                         navController.navigate(
-                                                            "deck/card/${card.id}"
+                                                            "deck/card/${card.code}"
                                                         ) {
                                                             launchSingleTop = true
                                                         }
@@ -1054,6 +1063,7 @@ fun DeckScreen(
                                         cards.forEach { card ->
                                             key(card.id) {
                                                 CardListItem(
+                                                    tabooId = card.tabooId,
                                                     aspectId = card.aspectId,
                                                     aspectShortName = card.aspectShortName,
                                                     cost = card.cost,
@@ -1068,10 +1078,10 @@ fun DeckScreen(
                                                     level = card.level,
                                                     isDarkTheme = isDarkTheme,
                                                     charForAmount = "+",
-                                                    currentAmount = deck.addedCollectionCards[card.id],
+                                                    currentAmount = deck.addedCollectionCards[card.code],
                                                     onClick = {
                                                         navController.navigate(
-                                                            "deck/card/${card.id}"
+                                                            "deck/card/${card.code}"
                                                         ) {
                                                             launchSingleTop = true
                                                         }
@@ -1086,6 +1096,7 @@ fun DeckScreen(
                                         cards.forEach { card ->
                                             key(card.id) {
                                                 CardListItem(
+                                                    tabooId = card.tabooId,
                                                     aspectId = card.aspectId,
                                                     aspectShortName = card.aspectShortName,
                                                     cost = card.cost,
@@ -1099,10 +1110,10 @@ fun DeckScreen(
                                                     traits = card.typeName,
                                                     level = card.level,
                                                     isDarkTheme = isDarkTheme,
-                                                    currentAmount = deck.returnedCollectionCards[card.id],
+                                                    currentAmount = deck.returnedCollectionCards[card.code],
                                                     onClick = {
                                                         navController.navigate(
-                                                            "deck/card/${card.id}"
+                                                            "deck/card/${card.code}"
                                                         ) {
                                                             launchSingleTop = true
                                                         }
@@ -1116,12 +1127,19 @@ fun DeckScreen(
                         }
                     }
                 }
+                val isTabooSet = deck.tabooSetId != null
                 DeckRightSideDrawer(
                     isOpen = drawerOpen,
                     onClick = { drawerOpen = !drawerOpen },
                     deckName = deck.name,
                     deckId = if (deck.uploaded) deckId else null,
                     changeName = { showInputDialog = DialogWithInputType.Name },
+                    setTaboo = { coroutine.launch { showLoadingDialog = true
+                        deckViewModel.setDeckTaboo(!isTabooSet, user, deckProblems.value.first)
+                    }.invokeOnCompletion { showLoadingDialog = false
+                        deckViewModel.loadDeck(deckId)
+                    } },
+                    isTabooSet = isTabooSet,
                     toNotes = { /*TODO:Implement notes*/ },
                     toCharts = { /*TODO:Implement charts*/ },
                     camp = if (deck.nextId == null) {{ if (deckProblems.value.first.orEmpty().isNotEmpty()) {

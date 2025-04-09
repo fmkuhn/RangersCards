@@ -14,12 +14,14 @@ import com.rangerscards.DeleteDeckMutation
 import com.rangerscards.GetDeckQuery
 import com.rangerscards.R
 import com.rangerscards.SaveDeckMutation
+import com.rangerscards.SaveDeckTabooSetMutation
 import com.rangerscards.UpgradeDeckMutation
 import com.rangerscards.data.database.card.CardDeckListItemProjection
 import com.rangerscards.data.database.deck.Deck
 import com.rangerscards.data.database.deck.RoleCardProjection
 import com.rangerscards.data.database.repository.CampaignRepository
 import com.rangerscards.data.database.repository.DeckRepository
+import com.rangerscards.ui.decks.CURRENT_TABOO_SET
 import com.rangerscards.ui.decks.getCurrentDateTime
 import com.rangerscards.ui.decks.toDeck
 import kotlinx.collections.immutable.PersistentMap
@@ -56,6 +58,7 @@ data class FullDeckState(
     val id: String,
     val uploaded: Boolean,
     val userId: String,
+    val tabooSetId: String?,
     val userHandle: String?,
     val version: Int,
     val name: String,
@@ -127,14 +130,14 @@ class DeckViewModel(
     // Create flows that fetch the corresponding cards from Room.
     @OptIn(ExperimentalCoroutinesApi::class)
     val slotsCardsFlow: Flow<List<CardDeckListItemProjection>> = _updatableValues
-        .filterNotNull().map { it.slots.keys.toList() }.distinctUntilChanged().flatMapLatest {
-            deckRepository.getCardsByIds(it)
+        .filterNotNull().map { it.slots.keys.toList() to _originalDeck.value?.tabooSetId }.distinctUntilChanged().flatMapLatest {
+            deckRepository.getCardsByIds(it.first, it.second)
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
     val extraSlotsCardsFlow: Flow<List<CardDeckListItemProjection>> = _updatableValues
-        .filterNotNull().map { it.extraSlots.keys.toList() }.distinctUntilChanged().flatMapLatest {
-            deckRepository.getCardsByIds(it)
+        .filterNotNull().map { it.extraSlots.keys.toList() to _originalDeck.value?.tabooSetId }.distinctUntilChanged().flatMapLatest {
+            deckRepository.getCardsByIds(it.first, it.second)
         }
 
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -174,14 +177,15 @@ class DeckViewModel(
                     _originalDeck.value!!.removedCards.isNotEmpty() ||
                     _originalDeck.value!!.addedCollectionCards.isNotEmpty() ||
                     _originalDeck.value!!.returnedCollectionCards.isNotEmpty()) {
+                    val originalDeck = _originalDeck.value!!
                     val added = deckRepository
-                        .getChangedCardsByIds(_originalDeck.value!!.addedCards.keys.toList())
+                        .getChangedCardsByIds(originalDeck.addedCards.keys.toList(), originalDeck.tabooSetId)
                     val removed = deckRepository
-                        .getChangedCardsByIds(_originalDeck.value!!.removedCards.keys.toList())
+                        .getChangedCardsByIds(originalDeck.removedCards.keys.toList(), originalDeck.tabooSetId)
                     val addedCollection = deckRepository
-                        .getChangedCardsByIds(_originalDeck.value!!.addedCollectionCards.keys.toList())
+                        .getChangedCardsByIds(originalDeck.addedCollectionCards.keys.toList(), originalDeck.tabooSetId)
                     val returnedCollection = deckRepository
-                        .getChangedCardsByIds(_originalDeck.value!!.returnedCollectionCards.keys.toList())
+                        .getChangedCardsByIds(originalDeck.returnedCollectionCards.keys.toList(), originalDeck.tabooSetId)
                     _changedCards.update {
                         mapOf(
                             R.string.deck_changes_added to added,
@@ -273,10 +277,10 @@ class DeckViewModel(
         if (checkStats[0] != 1 || checkStats[1] != 1) problems.add("invalid_aspects")
         var splashCount = 0
         var splashResId: Int? = null
-        val deckSize = cards.associateWith { updatableValues.value!!.slots[it.id] }
+        val deckSize = cards.associateWith { updatableValues.value!!.slots[it.code] }
             .entries.sumOf { if (it.key.setId != "malady") it.value ?: 0 else 0 }
         cards.forEach { card ->
-            val cardCount = updatableValues.value!!.slots[card.id] ?: 0
+            val cardCount = updatableValues.value!!.slots[card.code] ?: 0
             if (cardCount > 2) {
                 if (card.setId != "malady" && !problems.contains("too_many_duplicates")) {
                     problems.add("too_many_duplicates")
@@ -310,7 +314,7 @@ class DeckViewModel(
                 "SPI" to 0
             )
             cards.forEach { card ->
-                val cardCount = updatableValues.value!!.slots[card.id] ?: 0
+                val cardCount = updatableValues.value!!.slots[card.code] ?: 0
                 when(card.setId) {
                     "personality" -> {
                         if (card.aspectId != null) {
@@ -367,7 +371,7 @@ class DeckViewModel(
                                 if (card.setId == originalDeck.value!!.specialty) {
                                     specialtyCount += cardCount
                                     if (card.realTraits == null || !card.realTraits.contains("Expert")) {
-                                        specialtyNonExpert += updatableValues.value!!.slots[card.id] ?: 0
+                                        specialtyNonExpert += cardCount
                                     }
                                     if (specialtyCount > 10) {
                                         if (specialtyCount > 12 || splashCount >= 2) {
@@ -547,9 +551,9 @@ class DeckViewModel(
         isEditing.update { false }
     }
 
-    fun getRole(id: String) {
+    fun getRole(id: String, taboo: Boolean) {
         viewModelScope.launch {
-            val role = deckRepository.getRole(id)
+            val role = deckRepository.getRole(id, taboo)
             _role.update { role }
         }
     }
@@ -841,6 +845,28 @@ class DeckViewModel(
             }
         }
     }
+
+    suspend fun setDeckTaboo(taboo: Boolean, user: FirebaseUser?, problems: List<String>?) {
+        if (originalDeck.value!!.uploaded) {
+            val token = user!!.getIdToken(true).await().token
+            val newDeck = apolloClient.mutation(SaveDeckTabooSetMutation(
+                id = originalDeck.value!!.id.toInt(),
+                tabooSetId = if (taboo) Optional.present(CURRENT_TABOO_SET) else Optional.absent(),
+            )).addHttpHeader("Authorization", "Bearer $token").execute()
+            if (newDeck.data != null) {
+                deckRepository.updateDeck(
+                    newDeck.data!!.update_rangers_deck_by_pk!!.deck.toDeck(true)
+                )
+            }
+        } else {
+            deckRepository.updateDeck(originalDeck.value!!.toDeck(
+                updatableValues.value!!, problems
+            ).copy(
+                tabooSetId = if (taboo) CURRENT_TABOO_SET else null,
+                updatedAt = getCurrentDateTime()
+            ))
+        }
+    }
 }
 
 fun JsonElement.toPersistentMap(): PersistentMap<String, Int> {
@@ -852,6 +878,7 @@ fun Deck.toDeckState(): FullDeckState {
         id = this.id,
         uploaded = this.uploaded,
         userId = this.userId,
+        tabooSetId = this.tabooSetId,
         userHandle = this.userHandle,
         version = this.version,
         name = this.name,
@@ -878,6 +905,7 @@ fun FullDeckState.toDeck(values: OftenUpdatableDeckValues, problems: List<String
         id = this.id,
         uploaded = this.uploaded,
         userId = this.userId,
+        tabooSetId = this.tabooSetId,
         userHandle = this.userHandle,
         slots = buildJsonObject { values.slots.forEach { (key, value) -> put(key, value) } },
         sideSlots = buildJsonObject { values.sideSlots.forEach { (key, value) -> put(key, value) } },
