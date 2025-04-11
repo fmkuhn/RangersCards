@@ -25,7 +25,11 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -63,7 +67,8 @@ fun CampaignRewardFullScreen(
             ),
     ) { page ->
         val cardCode = rewards.value[page].code
-        val isAdded = campaignState!!.rewards.contains(cardCode)
+        var isAdded by remember { mutableStateOf(campaignState!!.rewards.contains(cardCode)) }
+        var currentIsAdded by remember { mutableIntStateOf(if (isAdded) 2 else 0) }
         val fullCard by campaignViewModel.getRewardById(cardCode).collectAsState(null)
         Box(modifier = Modifier.fillMaxSize()) {
             if (fullCard == null) Column(
@@ -127,6 +132,8 @@ fun CampaignRewardFullScreen(
                         IconButton(
                             onClick = { coroutine.launch {
                                 campaignViewModel.removeCampaignReward(cardCode, user)
+                            }.invokeOnCompletion { currentIsAdded = 0
+                                isAdded = !isAdded
                             } },
                             colors = IconButtonDefaults.iconButtonColors()
                                 .copy(containerColor = Color.Transparent),
@@ -152,7 +159,7 @@ fun CampaignRewardFullScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = (if (isAdded) 2 else 0).toString(),
+                                    text = currentIsAdded.toString(),
                                     color = CustomTheme.colors.d10,
                                     fontFamily = Jost,
                                     fontWeight = FontWeight.Normal,
@@ -161,8 +168,10 @@ fun CampaignRewardFullScreen(
                             }
                         }
                         IconButton(
-                            onClick = { coroutine.launch {
+                            onClick = { coroutine.launch { currentIsAdded = 2
                                 campaignViewModel.addCampaignReward(cardCode, user)
+                            }.invokeOnCompletion { currentIsAdded = 2
+                                isAdded = !isAdded
                             } },
                             colors = IconButtonDefaults.iconButtonColors()
                                 .copy(containerColor = Color.Transparent),
