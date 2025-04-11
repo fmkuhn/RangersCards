@@ -69,6 +69,17 @@ class UserPreferencesRepository(
             preferences[COLLECTION]?.split(",")?.filter { it.isNotBlank() } ?: listOf("core")
         }
 
+    val cardsUpdatedAt: Flow<String> = dataStore.data.catch {
+        if (it is IOException) {
+            Log.e(TAG, "Error reading preferences.", it)
+            emit(emptyPreferences())
+        } else {
+            throw it
+        }
+    }.map { preferences ->
+        preferences[CARDS_UPDATED_AT] ?: ""
+    }
+
     private companion object {
         val THEME = intPreferencesKey("theme")
         const val TAG = "UserPreferencesRepo"
@@ -106,20 +117,6 @@ class UserPreferencesRepository(
         dataStore.edit { preferences ->
             preferences[COLLECTION] = collection.joinToString(",")
         }
-    }
-
-    fun getCarsUpdatedAt(): Flow<String> {
-        val carsUpdatedAt = dataStore.data.catch {
-            if (it is IOException) {
-                Log.e(TAG, "Error reading preferences.", it)
-                emit(emptyPreferences())
-            } else {
-                throw it
-            }
-        }.map { preferences ->
-            preferences[CARDS_UPDATED_AT] ?: ""
-        }
-        return carsUpdatedAt
     }
 
     fun compareTimestamps(timestamp1: String, timestamp2: String): Boolean {

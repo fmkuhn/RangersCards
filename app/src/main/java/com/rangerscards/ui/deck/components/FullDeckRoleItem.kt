@@ -35,6 +35,7 @@ import androidx.compose.ui.unit.sp
 import coil3.compose.AsyncImage
 import coil3.request.ImageRequest
 import com.rangerscards.R
+import com.rangerscards.data.objects.CardTextParser
 import com.rangerscards.data.objects.ImageSrc
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
@@ -101,13 +102,16 @@ fun FullDeckRoleItem(
                     modifier = Modifier.size(24.dp)
                 )
             }
-            Text(
+            BasicText(
                 text = text,
-                color = CustomTheme.colors.d20,
-                fontFamily = Jost,
-                fontWeight = FontWeight.Normal,
-                fontSize = 16.sp,
-                lineHeight = 18.sp,
+                inlineContent = CardTextParser.inlineIconsMap,
+                style = TextStyle(
+                    color = CustomTheme.colors.d30,
+                    fontFamily = Jost,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 16.sp,
+                    lineHeight = 18.sp,
+                )
             )
             if (campaignName != null) {
                 val iconId = "campaign"

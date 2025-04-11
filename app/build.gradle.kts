@@ -16,8 +16,8 @@ android {
         applicationId = "com.rangerscards"
         minSdk = 24
         targetSdk = 35
-        versionCode = 6
-        versionName = "1.1.2"
+        versionCode = 7
+        versionName = "1.1.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -70,10 +70,10 @@ dependencies {
     implementation("com.apollographql.apollo:apollo-normalized-cache-sqlite:4.1.1")
 
     //Import Room
-    implementation("androidx.room:room-ktx:2.7.0")
-    implementation("androidx.room:room-runtime:2.7.0")
-    implementation("androidx.room:room-paging:2.7.0")
-    ksp("androidx.room:room-compiler:2.7.0")
+    implementation("androidx.room:room-ktx:2.6.1")
+    implementation("androidx.room:room-runtime:2.6.1")
+    implementation("androidx.room:room-paging:2.6.1")
+    ksp("androidx.room:room-compiler:2.6.1")
 
     //Import Paging
     implementation("androidx.paging:paging-runtime-ktx:3.3.6")

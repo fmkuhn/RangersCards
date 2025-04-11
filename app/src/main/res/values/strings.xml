@@ -94,6 +94,8 @@
     <string name="fit_styled_card_text">FIT</string>
     <string name="foc_styled_card_text">FOC</string>
     <string name="spi_styled_card_text">SPI</string>
+    <string name="show_card_image">Show card image</string>
+    <string name="hide_card_image">Hide card image</string>
 
     //Decks screen
     <string name="traveler_background">Traveler</string>

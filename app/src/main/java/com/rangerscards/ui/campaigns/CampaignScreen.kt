@@ -546,7 +546,8 @@ fun CampaignScreen(
                         ) {
                             launchSingleTop = true
                         } },
-                        onUploadCampaign = if (!campaignState!!.uploaded) { { if (campaignState!!.decks.isNotEmpty())
+                        onUploadCampaign = if (!campaignState!!.uploaded && userUIState.currentUser != null)
+                        { { if (campaignState!!.decks.isNotEmpty())
                             Toast.makeText(
                                 context,
                                 context.getString(R.string.upload_campaign_warning),

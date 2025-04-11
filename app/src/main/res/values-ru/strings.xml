@@ -79,6 +79,8 @@
     <string name="fit_styled_card_text">ВЫН</string>
     <string name="foc_styled_card_text">КОН</string>
     <string name="spi_styled_card_text">ДУХ</string>
+    <string name="show_card_image">Показать изображение карты</string>
+    <string name="hide_card_image">Скрыть изображение карты</string>
     <string name="traveler_background">Путник</string>
     <string name="shepherd_background">Пастух</string>
     <string name="forager_background">Добытчик</string>

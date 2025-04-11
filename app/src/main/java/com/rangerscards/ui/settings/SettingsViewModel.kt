@@ -13,7 +13,6 @@ import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.apolloStore
 import com.apollographql.apollo.cache.normalized.fetchPolicy
-import com.apollographql.apollo.exception.ApolloNetworkException
 import com.google.firebase.Firebase
 import com.google.firebase.auth.EmailAuthProvider
 import com.google.firebase.auth.FirebaseUser
@@ -94,6 +93,16 @@ class SettingsViewModel(
                 _userUiState.update {
                     it.copy(settings = it.settings.copy(collection = collection))
                 }
+            }
+        }
+    }
+
+    private var _cardsUpdatedAt = MutableStateFlow("")
+
+    init {
+        viewModelScope.launch {
+            userPreferencesRepository.cardsUpdatedAt.collect { updateAt ->
+                _cardsUpdatedAt.update { updateAt }
             }
         }
     }
@@ -311,24 +320,25 @@ class SettingsViewModel(
     }
 
     private fun downloadCards(context: Context) {
-        if (!isConnected(context)) return
+        //if (!isConnected(context)) return
         _isCardsLoading.update { true }
         viewModelScope.launch {
             val language = _userUiState.value.language
             val response = apolloClient.query(GetAllCardsQuery(language))
                 .fetchPolicy(FetchPolicy.NetworkOnly).execute()
             if (response.data != null) {
-                if (cardsRepository.isExists())
+                if (cardsRepository.isExists()) {
                     cardsRepository.updateAllCards(response.data!!.cards.toCards(language))
-                else {
+                    userPreferencesRepository.saveCardsUpdatedTimestamp(
+                        response.data!!.all_updated_at[0].updated_at.toString()
+                    )
+                    _cardsUpdatedAt.update { response.data!!.all_updated_at[0].updated_at.toString() }
+                } else {
                     cardsRepository.upsertAllCards(response.data!!.cards.toCards(language))
-                }
-                if (response.errors.orEmpty().isEmpty()
-                    && response.exception !is ApolloNetworkException) {
-                    if (response.data!!.all_updated_at.isNotEmpty())
-                        userPreferencesRepository.saveCardsUpdatedTimestamp(
-                            response.data!!.all_updated_at[0].updated_at.toString()
-                        )
+                    userPreferencesRepository.saveCardsUpdatedTimestamp(
+                        response.data!!.all_updated_at[0].updated_at.toString()
+                    )
+                    _cardsUpdatedAt.update { response.data!!.all_updated_at[0].updated_at.toString() }
                 }
             }
         }.invokeOnCompletion {
@@ -343,18 +353,13 @@ class SettingsViewModel(
            val response = apolloClient.query(GetCardsUpdatedAtQuery(_userUiState.value.language))
                .fetchPolicy(FetchPolicy.NetworkOnly).execute()
            if (response.data != null) {
-               userPreferencesRepository.getCarsUpdatedAt().collect {
-                   if (userPreferencesRepository.compareTimestamps(
-                           it,
-                           if (response.data!!.card_updated_at.isNotEmpty())
-                               response.data!!.card_updated_at[0].updated_at.toString()
-                           else ""
-                       )) {
-                       downloadCards(context)
-                   }
-                   else {
-                       _isCardsLoading.update { false }
-                   }
+               if (userPreferencesRepository.compareTimestamps(
+                       _cardsUpdatedAt.value,
+                       response.data!!.card_updated_at.getOrNull(0)?.updated_at.toString()
+               )) {
+                   downloadCards(context)
+               } else {
+                   _isCardsLoading.update { false }
                }
            }
         }
