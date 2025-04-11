@@ -28,7 +28,6 @@ abstract class RangersDatabase : RoomDatabase() {
         fun getDatabase(context: Context): RangersDatabase {
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(context, RangersDatabase::class.java, "rangers_database")
-                    .fallbackToDestructiveMigration()
                     .build()
                     .also { Instance = it }
             }
