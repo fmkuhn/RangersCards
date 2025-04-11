@@ -325,9 +325,10 @@ class SettingsViewModel(
                 }
                 if (response.errors.orEmpty().isEmpty()
                     && response.exception !is ApolloNetworkException) {
-                    userPreferencesRepository.saveCardsUpdatedTimestamp(
-                        response.data!!.all_updated_at[0].updated_at.toString()
-                    )
+                    if (response.data!!.all_updated_at.isNotEmpty())
+                        userPreferencesRepository.saveCardsUpdatedTimestamp(
+                            response.data!!.all_updated_at[0].updated_at.toString()
+                        )
                 }
             }
         }.invokeOnCompletion {
@@ -345,7 +346,9 @@ class SettingsViewModel(
                userPreferencesRepository.getCarsUpdatedAt().collect {
                    if (userPreferencesRepository.compareTimestamps(
                            it,
-                           response.data!!.card_updated_at[0].updated_at.toString()
+                           if (response.data!!.card_updated_at.isNotEmpty())
+                               response.data!!.card_updated_at[0].updated_at.toString()
+                           else ""
                        )) {
                        downloadCards(context)
                    }

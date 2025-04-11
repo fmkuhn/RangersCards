@@ -35,6 +35,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
 import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.R
+import com.rangerscards.data.objects.CampaignMaps
 import com.rangerscards.ui.campaigns.CampaignViewModel
 import com.rangerscards.ui.campaigns.components.CampaignDialog
 import com.rangerscards.ui.components.SquareButton
@@ -98,44 +99,46 @@ fun DayInfoDialog(
                             lineHeight = 18.sp,
                             modifier = Modifier.weight(1f)
                         )
-                        IconButton(
-                            onClick = { guideEntryEditing = guideEntry
-                                guideEntryPrevious = guideEntry
-                                showInputDialog = DayInfoDialog.Edit
-                            },
-                            colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
-                            modifier = Modifier.size(28.dp),
-                        ) {
-                            Icon(
-                                painterResource(R.drawable.edit_32dp),
-                                contentDescription = null,
-                                tint = CustomTheme.colors.m,
-                                modifier = Modifier.size(24.dp)
-                            )
-                        }
-                        IconButton(
-                            onClick = { coroutine.launch { showInputDialog = null
-                                showLoadingDialog = true
-                                val newGuides = campaign!!.calendar[dayId]?.toMutableList()
-                                newGuides?.remove(guideEntry)
-                                campaignViewModel.setCampaignCalendar(
-                                    dayId,
-                                    newGuides ?: emptyList(),
-                                    user
+                        if (CampaignMaps.fixedGuideEntries[campaign!!.cycleId]?.get(dayId)?.contains(guideEntry) != true) {
+                            IconButton(
+                                onClick = { guideEntryEditing = guideEntry
+                                    guideEntryPrevious = guideEntry
+                                    showInputDialog = DayInfoDialog.Edit
+                                },
+                                colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
+                                modifier = Modifier.size(28.dp),
+                            ) {
+                                Icon(
+                                    painterResource(R.drawable.edit_32dp),
+                                    contentDescription = null,
+                                    tint = CustomTheme.colors.m,
+                                    modifier = Modifier.size(24.dp)
                                 )
-                            }.invokeOnCompletion { guideEntryEditing = ""
-                                showLoadingDialog = false
-                                onBack.invoke() }
-                            },
-                            colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
-                            modifier = Modifier.size(28.dp),
-                        ) {
-                            Icon(
-                                painterResource(R.drawable.delete_32dp),
-                                contentDescription = null,
-                                tint = CustomTheme.colors.warn,
-                                modifier = Modifier.size(24.dp)
-                            )
+                            }
+                            IconButton(
+                                onClick = { coroutine.launch { showInputDialog = null
+                                    showLoadingDialog = true
+                                    val newGuides = campaign!!.calendar[dayId]?.toMutableList()
+                                    newGuides?.remove(guideEntry)
+                                    campaignViewModel.setCampaignCalendar(
+                                        dayId,
+                                        newGuides ?: emptyList(),
+                                        user
+                                    )
+                                }.invokeOnCompletion { guideEntryEditing = ""
+                                    showLoadingDialog = false
+                                    onBack.invoke() }
+                                },
+                                colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
+                                modifier = Modifier.size(28.dp),
+                            ) {
+                                Icon(
+                                    painterResource(R.drawable.delete_32dp),
+                                    contentDescription = null,
+                                    tint = CustomTheme.colors.warn,
+                                    modifier = Modifier.size(24.dp)
+                                )
+                            }
                         }
                     }
                 }

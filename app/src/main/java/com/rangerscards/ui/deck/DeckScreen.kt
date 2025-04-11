@@ -297,7 +297,7 @@ fun DeckScreen(
                 } else SquareButton(
                     stringId = R.string.options_section_delete_deck,
                     leadingIcon = R.drawable.delete_32dp,
-                    onClick = { if (deck?.campaignId != null) {
+                    onClick = { if (deck?.campaignId.toString() != "null") {
                         Toast.makeText(
                             context,
                             context.getString(R.string.options_section_delete_deck_warning),

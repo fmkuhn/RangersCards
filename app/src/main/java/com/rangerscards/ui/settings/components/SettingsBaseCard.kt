@@ -47,7 +47,7 @@ fun SettingsBaseCard(
             .padding(8.dp),
         shape = CustomTheme.shapes.large,
         color = CustomTheme.colors.l30,
-        border = BorderStroke(1.dp, if (isDarkTheme) Color.Transparent else CustomTheme.colors.d15),
+        border = BorderStroke(1.dp, if (isDarkTheme) Color.Transparent else CustomTheme.colors.d20),
         shadowElevation = 4.dp
     ) {
         Column {
@@ -55,7 +55,7 @@ fun SettingsBaseCard(
                 horizontalArrangement = Arrangement.Center,
                 modifier = Modifier
                     .background(
-                        if (isDarkTheme) CustomTheme.colors.l15 else CustomTheme.colors.d15,
+                        if (isDarkTheme) CustomTheme.colors.l20 else CustomTheme.colors.d20,
                         RoundedCornerShape(topStart = 8.dp, topEnd = 8.dp)
                     )
                     .fillMaxWidth()

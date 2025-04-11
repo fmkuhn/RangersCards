@@ -11,6 +11,7 @@ import androidx.room.Upsert
 import com.rangerscards.data.database.campaign.Campaign
 import com.rangerscards.data.database.campaign.CampaignListItemProjection
 import com.rangerscards.data.database.card.CardListItemProjection
+import com.rangerscards.data.database.card.FullCardProjection
 import com.rangerscards.data.database.deck.DeckListItemProjection
 import com.rangerscards.data.database.deck.RoleCardProjection
 import kotlinx.coroutines.flow.Flow
@@ -123,4 +124,32 @@ interface CampaignDao {
             FROM card WHERE pack_id IN (:packId) AND set_id == 'reward' AND (:taboo IS 0 AND taboo_id IS NULL)
         ) ORDER BY (set_type_id IS NULL), set_type_id, set_id, set_position""")
     fun getAllRewards(taboo: Boolean, packId: String): Flow<List<CardListItemProjection>>
+
+    @Query("""SELECT * FROM (
+            -- Case 1: Taboo is set – choose the taboo-specific card
+            SELECT taboo_id, aspect_id, aspect_short_name, cost, image_src, real_image_src, name,
+                presence, approach_conflict, approach_reason, approach_exploration, approach_connection,
+                type_name, traits, equip, harm, progress, token_plurals, token_count, text, flavor, level,
+                set_name, set_size, set_position, pack_short_name, subset_name, subset_position, subset_size,
+                sun_challenge, mountain_challenge, crest_challenge
+            FROM card WHERE code = :cardCode AND (:taboo IS 1 AND taboo_id IS NOT NULL) AND pack_id IN (:packId)
+            UNION ALL
+            -- Case 2: When taboo is set but no override exists, return the default card
+            SELECT taboo_id, aspect_id, aspect_short_name, cost, image_src, real_image_src, name,
+                presence, approach_conflict, approach_reason, approach_exploration, approach_connection,
+                type_name, traits, equip, harm, progress, token_plurals, token_count, text, flavor, level,
+                set_name, set_size, set_position, pack_short_name, subset_name, subset_position, subset_size,
+                sun_challenge, mountain_challenge, crest_challenge
+            FROM card AS c WHERE code = :cardCode AND (:taboo IS 1 AND taboo_id IS NULL) AND pack_id IN (:packId)
+              AND NOT EXISTS ( SELECT 1 FROM card c2 WHERE c2.code = c.code AND c2.taboo_id IS NOT NULL)
+            UNION ALL
+            -- Case 3: Taboo not set – return default card
+            SELECT taboo_id, aspect_id, aspect_short_name, cost, image_src, real_image_src, name,
+                presence, approach_conflict, approach_reason, approach_exploration, approach_connection,
+                type_name, traits, equip, harm, progress, token_plurals, token_count, text, flavor, level,
+                set_name, set_size, set_position, pack_short_name, subset_name, subset_position, subset_size,
+                sun_challenge, mountain_challenge, crest_challenge
+            FROM card WHERE code = :cardCode AND (:taboo IS 0 AND taboo_id IS NULL) AND pack_id IN (:packId)
+        )""")
+    fun getCardById(cardCode: String, taboo: Boolean, packId: String): Flow<FullCardProjection>
 }

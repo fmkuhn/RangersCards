@@ -262,8 +262,6 @@ fun AccountCard(
                         labelIdRes = R.string.account_name_header
                     ) {
                         if (!isLoading) {
-                            if (userHandle.isEmpty()) userHandle =
-                                user.userInfo?.profile?.userProfile?.handle ?: ""
                             SettingsInputField(
                                 leadingIcon = R.drawable.badge_32dp,
                                 placeholder = null,
@@ -344,7 +342,8 @@ fun AccountCard(
                     trailingIcon = R.drawable.edit_32dp,
                     headerId = R.string.account_name_header,
                     text = user.userInfo.profile?.userProfile?.handle ?: "",
-                    { openHandleDialog = true }
+                    { userHandle = user.userInfo.profile?.userProfile?.handle ?: ""
+                        openHandleDialog = true }
                 )
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 8.dp),

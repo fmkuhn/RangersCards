@@ -14,9 +14,13 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
+import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
+import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -56,6 +60,7 @@ import com.rangerscards.ui.campaigns.AddPlayersToCampaign
 import com.rangerscards.ui.campaigns.CampaignCreationScreen
 import com.rangerscards.ui.campaigns.CampaignDecksViewModel
 import com.rangerscards.ui.campaigns.CampaignJourneyScreen
+import com.rangerscards.ui.campaigns.CampaignRewardFullScreen
 import com.rangerscards.ui.campaigns.CampaignScreen
 import com.rangerscards.ui.campaigns.CampaignViewModel
 import com.rangerscards.ui.campaigns.CampaignsScreen
@@ -112,6 +117,7 @@ fun RangersNavHost(
     var switch: @Composable (RowScope.() -> Unit)? = null
     val isCardsLoading by settingsViewModel.isCardsLoading.collectAsState()
     Scaffold(
+        modifier = Modifier.safeDrawingPadding(),
         topBar = {
             AnimatedVisibility(showBars) {
                 RangersTopAppBar(
@@ -884,6 +890,29 @@ fun RangersNavHost(
                         isDarkTheme = isDarkTheme,
                         onBack = { navController.popBackStack() },
                         user = user.currentUser
+                    )
+                }
+                val cardIndexArgument = "cardIndex"
+                composable(
+                    route = "${BottomNavScreen.Campaigns.route}/campaign/reward/{$cardIndexArgument}",
+                    arguments = listOf(navArgument(cardIndexArgument) { type = NavType.IntType })
+                ) { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("${BottomNavScreen.Campaigns.route}/campaign/{$campaignIdArgument}")
+                    }
+                    val campaignViewModel: CampaignViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val user by settingsViewModel.userUiState.collectAsState()
+                    val cardIndex = backStackEntry.arguments?.getInt(cardIndexArgument)
+                        ?: error("cardIndexArgument cannot be null")
+                    CampaignRewardFullScreen(
+                        campaignViewModel = campaignViewModel,
+                        cardIndex = cardIndex,
+                        user = user.currentUser,
+                        isDarkTheme = isDarkTheme,
+                        contentPadding = innerPadding,
                     )
                 }
             }

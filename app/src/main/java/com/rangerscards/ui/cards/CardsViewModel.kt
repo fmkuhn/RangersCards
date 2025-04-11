@@ -113,8 +113,6 @@ class CardsViewModel(
         _packIds.update { packIds }
     }
 
-    fun getCardById(cardCode: String): Flow<FullCardProjection> {
-        Log.d("test", _taboo.value.toString())
-        return cardsRepository.getCardById(cardCode, _taboo.value, _packIds.value)
-    }
+    fun getCardById(cardCode: String): Flow<FullCardProjection> =
+        cardsRepository.getCardById(cardCode, _taboo.value, _packIds.value)
 }

@@ -35,6 +35,7 @@ import com.rangerscards.UpdateCampaignRewardsMutation
 import com.rangerscards.UpdateUploadedMutation
 import com.rangerscards.data.database.campaign.Campaign
 import com.rangerscards.data.database.card.CardListItemProjection
+import com.rangerscards.data.database.card.FullCardProjection
 import com.rangerscards.data.database.deck.RoleCardProjection
 import com.rangerscards.data.database.repository.CampaignRepository
 import com.rangerscards.data.database.repository.DeckRepository
@@ -678,6 +679,9 @@ class CampaignViewModel(
     }
 
     fun getRewardsCards(): Flow<List<CardListItemProjection>> = campaignRepository.getRewards(_taboo.value, _packId.value)
+
+    fun getRewardById(cardCode: String): Flow<FullCardProjection> =
+        campaignRepository.getCardById(cardCode, _taboo.value, _packId.value)
 
     suspend fun addCampaignReward(id: String, user: FirebaseUser?) {
         val campaign = campaign.value!!

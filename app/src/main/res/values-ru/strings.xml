@@ -21,7 +21,7 @@
     <string name="done_button">Готово</string>
     <string name="account_name_header">Имя аккаунта</string>
     <string name="friends_amount_header">Друзья</string>
-    <string name="contact_us_button">Обратная сязь</string>
+    <string name="contact_us_button">Обратная связь</string>
     <plurals name="friends_amount">
         <item quantity="one">%d друг</item>
         <item quantity="few">%d друга</item>

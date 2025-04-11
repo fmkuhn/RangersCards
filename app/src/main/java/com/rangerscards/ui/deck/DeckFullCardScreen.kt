@@ -15,6 +15,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -93,34 +94,38 @@ fun DeckFullCardScreen(
                     color = CustomTheme.colors.m
                 )
             } else {
-                FullCard(
-                    tabooId = fullCard!!.tabooId,
-                    aspectId = fullCard!!.aspectId,
-                    aspectShortName = fullCard!!.aspectShortName,
-                    cost = fullCard!!.cost,
-                    imageSrc = fullCard!!.imageSrc,
-                    realImageSrc = fullCard!!.realImageSrc,
-                    name = fullCard!!.name,
-                    presence = fullCard!!.presence,
-                    approachConflict = fullCard!!.approachConflict,
-                    approachReason = fullCard!!.approachReason,
-                    approachExploration = fullCard!!.approachExploration,
-                    approachConnection = fullCard!!.approachConnection,
-                    typeName = fullCard!!.typeName,
-                    traits = fullCard!!.traits,
-                    equip = fullCard!!.equip,
-                    harm = fullCard!!.harm,
-                    progress = fullCard!!.progress,
-                    tokenPlurals = fullCard!!.tokenPlurals,
-                    tokenCount = fullCard!!.tokenCount,
-                    text = fullCard!!.text,
-                    flavor = fullCard!!.flavor,
-                    level = fullCard!!.level,
-                    setName = fullCard!!.setName,
-                    setSize = fullCard!!.setSize,
-                    setPosition = fullCard!!.setPosition,
-                    isDarkTheme = isDarkTheme
-                )
+                LazyColumn(contentPadding = PaddingValues(bottom = 80.dp)) {
+                    item {
+                        FullCard(
+                            tabooId = fullCard!!.tabooId,
+                            aspectId = fullCard!!.aspectId,
+                            aspectShortName = fullCard!!.aspectShortName,
+                            cost = fullCard!!.cost,
+                            imageSrc = fullCard!!.imageSrc,
+                            realImageSrc = fullCard!!.realImageSrc,
+                            name = fullCard!!.name,
+                            presence = fullCard!!.presence,
+                            approachConflict = fullCard!!.approachConflict,
+                            approachReason = fullCard!!.approachReason,
+                            approachExploration = fullCard!!.approachExploration,
+                            approachConnection = fullCard!!.approachConnection,
+                            typeName = fullCard!!.typeName,
+                            traits = fullCard!!.traits,
+                            equip = fullCard!!.equip,
+                            harm = fullCard!!.harm,
+                            progress = fullCard!!.progress,
+                            tokenPlurals = fullCard!!.tokenPlurals,
+                            tokenCount = fullCard!!.tokenCount,
+                            text = fullCard!!.text,
+                            flavor = fullCard!!.flavor,
+                            level = fullCard!!.level,
+                            setName = fullCard!!.setName,
+                            setSize = fullCard!!.setSize,
+                            setPosition = fullCard!!.setPosition,
+                            isDarkTheme = isDarkTheme
+                        )
+                    }
+                }
                 // Overlay custom FABs in the bottom-end corner
                 if (slotInfo?.realTraits != null) Row(
                     modifier = Modifier

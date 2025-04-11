@@ -12,7 +12,7 @@ val Light10 = Color(0xFFD7D3C6)
 val Medium = Color(0xFF9B9B9B)
 val Dark10 = Color(0xFF656C6F)
 val Dark15 = Color(0xFF4F5A60)
-val Dark20 = Color(0xFF394852)
+val Dark20 = Color(0xFF475259)
 val Dark30 = Color(0xFF24303C)
 
 // Light colors

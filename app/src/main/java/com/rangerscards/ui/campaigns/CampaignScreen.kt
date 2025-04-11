@@ -146,7 +146,6 @@ fun CampaignScreen(
                 isDarkTheme = isDarkTheme,
                 labelIdRes = R.string.deck_creation_name_label
             ) {
-                if (campaignNameEditing.isEmpty()) campaignNameEditing = campaignState?.name ?: ""
                 SettingsInputField(
                     leadingIcon = R.drawable.badge_32dp,
                     placeholder = null,
@@ -277,7 +276,9 @@ fun CampaignScreen(
                 verticalArrangement = Arrangement.spacedBy(16.dp),
             ) {
                 item {
-                    CampaignTitleRow(campaignState!!.name) { showNameDialog = true }
+                    CampaignTitleRow(campaignState!!.name) { campaignNameEditing = campaignState?.name ?: ""
+                        showNameDialog = true
+                    }
                 }
                 item {
                     TimeLineLazyRow(
@@ -391,7 +392,7 @@ fun CampaignScreen(
                             }
                             if (isCampaignLogExpanded) Column(modifier = Modifier
                                 .fillMaxWidth()
-                                .sizeIn(maxHeight = 450.dp)) {
+                                .sizeIn(maxHeight = 400.dp)) {
                                 ScrollableRangersTabs(
                                     listOf(
                                         R.string.missions_campaign_log_tab,
@@ -408,7 +409,7 @@ fun CampaignScreen(
                                         ) {
                                             launchSingleTop = true
                                         } },
-                                        missions = campaignState!!.missions,
+                                        missions = campaignState!!.missions.distinctBy { it.name },
                                         onClick = { navController.navigate(
                                             "${BottomNavScreen.Campaigns.route}/campaign/mission/$it")
                                         {
@@ -418,7 +419,7 @@ fun CampaignScreen(
                                     1 -> {
                                         val rewards = campaignViewModel.getRewardsCards().collectAsState(emptyList())
                                         LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                                            rewards.value.forEach { reward ->
+                                            rewards.value.forEachIndexed { index, reward ->
                                                 val isAdded = campaignState!!.rewards.contains(reward.id)
                                                 item(reward.id) {
                                                     CardListItem(
@@ -445,7 +446,13 @@ fun CampaignScreen(
                                                             campaignViewModel.addCampaignReward(reward.id, userUIState.currentUser)
                                                         }.invokeOnCompletion { showLoadingDialog = false }  },
                                                         onAddEnabled = !isAdded,
-                                                        onClick = {}
+                                                        onClick = {
+                                                            navController.navigate(
+                                                                "${BottomNavScreen.Campaigns.route}/campaign/reward/$index"
+                                                            ) {
+                                                                launchSingleTop = true
+                                                            }
+                                                        }
                                                     )
                                                 }
                                             }
@@ -457,7 +464,7 @@ fun CampaignScreen(
                                         ) {
                                             launchSingleTop = true
                                         } },
-                                        events = campaignState!!.events,
+                                        events = campaignState!!.events.distinctBy { it.name },
                                         onClick = { navController.navigate(
                                             "${BottomNavScreen.Campaigns.route}/campaign/event/$it"
                                         ) {
@@ -471,7 +478,7 @@ fun CampaignScreen(
                                             launchSingleTop = true
                                         } },
                                         removedSets = campaignViewModel.getRemovedSetsInfo(),
-                                        removed = campaignState!!.removed,
+                                        removed = campaignState!!.removed.distinctBy { it.name },
                                         onRemove = { removedName -> coroutine.launch { showLoadingDialog = true
                                             campaignViewModel.updateCampaignRemoved(removedName, userUIState.currentUser)
                                         }.invokeOnCompletion { showLoadingDialog = false }}

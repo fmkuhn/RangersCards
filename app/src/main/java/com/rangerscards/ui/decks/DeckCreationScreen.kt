@@ -5,10 +5,14 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.Spacer
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
@@ -29,6 +33,7 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
@@ -100,6 +105,7 @@ fun DeckCreationScreen(
                     (background.isNotEmpty() && specialty.isNotEmpty() && role.first.isNotEmpty())
         }
     }
+    val context = LocalContext.current.applicationContext
     Column(
         modifier = modifier
             .background(CustomTheme.colors.l30)
@@ -151,275 +157,296 @@ fun DeckCreationScreen(
                         )
                     }
                 }
-                OutlinedTextField(
-                    modifier = Modifier
-                        .padding(horizontal = 8.dp)
-                        .fillMaxWidth(),
-                    value = name,
-                    onValueChange = { name = it },
-                    label = {
-                        Text(text = stringResource(R.string.deck_creation_name_label))
-                    },
-                    placeholder = {
-                        Text(text = stringResource(R.string.deck_creation_name_placeholder))
-                    },
-                    textStyle = TextStyle(
-                        color = CustomTheme.colors.d30,
-                        fontFamily = Jost,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 16.sp,
-                        lineHeight = 18.sp,
-                    ),
-                    singleLine = true,
-                    shape = CustomTheme.shapes.small,
-                    colors = TextFieldDefaults.colors().copy(
-                        focusedIndicatorColor = CustomTheme.colors.m,
-                        unfocusedIndicatorColor = CustomTheme.colors.m,
-                        unfocusedLabelColor = CustomTheme.colors.d30,
-                        focusedLabelColor = CustomTheme.colors.d30,
-                        unfocusedPlaceholderColor = CustomTheme.colors.d30,
-                        focusedPlaceholderColor = CustomTheme.colors.d30,
-                        focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent
-                    )
-                )
-                when (tabIndex) {
-                    0 -> {
-                        val roles = decksViewModel.getRoles(specialty, taboo, packIds).collectAsLazyPagingItems()
-                        Column(
+                LazyColumn(
+                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                ) {
+                    item {
+                        OutlinedTextField(
                             modifier = Modifier
-                                .fillMaxWidth()
-                                .padding(horizontal = 8.dp),
-                            verticalArrangement = Arrangement.spacedBy(8.dp)
-                        ) {
-                            DataPicker(
-                                onClick = { showDialogPicker = ActiveField.FieldOne },
-                                type = R.string.background
-                            ) {
-                                Text(
-                                    text = stringResource(if (background.isEmpty())
-                                        R.string.background_placeholder
-                                    else DeckMetaMaps.background[background]!!),
-                                    color = CustomTheme.colors.d30,
-                                    fontFamily = Jost,
-                                    fontWeight = FontWeight.Normal,
-                                    fontSize = 16.sp,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-                            DataPicker(
-                                onClick = { showDialogPicker = ActiveField.FieldTwo },
-                                type = R.string.specialty
-                            ) {
-                                Text(
-                                    text = stringResource(if (specialty.isEmpty())
-                                        R.string.specialty_placeholder
-                                    else DeckMetaMaps.specialty[specialty]!!),
-                                    color = CustomTheme.colors.d30,
-                                    fontFamily = Jost,
-                                    fontWeight = FontWeight.Normal,
-                                    fontSize = 16.sp,
-                                    maxLines = 1,
-                                    overflow = TextOverflow.Ellipsis
-                                )
-                            }
-                            AnimatedVisibility(specialty.isNotEmpty()) {
-                                DataPicker(
-                                    onClick = { showDialogPicker = ActiveField.FieldThree },
-                                    type = R.string.role
-                                ) {
-                                    Text(
-                                        text = if (role.first.isEmpty())
-                                            stringResource(R.string.role_placeholder)
-                                        else role.second,
-                                        color = CustomTheme.colors.d30,
-                                        fontFamily = Jost,
-                                        fontWeight = FontWeight.Normal,
-                                        fontSize = 16.sp,
-                                        maxLines = 1,
-                                        overflow = TextOverflow.Ellipsis
-                                    )
-                                }
-                            }
-                        }
-                        if (showDialogPicker != null) Dialog(
-                            onDismissRequest = { showDialogPicker = null },
-                            properties = DialogProperties(
-                                dismissOnBackPress = true,
-                                dismissOnClickOutside = true,
-                                usePlatformDefaultWidth = false
+                                .padding(horizontal = 8.dp)
+                                .fillMaxWidth(),
+                            value = name,
+                            onValueChange = { name = it },
+                            label = {
+                                Text(text = stringResource(R.string.deck_creation_name_label))
+                            },
+                            placeholder = {
+                                Text(text = stringResource(R.string.deck_creation_name_placeholder))
+                            },
+                            textStyle = TextStyle(
+                                color = CustomTheme.colors.d30,
+                                fontFamily = Jost,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 16.sp,
+                                lineHeight = 18.sp,
+                            ),
+                            singleLine = true,
+                            shape = CustomTheme.shapes.small,
+                            colors = TextFieldDefaults.colors().copy(
+                                focusedIndicatorColor = CustomTheme.colors.m,
+                                unfocusedIndicatorColor = CustomTheme.colors.m,
+                                unfocusedLabelColor = CustomTheme.colors.d30,
+                                focusedLabelColor = CustomTheme.colors.d30,
+                                unfocusedPlaceholderColor = CustomTheme.colors.d30,
+                                focusedPlaceholderColor = CustomTheme.colors.d30,
+                                focusedContainerColor = Color.Transparent,
+                                unfocusedContainerColor = Color.Transparent
                             )
-                        ) {
-                            SettingsBaseCard(
-                                isDarkTheme = isDarkTheme,
-                                labelIdRes = when(showDialogPicker) {
-                                    ActiveField.FieldOne -> R.string.background
-                                    ActiveField.FieldTwo -> R.string.specialty
-                                    else -> R.string.role
-                                }
-                            ) {
-                                LazyColumn(modifier = Modifier.sizeIn(maxHeight = 400.dp)) {
-                                    when(showDialogPicker) {
-                                        ActiveField.FieldOne -> DeckMetaMaps.background.forEach { (key, value) ->
-                                            item {
-                                                Text(
-                                                    text = stringResource(value),
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .clickable {
-                                                            background = key
-                                                            showDialogPicker = null
-                                                        }
-                                                        .padding(
-                                                            horizontal = 16.dp,
-                                                            vertical = 8.dp
-                                                        ),
-                                                    color = CustomTheme.colors.d30,
-                                                    fontFamily = Jost,
-                                                    fontWeight = FontWeight.Medium,
-                                                    fontSize = 18.sp,
-                                                    lineHeight = 22.sp,
-                                                )
-                                                HorizontalDivider(color = CustomTheme.colors.l10)
-                                            }
-                                        }
-                                        ActiveField.FieldTwo -> DeckMetaMaps.specialty.forEach { (key, value) ->
-                                            item {
-                                                Text(
-                                                    text = stringResource(value),
-                                                    modifier = Modifier
-                                                        .fillMaxWidth()
-                                                        .clickable {
-                                                            specialty = key
-                                                            showDialogPicker = null
-                                                        }
-                                                        .padding(
-                                                            horizontal = 16.dp,
-                                                            vertical = 8.dp
-                                                        ),
-                                                    color = CustomTheme.colors.d30,
-                                                    fontFamily = Jost,
-                                                    fontWeight = FontWeight.Medium,
-                                                    fontSize = 18.sp,
-                                                    lineHeight = 22.sp,
-                                                )
-                                                HorizontalDivider(color = CustomTheme.colors.l10)
-                                            }
-                                        }
-                                        else -> items(
-                                            count = roles.itemCount,
-                                            key = roles.itemKey(CardListItemProjection::id),
-                                            contentType = roles.itemContentType { it }
-                                        ) { index ->
-                                            val item = roles[index] ?: return@items
+                        )
+                    }
+                    when (tabIndex) {
+                        0 -> {
+                            item {
+                                val roles = decksViewModel.getRoles(specialty, taboo, packIds).collectAsLazyPagingItems()
+                                Column(
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .padding(horizontal = 8.dp),
+                                    verticalArrangement = Arrangement.spacedBy(8.dp)
+                                ) {
+                                    key(background) {
+                                        DataPicker(
+                                            onClick = { showDialogPicker = ActiveField.FieldOne },
+                                            type = R.string.background
+                                        ) {
                                             Text(
-                                                text = item.name.toString(),
-                                                modifier = Modifier
-                                                    .fillMaxWidth()
-                                                    .clickable {
-                                                        role = item.code to item.name.toString()
-                                                        showDialogPicker = null
-                                                    }
-                                                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                                                text = stringResource(if (background.isEmpty())
+                                                    R.string.background_placeholder
+                                                else DeckMetaMaps.background[background]!!),
                                                 color = CustomTheme.colors.d30,
                                                 fontFamily = Jost,
-                                                fontWeight = FontWeight.Medium,
-                                                fontSize = 18.sp,
-                                                lineHeight = 22.sp,
+                                                fontWeight = FontWeight.Normal,
+                                                fontSize = 16.sp,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis
                                             )
-                                            HorizontalDivider(color = CustomTheme.colors.l10)
+                                        }
+                                    }
+                                    key(specialty) {
+                                        DataPicker(
+                                            onClick = { showDialogPicker = ActiveField.FieldTwo },
+                                            type = R.string.specialty
+                                        ) {
+                                            Text(
+                                                text = stringResource(if (specialty.isEmpty())
+                                                    R.string.specialty_placeholder
+                                                else DeckMetaMaps.specialty[specialty]!!),
+                                                color = CustomTheme.colors.d30,
+                                                fontFamily = Jost,
+                                                fontWeight = FontWeight.Normal,
+                                                fontSize = 16.sp,
+                                                maxLines = 1,
+                                                overflow = TextOverflow.Ellipsis
+                                            )
+                                        }
+                                    }
+                                    key(role.first) {
+                                        AnimatedVisibility(specialty.isNotEmpty()) {
+                                            DataPicker(
+                                                onClick = { showDialogPicker = ActiveField.FieldThree },
+                                                type = R.string.role
+                                            ) {
+                                                Text(
+                                                    text = if (role.first.isEmpty())
+                                                        stringResource(R.string.role_placeholder)
+                                                    else role.second,
+                                                    color = CustomTheme.colors.d30,
+                                                    fontFamily = Jost,
+                                                    fontWeight = FontWeight.Normal,
+                                                    fontSize = 16.sp,
+                                                    maxLines = 1,
+                                                    overflow = TextOverflow.Ellipsis
+                                                )
+                                            }
+                                        }
+                                    }
+                                    if (showDialogPicker != null) Dialog(
+                                        onDismissRequest = { showDialogPicker = null },
+                                        properties = DialogProperties(
+                                            dismissOnBackPress = true,
+                                            dismissOnClickOutside = true,
+                                            usePlatformDefaultWidth = false
+                                        )
+                                    ) {
+                                        SettingsBaseCard(
+                                            isDarkTheme = isDarkTheme,
+                                            labelIdRes = when(showDialogPicker) {
+                                                ActiveField.FieldOne -> R.string.background
+                                                ActiveField.FieldTwo -> R.string.specialty
+                                                else -> R.string.role
+                                            }
+                                        ) {
+                                            LazyColumn(modifier = Modifier.sizeIn(maxHeight = 400.dp)) {
+                                                when(showDialogPicker) {
+                                                    ActiveField.FieldOne -> DeckMetaMaps.background.forEach { (key, value) ->
+                                                        item {
+                                                            Text(
+                                                                text = stringResource(value),
+                                                                modifier = Modifier
+                                                                    .fillMaxWidth()
+                                                                    .clickable {
+                                                                        background = key
+                                                                        showDialogPicker = null
+                                                                    }
+                                                                    .padding(
+                                                                        horizontal = 16.dp,
+                                                                        vertical = 8.dp
+                                                                    ),
+                                                                color = CustomTheme.colors.d30,
+                                                                fontFamily = Jost,
+                                                                fontWeight = FontWeight.Medium,
+                                                                fontSize = 18.sp,
+                                                                lineHeight = 22.sp,
+                                                            )
+                                                            HorizontalDivider(color = CustomTheme.colors.l10)
+                                                        }
+                                                    }
+                                                    ActiveField.FieldTwo -> DeckMetaMaps.specialty.forEach { (key, value) ->
+                                                        item {
+                                                            Text(
+                                                                text = stringResource(value),
+                                                                modifier = Modifier
+                                                                    .fillMaxWidth()
+                                                                    .clickable {
+                                                                        specialty = key
+                                                                        showDialogPicker = null
+                                                                    }
+                                                                    .padding(
+                                                                        horizontal = 16.dp,
+                                                                        vertical = 8.dp
+                                                                    ),
+                                                                color = CustomTheme.colors.d30,
+                                                                fontFamily = Jost,
+                                                                fontWeight = FontWeight.Medium,
+                                                                fontSize = 18.sp,
+                                                                lineHeight = 22.sp,
+                                                            )
+                                                            HorizontalDivider(color = CustomTheme.colors.l10)
+                                                        }
+                                                    }
+                                                    else -> items(
+                                                        count = roles.itemCount,
+                                                        key = roles.itemKey(CardListItemProjection::id),
+                                                        contentType = roles.itemContentType { it }
+                                                    ) { index ->
+                                                        val item = roles[index] ?: return@items
+                                                        Text(
+                                                            text = item.name.toString(),
+                                                            modifier = Modifier
+                                                                .fillMaxWidth()
+                                                                .clickable {
+                                                                    role = item.code to item.name.toString()
+                                                                    showDialogPicker = null
+                                                                }
+                                                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                                                            color = CustomTheme.colors.d30,
+                                                            fontFamily = Jost,
+                                                            fontWeight = FontWeight.Medium,
+                                                            fontSize = 18.sp,
+                                                            lineHeight = 22.sp,
+                                                        )
+                                                        HorizontalDivider(color = CustomTheme.colors.l10)
+                                                    }
+                                                }
+                                            }
                                         }
                                     }
                                 }
                             }
                         }
+                        1 -> item {
+                            Column(
+                                modifier = Modifier
+                                    .fillMaxWidth()
+                                    .padding(horizontal = 8.dp),
+                                verticalArrangement = Arrangement.spacedBy(8.dp)
+                            ) {
+                                Text(
+                                    text = stringResource(R.string.starter_deck_title),
+                                    color = CustomTheme.colors.d30,
+                                    fontFamily = Jost,
+                                    fontWeight = FontWeight.Medium,
+                                    fontSize = 20.sp,
+                                    lineHeight = 22.sp,
+                                )
+                                StarterDecks.starterDecks().forEachIndexed { index, starterDeck ->
+                                    val starterRole by decksViewModel.getCard(
+                                        starterDeck.meta.jsonObject["role"]?.jsonPrimitive?.content.toString()
+                                    ).collectAsState(null)
+                                    if (starterRole != null) key("starterDeck - $index") {
+                                        StarterDeck(
+                                            onclick = { selectedStarterDeck = index },
+                                            isSelected = selectedStarterDeck == index,
+                                            imageSrc = starterRole!!.realImageSrc.toString(),
+                                            name = starterRole!!.name.toString(),
+                                            starterDeck = starterDeck,
+                                            isDarkTheme = isDarkTheme
+                                        )
+                                    }
+                                }
+                            }
+                        }
                     }
-                    1 -> Column(
-                        modifier = Modifier
-                            .fillMaxWidth()
-                            .padding(horizontal = 8.dp),
-                        verticalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        Text(
-                            text = stringResource(R.string.starter_deck_title),
-                            color = CustomTheme.colors.d30,
-                            fontFamily = Jost,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 20.sp,
-                            lineHeight = 22.sp,
-                        )
-                        StarterDecks.starterDecks().forEachIndexed { index, starterDeck ->
-                            val starterRole by decksViewModel.getCard(
-                                starterDeck.meta.jsonObject["role"]?.jsonPrimitive?.content.toString()
-                            ).collectAsState(null)
-                            if (starterRole != null) StarterDeck(
-                                onclick = { selectedStarterDeck = index },
-                                isSelected = selectedStarterDeck == index,
-                                imageSrc = starterRole!!.realImageSrc.toString(),
-                                name = starterRole!!.name.toString(),
-                                starterDeck = starterDeck,
-                                isDarkTheme = isDarkTheme
+                    item {
+                        Row(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp, vertical = 4.dp)
+                                .clickable { taboo = !taboo },
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(R.string.use_taboo),
+                                color = CustomTheme.colors.d30,
+                                fontFamily = Jost,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 18.sp,
+                                lineHeight = 20.sp,
+                                modifier = Modifier.weight(1f)
+                            )
+                            RadioButton(
+                                selected = taboo,
+                                onClick = { taboo = !taboo },
+                                colors = RadioButtonDefaults.colors().copy(
+                                    selectedColor = CustomTheme.colors.m,
+                                    unselectedColor = CustomTheme.colors.m
+                                ),
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                    }
+                    item {
+                        if (user.currentUser != null && decksViewModel.isConnected(context)) Row(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp, vertical = 4.dp)
+                                .clickable { isUploading = !isUploading },
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(R.string.upload_to_rangersdb),
+                                color = CustomTheme.colors.d30,
+                                fontFamily = Jost,
+                                fontWeight = FontWeight.Medium,
+                                fontSize = 20.sp,
+                                lineHeight = 22.sp,
+                                modifier = Modifier.weight(1f)
+                            )
+                            RadioButton(
+                                selected = isUploading,
+                                onClick = { isUploading = !isUploading },
+                                colors = RadioButtonDefaults.colors().copy(
+                                    selectedColor = CustomTheme.colors.m,
+                                    unselectedColor = CustomTheme.colors.m
+                                ),
+                                modifier = Modifier.size(32.dp)
                             )
                         }
                     }
                 }
-                Row(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 4.dp)
-                        .clickable { taboo = !taboo },
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.use_taboo),
-                        color = CustomTheme.colors.d30,
-                        fontFamily = Jost,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 18.sp,
-                        lineHeight = 20.sp,
-                        modifier = Modifier.weight(1f)
-                    )
-                    RadioButton(
-                        selected = taboo,
-                        onClick = { taboo = !taboo },
-                        colors = RadioButtonDefaults.colors().copy(
-                            selectedColor = CustomTheme.colors.m,
-                            unselectedColor = CustomTheme.colors.m
-                        ),
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
-                val context = LocalContext.current.applicationContext
-                if (user.currentUser != null && decksViewModel.isConnected(context)) Row(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 4.dp)
-                        .clickable { isUploading = !isUploading },
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = stringResource(R.string.upload_to_rangersdb),
-                        color = CustomTheme.colors.d30,
-                        fontFamily = Jost,
-                        fontWeight = FontWeight.Medium,
-                        fontSize = 20.sp,
-                        lineHeight = 22.sp,
-                        modifier = Modifier.weight(1f)
-                    )
-                    RadioButton(
-                        selected = isUploading,
-                        onClick = { isUploading = !isUploading },
-                        colors = RadioButtonDefaults.colors().copy(
-                            selectedColor = CustomTheme.colors.m,
-                            unselectedColor = CustomTheme.colors.m
-                        ),
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
             }
             Row(
-                modifier = Modifier
+                modifier = Modifier.height(IntrinsicSize.Max)
                     .fillMaxWidth()
                     .padding(horizontal = 8.dp, vertical = 16.dp),
                 horizontalArrangement = Arrangement.spacedBy(8.dp)
@@ -432,10 +459,9 @@ fun DeckCreationScreen(
                         .copy(CustomTheme.colors.warn),
                     iconColor = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
                     textColor = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
-                    modifier = Modifier.weight(1f)
+                    modifier = Modifier.weight(1f).fillMaxHeight()
                 )
                 val postfix = stringResource(R.string.starter_deck_name_postfix)
-                val context = LocalContext.current.applicationContext
                 SquareButton(
                     stringId = R.string.create_deck_button,
                     leadingIcon = R.drawable.add_32dp,
@@ -464,7 +490,7 @@ fun DeckCreationScreen(
                     ),
                     iconColor = CustomTheme.colors.m,
                     textColor = CustomTheme.colors.l30,
-                    modifier = Modifier.weight(1.1f),
+                    modifier = Modifier.weight(1.1f).fillMaxHeight(),
                     isEnabled = isLegit
                 )
             }

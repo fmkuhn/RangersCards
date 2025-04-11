@@ -590,7 +590,7 @@ class DeckViewModel(
             val newUuid = Uuid.random().toString()
             val values = updatableValues.value!!
             val deck = originalDeck.value!!.toDeck(values, problems)
-            if (deck.campaignId != null) {
+            if (deck.campaignId.toString() != "null") {
                 val campaign = campaignRepository.getCampaignById(deck.campaignId.toString())
                 val newDeck = buildJsonObject {
                     put(newUuid, buildJsonArray {
@@ -726,7 +726,7 @@ class DeckViewModel(
                     name = newName,
                     updatedAt = getCurrentDateTime()
                 ))
-                if (originalDeck.value!!.campaignId != null) {
+                if (originalDeck.value!!.campaignId.toString() != "null") {
                     val deck = originalDeck.value!!.toDeck(updatableValues.value!!, problems)
                     val campaign = campaignRepository.getCampaignById(deck.campaignId.toString())
                     val newDeck = buildJsonObject {
@@ -807,7 +807,7 @@ class DeckViewModel(
                 deckRepository.updateDeck(previousDeck.copy(nextId = null,
                     updatedAt = getCurrentDateTime()))
                 deckToOpen.update { previousId }
-                if (originalDeck.value!!.campaignId != null) {
+                if (originalDeck.value!!.campaignId.toString() != "null") {
                     val deck = originalDeck.value!!
                     val campaign = campaignRepository.getCampaignById(deck.campaignId.toString())
                     val oldDeckValue = campaign.latestDecks.jsonObject[deck.id]!!.jsonArray
@@ -828,7 +828,7 @@ class DeckViewModel(
                         updatedAt = getCurrentDateTime()
                     ))
                 }
-            } else if (originalDeck.value!!.campaignId != null) {
+            } else if (originalDeck.value!!.campaignId.toString() != "null") {
                 val deck = originalDeck.value!!
                 val campaign = campaignRepository.getCampaignById(deck.campaignId.toString())
                 val newDeckValues = buildJsonObject {
@@ -927,7 +927,7 @@ fun FullDeckState.toDeck(values: OftenUpdatableDeckValues, problems: List<String
             put("background", deckState.background)
             put("specialty", deckState.specialty)
         },
-        campaignId = this.campaignId.toString(),
+        campaignId = this.campaignId,
         campaignName = this.campaignName,
         campaignRewards = buildJsonArray { deckState.campaignRewards?.forEach { add(it) } },
         previousId = this.previousId,

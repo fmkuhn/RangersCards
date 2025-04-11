@@ -7,6 +7,7 @@ import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.pager.HorizontalPager
 import androidx.compose.foundation.pager.rememberPagerState
 import androidx.compose.material3.CircularProgressIndicator
@@ -36,50 +37,54 @@ fun FullCardScreen(
             .background(CustomTheme.colors.l30)
             .fillMaxSize(),
     ) { page ->
-        Column(
+        val fullCard by cardsViewModel.getCardById(cardsLazyItems[page]!!.code).collectAsState(null)
+        LazyColumn (
             modifier = Modifier.fillMaxSize()
                 .padding(
                     top = contentPadding.calculateTopPadding(),
                     bottom = contentPadding.calculateBottomPadding()
                 )
         ) {
-            val fullCard by cardsViewModel.getCardById(cardsLazyItems[page]!!.code).collectAsState(null)
-            if (fullCard == null) Column(
-                verticalArrangement = Arrangement.Center,
-                horizontalAlignment = Alignment.CenterHorizontally,
-                modifier = Modifier.padding(16.dp).fillMaxSize()
-            ) {
-                CircularProgressIndicator(
-                    modifier = Modifier.size(32.dp),
-                    color = CustomTheme.colors.m)
-            } else FullCard(
-                tabooId = fullCard!!.tabooId,
-                aspectId = fullCard!!.aspectId,
-                aspectShortName = fullCard!!.aspectShortName,
-                cost = fullCard!!.cost,
-                imageSrc = fullCard!!.imageSrc,
-                realImageSrc = fullCard!!.realImageSrc,
-                name = fullCard!!.name,
-                presence = fullCard!!.presence,
-                approachConflict = fullCard!!.approachConflict,
-                approachReason = fullCard!!.approachReason,
-                approachExploration = fullCard!!.approachExploration,
-                approachConnection = fullCard!!.approachConnection,
-                typeName = fullCard!!.typeName,
-                traits = fullCard!!.traits,
-                equip = fullCard!!.equip,
-                harm = fullCard!!.harm,
-                progress = fullCard!!.progress,
-                tokenPlurals = fullCard!!.tokenPlurals,
-                tokenCount = fullCard!!.tokenCount,
-                text = fullCard!!.text,
-                flavor = fullCard!!.flavor,
-                level = fullCard!!.level,
-                setName = fullCard!!.setName,
-                setSize = fullCard!!.setSize,
-                setPosition = fullCard!!.setPosition,
-                isDarkTheme = isDarkTheme
-            )
+            if (fullCard == null) item {
+                Column(
+                    verticalArrangement = Arrangement.Center,
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    modifier = Modifier.padding(16.dp).fillMaxSize()
+                ) {
+                    CircularProgressIndicator(
+                        modifier = Modifier.size(32.dp),
+                        color = CustomTheme.colors.m)
+                }
+            } else item {
+                FullCard(
+                    tabooId = fullCard!!.tabooId,
+                    aspectId = fullCard!!.aspectId,
+                    aspectShortName = fullCard!!.aspectShortName,
+                    cost = fullCard!!.cost,
+                    imageSrc = fullCard!!.imageSrc,
+                    realImageSrc = fullCard!!.realImageSrc,
+                    name = fullCard!!.name,
+                    presence = fullCard!!.presence,
+                    approachConflict = fullCard!!.approachConflict,
+                    approachReason = fullCard!!.approachReason,
+                    approachExploration = fullCard!!.approachExploration,
+                    approachConnection = fullCard!!.approachConnection,
+                    typeName = fullCard!!.typeName,
+                    traits = fullCard!!.traits,
+                    equip = fullCard!!.equip,
+                    harm = fullCard!!.harm,
+                    progress = fullCard!!.progress,
+                    tokenPlurals = fullCard!!.tokenPlurals,
+                    tokenCount = fullCard!!.tokenCount,
+                    text = fullCard!!.text,
+                    flavor = fullCard!!.flavor,
+                    level = fullCard!!.level,
+                    setName = fullCard!!.setName,
+                    setSize = fullCard!!.setSize,
+                    setPosition = fullCard!!.setPosition,
+                    isDarkTheme = isDarkTheme
+                )
+            }
         }
     }
 }
