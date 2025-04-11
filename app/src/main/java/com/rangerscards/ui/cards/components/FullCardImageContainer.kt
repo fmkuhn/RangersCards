@@ -1,7 +1,5 @@
 package com.rangerscards.ui.cards.components
 
-import androidx.compose.animation.AnimatedVisibility
-import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
@@ -60,22 +58,34 @@ fun FullCardImageContainer(imageSrc: String?) {
                 modifier = Modifier.size(32.dp)
             )
         }
-        AnimatedVisibility(isExpanded) {
-            Surface(
-                color = CustomTheme.colors.l30,
-                shape = CustomTheme.shapes.large,
-                modifier = Modifier.size(225.dp, 315.dp).animateContentSize()
-            ) {
-                AsyncImage(
-                    model = ImageRequest.Builder(LocalContext.current)
-                        .data(ImageSrc.imageSrc + imageSrc)
-                        .build(),
-                    placeholder = painterResource(R.drawable.broken_image_32dp),
-                    error = painterResource(R.drawable.broken_image_32dp),
-                    contentDescription = null,
-                    contentScale = ContentScale.Fit,
-                )
-            }
+        if (isExpanded) Surface(
+            color = CustomTheme.colors.l30,
+            shape = CustomTheme.shapes.large,
+            modifier = Modifier.size(225.dp, 315.dp).clickable { isExpanded = !isExpanded }
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(ImageSrc.imageSrc + imageSrc)
+                    .build(),
+                placeholder = painterResource(R.drawable.broken_image_32dp),
+                error = painterResource(R.drawable.broken_image_32dp),
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
+            )
+        } else Surface(
+            color = CustomTheme.colors.l30,
+            shape = CustomTheme.shapes.large,
+            modifier = Modifier.size(112.dp, 157.dp).clickable { isExpanded = !isExpanded }
+        ) {
+            AsyncImage(
+                model = ImageRequest.Builder(LocalContext.current)
+                    .data(ImageSrc.imageSrc + imageSrc)
+                    .build(),
+                placeholder = painterResource(R.drawable.broken_image_32dp),
+                error = painterResource(R.drawable.broken_image_32dp),
+                contentDescription = null,
+                contentScale = ContentScale.Fit,
+            )
         }
     }
 }

@@ -8,10 +8,13 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
+import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
@@ -309,7 +312,10 @@ fun CampaignScreen(
                     } }
                 }
                 item {
-                    Row(modifier = Modifier.fillMaxWidth(), horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         key("travelButton") {
                             SquareButton(
                                 stringId = R.string.travel_button,
@@ -324,7 +330,7 @@ fun CampaignScreen(
                                 ) {
                                     launchSingleTop = true
                                 } },
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier.weight(1f).fillMaxHeight()
                             )
                         }
                         if ((campaignState!!.currentDay != 30 || campaignState!!.extendedCalendar)
@@ -342,7 +348,7 @@ fun CampaignScreen(
                                 ) {
                                     launchSingleTop = true
                                 } },
-                                modifier = Modifier.weight(1f)
+                                modifier = Modifier.weight(1f).fillMaxHeight()
                             )
                         }
                     }
@@ -366,7 +372,7 @@ fun CampaignScreen(
                                     )
                                     .fillMaxWidth()
                                     .padding(vertical = 4.dp, horizontal = 8.dp)
-                                    .clickable { isCampaignLogExpanded = !isCampaignLogExpanded },
+                                    .clickable { isCampaignLogExpanded = !isCampaignLogExpanded }
                             ) {
                                 Box(Modifier.fillMaxWidth(), contentAlignment = Alignment.CenterEnd) {
                                     Text(

@@ -1178,7 +1178,7 @@ fun DeckScreen(
                         launchSingleTop = true
                     } }} else null,
                     cloneDeck = { showInputDialog = DialogWithInputType.Clone },
-                    upload = if (deck.uploaded) null else {{
+                    upload = if (deck.uploaded || user == null) null else {{
                         if (deck.nextId != null || deck.previousId != null) {
                             Toast.makeText(
                                 context,

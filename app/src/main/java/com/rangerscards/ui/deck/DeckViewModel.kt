@@ -592,19 +592,17 @@ class DeckViewModel(
             val deck = originalDeck.value!!.toDeck(values, problems)
             if (deck.campaignId.toString() != "null") {
                 val campaign = campaignRepository.getCampaignById(deck.campaignId.toString())
-                val newDeck = buildJsonObject {
-                    put(newUuid, buildJsonArray {
-                        add(deck.name)
-                        add(deck.meta)
-                        add(campaign.latestDecks.jsonObject[deck.id]?.jsonArray?.get(2)?.jsonObject
-                            ?: JsonObject(emptyMap()
-                        ))
-                    })
+                val newDeck = buildJsonArray {
+                    add(deck.name)
+                    add(deck.meta)
+                    add(campaign.latestDecks.jsonObject[deck.id]?.jsonArray?.get(2)?.jsonObject
+                        ?: JsonObject(emptyMap()
+                    ))
                 }
                 val newDeckValues = buildJsonObject {
                     campaign.latestDecks.jsonObject.forEach { (key, value) ->
                         if (key == deck.id) {
-                            put(key, newDeck)  // Replace the target key
+                            put(newUuid, newDeck)  // Replace the target key
                         } else {
                             put(key, value)  // Keep other keys unchanged
                         }
