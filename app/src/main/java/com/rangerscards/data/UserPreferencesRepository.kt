@@ -121,6 +121,7 @@ class UserPreferencesRepository(
 
     fun compareTimestamps(timestamp1: String, timestamp2: String): Boolean {
         if (timestamp1.isEmpty()) return true
+        if (timestamp1 == "null" || timestamp2 == "null") return true
         val timestamp1Fixed = TimestampNormilizer.fixFraction(timestamp1).toString()
         val timestamp2Fixed = TimestampNormilizer.fixFraction(timestamp2).toString()
         // Define the date format

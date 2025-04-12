@@ -327,14 +327,14 @@ class SettingsViewModel(
             val language = _userUiState.value.language
             val response = apolloClient.query(GetAllCardsQuery(language))
                 .fetchPolicy(FetchPolicy.NetworkOnly).execute()
-            Log.d("DownloadError", response.errors.toString())
-            Log.d("DownloadException", response.exception?.message.toString())
+            Log.e("DownloadError", response.errors.toString())
+            Log.e("DownloadException", response.exception?.message.toString())
             if (response.data != null) {
-                Log.d("DownloadDataNotNull", response.data.toString())
+                Log.e("DownloadDataNotNull", response.data.toString())
                 if (cardsRepository.isExists()) cardsRepository.updateAllCards(response.data!!.cards.toCards(language))
                 else cardsRepository.upsertAllCards(response.data!!.cards.toCards(language))
                 val timestamp = response.data!!.all_updated_at.getOrNull(0)?.updated_at.toString()
-                Log.d("DownloadDataTimestamp", timestamp)
+                Log.e("DownloadDataTimestamp", timestamp)
                 userPreferencesRepository.saveCardsUpdatedTimestamp(
                     timestamp
                 )
@@ -351,10 +351,10 @@ class SettingsViewModel(
         viewModelScope.launch {
             val response = apolloClient.query(GetCardsUpdatedAtQuery(_userUiState.value.language))
                .fetchPolicy(FetchPolicy.NetworkOnly).execute()
-            Log.d("CheckError", response.errors.toString())
-            Log.d("CheckException", response.exception?.message.toString())
+            Log.e("CheckError", response.errors.toString())
+            Log.e("CheckException", response.exception?.message.toString())
             if (response.data != null) {
-               Log.d("CheckDataNotNull", response.data.toString())
+               Log.e("CheckDataNotNull", response.data.toString())
                if (userPreferencesRepository.compareTimestamps(
                        _cardsUpdatedAt.value,
                        response.data!!.card_updated_at.getOrNull(0)?.updated_at.toString()
