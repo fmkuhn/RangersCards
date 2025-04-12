@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
@@ -326,20 +327,18 @@ class SettingsViewModel(
             val language = _userUiState.value.language
             val response = apolloClient.query(GetAllCardsQuery(language))
                 .fetchPolicy(FetchPolicy.NetworkOnly).execute()
+            Log.d("DownloadError", response.errors.toString())
+            Log.d("DownloadException", response.exception?.message.toString())
             if (response.data != null) {
-                if (cardsRepository.isExists()) {
-                    cardsRepository.updateAllCards(response.data!!.cards.toCards(language))
-                    userPreferencesRepository.saveCardsUpdatedTimestamp(
-                        response.data!!.all_updated_at[0].updated_at.toString()
-                    )
-                    _cardsUpdatedAt.update { response.data!!.all_updated_at[0].updated_at.toString() }
-                } else {
-                    cardsRepository.upsertAllCards(response.data!!.cards.toCards(language))
-                    userPreferencesRepository.saveCardsUpdatedTimestamp(
-                        response.data!!.all_updated_at[0].updated_at.toString()
-                    )
-                    _cardsUpdatedAt.update { response.data!!.all_updated_at[0].updated_at.toString() }
-                }
+                Log.d("DownloadDataNotNull", response.data.toString())
+                if (cardsRepository.isExists()) cardsRepository.updateAllCards(response.data!!.cards.toCards(language))
+                else cardsRepository.upsertAllCards(response.data!!.cards.toCards(language))
+                val timestamp = response.data!!.all_updated_at.getOrNull(0)?.updated_at.toString()
+                Log.d("DownloadDataTimestamp", timestamp)
+                userPreferencesRepository.saveCardsUpdatedTimestamp(
+                    timestamp
+                )
+                _cardsUpdatedAt.update { timestamp }
             }
         }.invokeOnCompletion {
             _isCardsLoading.update { false }
@@ -350,9 +349,12 @@ class SettingsViewModel(
         if (!isConnected(context)) return
         _isCardsLoading.update { true }
         viewModelScope.launch {
-           val response = apolloClient.query(GetCardsUpdatedAtQuery(_userUiState.value.language))
+            val response = apolloClient.query(GetCardsUpdatedAtQuery(_userUiState.value.language))
                .fetchPolicy(FetchPolicy.NetworkOnly).execute()
-           if (response.data != null) {
+            Log.d("CheckError", response.errors.toString())
+            Log.d("CheckException", response.exception?.message.toString())
+            if (response.data != null) {
+               Log.d("CheckDataNotNull", response.data.toString())
                if (userPreferencesRepository.compareTimestamps(
                        _cardsUpdatedAt.value,
                        response.data!!.card_updated_at.getOrNull(0)?.updated_at.toString()
@@ -361,7 +363,7 @@ class SettingsViewModel(
                } else {
                    _isCardsLoading.update { false }
                }
-           }
+            }
         }
     }
 
