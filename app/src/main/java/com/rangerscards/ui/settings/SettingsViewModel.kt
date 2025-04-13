@@ -4,7 +4,6 @@ import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.Uri
-import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
@@ -62,6 +61,8 @@ data class UserSettings(
     val taboo: Boolean = false,
     val collection: List<String> = listOf("core")
 )
+
+val SUPPORTED_LANGUAGES = listOf("en", "ru", "de", "fr", "it")
 
 /**
  * ViewModel to maintain user's settings.
@@ -321,20 +322,17 @@ class SettingsViewModel(
     }
 
     private fun downloadCards(context: Context) {
-        //if (!isConnected(context)) return
+        if (!isConnected(context)) return
         _isCardsLoading.update { true }
         viewModelScope.launch {
-            val language = _userUiState.value.language
+            val language = if (SUPPORTED_LANGUAGES.contains(_userUiState.value.language)) _userUiState.value.language
+            else "en"
             val response = apolloClient.query(GetAllCardsQuery(language))
                 .fetchPolicy(FetchPolicy.NetworkOnly).execute()
-            Log.e("DownloadError", response.errors.toString())
-            Log.e("DownloadException", response.exception?.message.toString())
             if (response.data != null) {
-                Log.e("DownloadDataNotNull", response.data.toString())
                 if (cardsRepository.isExists()) cardsRepository.updateAllCards(response.data!!.cards.toCards(language))
                 else cardsRepository.upsertAllCards(response.data!!.cards.toCards(language))
                 val timestamp = response.data!!.all_updated_at.getOrNull(0)?.updated_at.toString()
-                Log.e("DownloadDataTimestamp", timestamp)
                 userPreferencesRepository.saveCardsUpdatedTimestamp(
                     timestamp
                 )
@@ -351,10 +349,7 @@ class SettingsViewModel(
         viewModelScope.launch {
             val response = apolloClient.query(GetCardsUpdatedAtQuery(_userUiState.value.language))
                .fetchPolicy(FetchPolicy.NetworkOnly).execute()
-            Log.e("CheckError", response.errors.toString())
-            Log.e("CheckException", response.exception?.message.toString())
             if (response.data != null) {
-               Log.e("CheckDataNotNull", response.data.toString())
                if (userPreferencesRepository.compareTimestamps(
                        _cardsUpdatedAt.value,
                        response.data!!.card_updated_at.getOrNull(0)?.updated_at.toString()
