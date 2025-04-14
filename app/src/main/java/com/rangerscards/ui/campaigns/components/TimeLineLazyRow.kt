@@ -33,6 +33,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -54,11 +55,19 @@ fun TimeLineLazyRow(
     onClick: (Int) -> Unit
 ) {
     val listState = rememberLazyListState()
+    val localDensity = LocalDensity.current
     LaunchedEffect(Unit) {
         snapshotFlow { currentDay }
             .collect {
-                // Scroll to the first item
-                listState.animateScrollToItem(currentDay - 1)
+                val weatherList = groupedDays.toList()
+                val currentIndex = weatherList.indexOfFirst { it.second.containsKey(currentDay) }
+                if (currentIndex >= 0) {
+                    val itemWidthPx = 40.dp
+                    val daysList = weatherList[currentIndex].second.toList()
+                    val dayIndex = daysList.indexOfFirst { it.first == currentDay }
+                    val offset = (4.dp + itemWidthPx) * dayIndex
+                    listState.animateScrollToItem(index = currentIndex, scrollOffset = with(localDensity) { offset.roundToPx() })
+                }
             }
     }
     LazyRow(
