@@ -618,7 +618,7 @@ fun DeckScreen(
                                     onClick = {
                                         deckViewModel.enterEditMode()
                                         navController.navigate(
-                                            "deck/cardsList"
+                                            "deck/cardsList/0"
                                         ) {
                                             launchSingleTop = true
                                         }
@@ -677,7 +677,7 @@ fun DeckScreen(
                                     onClick = {
                                         deckViewModel.enterEditMode()
                                         navController.navigate(
-                                            "deck/cardsList"
+                                            "deck/cardsList/${if (deck.previousId == null) 1 else 0}"
                                         ) {
                                             launchSingleTop = true
                                         }
@@ -736,7 +736,7 @@ fun DeckScreen(
                                     onClick = {
                                         deckViewModel.enterEditMode()
                                         navController.navigate(
-                                            "deck/cardsList"
+                                            "deck/cardsList/${if (deck.previousId == null) 2 else 0}"
                                         ) {
                                             launchSingleTop = true
                                         }
@@ -794,7 +794,7 @@ fun DeckScreen(
                                     onClick = {
                                         deckViewModel.enterEditMode()
                                         navController.navigate(
-                                            "deck/cardsList"
+                                            "deck/cardsList/${if (deck.previousId == null) 3 else 0}"
                                         ) {
                                             launchSingleTop = true
                                         }
@@ -891,7 +891,7 @@ fun DeckScreen(
                                     onClick = {
                                         deckViewModel.enterEditMode()
                                         navController.navigate(
-                                            "deck/cardsList"
+                                            "deck/cardsList/0"
                                         ) {
                                             launchSingleTop = true
                                         }

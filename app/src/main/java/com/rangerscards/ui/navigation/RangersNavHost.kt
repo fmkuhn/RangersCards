@@ -1,6 +1,5 @@
 package com.rangerscards.ui.navigation
 
-import android.util.Log
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -14,13 +13,10 @@ import androidx.compose.animation.fadeOut
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.RowScope
-import androidx.compose.foundation.layout.WindowInsets
 import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.navigationBars
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.statusBars
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -93,8 +89,6 @@ import com.rangerscards.ui.settings.SettingsFriendsScreen
 import com.rangerscards.ui.settings.SettingsScreen
 import com.rangerscards.ui.settings.SettingsViewModel
 import com.rangerscards.ui.theme.CustomTheme
-import kotlinx.serialization.json.jsonArray
-import kotlinx.serialization.json.jsonPrimitive
 
 @Composable
 fun RangersNavHost(
@@ -443,7 +437,9 @@ fun RangersNavHost(
                         isEditing = isEditing
                     )
                 }
-                composable(route = "deck/cardsList",
+                val typeIndexArgument = "typeIndexArgument"
+                composable(route = "deck/cardsList/{$typeIndexArgument}",
+                    arguments = listOf(navArgument(typeIndexArgument) { type = NavType.IntType }),
                     enterTransition = { EnterTransition.None },
                     exitTransition = { ExitTransition.None }
                 ) { backStackEntry ->
@@ -458,6 +454,9 @@ fun RangersNavHost(
                         factory = AppViewModelProvider.Factory,
                         viewModelStoreOwner = backStackEntry
                     )
+                    val typeIndex = backStackEntry.arguments?.getInt(typeIndexArgument)
+                        ?: error("typeIndexArgument cannot be null")
+                    deckCardsViewModel.onTypeIndexChanged(typeIndex)
                     val user by settingsViewModel.userUiState.collectAsState()
                     deckCardsViewModel.setPackIds(user.settings.collection)
                     DeckCardsSearchingListScreen(
