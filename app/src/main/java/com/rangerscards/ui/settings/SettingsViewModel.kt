@@ -4,6 +4,7 @@ import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
 import android.net.Uri
+import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
@@ -33,6 +34,7 @@ import com.rangerscards.data.UserAuthRepository
 import com.rangerscards.data.UserPreferencesRepository
 import com.rangerscards.data.database.card.Card
 import com.rangerscards.data.database.repository.CardsRepository
+import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
 import kotlinx.coroutines.flow.StateFlow
@@ -204,8 +206,11 @@ class SettingsViewModel(
 
     fun getUserInfo(context: Context, id: String) {
         viewModelScope.launch {
-            val token = getCurrentToken(context)
-            apolloClient.query(GetProfileQuery(id))
+            var token: String? = ""
+            val result = performFirebaseOperationWithRetry {
+                token = getCurrentToken(context)
+            }
+            if (result != null) apolloClient.query(GetProfileQuery(id))
                 .addHttpHeader("Authorization", "Bearer $token")
                 .toFlow()
                 .collect {
@@ -449,6 +454,25 @@ class SettingsViewModel(
             getUserInfo(context, userId)
         }
     }
+}
+
+suspend fun <T> performFirebaseOperationWithRetry(
+    maxRetries: Int = 3,
+    initialDelay: Long = 1000L,
+    factor: Double = 2.0,
+    block: suspend () -> T
+): T? {
+    var currentDelay = initialDelay
+    repeat(maxRetries) { attempt ->
+        try {
+            return block()
+        } catch (e: Exception) {
+            Log.w("FirebaseOperation", "Attempt ${attempt + 1} failed: ${e.localizedMessage}")
+        }
+        delay(currentDelay)
+        currentDelay = (currentDelay * factor).toLong()
+    }
+    return null
 }
 
 /**

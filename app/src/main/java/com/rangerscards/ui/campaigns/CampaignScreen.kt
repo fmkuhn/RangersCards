@@ -1,5 +1,6 @@
 package com.rangerscards.ui.campaigns
 
+import android.net.Uri
 import android.widget.Toast
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.BorderStroke
@@ -313,7 +314,9 @@ fun CampaignScreen(
                 }
                 item {
                     Row(
-                        modifier = Modifier.fillMaxWidth().height(IntrinsicSize.Max),
+                        modifier = Modifier
+                            .fillMaxWidth()
+                            .height(IntrinsicSize.Max),
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
                         key("travelButton") {
@@ -330,7 +333,9 @@ fun CampaignScreen(
                                 ) {
                                     launchSingleTop = true
                                 } },
-                                modifier = Modifier.weight(1f).fillMaxHeight()
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
                             )
                         }
                         if ((campaignState!!.currentDay != 30 || campaignState!!.extendedCalendar)
@@ -348,7 +353,9 @@ fun CampaignScreen(
                                 ) {
                                     launchSingleTop = true
                                 } },
-                                modifier = Modifier.weight(1f).fillMaxHeight()
+                                modifier = Modifier
+                                    .weight(1f)
+                                    .fillMaxHeight()
                             )
                         }
                     }
@@ -417,7 +424,7 @@ fun CampaignScreen(
                                         } },
                                         missions = campaignState!!.missions.distinctBy { it.name },
                                         onClick = { navController.navigate(
-                                            "${BottomNavScreen.Campaigns.route}/campaign/mission/$it")
+                                            "${BottomNavScreen.Campaigns.route}/campaign/mission/${Uri.encode(it)}")
                                         {
                                             launchSingleTop = true
                                         } }
@@ -472,7 +479,7 @@ fun CampaignScreen(
                                         } },
                                         events = campaignState!!.events.distinctBy { it.name },
                                         onClick = { navController.navigate(
-                                            "${BottomNavScreen.Campaigns.route}/campaign/event/$it"
+                                            "${BottomNavScreen.Campaigns.route}/campaign/event/$${Uri.encode(it)}"
                                         ) {
                                             launchSingleTop = true
                                         } }

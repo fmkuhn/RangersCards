@@ -47,8 +47,8 @@ interface CampaignDao {
     )
     fun searchCampaigns(query: String): PagingSource<Int, CampaignListItemProjection>
 
-    @Query("Select real_image_src FROM card WHERE id IN (:ids)")
-    fun getRolesImages(ids: List<String>): Flow<List<String>>
+    @Query("Select id, name, text, real_image_src, traits, taboo_id FROM card WHERE id IN (:ids)")
+    fun getRolesImages(ids: List<String>): Flow<List<RoleCardProjection>>
 
     @Transaction
     suspend fun syncCampaigns(networkData: List<Campaign>) {

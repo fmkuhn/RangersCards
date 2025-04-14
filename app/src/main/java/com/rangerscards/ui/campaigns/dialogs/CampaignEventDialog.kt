@@ -1,5 +1,6 @@
 package com.rangerscards.ui.campaigns.dialogs
 
+import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
@@ -24,6 +25,7 @@ import androidx.compose.runtime.setValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -53,93 +55,103 @@ fun CampaignEventDialog(
     user: FirebaseUser?
 ) {
     val campaign by campaignViewModel.campaign.collectAsState()
-    val event = campaign!!.events.firstOrNull { it.name == eventName }!!
+    val event = campaign!!.events.firstOrNull { it.name == eventName }
     var showLoadingDialog by rememberSaveable { mutableStateOf(false) }
-    var name by rememberSaveable { mutableStateOf(event.name) }
-    var crossedOut by rememberSaveable { mutableStateOf(event.crossedOut) }
     val coroutine = rememberCoroutineScope()
-    CampaignDialog(
-        header = stringResource(id = R.string.event_header),
-        isDarkTheme = isDarkTheme,
-        onBack = onBack
-    ) {
-        Column(
-            modifier = Modifier.fillMaxWidth().padding(8.dp),
-            verticalArrangement = Arrangement.spacedBy(8.dp)
+    if (event == null) {
+        val context = LocalContext.current
+        Toast.makeText(
+            context,
+            context.getString(R.string.something_went_wrong),
+            Toast.LENGTH_SHORT,
+        ).show()
+        onBack.invoke()
+    } else {
+        var name by rememberSaveable { mutableStateOf(event.name) }
+        var crossedOut by rememberSaveable { mutableStateOf(event.crossedOut) }
+        CampaignDialog(
+            header = stringResource(id = R.string.event_header),
+            isDarkTheme = isDarkTheme,
+            onBack = onBack
         ) {
-            OutlinedTextField(
-                modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
-                value = name,
-                onValueChange = { name = it },
-                label = {
-                    Text(text = buildAnnotatedString {
-                        append(stringResource(R.string.event_name_input))
-                        withStyle(style = SpanStyle(color = CustomTheme.colors.warn)) {
-                            append("*")
-                        }
-                    })
-                },
-                textStyle = TextStyle(
-                    color = CustomTheme.colors.d30,
-                    fontFamily = Jost,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 16.sp,
-                    lineHeight = 18.sp,
-                ),
-                singleLine = true,
-                shape = CustomTheme.shapes.small,
-                colors = TextFieldDefaults.colors().copy(
-                    focusedIndicatorColor = CustomTheme.colors.m,
-                    unfocusedIndicatorColor = CustomTheme.colors.m,
-                    unfocusedLabelColor = CustomTheme.colors.d30,
-                    focusedLabelColor = CustomTheme.colors.d30,
-                    unfocusedPlaceholderColor = CustomTheme.colors.d30,
-                    focusedPlaceholderColor = CustomTheme.colors.d30,
-                    focusedContainerColor = Color.Transparent,
-                    unfocusedContainerColor = Color.Transparent
-                )
-            )
-            Row(
-                modifier = Modifier.padding(horizontal = 8.dp).clickable {
-                    crossedOut = !crossedOut
-                },
-                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                verticalAlignment = Alignment.CenterVertically
+            Column(
+                modifier = Modifier.fillMaxWidth().padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
-                Text(
-                    text = stringResource(R.string.event_crossed_out),
-                    color = CustomTheme.colors.d30,
-                    fontFamily = Jost,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 20.sp,
-                    lineHeight = 22.sp,
-                    modifier = Modifier.weight(1f)
-                )
-                RadioButton(
-                    selected = crossedOut,
-                    onClick = { crossedOut = !crossedOut },
-                    colors = RadioButtonDefaults.colors().copy(
-                        selectedColor = CustomTheme.colors.m,
-                        unselectedColor = CustomTheme.colors.m
+                OutlinedTextField(
+                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                    value = name,
+                    onValueChange = { name = it },
+                    label = {
+                        Text(text = buildAnnotatedString {
+                            append(stringResource(R.string.event_name_input))
+                            withStyle(style = SpanStyle(color = CustomTheme.colors.warn)) {
+                                append("*")
+                            }
+                        })
+                    },
+                    textStyle = TextStyle(
+                        color = CustomTheme.colors.d30,
+                        fontFamily = Jost,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 16.sp,
+                        lineHeight = 18.sp,
                     ),
-                    modifier = Modifier.size(32.dp)
+                    singleLine = true,
+                    shape = CustomTheme.shapes.small,
+                    colors = TextFieldDefaults.colors().copy(
+                        focusedIndicatorColor = CustomTheme.colors.m,
+                        unfocusedIndicatorColor = CustomTheme.colors.m,
+                        unfocusedLabelColor = CustomTheme.colors.d30,
+                        focusedLabelColor = CustomTheme.colors.d30,
+                        unfocusedPlaceholderColor = CustomTheme.colors.d30,
+                        focusedPlaceholderColor = CustomTheme.colors.d30,
+                        focusedContainerColor = Color.Transparent,
+                        unfocusedContainerColor = Color.Transparent
+                    )
                 )
+                Row(
+                    modifier = Modifier.padding(horizontal = 8.dp).clickable {
+                        crossedOut = !crossedOut
+                    },
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.event_crossed_out),
+                        color = CustomTheme.colors.d30,
+                        fontFamily = Jost,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 20.sp,
+                        lineHeight = 22.sp,
+                        modifier = Modifier.weight(1f)
+                    )
+                    RadioButton(
+                        selected = crossedOut,
+                        onClick = { crossedOut = !crossedOut },
+                        colors = RadioButtonDefaults.colors().copy(
+                            selectedColor = CustomTheme.colors.m,
+                            unselectedColor = CustomTheme.colors.m
+                        ),
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
             }
+            SquareButton(
+                stringId = R.string.save_deck_changes_button,
+                leadingIcon = R.drawable.done_32dp,
+                buttonColor = ButtonDefaults.buttonColors().copy(
+                    containerColor = CustomTheme.colors.d10,
+                    disabledContainerColor = CustomTheme.colors.d10.copy(alpha = 0.3f)
+                ),
+                onClick = { coroutine.launch { showLoadingDialog = true
+                    campaignViewModel.updateCampaignEvents(eventName, name, crossedOut, user)
+                }.invokeOnCompletion { showLoadingDialog = false
+                    onBack.invoke()
+                } },
+                modifier = Modifier.padding(8.dp)
+            )
         }
-        SquareButton(
-            stringId = R.string.save_deck_changes_button,
-            leadingIcon = R.drawable.done_32dp,
-            buttonColor = ButtonDefaults.buttonColors().copy(
-                containerColor = CustomTheme.colors.d10,
-                disabledContainerColor = CustomTheme.colors.d10.copy(alpha = 0.3f)
-            ),
-            onClick = { coroutine.launch { showLoadingDialog = true
-                campaignViewModel.updateCampaignEvents(eventName, name, crossedOut, user)
-            }.invokeOnCompletion { showLoadingDialog = false
-                onBack.invoke()
-            } },
-            modifier = Modifier.padding(8.dp)
-        )
     }
     if (showLoadingDialog) Dialog(
         onDismissRequest = { showLoadingDialog = false },

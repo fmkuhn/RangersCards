@@ -305,4 +305,5 @@
     <string name="removed_set_header">Набор</string>
     <string name="removed_select_set_text">Выберите набор карт</string>
     <string name="removed_campaign_log_text">Отслеживайте здесь карты, которые навсегда убираются из колоды пути.</string>
+    <string name="something_went_wrong">Что-то пошло не так.</string>
 </resources>

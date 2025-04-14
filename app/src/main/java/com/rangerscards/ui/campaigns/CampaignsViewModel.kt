@@ -19,6 +19,7 @@ import com.rangerscards.data.objects.TimestampNormilizer
 import com.rangerscards.ui.decks.getCurrentDateTime
 import com.rangerscards.ui.decks.toDeck
 import com.rangerscards.ui.settings.UserUIState
+import com.rangerscards.ui.settings.performFirebaseOperationWithRetry
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -26,6 +27,7 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.flatMapLatest
+import kotlinx.coroutines.flow.map
 import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
@@ -34,8 +36,6 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
-import kotlinx.serialization.json.jsonObject
-import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
@@ -59,20 +59,25 @@ class CampaignsViewModel(
         viewModelScope.launch {
             _isRefreshing.update { true }
             if (isConnected(context) && user != null) {
-                val token = user.getIdToken(true).await().token
-                val response = apolloClient.query(GetMyCampaignsQuery(user.uid))
-                    .addHttpHeader("Authorization", "Bearer $token")
-                    .fetchPolicy(FetchPolicy.NetworkOnly).execute()
-                if (response.data != null) {
-                    if (response.data!!.campaigns.isEmpty()) campaignsRepository.syncCampaigns(emptyList())
-                    else {
-                        campaignsRepository.syncCampaigns(response.data!!.campaigns.toCampaigns(true))
-                        val decks = response.data!!.campaigns.flatMap { campaign ->
-                            campaign.campaign!!.campaign.latest_decks.map { deck ->
-                                deck.deck!!.deck.toDeck(true)
+                var token: String? = ""
+                val result = performFirebaseOperationWithRetry {
+                    token = user.getIdToken(true).await().token
+                }
+                if (result != null) {
+                    val response = apolloClient.query(GetMyCampaignsQuery(user.uid))
+                        .addHttpHeader("Authorization", "Bearer $token")
+                        .fetchPolicy(FetchPolicy.NetworkOnly).execute()
+                    if (response.data != null) {
+                        if (response.data!!.campaigns.isEmpty()) campaignsRepository.syncCampaigns(emptyList())
+                        else {
+                            campaignsRepository.syncCampaigns(response.data!!.campaigns.toCampaigns(true))
+                            val decks = response.data!!.campaigns.flatMap { campaign ->
+                                campaign.campaign!!.campaign.latest_decks.map { deck ->
+                                    deck.deck!!.deck.toDeck(true)
+                                }
                             }
+                            campaignsRepository.insertDecks(decks)
                         }
-                        campaignsRepository.insertDecks(decks)
                     }
                 }
             } else campaignsRepository.deleteAllUploadedCampaigns()
@@ -107,7 +112,13 @@ class CampaignsViewModel(
             }
         }.cachedIn(viewModelScope)
 
-    fun getRolesImages(ids: List<String>): Flow<List<String>> = campaignsRepository.getRolesImages(ids)
+    fun getRolesImages(ids: List<String>): Flow<List<String>> =
+        campaignsRepository.getRolesImages(ids).map { rolesList ->
+            // Create a map from id to RoleCardProjection
+            val itemById = rolesList.associateBy { it.id }
+            // Map the list of ids to the corresponding real image URLs.
+            ids.map { id -> itemById[id]?.realImageSrc.orEmpty() }
+        }
 
     /**
      * Called when the user enters a new search term.

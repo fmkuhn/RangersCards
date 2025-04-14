@@ -23,6 +23,7 @@ import com.rangerscards.data.objects.DeckMetaMaps
 import com.rangerscards.data.objects.StarterDecks
 import com.rangerscards.data.objects.TimestampNormilizer
 import com.rangerscards.ui.settings.UserUIState
+import com.rangerscards.ui.settings.performFirebaseOperationWithRetry
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -68,13 +69,18 @@ class DecksViewModel(
         viewModelScope.launch {
             _isRefreshing.update { true }
             if (isConnected(context) && user != null) {
-                val token = user.getIdToken(true).await().token
-                val response = apolloClient.query(GetMyDecksQuery(user.uid))
-                    .addHttpHeader("Authorization", "Bearer $token")
-                    .fetchPolicy(FetchPolicy.NetworkOnly).execute()
-                if (response.data != null) {
-                    if (response.data?.decks?.isEmpty() == true) decksRepository.syncDecks(emptyList())
-                    else decksRepository.syncDecks(response.data!!.decks.toDecks(true))
+                var token: String? = ""
+                val result = performFirebaseOperationWithRetry {
+                    token = user.getIdToken(true).await().token
+                }
+                if (result != null) {
+                    val response = apolloClient.query(GetMyDecksQuery(user.uid))
+                        .addHttpHeader("Authorization", "Bearer $token")
+                        .fetchPolicy(FetchPolicy.NetworkOnly).execute()
+                    if (response.data != null) {
+                        if (response.data?.decks?.isEmpty() == true) decksRepository.syncDecks(emptyList())
+                        else decksRepository.syncDecks(response.data!!.decks.toDecks(true))
+                    }
                 }
             } else decksRepository.deleteAllUploadedDecks()
         }.invokeOnCompletion { _isRefreshing.update { false } }

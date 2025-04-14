@@ -19,6 +19,9 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -47,6 +50,7 @@ fun DeckCardsSearchingListScreen(
     navigateUp: () -> Unit,
     deckViewModel: DeckViewModel,
     deckCardsViewModel: DeckCardsViewModel,
+    startingTypeIndex: Int,
     isDarkTheme: Boolean,
     navigateToCard: (Int) -> Unit,
     modifier: Modifier = Modifier,
@@ -58,6 +62,7 @@ fun DeckCardsSearchingListScreen(
     val searchQuery by deckCardsViewModel.searchQuery.collectAsState()
     val typeIndex by deckCardsViewModel.typeIndex.collectAsState()
     val cardsLazyItems = deckCardsViewModel.searchResults.collectAsLazyPagingItems()
+    var isTypeIndexSet by rememberSaveable { mutableStateOf(false) }
     // Remember a LazyListState to control and observe scroll position.
     val listState = rememberLazyListState()
 
@@ -72,6 +77,12 @@ fun DeckCardsSearchingListScreen(
     }
     LaunchedEffect(deck, values?.sideSlots) {
         deckCardsViewModel.updateDeckInfo(deck!!, values!!.sideSlots.keys.toList())
+    }
+    LaunchedEffect(Unit) {
+        if (!isTypeIndexSet){
+            deckCardsViewModel.onTypeIndexChanged(startingTypeIndex)
+            isTypeIndexSet = true
+        }
     }
 
     Scaffold(

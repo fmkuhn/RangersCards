@@ -8,6 +8,7 @@ import com.rangerscards.data.database.campaign.CampaignListItemProjection
 import com.rangerscards.data.database.dao.CampaignDao
 import com.rangerscards.data.database.dao.DeckDao
 import com.rangerscards.data.database.deck.Deck
+import com.rangerscards.data.database.deck.RoleCardProjection
 import kotlinx.coroutines.flow.Flow
 
 class OfflineCampaignsRepository(
@@ -49,7 +50,7 @@ class OfflineCampaignsRepository(
         ).flow
     }
 
-    override fun getRolesImages(ids: List<String>): Flow<List<String>> = campaignDao.getRolesImages(ids)
+    override fun getRolesImages(ids: List<String>): Flow<List<RoleCardProjection>> = campaignDao.getRolesImages(ids)
 
     override suspend fun insertCampaign(campaign: Campaign) = campaignDao.insertCampaign(campaign)
 

@@ -4,6 +4,7 @@ import androidx.paging.PagingData
 import com.rangerscards.data.database.campaign.Campaign
 import com.rangerscards.data.database.campaign.CampaignListItemProjection
 import com.rangerscards.data.database.deck.Deck
+import com.rangerscards.data.database.deck.RoleCardProjection
 import kotlinx.coroutines.flow.Flow
 
 interface CampaignsRepository {
@@ -16,7 +17,7 @@ interface CampaignsRepository {
 
     fun searchCampaigns(query: String): Flow<PagingData<CampaignListItemProjection>>
 
-    fun getRolesImages(ids: List<String>): Flow<List<String>>
+    fun getRolesImages(ids: List<String>): Flow<List<RoleCardProjection>>
 
     suspend fun insertCampaign(campaign: Campaign)
 

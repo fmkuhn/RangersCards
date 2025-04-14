@@ -3,6 +3,8 @@ package com.rangerscards.ui.campaigns.components
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.offset
@@ -31,6 +33,7 @@ import kotlinx.serialization.json.contentOrNull
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CampaignListItem(
     name: String,
@@ -82,7 +85,10 @@ fun CampaignListItem(
                             modifier = Modifier.weight(1f)
                         )
                     }
-                    if (rolesImages.isNotEmpty()) Row(horizontalArrangement = Arrangement.spacedBy(8.dp)) {
+                    if (rolesImages.isNotEmpty()) FlowRow(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
                         rolesImages.forEach {
                             DeckListItemImageContainer(it, Modifier)
                         }

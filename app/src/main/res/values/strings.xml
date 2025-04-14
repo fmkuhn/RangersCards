@@ -360,4 +360,7 @@
     <string name="removed_select_set_text">Select card set</string>
     <string name="removed_campaign_log_text">Track cards that are removed permanently from the path deck here.</string>
 
+    //Errors handling
+    <string name="something_went_wrong">Something went wrong.</string>
+
 </resources>

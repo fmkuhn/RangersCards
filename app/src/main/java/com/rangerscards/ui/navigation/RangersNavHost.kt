@@ -1,5 +1,6 @@
 package com.rangerscards.ui.navigation
 
+import android.net.Uri
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -456,17 +457,17 @@ fun RangersNavHost(
                     )
                     val typeIndex = backStackEntry.arguments?.getInt(typeIndexArgument)
                         ?: error("typeIndexArgument cannot be null")
-                    deckCardsViewModel.onTypeIndexChanged(typeIndex)
                     val user by settingsViewModel.userUiState.collectAsState()
                     deckCardsViewModel.setPackIds(user.settings.collection)
                     DeckCardsSearchingListScreen(
                         navigateUp = { navController.navigateUp() },
                         deckViewModel = deckViewModel,
                         deckCardsViewModel = deckCardsViewModel,
+                        startingTypeIndex = typeIndex,
                         isDarkTheme = isDarkTheme,
                         navigateToCard = { cardIndex ->
                             navController.navigate(
-                                "deck/cardsList/card/$cardIndex"
+                                "deck/cardsList/{$typeIndexArgument}/card/$cardIndex"
                             ) {
                                 launchSingleTop = true
                             }
@@ -475,14 +476,14 @@ fun RangersNavHost(
                 }
                 val cardIndexArgument = "cardIndex"
                 composable(
-                    route = "deck/cardsList/card/{$cardIndexArgument}",
+                    route = "deck/cardsList/{$typeIndexArgument}/card/{$cardIndexArgument}",
                     arguments = listOf(navArgument(cardIndexArgument) { type = NavType.IntType })
                 ) { backStackEntry ->
                     val parentGraphEntry = remember(backStackEntry) {
                         navController.getBackStackEntry("deck/{$deckIdArgument}")
                     }
                     val parentEntry = remember(backStackEntry) {
-                        navController.getBackStackEntry("deck/cardsList")
+                        navController.getBackStackEntry("deck/cardsList/{$typeIndexArgument}")
                     }
                     val deckViewModel: DeckViewModel = viewModel(
                         factory = AppViewModelProvider.Factory,
@@ -847,7 +848,7 @@ fun RangersNavHost(
                     val user by settingsViewModel.userUiState.collectAsState()
                     CampaignEventDialog(
                         campaignViewModel = campaignViewModel,
-                        eventName = eventName,
+                        eventName = Uri.decode(eventName),
                         isDarkTheme = isDarkTheme,
                         onBack = { navController.popBackStack() },
                         user = user.currentUser
@@ -885,7 +886,7 @@ fun RangersNavHost(
                     val user by settingsViewModel.userUiState.collectAsState()
                     CampaignMissionDialog(
                         campaignViewModel = campaignViewModel,
-                        missionName = missionName,
+                        missionName = Uri.decode(missionName),
                         isDarkTheme = isDarkTheme,
                         onBack = { navController.popBackStack() },
                         user = user.currentUser

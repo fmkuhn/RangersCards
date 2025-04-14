@@ -125,7 +125,7 @@ class DeckCardsViewModel(
     }
 
     fun onTypeIndexChanged(newIndex: Int) {
-        _typeIndex.update {
+        if (newIndex != -1) _typeIndex.update {
             newIndex
         }
     }
