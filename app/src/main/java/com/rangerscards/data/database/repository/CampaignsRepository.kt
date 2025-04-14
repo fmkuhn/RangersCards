@@ -3,7 +3,6 @@ package com.rangerscards.data.database.repository
 import androidx.paging.PagingData
 import com.rangerscards.data.database.campaign.Campaign
 import com.rangerscards.data.database.campaign.CampaignListItemProjection
-import com.rangerscards.data.database.card.CardListItemProjection
 import com.rangerscards.data.database.deck.Deck
 import kotlinx.coroutines.flow.Flow
 

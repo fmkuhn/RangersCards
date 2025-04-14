@@ -16,7 +16,7 @@ class OfflineDeckRepository(private val deckDao: DeckDao) : DeckRepository {
 
     override suspend fun getDeck(id: String): Deck = deckDao.getDeckById(id)
 
-    override suspend fun getRole(code: String, taboo: Boolean): RoleCardProjection =
+    override suspend fun getRole(code: String, taboo: Boolean): RoleCardProjection? =
         deckDao.getRole(code, taboo)
 
     override suspend fun updateDeck(deck: Deck) = deckDao.updateDeck(deck)

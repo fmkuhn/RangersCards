@@ -11,7 +11,7 @@ interface DeckRepository {
 
     suspend fun getDeck(id: String): Deck
 
-    suspend fun getRole(code: String, taboo: Boolean): RoleCardProjection
+    suspend fun getRole(code: String, taboo: Boolean): RoleCardProjection?
 
     suspend fun updateDeck(deck: Deck)
 

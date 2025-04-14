@@ -49,7 +49,7 @@ interface DeckDao {
     @Query("Select id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, " +
             "type_name, traits, level, approach_conflict, approach_reason, approach_exploration, " +
             "approach_connection FROM card WHERE id = :id")
-    fun getCard(id: String): Flow<CardListItemProjection>
+    fun getCard(id: String): Flow<CardListItemProjection?>
 
     @Query("""SELECT * FROM (
             -- Case 1: Taboo is set – select the override card
@@ -107,7 +107,7 @@ interface DeckDao {
             FROM card WHERE code = :code AND (:taboo IS 0 AND taboo_id IS NULL)
         )"""
     )
-    suspend fun getRole(code: String, taboo: Boolean): RoleCardProjection
+    suspend fun getRole(code: String, taboo: Boolean): RoleCardProjection?
 
     @Query("""SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, 
                    type_name, traits, real_traits, level, set_id, set_type_id, deck_limit, 

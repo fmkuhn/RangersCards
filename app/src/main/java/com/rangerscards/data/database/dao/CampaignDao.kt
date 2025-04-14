@@ -66,7 +66,7 @@ interface CampaignDao {
     }
 
     @Query("SELECT * FROM campaign WHERE id = :id")
-    fun getCampaignFlowById(id: String): Flow<Campaign>
+    fun getCampaignFlowById(id: String): Flow<Campaign?>
 
     @Query("SELECT * FROM campaign WHERE id = :id")
     suspend fun getCampaignById(id: String): Campaign
@@ -87,7 +87,7 @@ interface CampaignDao {
             FROM card WHERE code = :code AND (:taboo IS 0 AND taboo_id IS NULL)
         )"""
     )
-    fun getRole(code: String, taboo: Boolean): Flow<RoleCardProjection>
+    fun getRole(code: String, taboo: Boolean): Flow<RoleCardProjection?>
 
     @Query("SELECT id, user_handle, name, meta, campaign_name FROM deck WHERE next_id IS NULL AND uploaded = :uploaded " +
             " AND campaign_id IS NULL AND (user_id = :userId OR user_id = '') ORDER BY updated_at DESC"

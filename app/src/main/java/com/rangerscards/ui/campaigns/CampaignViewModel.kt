@@ -398,7 +398,7 @@ class CampaignViewModel(
     private val _taboo = MutableStateFlow(false)
     private val _packId = MutableStateFlow("core")
 
-    fun getRole(id: String): Flow<RoleCardProjection> = campaignRepository.getRole(id, _taboo.value)
+    fun getRole(id: String): Flow<RoleCardProjection?> = campaignRepository.getRole(id, _taboo.value)
 
     fun setTaboo(taboo: Boolean?) {
         _taboo.update { taboo ?: false }
@@ -423,12 +423,20 @@ class CampaignViewModel(
                 .fetchPolicy(FetchPolicy.NetworkOnly).execute()
             if (response.data != null) deckRepository.updateDeck(response.data!!.deck!!.deck.toDeck(true))
         } else {
-            val deck = deckRepository.getDeck(deckId)
+            var deck = deckRepository.getDeck(deckId)
             deckRepository.updateDeck(deck.copy(
                 campaignId = null,
                 campaignName = null,
                 campaignRewards = null
             ))
+            while (deck.previousId != null) {
+                deck = deckRepository.getDeck(deck.previousId!!)
+                deckRepository.updateDeck(deck.copy(
+                    campaignId = null,
+                    campaignName = null,
+                    campaignRewards = null
+                ))
+            }
             val campaignEntry = campaignRepository.getCampaignById(campaign.id)
             campaignRepository.updateCampaign(campaignEntry.copy(
                 latestDecks = JsonObject(campaignEntry.latestDecks.jsonObject.filterKeys { it != deckId }),

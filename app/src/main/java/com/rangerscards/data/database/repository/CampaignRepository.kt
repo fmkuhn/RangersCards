@@ -14,11 +14,11 @@ interface CampaignRepository {
 
     suspend fun insertCampaign(campaign: Campaign)
 
-    fun getCampaignFlowById(id: String): Flow<Campaign>
+    fun getCampaignFlowById(id: String): Flow<Campaign?>
 
     suspend fun getCampaignById(id: String): Campaign
 
-    fun getRole(id: String, taboo: Boolean): Flow<RoleCardProjection>
+    fun getRole(id: String, taboo: Boolean): Flow<RoleCardProjection?>
 
     fun getAllDecks(userId: String, uploaded: Boolean): Flow<PagingData<DeckListItemProjection>>
 

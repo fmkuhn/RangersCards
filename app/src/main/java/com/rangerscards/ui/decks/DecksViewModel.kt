@@ -117,7 +117,7 @@ class DecksViewModel(
             emit(PagingData.empty())
         }.cachedIn(viewModelScope)
 
-    fun getCard(id: String): Flow<CardListItemProjection> = decksRepository.getCard(id)
+    fun getCard(id: String): Flow<CardListItemProjection?> = decksRepository.getCard(id)
 
     /**
      * Called when the user enters a new search term.
