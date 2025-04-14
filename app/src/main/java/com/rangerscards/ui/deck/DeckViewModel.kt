@@ -844,6 +844,23 @@ class DeckViewModel(
         }
     }
 
+    suspend fun deleteAllVersionsOfDeck(user: FirebaseUser?) {
+        val deckIds = mutableListOf(originalDeck.value!!.id)
+        var previousDeck = originalDeck.value!!.previousId?.let { deckRepository.getDeck(it) }
+        while (previousDeck != null) {
+            deckIds.add(previousDeck.id)
+            previousDeck = previousDeck.previousId?.let { deckRepository.getDeck(it) }
+        }
+        if (originalDeck.value!!.uploaded) {
+            val token = user!!.getIdToken(true).await().token
+            deckIds.forEach { deckId ->
+                apolloClient.mutation(DeleteDeckMutation(deckId.toInt()))
+                    .addHttpHeader("Authorization", "Bearer $token").execute()
+            }
+        }
+        deckRepository.deleteDecksById(deckIds)
+    }
+
     suspend fun setDeckTaboo(taboo: Boolean, user: FirebaseUser?, problems: List<String>?) {
         if (originalDeck.value!!.uploaded) {
             val token = user!!.getIdToken(true).await().token

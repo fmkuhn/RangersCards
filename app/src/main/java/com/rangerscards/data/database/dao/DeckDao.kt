@@ -27,6 +27,9 @@ interface DeckDao {
     @Query("DELETE FROM deck WHERE id = :id")
     suspend fun deleteDeckById(id: String)
 
+    @Query("DELETE FROM deck WHERE id IN (:ids)")
+    suspend fun deleteDecksById(ids: List<String>)
+
     @Upsert
     suspend fun upsertAllDecks(decks: List<Deck>)
 

@@ -148,6 +148,263 @@ fun DeckScreen(
             showActionDialog = DialogType.Save
         } else navController.navigateUp()
     }
+    if (showActionDialog != null) Dialog(
+        onDismissRequest = { showActionDialog = null },
+        properties = DialogProperties(
+            dismissOnBackPress = true,
+            dismissOnClickOutside = true,
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        SettingsBaseCard(
+            isDarkTheme = isDarkTheme,
+            labelIdRes = if (showActionDialog == DialogType.Save) R.string.save_deck_changes_header
+            else R.string.options_section_delete_deck
+        ) {
+            Text(
+                text = if (showActionDialog == DialogType.Save)
+                    stringResource(id = R.string.save_deck_changes_text)
+                else stringResource(id = R.string.delete_deck_text, deck?.version ?: 0),
+                color = CustomTheme.colors.d30,
+                fontFamily = Jost,
+                fontWeight = FontWeight.Normal,
+                fontSize = 18.sp,
+                lineHeight = 24.sp,
+                modifier = Modifier.padding(horizontal = 4.dp)
+            )
+            SquareButton(
+                stringId = R.string.cancel_button,
+                leadingIcon = R.drawable.close_32dp,
+                onClick = { showActionDialog = null },
+                buttonColor = ButtonDefaults.buttonColors()
+                    .copy(CustomTheme.colors.d30),
+                iconColor = CustomTheme.colors.warn,
+                textColor = CustomTheme.colors.l30
+            )
+            if (showActionDialog == DialogType.Save) {
+                SquareButton(
+                    R.string.discard_deck_changes_button,
+                    R.drawable.delete_32dp,
+                    onClick = {
+                        deckViewModel.discardChanges()
+                        showActionDialog = null
+                        navController.navigateUp()
+                    },
+                    buttonColor = ButtonDefaults.buttonColors()
+                        .copy(CustomTheme.colors.warn),
+                    iconColor = if (isDarkTheme)
+                        CustomTheme.colors.d30 else CustomTheme.colors.l30,
+                    textColor = if (isDarkTheme)
+                        CustomTheme.colors.d30 else CustomTheme.colors.l30,
+                    isEnabled = !showLoadingDialog
+                )
+                SquareButton(
+                    stringId = R.string.save_deck_changes_button,
+                    leadingIcon = R.drawable.done_32dp,
+                    onClick = {
+                        coroutine.launch {
+                            showLoadingDialog = true
+                            showActionDialog = null
+                            deckViewModel.saveChanges(user, deckProblems.value.first, context)
+                        }.invokeOnCompletion {
+                            showLoadingDialog = false
+                            navController.navigateUp()
+                        }
+                    },
+                )
+            } else {
+                SquareButton(
+                    stringId = R.string.options_section_delete_current_deck,
+                    leadingIcon = R.drawable.delete_32dp,
+                    onClick = { if (deck?.campaignId.toString() != "null") {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.options_section_delete_deck_warning),
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                    } else coroutine.launch {
+                        showLoadingDialog = true
+                        showActionDialog = null
+                        deckViewModel.deleteDeck(user)
+                    }.invokeOnCompletion {
+                        showLoadingDialog = false
+                        if (deckViewModel.deckToOpen.value != null) navController.navigate(
+                            "deck/${deckViewModel.deckToOpen.value}"
+                        ) {
+                            popUpTo(navController.previousBackStackEntry?.destination?.id!!) {
+                                inclusive = false
+                            }
+                            launchSingleTop = true
+                        }
+                        else navController.navigateUp()
+                    } },
+                    buttonColor = ButtonDefaults.buttonColors()
+                        .copy(CustomTheme.colors.warn),
+                    iconColor = if (isDarkTheme)
+                        CustomTheme.colors.d30 else CustomTheme.colors.l30,
+                    textColor = if (isDarkTheme)
+                        CustomTheme.colors.d30 else CustomTheme.colors.l30,
+                )
+                SquareButton(
+                    stringId = R.string.options_section_delete_deck_all_versions,
+                    leadingIcon = R.drawable.delete_32dp,
+                    onClick = { if (deck?.campaignId.toString() != "null") {
+                        Toast.makeText(
+                            context,
+                            context.getString(R.string.options_section_delete_deck_warning),
+                            Toast.LENGTH_SHORT,
+                        ).show()
+                    } else coroutine.launch {
+                        showLoadingDialog = true
+                        showActionDialog = null
+                        deckViewModel.deleteAllVersionsOfDeck(user)
+                    }.invokeOnCompletion {
+                        showLoadingDialog = false
+                        navController.navigateUp()
+                    } },
+                    buttonColor = ButtonDefaults.buttonColors()
+                        .copy(CustomTheme.colors.warn),
+                    iconColor = if (isDarkTheme)
+                        CustomTheme.colors.d30 else CustomTheme.colors.l30,
+                    textColor = if (isDarkTheme)
+                        CustomTheme.colors.d30 else CustomTheme.colors.l30,
+                )
+            }
+        }
+    }
+    if (showLoadingDialog) Dialog(
+        onDismissRequest = { showLoadingDialog = false },
+        properties = DialogProperties(
+            dismissOnBackPress = false,
+            dismissOnClickOutside = false,
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        SettingsBaseCard(
+            isDarkTheme = isDarkTheme,
+            labelIdRes = R.string.saving_deck_changes_header
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(32.dp),
+                horizontalAlignment = Alignment.CenterHorizontally
+            ) {
+                CircularProgressIndicator(modifier = Modifier.size(32.dp), color = CustomTheme.colors.m)
+            }
+        }
+    }
+    if (showInputDialog != null) Dialog(
+        onDismissRequest = { showInputDialog = null
+            deckNameEditing = deck?.name ?: ""
+        },
+        properties = DialogProperties(
+            dismissOnBackPress = false,
+            dismissOnClickOutside = false,
+            usePlatformDefaultWidth = false
+        )
+    ) {
+        SettingsBaseCard(
+            isDarkTheme = isDarkTheme,
+            labelIdRes = R.string.deck_creation_name_label
+        ) {
+            SettingsInputField(
+                leadingIcon = R.drawable.badge_32dp,
+                placeholder = null,
+                textValue = deckNameEditing,
+                onValueChange = { deckNameEditing = it },
+                KeyboardOptions.Default.copy(
+                    keyboardType = KeyboardType.Text,
+                    imeAction = ImeAction.Done,
+                )
+            )
+            if (showInputDialog == DialogWithInputType.Clone && deckViewModel.isConnected(context)) {
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 16.dp, vertical = 4.dp)
+                        .clickable { isUploadClone = !isUploadClone },
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.upload_to_rangersdb),
+                        color = CustomTheme.colors.d30,
+                        fontFamily = Jost,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 20.sp,
+                        lineHeight = 22.sp,
+                        modifier = Modifier.weight(1f)
+                    )
+                    RadioButton(
+                        selected = isUploadClone,
+                        onClick = { isUploadClone = !isUploadClone },
+                        colors = RadioButtonDefaults.colors().copy(
+                            selectedColor = CustomTheme.colors.m,
+                            unselectedColor = CustomTheme.colors.m
+                        ),
+                        modifier = Modifier.size(32.dp)
+                    )
+                }
+            }
+            Row(
+                modifier = Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                SquareButton(
+                    stringId = R.string.cancel_button,
+                    leadingIcon = R.drawable.close_32dp,
+                    onClick = { showInputDialog = null
+                        deckNameEditing = deck?.name ?: ""
+                    },
+                    buttonColor = ButtonDefaults.buttonColors().copy(
+                        CustomTheme.colors.d30,
+                        disabledContainerColor = CustomTheme.colors.m
+                    ),
+                    iconColor = CustomTheme.colors.warn,
+                    textColor = CustomTheme.colors.l30,
+                    modifier = Modifier.weight(0.5f),
+                )
+                SquareButton(
+                    stringId = R.string.done_button,
+                    leadingIcon = R.drawable.done_32dp,
+                    onClick = when(showInputDialog) {
+                        DialogWithInputType.Name -> {{ coroutine.launch {
+                            showInputDialog = null
+                            showLoadingDialog = true
+                            deckViewModel.updateDeckName(user, deckProblems.value.first, deckNameEditing)
+                        }.invokeOnCompletion {
+                            deckNameEditing = ""
+                            showLoadingDialog = false
+                            deckViewModel.loadDeck(deckId) }
+                        }}
+                        else -> {{coroutine.launch { showLoadingDialog = true
+                            deckViewModel.cloneDeck(
+                                user, deckProblems.value.first, isUploadClone,
+                                deckNameEditing, context)
+                        }.invokeOnCompletion { showLoadingDialog = false
+                            if (deckViewModel.deckToOpen.value != null) navController.navigate(
+                                "deck/${deckViewModel.deckToOpen.value}"
+                            ) {
+                                popUpTo(BottomNavScreen.Decks.startDestination) {
+                                    inclusive = false
+                                }
+                                launchSingleTop = true
+                            }
+                            else navController.navigateUp() }
+                        }}
+                    },
+                    buttonColor = ButtonDefaults.buttonColors().copy(
+                        CustomTheme.colors.d10,
+                        disabledContainerColor = CustomTheme.colors.m
+                    ),
+                    iconColor = CustomTheme.colors.l15,
+                    textColor = CustomTheme.colors.l30,
+                    isEnabled = deckNameEditing.isNotEmpty(),
+                    modifier = Modifier.weight(0.5f),
+                )
+            }
+        }
+    }
     Scaffold(
         containerColor = CustomTheme.colors.l30,
         modifier = Modifier.padding(
@@ -230,238 +487,6 @@ fun DeckScreen(
             }
         },
     ) { innerPadding ->
-        if (showActionDialog != null) Dialog(
-            onDismissRequest = { showActionDialog = null },
-            properties = DialogProperties(
-                dismissOnBackPress = true,
-                dismissOnClickOutside = true,
-                usePlatformDefaultWidth = false
-            )
-        ) {
-            SettingsBaseCard(
-                isDarkTheme = isDarkTheme,
-                labelIdRes = if (showActionDialog == DialogType.Save) R.string.save_deck_changes_header
-                else R.string.options_section_delete_deck
-            ) {
-                Text(
-                    text = if (showActionDialog == DialogType.Save)
-                        stringResource(id = R.string.save_deck_changes_text)
-                    else stringResource(id = R.string.delete_deck_text, deck?.version ?: 0),
-                    color = CustomTheme.colors.d30,
-                    fontFamily = Jost,
-                    fontWeight = FontWeight.Normal,
-                    fontSize = 18.sp,
-                    lineHeight = 24.sp,
-                    modifier = Modifier.padding(horizontal = 4.dp)
-                )
-                SquareButton(
-                    stringId = R.string.cancel_button,
-                    leadingIcon = R.drawable.close_32dp,
-                    onClick = { showActionDialog = null },
-                    buttonColor = ButtonDefaults.buttonColors()
-                        .copy(CustomTheme.colors.d30),
-                    iconColor = CustomTheme.colors.warn,
-                    textColor = CustomTheme.colors.l30
-                )
-                if (showActionDialog == DialogType.Save) {
-                    SquareButton(
-                        R.string.discard_deck_changes_button,
-                        R.drawable.delete_32dp,
-                        onClick = {
-                            deckViewModel.discardChanges()
-                            showActionDialog = null
-                            navController.navigateUp()
-                        },
-                        buttonColor = ButtonDefaults.buttonColors()
-                            .copy(CustomTheme.colors.warn),
-                        iconColor = if (isDarkTheme)
-                            CustomTheme.colors.d30 else CustomTheme.colors.l30,
-                        textColor = if (isDarkTheme)
-                            CustomTheme.colors.d30 else CustomTheme.colors.l30,
-                        isEnabled = !showLoadingDialog
-                    )
-                    SquareButton(
-                        stringId = R.string.save_deck_changes_button,
-                        leadingIcon = R.drawable.done_32dp,
-                        onClick = {
-                            coroutine.launch {
-                                showLoadingDialog = true
-                                showActionDialog = null
-                                deckViewModel.saveChanges(user, deckProblems.value.first, context)
-                            }.invokeOnCompletion {
-                                showLoadingDialog = false
-                                navController.navigateUp()
-                            }
-                        },
-                    )
-                } else SquareButton(
-                    stringId = R.string.options_section_delete_deck,
-                    leadingIcon = R.drawable.delete_32dp,
-                    onClick = { if (deck?.campaignId.toString() != "null") {
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.options_section_delete_deck_warning),
-                            Toast.LENGTH_SHORT,
-                        ).show()
-                    } else coroutine.launch {
-                            showLoadingDialog = true
-                            showActionDialog = null
-                            deckViewModel.deleteDeck(user)
-                        }.invokeOnCompletion {
-                            showLoadingDialog = false
-                            if (deckViewModel.deckToOpen.value != null) navController.navigate(
-                                "deck/${deckViewModel.deckToOpen.value}"
-                            ) {
-                                popUpTo(navController.previousBackStackEntry?.destination?.id!!) {
-                                    inclusive = false
-                                }
-                                launchSingleTop = true
-                            }
-                            else navController.navigateUp()
-                        }
-                    },
-                    buttonColor = ButtonDefaults.buttonColors()
-                        .copy(CustomTheme.colors.warn),
-                    iconColor = if (isDarkTheme)
-                        CustomTheme.colors.d30 else CustomTheme.colors.l30,
-                    textColor = if (isDarkTheme)
-                        CustomTheme.colors.d30 else CustomTheme.colors.l30,
-                )
-            }
-        }
-        if (showLoadingDialog) Dialog(
-            onDismissRequest = { showLoadingDialog = false },
-            properties = DialogProperties(
-                dismissOnBackPress = false,
-                dismissOnClickOutside = false,
-                usePlatformDefaultWidth = false
-            )
-        ) {
-            SettingsBaseCard(
-                isDarkTheme = isDarkTheme,
-                labelIdRes = R.string.saving_deck_changes_header
-            ) {
-                Column(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(32.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally
-                ) {
-                    CircularProgressIndicator(modifier = Modifier.size(32.dp), color = CustomTheme.colors.m)
-                }
-            }
-        }
-        if (showInputDialog != null) Dialog(
-            onDismissRequest = { showInputDialog = null
-                deckNameEditing = deck?.name ?: ""
-                               },
-            properties = DialogProperties(
-                dismissOnBackPress = false,
-                dismissOnClickOutside = false,
-                usePlatformDefaultWidth = false
-            )
-        ) {
-            SettingsBaseCard(
-                isDarkTheme = isDarkTheme,
-                labelIdRes = R.string.deck_creation_name_label
-            ) {
-                SettingsInputField(
-                    leadingIcon = R.drawable.badge_32dp,
-                    placeholder = null,
-                    textValue = deckNameEditing,
-                    onValueChange = { deckNameEditing = it },
-                    KeyboardOptions.Default.copy(
-                        keyboardType = KeyboardType.Text,
-                        imeAction = ImeAction.Done,
-                    )
-                )
-                if (showInputDialog == DialogWithInputType.Clone && deckViewModel.isConnected(context)) {
-                    Row(
-                        modifier = Modifier
-                            .padding(horizontal = 16.dp, vertical = 4.dp)
-                            .clickable { isUploadClone = !isUploadClone },
-                        horizontalArrangement = Arrangement.spacedBy(8.dp),
-                        verticalAlignment = Alignment.CenterVertically
-                    ) {
-                        Text(
-                            text = stringResource(R.string.upload_to_rangersdb),
-                            color = CustomTheme.colors.d30,
-                            fontFamily = Jost,
-                            fontWeight = FontWeight.Medium,
-                            fontSize = 20.sp,
-                            lineHeight = 22.sp,
-                            modifier = Modifier.weight(1f)
-                        )
-                        RadioButton(
-                            selected = isUploadClone,
-                            onClick = { isUploadClone = !isUploadClone },
-                            colors = RadioButtonDefaults.colors().copy(
-                                selectedColor = CustomTheme.colors.m,
-                                unselectedColor = CustomTheme.colors.m
-                            ),
-                            modifier = Modifier.size(32.dp)
-                        )
-                    }
-                }
-                Row(
-                    modifier = Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.spacedBy(8.dp)
-                ) {
-                    SquareButton(
-                        stringId = R.string.cancel_button,
-                        leadingIcon = R.drawable.close_32dp,
-                        onClick = { showInputDialog = null
-                                  deckNameEditing = deck?.name ?: ""
-                                  },
-                        buttonColor = ButtonDefaults.buttonColors().copy(
-                            CustomTheme.colors.d30,
-                            disabledContainerColor = CustomTheme.colors.m
-                        ),
-                        iconColor = CustomTheme.colors.warn,
-                        textColor = CustomTheme.colors.l30,
-                        modifier = Modifier.weight(0.5f),
-                    )
-                    SquareButton(
-                        stringId = R.string.done_button,
-                        leadingIcon = R.drawable.done_32dp,
-                        onClick = when(showInputDialog) {
-                            DialogWithInputType.Name -> {{ coroutine.launch {
-                                showInputDialog = null
-                                showLoadingDialog = true
-                                deckViewModel.updateDeckName(user, deckProblems.value.first, deckNameEditing)
-                            }.invokeOnCompletion {
-                                deckNameEditing = ""
-                                showLoadingDialog = false
-                                deckViewModel.loadDeck(deckId) }
-                            }}
-                            else -> {{coroutine.launch { showLoadingDialog = true
-                                deckViewModel.cloneDeck(
-                                    user, deckProblems.value.first, isUploadClone,
-                                    deckNameEditing, context)
-                            }.invokeOnCompletion { showLoadingDialog = false
-                                if (deckViewModel.deckToOpen.value != null) navController.navigate(
-                                    "deck/${deckViewModel.deckToOpen.value}"
-                                ) {
-                                    popUpTo(BottomNavScreen.Decks.startDestination) {
-                                        inclusive = false
-                                    }
-                                    launchSingleTop = true
-                                }
-                                else navController.navigateUp() }
-                            }}
-                        },
-                        buttonColor = ButtonDefaults.buttonColors().copy(
-                            CustomTheme.colors.d10,
-                            disabledContainerColor = CustomTheme.colors.m
-                        ),
-                        iconColor = CustomTheme.colors.l15,
-                        textColor = CustomTheme.colors.l30,
-                        isEnabled = deckNameEditing.isNotEmpty(),
-                        modifier = Modifier.weight(0.5f),
-                    )
-                }
-            }
-        }
         if (deck == null) {
             Column(
                 modifier = Modifier

@@ -19,6 +19,8 @@ interface DeckRepository {
 
     suspend fun deleteDeckById(id: String)
 
+    suspend fun deleteDecksById(ids: List<String>)
+
     fun getCardsByIds(ids: List<String>, tabooId: String?): Flow<List<CardDeckListItemProjection>>
 
     suspend fun getChangedCardsByIds(ids: List<String>, tabooId: String?): List<CardDeckListItemProjection>

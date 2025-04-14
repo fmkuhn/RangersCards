@@ -25,6 +25,8 @@ class OfflineDeckRepository(private val deckDao: DeckDao) : DeckRepository {
 
     override suspend fun deleteDeckById(id: String) = deckDao.deleteDeckById(id)
 
+    override suspend fun deleteDecksById(ids: List<String>) = deckDao.deleteDecksById(ids)
+
     override fun getCardsByIds(ids: List<String>, tabooId: String?): Flow<List<CardDeckListItemProjection>> =
         deckDao.getCardsByIds(ids, tabooId)
 
