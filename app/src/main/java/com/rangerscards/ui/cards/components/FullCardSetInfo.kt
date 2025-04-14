@@ -70,15 +70,26 @@ fun FullCardSetInfo(
             color = CustomTheme.colors.l10,
             modifier = Modifier.fillMaxWidth()
         ) {
-            Text(
-                text = name + " - " + stringResource(R.string.set_info, position, size),
-                color = CustomTheme.colors.d20,
-                fontFamily = Jost,
-                fontWeight = FontWeight.Medium,
-                fontSize = 18.sp,
-                lineHeight = 20.sp,
+            Row(
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically,
                 modifier = Modifier.padding(8.dp)
-            )
+            ) {
+                Text(
+                    text = name + " - " + stringResource(R.string.set_info, position, size),
+                    color = CustomTheme.colors.d20,
+                    fontFamily = Jost,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 18.sp,
+                    lineHeight = 20.sp,
+                )
+                if (tabooId != null && level == null) Icon(
+                    painterResource(R.drawable.uncommon_wisdom),
+                    contentDescription = null,
+                    tint = CustomTheme.colors.d20,
+                    modifier = Modifier.size(24.dp)
+                )
+            }
         }
     }
 }

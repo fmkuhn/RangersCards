@@ -34,7 +34,6 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
-import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.tooling.preview.Preview
@@ -97,7 +96,13 @@ fun CardListItem(
                     isDarkTheme,
                     Modifier.align(Alignment.CenterVertically)
                 )
-                CardListItemTextContainer(name, typeName, traits, Modifier.weight(1f))
+                CardListItemTextContainer(
+                    name,
+                    typeName,
+                    traits,
+                    if (level == null) tabooId else null,
+                    Modifier.weight(1f)
+                )
                 Column(horizontalAlignment = Alignment.End, verticalArrangement = Arrangement.spacedBy(2.dp)) {
                     CardListItemApproachContainer(
                         approachConflict,
@@ -215,6 +220,7 @@ fun CardListItemTextContainer(
     name: String,
     typeName: String?,
     traits: String?,
+    tabooId: String?,
     weight: Modifier
 ) {
     Column(
@@ -230,23 +236,34 @@ fun CardListItemTextContainer(
             maxLines = 1,
             overflow = TextOverflow.Ellipsis,
         )
-        Text(
-            text = buildAnnotatedString {
-                if (traits != null) {
-                    append("$typeName ")
-                    withStyle(style = SpanStyle(fontStyle = FontStyle.Italic)) {
-                        append("/ $traits")
-                    }
-                } else append(typeName)
-            },
-            color = CustomTheme.colors.d10,
-            fontFamily = Jost,
-            fontWeight = FontWeight.Normal,
-            fontSize = 14.sp,
-            lineHeight = 16.sp,
-            maxLines = 1,
-            overflow = TextOverflow.Ellipsis,
-        )
+        Row(
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+            verticalAlignment = Alignment.CenterVertically,
+        ) {
+            Text(
+                text = buildAnnotatedString {
+                    if (traits != null) {
+                        append("$typeName ")
+                        withStyle(style = SpanStyle(fontStyle = FontStyle.Italic)) {
+                            append("/ $traits")
+                        }
+                    } else append(typeName)
+                },
+                color = CustomTheme.colors.d10,
+                fontFamily = Jost,
+                fontWeight = FontWeight.Normal,
+                fontSize = 14.sp,
+                lineHeight = 16.sp,
+                maxLines = 1,
+                overflow = TextOverflow.Ellipsis,
+            )
+            if (tabooId != null) Icon(
+                painterResource(R.drawable.uncommon_wisdom),
+                contentDescription = null,
+                tint = CustomTheme.colors.d10,
+                modifier = Modifier.size(14.dp)
+            )
+        }
     }
 }
 
