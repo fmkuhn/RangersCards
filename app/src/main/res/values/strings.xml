@@ -35,6 +35,14 @@
         <item quantity="many">%d friends</item>
         <item quantity="other">%d friends</item>
     </plurals>
+    <plurals name="friends_request_amount">
+        <item quantity="zero">%d pending requests</item>
+        <item quantity="one">%d pending request</item>
+        <item quantity="two">%d pending requests</item>
+        <item quantity="few">%d pending requests</item>
+        <item quantity="many">%d pending requests</item>
+        <item quantity="other">%d pending requests</item>
+    </plurals>
     <string name="search_friends">Search friends</string>
     <string name="your_friends">Your Friends</string>
     <string name="sent_requests">Sent requests</string>
@@ -204,6 +212,7 @@
     <string name="tools_section_charts">Charts</string>
     <string name="campaign_section_header">Campaign</string>
     <string name="campaign_section_camp">Camp</string>
+    <string name="campaign_section_camp_additional_text">For adding rewards and tracking changes</string>
     <string name="campaign_section_camp_warning">Error: Deck contains problems!</string>
     <string name="campaign_section_previous_deck">Previous deck</string>
     <string name="campaign_section_next_deck">Next deck</string>

@@ -360,6 +360,7 @@ fun AccountCard(
                 }
                 else {
                     val friendsCount = user.userInfo.profile?.userProfile?.friends?.size ?: 0
+                    val friendRequestCount = user.userInfo.profile?.userProfile?.received_requests?.size ?: 0
                     SettingsClickableSurface(
                         leadingIcon = R.drawable.group_32dp,
                         trailingIcon = R.drawable.add_32dp,
@@ -368,7 +369,11 @@ fun AccountCard(
                             id = R.plurals.friends_amount,
                             count = friendsCount,
                             friendsCount
-                        ),
+                        ) + if (friendRequestCount > 0) " + ${pluralStringResource(
+                            id = R.plurals.friends_request_amount,
+                            count = friendRequestCount,
+                            friendRequestCount
+                        )}" else "",
                         onClick = navigateToFriends
                     )
                 }

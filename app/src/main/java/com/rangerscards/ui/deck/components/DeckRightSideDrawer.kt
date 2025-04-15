@@ -143,6 +143,7 @@ fun BoxScope.DeckRightSideDrawer(
                         R.drawable.camp_32dp,
                         stringResource(R.string.campaign_section_camp),
                         camp,
+                        stringResource(R.string.campaign_section_camp_additional_text)
                     )
                     if (toPreviousDeck != null) {
                         if (camp != null) HorizontalDivider(color = CustomTheme.colors.l10)

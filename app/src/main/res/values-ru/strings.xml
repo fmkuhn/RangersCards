@@ -27,6 +27,11 @@
         <item quantity="few">%d друга</item>
         <item quantity="many">%d друзей</item>
     </plurals>
+    <plurals name="friends_request_amount">
+        <item quantity="one">%d новый запрос</item>
+        <item quantity="few">%d новых запроса</item>
+        <item quantity="many">%d новых запросов</item>
+    </plurals>
     <string name="search_friends">Поиск друзей</string>
     <string name="your_friends">Ваши друзья</string>
     <string name="sent_requests">Отправленные запросы</string>
@@ -176,6 +181,7 @@
     <string name="tools_section_charts">Диаграммы</string>
     <string name="campaign_section_header">Кампания</string>
     <string name="campaign_section_camp">Разбить лагерь</string>
+    <string name="campaign_section_camp_additional_text">Для добавления наград и отслеживания изменений</string>
     <string name="campaign_section_camp_warning">Ошибка: Ваша колода содержит ошибки!</string>
     <string name="campaign_section_previous_deck">Предыдущая колода</string>
     <string name="campaign_section_next_deck">Следующая колода</string>
