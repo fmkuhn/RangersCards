@@ -216,13 +216,7 @@ fun DeckScreen(
                 SquareButton(
                     stringId = R.string.options_section_delete_current_deck,
                     leadingIcon = R.drawable.delete_32dp,
-                    onClick = { if (deck?.campaignId.toString() != "null") {
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.options_section_delete_deck_warning),
-                            Toast.LENGTH_SHORT,
-                        ).show()
-                    } else coroutine.launch {
+                    onClick = { coroutine.launch {
                         showLoadingDialog = true
                         showActionDialog = null
                         deckViewModel.deleteDeck(user)
@@ -248,13 +242,7 @@ fun DeckScreen(
                 SquareButton(
                     stringId = R.string.options_section_delete_deck_all_versions,
                     leadingIcon = R.drawable.delete_32dp,
-                    onClick = { if (deck?.campaignId.toString() != "null") {
-                        Toast.makeText(
-                            context,
-                            context.getString(R.string.options_section_delete_deck_warning),
-                            Toast.LENGTH_SHORT,
-                        ).show()
-                    } else coroutine.launch {
+                    onClick = { coroutine.launch {
                         showLoadingDialog = true
                         showActionDialog = null
                         deckViewModel.deleteAllVersionsOfDeck(user)

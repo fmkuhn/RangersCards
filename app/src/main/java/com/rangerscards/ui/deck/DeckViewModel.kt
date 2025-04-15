@@ -807,17 +807,16 @@ class DeckViewModel(
                 deckRepository.updateDeck(previousDeck.copy(nextId = null,
                     updatedAt = getCurrentDateTime()))
                 deckToOpen.update { previousId }
+                //{"c19b0513-3dad-4967-80a8-9e058955c89a"
+                // :["Forager - Shaper (Стартовый)",{"role":"01079","background":"forager","specialty":"shaper"},{"":null}]}
                 if (originalDeck.value!!.campaignId.toString() != "null") {
                     val deck = originalDeck.value!!
                     val campaign = campaignRepository.getCampaignById(deck.campaignId.toString())
                     val oldDeckValue = campaign.latestDecks.jsonObject[deck.id]!!.jsonArray
-                    val newDeck = buildJsonObject {
-                        put(previousId, oldDeckValue)
-                    }
                     val newDeckValues = buildJsonObject {
                         campaign.latestDecks.jsonObject.forEach { (key, value) ->
-                            if (key == previousId) {
-                                put(previousId, newDeck)  // Replace the target key
+                            if (key == deck.id) {
+                                put(previousId, oldDeckValue)  // Replace the target key
                             } else {
                                 put(key, value)  // Keep other keys unchanged
                             }
@@ -852,6 +851,21 @@ class DeckViewModel(
         while (previousDeck != null) {
             deckIds.add(previousDeck.id)
             previousDeck = previousDeck.previousId?.let { deckRepository.getDeck(it) }
+        }
+        if (originalDeck.value!!.campaignId.toString() != "null") {
+            val deck = originalDeck.value!!
+            val campaign = campaignRepository.getCampaignById(deck.campaignId.toString())
+            val newDeckValues = buildJsonObject {
+                campaign.latestDecks.jsonObject.forEach { (key, value) ->
+                    if (key != deck.id) {
+                        put(key, value)  // Keep other keys unchanged
+                    }
+                }
+            }
+            campaignRepository.updateCampaign(campaign.copy(
+                latestDecks = newDeckValues,
+                updatedAt = getCurrentDateTime()
+            ))
         }
         if (originalDeck.value!!.uploaded) {
             val token = user!!.getIdToken(true).await().token
