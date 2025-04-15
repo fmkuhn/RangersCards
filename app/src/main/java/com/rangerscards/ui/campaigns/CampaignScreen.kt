@@ -526,7 +526,20 @@ fun CampaignScreen(
                                     ) {
                                         launchSingleTop = true
                                     }
-                                },
+                                    else coroutine.launch { showLoadingDialog = true
+                                        campaignViewModel.downloadFriendDeck(deck.id, userUIState.currentUser)
+                                    }.invokeOnCompletion { showLoadingDialog = false
+                                        if (campaignViewModel.friendDeckIdToOpen.value != null)
+                                            navController.navigate(
+                                                "deck/${campaignViewModel.friendDeckIdToOpen.value}"
+                                            ) { launchSingleTop = true }
+                                        else Toast.makeText(
+                                            context,
+                                            context.getString(R.string.something_went_wrong),
+                                            Toast.LENGTH_SHORT,
+                                        ).show()
+                                    }
+                                } ,
                                 isCampaign = false,
                                 userName = if (deck.userName == "null") "" else deck.userName,
                                 onRemoveDeck = if (!campaignState!!.uploaded || userUIState.currentUser?.uid == deck.userId) {

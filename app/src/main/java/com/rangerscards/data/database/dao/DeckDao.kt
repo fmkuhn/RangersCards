@@ -24,6 +24,9 @@ interface DeckDao {
     @Insert(onConflict = OnConflictStrategy.REPLACE)
     suspend fun insertDeck(deck: Deck)
 
+    @Upsert
+    suspend fun upsertDeck(deck: Deck)
+
     @Query("DELETE FROM deck WHERE id = :id")
     suspend fun deleteDeckById(id: String)
 
@@ -92,7 +95,7 @@ interface DeckDao {
     }
 
     @Query("SELECT * FROM deck WHERE id = :id")
-    suspend fun getDeckById(id: String): Deck
+    suspend fun getDeckById(id: String): Deck?
 
     @Query(
         """SELECT * FROM (

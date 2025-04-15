@@ -153,46 +153,47 @@ class DeckViewModel(
     fun loadDeck(id: String) {
         viewModelScope.launch {
             val deck = deckRepository.getDeck(id)
-            _updatableValues.update {
-                OftenUpdatableDeckValues(
-                    slots = deck.slots.toPersistentMap(),
-                    sideSlots = deck.sideSlots.toPersistentMap(),
-                    extraSlots = deck.extraSlots.toPersistentMap(),
-                    awa = deck.awa,
-                    spi = deck.spi,
-                    fit = deck.fit,
-                    foc = deck.foc,
-                )
-            }
-            _originalDeck.update { deck.toDeckState() }
-            if (deck.previousId != null) {
-                val previousDeck = deckRepository.getDeck(deck.previousId)
-                computeDeckChanges(
-                    slots = deck.slots.toPersistentMap(),
-                    sideSlots = deck.sideSlots.toPersistentMap(),
-                    previousSlots = previousDeck.slots.toPersistentMap(),
-                    previousSideSlots = previousDeck.sideSlots.toPersistentMap(),
-                )
-                if (_originalDeck.value!!.addedCards.isNotEmpty() ||
-                    _originalDeck.value!!.removedCards.isNotEmpty() ||
-                    _originalDeck.value!!.addedCollectionCards.isNotEmpty() ||
-                    _originalDeck.value!!.returnedCollectionCards.isNotEmpty()) {
-                    val originalDeck = _originalDeck.value!!
-                    val added = deckRepository
-                        .getChangedCardsByIds(originalDeck.addedCards.keys.toList(), originalDeck.tabooSetId)
-                    val removed = deckRepository
-                        .getChangedCardsByIds(originalDeck.removedCards.keys.toList(), originalDeck.tabooSetId)
-                    val addedCollection = deckRepository
-                        .getChangedCardsByIds(originalDeck.addedCollectionCards.keys.toList(), originalDeck.tabooSetId)
-                    val returnedCollection = deckRepository
-                        .getChangedCardsByIds(originalDeck.returnedCollectionCards.keys.toList(), originalDeck.tabooSetId)
-                    _changedCards.update {
-                        mapOf(
-                            R.string.deck_changes_added to added,
-                            R.string.deck_changes_removed to removed,
-                            R.string.deck_changes_added_collection to addedCollection,
-                            R.string.deck_changes_returned_collection to returnedCollection,
-                        )
+            if (deck != null) {
+                _updatableValues.update {
+                    OftenUpdatableDeckValues(
+                        slots = deck.slots.toPersistentMap(),
+                        sideSlots = deck.sideSlots.toPersistentMap(),
+                        extraSlots = deck.extraSlots.toPersistentMap(),
+                        awa = deck.awa,
+                        spi = deck.spi,
+                        fit = deck.fit,
+                        foc = deck.foc,
+                    )
+                }
+                _originalDeck.update { deck.toDeckState() }
+                if (deck.previousId != null) {
+                    computeDeckChanges(
+                        slots = deck.slots.toPersistentMap(),
+                        sideSlots = deck.sideSlots.toPersistentMap(),
+                        previousSlots = deck.previousSlots!!.toPersistentMap(),
+                        previousSideSlots = deck.previousSideSlots!!.toPersistentMap(),
+                    )
+                    if (_originalDeck.value!!.addedCards.isNotEmpty() ||
+                        _originalDeck.value!!.removedCards.isNotEmpty() ||
+                        _originalDeck.value!!.addedCollectionCards.isNotEmpty() ||
+                        _originalDeck.value!!.returnedCollectionCards.isNotEmpty()) {
+                        val originalDeck = _originalDeck.value!!
+                        val added = deckRepository
+                            .getChangedCardsByIds(originalDeck.addedCards.keys.toList(), originalDeck.tabooSetId)
+                        val removed = deckRepository
+                            .getChangedCardsByIds(originalDeck.removedCards.keys.toList(), originalDeck.tabooSetId)
+                        val addedCollection = deckRepository
+                            .getChangedCardsByIds(originalDeck.addedCollectionCards.keys.toList(), originalDeck.tabooSetId)
+                        val returnedCollection = deckRepository
+                            .getChangedCardsByIds(originalDeck.returnedCollectionCards.keys.toList(), originalDeck.tabooSetId)
+                        _changedCards.update {
+                            mapOf(
+                                R.string.deck_changes_added to added,
+                                R.string.deck_changes_removed to removed,
+                                R.string.deck_changes_added_collection to addedCollection,
+                                R.string.deck_changes_returned_collection to returnedCollection,
+                            )
+                        }
                     }
                 }
             }
@@ -793,7 +794,7 @@ class DeckViewModel(
                 deckRepository.deleteDeckById(originalDeck.value!!.id)
                 val previousId = originalDeck.value!!.previousId
                 if (previousId != null) {
-                    val previousDeck = deckRepository.getDeck(previousId)
+                    val previousDeck = deckRepository.getDeck(previousId)!!
                     deckRepository.updateDeck(previousDeck.copy(nextId = null,
                         updatedAt = getCurrentDateTime()))
                     deckToOpen.update { previousId }
@@ -803,7 +804,7 @@ class DeckViewModel(
             deckRepository.deleteDeckById(originalDeck.value!!.id)
             val previousId = originalDeck.value!!.previousId
             if (previousId != null) {
-                val previousDeck = deckRepository.getDeck(previousId)
+                val previousDeck = deckRepository.getDeck(previousId)!!
                 deckRepository.updateDeck(previousDeck.copy(nextId = null,
                     updatedAt = getCurrentDateTime()))
                 deckToOpen.update { previousId }

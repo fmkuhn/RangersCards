@@ -14,7 +14,7 @@ import java.util.Locale
 
 class OfflineDeckRepository(private val deckDao: DeckDao) : DeckRepository {
 
-    override suspend fun getDeck(id: String): Deck = deckDao.getDeckById(id)
+    override suspend fun getDeck(id: String): Deck? = deckDao.getDeckById(id)
 
     override suspend fun getRole(code: String, taboo: Boolean): RoleCardProjection? =
         deckDao.getRole(code, taboo)
@@ -22,6 +22,8 @@ class OfflineDeckRepository(private val deckDao: DeckDao) : DeckRepository {
     override suspend fun updateDeck(deck: Deck) = deckDao.updateDeck(deck)
 
     override suspend fun insertDeck(deck: Deck) = deckDao.insertDeck(deck)
+
+    override suspend fun upsertDeck(deck: Deck) = deckDao.upsertDeck(deck)
 
     override suspend fun deleteDeckById(id: String) = deckDao.deleteDeckById(id)
 

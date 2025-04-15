@@ -48,6 +48,7 @@ import com.rangerscards.ui.theme.Jost
 fun BoxScope.DeckRightSideDrawer(
     isOpen: Boolean,
     onClick: () -> Unit,
+    isOwner: Boolean,
     deckName: String,
     deckId: String?,
     changeName: () -> Unit,
@@ -108,12 +109,14 @@ fun BoxScope.DeckRightSideDrawer(
                         R.drawable.badge_32dp,
                         deckName,
                         changeName,
+                        isOwner,
                         if (deckId != null) stringResource(R.string.deck_section_deck_id, deckId) else null
                     )
                     DrawerSectionButtonRow(
                         R.drawable.uncommon_wisdom,
                         stringResource(R.string.use_taboo),
                         setTaboo,
+                        isOwner,
                         radioButton = isTabooSet
                     )
                     //TODO:Implement deck notes
@@ -136,14 +139,14 @@ fun BoxScope.DeckRightSideDrawer(
 //                    )
 //                }
 //            }
-            item {
+            if (isOwner) item {
                 Column(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                     DrawerSectionHeader(R.string.campaign_section_header)
                     if (camp != null) DrawerSectionButtonRow(
                         R.drawable.camp_32dp,
                         stringResource(R.string.campaign_section_camp),
                         camp,
-                        stringResource(R.string.campaign_section_camp_additional_text)
+                        additionalText = stringResource(R.string.campaign_section_camp_additional_text)
                     )
                     if (toPreviousDeck != null) {
                         if (camp != null) HorizontalDivider(color = CustomTheme.colors.l10)
@@ -172,22 +175,24 @@ fun BoxScope.DeckRightSideDrawer(
                         stringResource(R.string.options_section_clone_deck),
                         cloneDeck,
                     )
-                    if (upload != null) {
+                    if (isOwner) {
+                        if (upload != null) {
+                            HorizontalDivider(color = CustomTheme.colors.l10)
+                            DrawerSectionButtonRow(
+                                R.drawable.language_32dp,
+                                stringResource(
+                                    R.string.upload_to_rangersdb
+                                ),
+                                upload,
+                            )
+                        }
                         HorizontalDivider(color = CustomTheme.colors.l10)
                         DrawerSectionButtonRow(
-                            R.drawable.language_32dp,
-                            stringResource(
-                                R.string.upload_to_rangersdb
-                            ),
-                            upload,
+                            R.drawable.delete_32dp,
+                            stringResource(R.string.options_section_delete_deck),
+                            deleteDeck,
                         )
                     }
-                    HorizontalDivider(color = CustomTheme.colors.l10)
-                    DrawerSectionButtonRow(
-                        R.drawable.delete_32dp,
-                        stringResource(R.string.options_section_delete_deck),
-                        deleteDeck,
-                    )
                 }
             }
         }
@@ -223,12 +228,13 @@ fun DrawerSectionButtonRow(
     @DrawableRes iconResId: Int,
     mainText: String,
     onClick: () -> Unit,
+    isClickable: Boolean = true,
     additionalText: String? = null,
     radioButton: Boolean? = null,
 ) {
 
     Row(
-        modifier = Modifier.fillMaxWidth().clickable { onClick() },
+        modifier = Modifier.fillMaxWidth().clickable(enabled = isClickable) { onClick() },
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(
@@ -261,6 +267,7 @@ fun DrawerSectionButtonRow(
         if (radioButton != null) RadioButton(
             selected = radioButton,
             onClick = onClick,
+            enabled = isClickable,
             colors = RadioButtonDefaults.colors().copy(
                 selectedColor = CustomTheme.colors.m,
                 unselectedColor = CustomTheme.colors.m

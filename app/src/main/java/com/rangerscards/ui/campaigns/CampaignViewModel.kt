@@ -144,6 +144,8 @@ class CampaignViewModel(
 
     val uploadedCampaignIdToOpen = MutableStateFlow<String?>(null)
 
+    val friendDeckIdToOpen = MutableStateFlow<String?>(null)
+
     fun startSubscription(campaignId: String) {
         viewModelScope.launch {
             try {
@@ -423,14 +425,14 @@ class CampaignViewModel(
                 .fetchPolicy(FetchPolicy.NetworkOnly).execute()
             if (response.data != null) deckRepository.updateDeck(response.data!!.deck!!.deck.toDeck(true))
         } else {
-            var deck = deckRepository.getDeck(deckId)
+            var deck = deckRepository.getDeck(deckId)!!
             deckRepository.updateDeck(deck.copy(
                 campaignId = null,
                 campaignName = null,
                 campaignRewards = null
             ))
             while (deck.previousId != null) {
-                deck = deckRepository.getDeck(deck.previousId!!)
+                deck = deckRepository.getDeck(deck.previousId!!)!!
                 deckRepository.updateDeck(deck.copy(
                     campaignId = null,
                     campaignName = null,
@@ -460,7 +462,7 @@ class CampaignViewModel(
                 .fetchPolicy(FetchPolicy.NetworkOnly).execute()
             if (response.data != null) deckRepository.updateDeck(response.data!!.deck!!.deck.toDeck(true))
         } else {
-            val deck = deckRepository.getDeck(deckId)
+            val deck = deckRepository.getDeck(deckId)!!
             deckRepository.updateDeck(deck.copy(
                 campaignId = campaign.id,
                 campaignName = campaign.name,
@@ -478,6 +480,18 @@ class CampaignViewModel(
                 latestDecks = JsonObject(campaignEntry.latestDecks.jsonObject + (deckId to newDeckJson)),
                 updatedAt = getCurrentDateTime()
             ))
+        }
+    }
+
+    suspend fun downloadFriendDeck(deckId: String, user: FirebaseUser?) {
+        val token = user!!.getIdToken(true).await().token
+        val response = apolloClient.query(GetDeckQuery(deckId.toInt()))
+            .addHttpHeader("Authorization", "Bearer $token")
+            .fetchPolicy(FetchPolicy.NetworkOnly).execute()
+        if (response.data != null) {
+            Log.d("test", response.data.toString())
+            deckRepository.upsertDeck(response.data!!.deck!!.deck.toDeck(true))
+            friendDeckIdToOpen.update { response.data!!.deck!!.deck.id.toString() }
         }
     }
 
@@ -578,7 +592,7 @@ class CampaignViewModel(
             campaignRepository.deleteCampaign(campaign.id)
         } else {
             deckIds.forEach {
-                val deck = deckRepository.getDeck(it)
+                val deck = deckRepository.getDeck(it)!!
                 deckRepository.updateDeck(deck.copy(
                     campaignId = null,
                     campaignName = null,

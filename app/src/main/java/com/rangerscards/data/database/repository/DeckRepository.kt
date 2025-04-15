@@ -9,13 +9,15 @@ import kotlinx.coroutines.flow.Flow
 
 interface DeckRepository {
 
-    suspend fun getDeck(id: String): Deck
+    suspend fun getDeck(id: String): Deck?
 
     suspend fun getRole(code: String, taboo: Boolean): RoleCardProjection?
 
     suspend fun updateDeck(deck: Deck)
 
     suspend fun insertDeck(deck: Deck)
+
+    suspend fun upsertDeck(deck: Deck)
 
     suspend fun deleteDeckById(id: String)
 

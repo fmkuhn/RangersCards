@@ -35,6 +35,7 @@ import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
@@ -130,6 +131,9 @@ fun DeckScreen(
     var drawerOpen by remember { mutableStateOf(false) }
     var deckNameEditing by rememberSaveable { mutableStateOf("") }
     var isUploadClone by rememberSaveable { mutableStateOf(false) }
+    val isOwner by remember { derivedStateOf {
+        deck?.nextId == null && (user == null || user.uid == deck?.userId || deck?.userId?.isEmpty() == true)
+    } }
     LaunchedEffect(needLoadDeck) {
         delay(500L)
         if (needLoadDeck) {
@@ -537,9 +541,7 @@ fun DeckScreen(
                         item(key = "problem") {
                             FullDeckProblemsItem(deckProblems.value.first!!)
                         }
-                    if (deck.nextId == null && (user == null || user.uid == deck.userId
-                                || deck.userId.isEmpty())
-                    ) item(key = "edit_button") {
+                    if (isOwner) item(key = "edit_button") {
                         Button(
                             onClick = {
                                 if (!isEditing) deckViewModel.enterEditMode()
@@ -1144,6 +1146,7 @@ fun DeckScreen(
                 DeckRightSideDrawer(
                     isOpen = drawerOpen,
                     onClick = { drawerOpen = !drawerOpen },
+                    isOwner = isOwner,
                     deckName = deck.name,
                     deckId = if (deck.uploaded) deckId else null,
                     changeName = { showInputDialog = DialogWithInputType.Name },
