@@ -479,7 +479,7 @@ fun CampaignScreen(
                                         } },
                                         events = campaignState!!.events.distinctBy { it.name },
                                         onClick = { navController.navigate(
-                                            "${BottomNavScreen.Campaigns.route}/campaign/event/$${Uri.encode(it)}"
+                                            "${BottomNavScreen.Campaigns.route}/campaign/event/${Uri.encode(it)}"
                                         ) {
                                             launchSingleTop = true
                                         } }

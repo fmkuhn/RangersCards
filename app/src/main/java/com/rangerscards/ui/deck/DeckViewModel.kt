@@ -576,14 +576,16 @@ class DeckViewModel(
             val deckId = apolloClient.mutation(UpgradeDeckMutation(originalDeck.value!!.id.toInt()))
                 .addHttpHeader("Authorization", "Bearer $token").execute()
             if (deckId.data != null) {
-                val deck = apolloClient.query(GetDeckQuery(deckId.data!!.deck!!.id))
-                    .fetchPolicy(FetchPolicy.NetworkOnly).execute()
-                deckRepository.updateDeck(deck.data!!.deck!!.deck.toDeck(true))
-                val newDeck = apolloClient.query(GetDeckQuery(deck.data!!.deck!!.deck.next_deck!!.id))
-                    .fetchPolicy(FetchPolicy.NetworkOnly).execute()
-                if (newDeck.data != null) {
-                    deckRepository.insertDeck(newDeck.data!!.deck!!.deck.toDeck(true))
-                    deckToOpen.update { newDeck.data!!.deck!!.deck.id.toString() }
+                val updatedDeck = apolloClient.query(GetDeckQuery(originalDeck.value!!.id.toInt()))
+                    .addHttpHeader("Authorization", "Bearer $token").fetchPolicy(FetchPolicy.NetworkOnly).execute()
+                if (updatedDeck.data != null) {
+                    deckRepository.updateDeck(updatedDeck.data!!.deck!!.deck.toDeck(true))
+                    val newDeck = apolloClient.query(GetDeckQuery(updatedDeck.data!!.deck!!.deck.next_deck!!.id))
+                        .addHttpHeader("Authorization", "Bearer $token").fetchPolicy(FetchPolicy.NetworkOnly).execute()
+                    if (newDeck.data != null) {
+                        deckRepository.insertDeck(newDeck.data!!.deck!!.deck.toDeck(true))
+                        deckToOpen.update { newDeck.data!!.deck!!.deck.id.toString() }
+                    }
                 }
             }
         } else {

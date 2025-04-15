@@ -6,7 +6,6 @@ mutation upgradeDeck(
     upgrade_data: {}
   }) {
     id
-    next_deck_id
   }
 }
 
