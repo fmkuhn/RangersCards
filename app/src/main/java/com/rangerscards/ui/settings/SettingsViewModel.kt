@@ -10,6 +10,7 @@ import androidx.appcompat.app.AppCompatDelegate
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
+import coil3.imageLoader
 import com.apollographql.apollo.ApolloClient
 import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.apolloStore
@@ -460,6 +461,14 @@ class SettingsViewModel(
     suspend fun clearDecks() = settingsRepository.deleteAllLocalDecks()
 
     suspend fun clearCampaigns() = settingsRepository.deleteAllLocalCampaigns()
+
+    suspend fun clearCoilCache(context: Context) {
+        val imageLoader = context.imageLoader
+        // Clear memory cache.
+        imageLoader.memoryCache?.clear()
+        // Clear disk cache.
+        imageLoader.diskCache?.clear()
+    }
 }
 
 suspend fun <T> performFirebaseOperationWithRetry(

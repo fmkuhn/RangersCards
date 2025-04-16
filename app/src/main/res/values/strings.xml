@@ -374,6 +374,10 @@
 
     //Diagnostics Screen
     <string name="diagnostics_clear_decks">Clear local decks data</string>
+    <string name="diagnostics_clear_decks_cleared">Local decks data is cleared.</string>
     <string name="diagnostics_clear_campaigns">Clear local campaigns data</string>
+    <string name="diagnostics_clear_campaigns_cleared">Local campaigns data is cleared.</string>
+    <string name="diagnostics_clear_coil_cache">Clear image cache</string>
+    <string name="diagnostics_clear_coil_cache_cleared">Image cache is cleared.</string>
 
 </resources>
