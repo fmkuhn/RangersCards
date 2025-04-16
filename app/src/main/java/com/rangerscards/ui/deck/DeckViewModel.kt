@@ -670,6 +670,8 @@ class DeckViewModel(
             val deck = originalDeck.value!!.toDeck(updatableValues.value!!, problems)
             deckRepository.insertDeck(deck.copy(
                 id = newUuid,
+                userId = "",
+                userHandle = null,
                 name = if (newName.trim() == deck.name) "${deck.name} ${context.getString(R.string.clone_deck_name_postfix)}"
                 else newName,
                 version = 1,
