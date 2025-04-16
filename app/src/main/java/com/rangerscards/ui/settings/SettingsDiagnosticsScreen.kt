@@ -80,16 +80,16 @@ fun SettingsDiagnosticsScreen(
     ) {
         item {
             Column(modifier = Modifier.fillMaxWidth().clickable { coroutine.launch { showLoadingDialog = true
-                settingsViewModel.clearDecks()
+                settingsViewModel.clearLocalData()
             }.invokeOnCompletion { showLoadingDialog = false
                 Toast.makeText(
                     context,
-                    context.getString(R.string.diagnostics_clear_decks_cleared),
+                    context.getString(R.string.diagnostics_clear_local_data_cleared),
                     Toast.LENGTH_SHORT
                 ).show()
             }}) {
                 Text(
-                    text = stringResource(R.string.diagnostics_clear_decks),
+                    text = stringResource(R.string.diagnostics_clear_local_data),
                     color = CustomTheme.colors.d30,
                     fontFamily = Jost,
                     fontWeight = FontWeight.Medium,
@@ -101,37 +101,13 @@ fun SettingsDiagnosticsScreen(
             }
         }
         item {
-            Column(modifier = Modifier.fillMaxWidth().clickable { coroutine.launch { showLoadingDialog = true
-                settingsViewModel.clearCampaigns()
-            }.invokeOnCompletion { showLoadingDialog = false
-                Toast.makeText(
-                    context,
-                    context.getString(R.string.diagnostics_clear_campaigns_cleared),
-                    Toast.LENGTH_SHORT
-                ).show()
-            }}) {
-                Text(
-                    text = stringResource(R.string.diagnostics_clear_campaigns),
-                    color = CustomTheme.colors.d30,
-                    fontFamily = Jost,
-                    fontWeight = FontWeight.Medium,
-                    fontSize = 20.sp,
-                    lineHeight = 22.sp,
-                    modifier = Modifier.padding(8.dp)
-                )
-                HorizontalDivider(color = CustomTheme.colors.l10)
-            }
-        }
-        item {
-            Column(modifier = Modifier.fillMaxWidth().clickable { coroutine.launch { showLoadingDialog = true
-                settingsViewModel.clearCoilCache(context)
-            }.invokeOnCompletion { showLoadingDialog = false
+            Column(modifier = Modifier.fillMaxWidth().clickable { settingsViewModel.clearCoilCache(context)
                 Toast.makeText(
                     context,
                     context.getString(R.string.diagnostics_clear_coil_cache_cleared),
                     Toast.LENGTH_SHORT
                 ).show()
-            }}) {
+            }) {
                 Text(
                     text = stringResource(R.string.diagnostics_clear_coil_cache),
                     color = CustomTheme.colors.d30,

@@ -458,11 +458,12 @@ class SettingsViewModel(
         }
     }
 
-    suspend fun clearDecks() = settingsRepository.deleteAllLocalDecks()
+    suspend fun clearLocalData() {
+        settingsRepository.deleteAllLocalDecks()
+        settingsRepository.deleteAllLocalCampaigns()
+    }
 
-    suspend fun clearCampaigns() = settingsRepository.deleteAllLocalCampaigns()
-
-    suspend fun clearCoilCache(context: Context) {
+    fun clearCoilCache(context: Context) {
         val imageLoader = context.imageLoader
         // Clear memory cache.
         imageLoader.memoryCache?.clear()
