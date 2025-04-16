@@ -52,9 +52,9 @@ import kotlinx.serialization.json.jsonPrimitive
 @Composable
 fun DeckListItem(
     meta: JsonElement,
-    imageSrc: String,
+    imageSrc: String?,
     name: String,
-    role: String,
+    role: String?,
     onClick: () -> Unit,
     isCampaign: Boolean? = null, //true - display campaign icon, false - display ranger icon
     campaignName: String? = null,
@@ -117,7 +117,7 @@ fun DeckListItem(
 
 @Composable
 fun DeckListItemImageContainer(
-    imageSrc: String,
+    imageSrc: String?,
     modifier: Modifier
 ) {
     Surface(
@@ -151,7 +151,7 @@ fun DeckListItemImageContainer(
 fun DeckListItemTextContainer(
     meta: JsonElement,
     name: String,
-    role: String,
+    role: String?,
     isCampaign: Boolean?,
     campaignOrUserName: String?,
     weight: Modifier
@@ -177,8 +177,8 @@ fun DeckListItemTextContainer(
                     if (background != null)
                         append(stringResource(background) + " - ")
                     if (specialty != null)
-                        append(stringResource(specialty) + " - ")
-                    append(role)
+                        append(stringResource(specialty))
+                    if (role != null) append(" - $role")
                 },
                 color = CustomTheme.colors.d20,
                 fontFamily = Jost,

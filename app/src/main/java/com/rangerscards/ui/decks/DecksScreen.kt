@@ -161,11 +161,11 @@ fun DecksScreen(
                     val role by decksViewModel.getCard(
                         item.meta.jsonObject["role"]?.jsonPrimitive?.content.toString()
                     ).collectAsState(null)
-                    if (role != null) DeckListItem(
+                    DeckListItem(
                         meta = item.meta,
-                        imageSrc = role!!.realImageSrc!!,
+                        imageSrc = role?.realImageSrc,
                         name = item.name,
-                        role = role!!.name!!,
+                        role = role?.name,
                         onClick = { navigateToDeck.invoke(item.id) },
                         isCampaign = if (item.campaignName != null) true else null,
                         campaignName = item.campaignName,
