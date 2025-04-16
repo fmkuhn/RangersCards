@@ -24,6 +24,8 @@ import com.rangerscards.data.database.repository.OfflineCampaignsRepository
 import com.rangerscards.data.database.repository.OfflineCardsRepository
 import com.rangerscards.data.database.repository.OfflineDeckRepository
 import com.rangerscards.data.database.repository.OfflineDecksRepository
+import com.rangerscards.data.database.repository.OfflineSettingsRepository
+import com.rangerscards.data.database.repository.SettingsRepository
 import com.rangerscards.data.objects.JsonElementAdapter
 import com.rangerscards.type.Jsonb
 import kotlinx.coroutines.delay
@@ -46,6 +48,7 @@ interface AppContainer {
     val deckRepository: DeckRepository
     val campaignsRepository: CampaignsRepository
     val campaignRepository: CampaignRepository
+    val settingsRepository: SettingsRepository
 }
 
 /**
@@ -103,5 +106,10 @@ class AppDataContainer(private val context: Context) : AppContainer {
 
     override val campaignRepository: CampaignRepository by lazy {
         OfflineCampaignRepository(RangersDatabase.getDatabase(context).campaignDao())
+    }
+
+    override val settingsRepository: SettingsRepository by lazy {
+        OfflineSettingsRepository(RangersDatabase.getDatabase(context).deckDao(),
+            RangersDatabase.getDatabase(context).campaignDao())
     }
 }

@@ -25,6 +25,7 @@ fun SettingsScreen(
     mainActivity: MainActivity,
     isDarkTheme: Boolean,
     navigateToAbout: () -> Unit,
+    navigateToDiagnostics: () -> Unit,
     navigateToFriends: () -> Unit,
     settingsViewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory),
     contentPadding: PaddingValues = PaddingValues(0.dp),
@@ -74,7 +75,8 @@ fun SettingsScreen(
             SupportCard(
                 isDarkTheme = isDarkTheme,
                 settingsViewModel = settingsViewModel,
-                navigateToAbout = { navigateToAbout.invoke() }
+                navigateToAbout = { navigateToAbout.invoke() },
+                navigateToDiagnostics = { navigateToDiagnostics.invoke() }
             )
         }
     }

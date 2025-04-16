@@ -37,6 +37,9 @@ interface CampaignDao {
     @Query("DELETE FROM campaign WHERE uploaded = 1")
     suspend fun deleteAllUploadedCampaigns()
 
+    @Query("DELETE FROM campaign WHERE uploaded = 0")
+    suspend fun deleteAllLocalCampaigns()
+
     @Query("SELECT id, name, day, current_location, latest_decks, access FROM campaign " +
             "WHERE cycle_id != 'demo' ORDER BY updated_at DESC"
     )

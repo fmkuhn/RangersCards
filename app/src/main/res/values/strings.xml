@@ -372,4 +372,8 @@
     //Errors handling
     <string name="something_went_wrong">Something went wrong.</string>
 
+    //Diagnostics Screen
+    <string name="diagnostics_clear_decks">Clear local decks data</string>
+    <string name="diagnostics_clear_campaigns">Clear local campaigns data</string>
+
 </resources>

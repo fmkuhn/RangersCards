@@ -34,6 +34,7 @@ import com.rangerscards.data.UserAuthRepository
 import com.rangerscards.data.UserPreferencesRepository
 import com.rangerscards.data.database.card.Card
 import com.rangerscards.data.database.repository.CardsRepository
+import com.rangerscards.data.database.repository.SettingsRepository
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.SharingStarted
@@ -73,7 +74,8 @@ class SettingsViewModel(
     private val apolloClient: ApolloClient,
     private val userAuthRepository: UserAuthRepository,
     private val userPreferencesRepository: UserPreferencesRepository,
-    private val cardsRepository: CardsRepository
+    private val cardsRepository: CardsRepository,
+    private  val settingsRepository: SettingsRepository
 ) : ViewModel() {
 
     private val _userUiState = MutableStateFlow(UserUIState())
@@ -454,6 +456,10 @@ class SettingsViewModel(
             getUserInfo(context, userId)
         }
     }
+
+    suspend fun clearDecks() = settingsRepository.deleteAllLocalDecks()
+
+    suspend fun clearCampaigns() = settingsRepository.deleteAllLocalCampaigns()
 }
 
 suspend fun <T> performFirebaseOperationWithRetry(

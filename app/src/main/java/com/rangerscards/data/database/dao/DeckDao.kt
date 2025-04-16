@@ -42,6 +42,9 @@ interface DeckDao {
     @Query("DELETE FROM deck WHERE uploaded = 1")
     suspend fun deleteAllUploadedDecks()
 
+    @Query("DELETE FROM deck WHERE uploaded = 0")
+    suspend fun deleteAllLocalDecks()
+
     @Query("SELECT id, user_handle, name, meta, campaign_name FROM deck WHERE next_id IS NULL " +
             "AND (user_id = :userId OR user_id = '') ORDER BY updated_at DESC"
     )

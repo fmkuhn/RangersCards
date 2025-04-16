@@ -86,6 +86,7 @@ import com.rangerscards.ui.decks.DeckCreationScreen
 import com.rangerscards.ui.decks.DecksScreen
 import com.rangerscards.ui.decks.DecksViewModel
 import com.rangerscards.ui.settings.SettingsAboutScreen
+import com.rangerscards.ui.settings.SettingsDiagnosticsScreen
 import com.rangerscards.ui.settings.SettingsFriendsScreen
 import com.rangerscards.ui.settings.SettingsScreen
 import com.rangerscards.ui.settings.SettingsViewModel
@@ -176,6 +177,13 @@ fun RangersNavHost(
                                     launchSingleTop = true
                                 }
                             },
+                            navigateToDiagnostics = {
+                                navController.navigate(
+                                    "${BottomNavScreen.Settings.route}/diagnostics"
+                                ) {
+                                    launchSingleTop = true
+                                }
+                            },
                             navigateToFriends = {
                                 navController.navigate(
                                     "${BottomNavScreen.Settings.route}/friends"
@@ -208,6 +216,17 @@ fun RangersNavHost(
                         contentPadding = innerPadding
                     )
                     title = stringResource(R.string.your_friends)
+                    actions = null
+                    switch = null
+                }
+                composable(BottomNavScreen.Settings.route + "/diagnostics") {
+                    if (!isCardsLoading) SettingsDiagnosticsScreen(
+                        settingsViewModel = settingsViewModel,
+                        isDarkTheme = isDarkTheme,
+                        contentPadding = innerPadding
+                    )
+                    else CardsDownloadingCircularProgressIndicator()
+                    title = stringResource(R.string.diagnostics_button)
                     actions = null
                     switch = null
                 }

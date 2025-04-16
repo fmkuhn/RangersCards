@@ -25,7 +25,8 @@ object AppViewModelProvider {
             SettingsViewModel(rangersApplication().container.apolloClient,
                 rangersApplication().container.userAuthRepository,
                 rangersApplication().container.userPreferencesRepository,
-                rangersApplication().container.cardsRepository)
+                rangersApplication().container.cardsRepository,
+                rangersApplication().container.settingsRepository)
         }
 
         //Initializer for CardsViewModel

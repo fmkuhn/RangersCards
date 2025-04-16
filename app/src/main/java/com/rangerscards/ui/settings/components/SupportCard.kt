@@ -37,6 +37,7 @@ const val boostyLink = "https://boosty.to/rangerscards"
 fun SupportCard(
     isDarkTheme: Boolean,
     navigateToAbout: () -> Unit,
+    navigateToDiagnostics: () -> Unit,
     modifier: Modifier = Modifier,
     settingsViewModel: SettingsViewModel
 ) {
@@ -107,11 +108,11 @@ fun SupportCard(
 //            onClick = { /*TODO: Implement backup*/ }
 //        )
         //TODO:Implement data export for diagnostics
-//        SquareButton(
-//            stringId = R.string.diagnostics_button,
-//            leadingIcon = R.drawable.build_32dp,
-//            onClick = { /*TODO: Implement diagnostic*/ }
-//        )
+        SquareButton(
+            stringId = R.string.diagnostics_button,
+            leadingIcon = R.drawable.build_32dp,
+            onClick = navigateToDiagnostics
+        )
         SquareButton(
             stringId = R.string.contact_us_button,
             leadingIcon = R.drawable.mail_32dp,
