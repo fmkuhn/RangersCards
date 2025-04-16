@@ -81,7 +81,7 @@ class OfflineDeckRepository(private val deckDao: DeckDao) : DeckRepository {
         val ftsQuery = if (language == "ru") {
             val stemedString = searchQuery
                 .replace("\"(\\[\"]|.*)?\"".toRegex(), " ")
-                .split("[^\\p{Alpha}]+".toRegex())
+                .split("[^\\p{Alnum}]+".toRegex())
                 .filter { it.isNotBlank() }
                 .joinToString(separator = " ", transform = { "${PorterStem.stem(it)}*" })
             createQueryString(stemedString, includeEnglish, language)
@@ -89,7 +89,7 @@ class OfflineDeckRepository(private val deckDao: DeckDao) : DeckRepository {
             val stemedString = searchQuery
                 .lowercase(Locale.forLanguageTag(language))
                 .replace("\"(\\[\"]|.*)?\"".toRegex(), " ")
-                .split("[^\\p{Alpha}]+".toRegex())
+                .split("[^\\p{Alnum}]+".toRegex())
                 .filter { it.isNotBlank() }
                 .joinToString(separator = " ", transform = { "$it*" })
             createQueryString(stemedString, includeEnglish, language)

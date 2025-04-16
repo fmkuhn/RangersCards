@@ -36,7 +36,7 @@ class OfflineCampaignsRepository(
         val newQuery = query
             .lowercase()
             .replace("\"(\\[\"]|.*)?\"".toRegex(), " ")
-            .split("[^\\p{Alpha}]+".toRegex())
+            .split("[^\\p{Alnum}]+".toRegex())
             .filter { it.isNotBlank() }
             .joinToString(separator = " ", transform = { "%$it%" })
         // Create a Pager that wraps the PagingSource from the DAO.

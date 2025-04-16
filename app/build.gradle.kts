@@ -16,8 +16,8 @@ android {
         applicationId = "com.rangerscards"
         minSdk = 24
         targetSdk = 35
-        versionCode = 17
-        versionName = "1.1.13"
+        versionCode = 18
+        versionName = "1.1.14"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

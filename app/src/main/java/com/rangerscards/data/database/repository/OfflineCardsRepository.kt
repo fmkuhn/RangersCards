@@ -43,7 +43,7 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
         val ftsQuery = if (language == "ru") {
             val stemedString = searchQuery
                 .replace("\"(\\[\"]|.*)?\"".toRegex(), " ")
-                .split("[^\\p{Alpha}]+".toRegex())
+                .split("[^\\p{Alnum}]+".toRegex())
                 .filter { it.isNotBlank() }
                 .joinToString(separator = " ", transform = { "${PorterStem.stem(it)}*" })
             createQueryString(stemedString, includeEnglish, language)
@@ -51,12 +51,11 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
             val stemedString = searchQuery
                 .lowercase(Locale.forLanguageTag(language))
                 .replace("\"(\\[\"]|.*)?\"".toRegex(), " ")
-                .split("[^\\p{Alpha}]+".toRegex())
+                .split("[^\\p{Alnum}]+".toRegex())
                 .filter { it.isNotBlank() }
                 .joinToString(separator = " ", transform = { "$it*" })
             createQueryString(stemedString, includeEnglish, language)
         }
-
         // Create a Pager that wraps the PagingSource from the DAO.
         return Pager(
             config = PagingConfig(
