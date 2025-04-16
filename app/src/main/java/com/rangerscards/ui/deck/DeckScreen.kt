@@ -896,7 +896,7 @@ fun DeckScreen(
                                 }
                             }
 
-                            "other" -> if (deck.previousId != null) item {
+                            "other" -> if (deck.previousId != null || value?.isNotEmpty() == true) item {
                                 DeckCardsTypeCard(
                                     showIcon = deck.nextId == null && (user == null || user.uid == deck.userId
                                             || deck.userId.isEmpty()),
@@ -910,6 +910,43 @@ fun DeckScreen(
                                         }
                                     }
                                 ) {
+                                    if (deck.previousId == null) Column(modifier = Modifier.fillMaxWidth()) {
+                                        val iconId = "warn"
+                                        BasicText(
+                                            modifier = Modifier.padding(horizontal = 8.dp),
+                                            text = buildAnnotatedString {
+                                                appendInlineContent(iconId, "[$iconId]")
+                                                append(
+                                                    " ${
+                                                        stringResource(R.string.reward_or_malady_in_starting_deck)
+                                                    } "
+                                                )
+                                            },
+                                            inlineContent = mapOf(
+                                                "warn" to InlineTextContent(
+                                                    Placeholder(
+                                                        width = 16.sp,
+                                                        height = 16.sp,
+                                                        placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
+                                                    )
+                                                ) {
+                                                    Icon(
+                                                        painter = painterResource(R.drawable.error_32dp),
+                                                        contentDescription = "Info Icon",
+                                                        tint = CustomTheme.colors.warn
+                                                    )
+                                                },
+                                            ),
+                                            style = TextStyle(
+                                                color = CustomTheme.colors.warn,
+                                                fontFamily = Jost,
+                                                fontWeight = FontWeight.Normal,
+                                                fontSize = 16.sp,
+                                                lineHeight = 18.sp,
+                                            ),
+                                        )
+                                        HorizontalDivider(color = CustomTheme.colors.l10)
+                                    }
                                     value?.forEach { (card, amount) ->
                                         key(card.id) {
                                             CardListItem(
@@ -940,7 +977,8 @@ fun DeckScreen(
                                                 onAddClick = if (isEditing) {
                                                     { deckViewModel.addCard(card.code) }
                                                 } else null,
-                                                onAddEnabled = amount != card.deckLimit,
+                                                onAddEnabled = if (deck.previousId != null) amount != card.deckLimit
+                                                else false,
                                                 onClick = {
                                                     navController.navigate(
                                                         "deck/card/${card.code}"

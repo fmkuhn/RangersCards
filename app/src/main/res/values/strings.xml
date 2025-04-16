@@ -187,6 +187,7 @@
     <string name="save_deck_button">Save changes</string>
     <string name="background_as_outside_interest">One of the chosen background cards is counting towards outside interest.</string>
     <string name="specialty_as_outside_interest">One of the chosen specialty cards is counting towards outside interest.</string>
+    <string name="reward_or_malady_in_starting_deck">Rewards and Maladies are not allowed in starting decks.</string>
     <string name="save_deck_changes_header">Save deck changes?</string>
     <string name="save_deck_changes_text">Looks like you have made some changes that have not been saved.</string>
     <string name="save_deck_changes_button">Save changes</string>

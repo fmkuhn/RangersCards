@@ -158,6 +158,7 @@
     <string name="save_deck_button">Сохранить изменения</string>
     <string name="background_as_outside_interest">Одна из выбранных карт квалификации идет в счёт карт хобби.</string>
     <string name="specialty_as_outside_interest">Одна из выбранных карт специализации идет в счёт карт хобби.</string>
+    <string name="reward_or_malady_in_starting_deck">Стартовая колода не должна содержать награды и/или недуги.</string>
     <string name="save_deck_changes_header">Сохранить изменения?</string>
     <string name="save_deck_changes_text">Кажется, вы внесли изменения, которые ещё не сохранены.</string>
     <string name="save_deck_changes_button">Сохранить изменения</string>
