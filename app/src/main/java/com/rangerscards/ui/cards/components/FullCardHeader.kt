@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
@@ -137,31 +136,26 @@ fun FullCardHeaderAspectContainer(
                     tint = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
                     modifier = Modifier.size(48.dp)
                 )
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    if (cost != null) Text(
-                        text = when(cost) {
+                if (cost != null) {
+                    Text(
+                        text = when (cost) {
                             -2 -> "X"
                             else -> cost.toString()
                         },
                         color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
                         fontFamily = Jost,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 24.sp,
-                        lineHeight = 26.sp,
-                        modifier = Modifier.sizeIn(maxHeight = 26.dp)
+                        fontSize = 28.sp,
+                        lineHeight = 30.sp,
                     )
                     Text(
                         text = aspectShortName.toString(),
                         color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
                         fontFamily = Jost,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        lineHeight = 18.sp,
-                        modifier = Modifier.sizeIn(maxHeight = 18.dp)
+                        fontSize = 14.sp,
+                        lineHeight = 16.sp,
+                        modifier = Modifier.align(Alignment.BottomCenter)
                     )
                 }
             }

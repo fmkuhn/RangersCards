@@ -149,9 +149,9 @@ fun StatsGrid(awa: Int, fit: Int, foc: Int, spi: Int, isDarkTheme: Boolean) {
                             color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
                             fontFamily = Jost,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp,
-                            lineHeight = 14.sp,
-                            modifier = Modifier.sizeIn(maxHeight = 14.dp)
+                            fontSize = 14.sp,
+                            lineHeight = 16.sp,
+                            modifier = Modifier.sizeIn(maxHeight = 16.dp)
                         )
                         Text(
                             text = stringResource(R.string.awa_styled_card_text),
@@ -188,9 +188,9 @@ fun StatsGrid(awa: Int, fit: Int, foc: Int, spi: Int, isDarkTheme: Boolean) {
                             color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
                             fontFamily = Jost,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp,
-                            lineHeight = 14.sp,
-                            modifier = Modifier.sizeIn(maxHeight = 14.dp)
+                            fontSize = 14.sp,
+                            lineHeight = 16.sp,
+                            modifier = Modifier.sizeIn(maxHeight = 16.dp)
                         )
                         Text(
                             text = stringResource(R.string.spi_styled_card_text),
@@ -229,9 +229,9 @@ fun StatsGrid(awa: Int, fit: Int, foc: Int, spi: Int, isDarkTheme: Boolean) {
                             color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
                             fontFamily = Jost,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp,
-                            lineHeight = 14.sp,
-                            modifier = Modifier.sizeIn(maxHeight = 14.dp)
+                            fontSize = 14.sp,
+                            lineHeight = 16.sp,
+                            modifier = Modifier.sizeIn(maxHeight = 16.dp)
                         )
                         Text(
                             text = stringResource(R.string.fit_styled_card_text),
@@ -268,9 +268,9 @@ fun StatsGrid(awa: Int, fit: Int, foc: Int, spi: Int, isDarkTheme: Boolean) {
                             color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
                             fontFamily = Jost,
                             fontWeight = FontWeight.Bold,
-                            fontSize = 12.sp,
-                            lineHeight = 14.sp,
-                            modifier = Modifier.sizeIn(maxHeight = 14.dp)
+                            fontSize = 14.sp,
+                            lineHeight = 16.sp,
+                            modifier = Modifier.sizeIn(maxHeight = 16.dp)
                         )
                         Text(
                             text = stringResource(R.string.foc_styled_card_text),

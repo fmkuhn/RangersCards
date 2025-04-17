@@ -170,14 +170,10 @@ fun CardListItemImageContainer(
                     }),
                     contentDescription = null,
                     tint = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
-                    modifier = Modifier.size(34.dp)
+                    modifier = Modifier.fillMaxSize(0.9f)
                 )
-                Column(
-                    verticalArrangement = Arrangement.Center,
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    modifier = Modifier.fillMaxSize()
-                ) {
-                    if (cost != null) Text(
+                if (cost != null) {
+                    Text(
                         text = when(cost) {
                             -2 -> "X"
                             else -> cost.toString()
@@ -185,20 +181,46 @@ fun CardListItemImageContainer(
                         color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
                         fontFamily = Jost,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 16.sp,
-                        lineHeight = 18.sp,
-                        modifier = Modifier.sizeIn(maxHeight = 18.dp)
+                        fontSize = 20.sp,
+                        lineHeight = 22.sp,
                     )
                     Text(
                         text = aspectShortName.toString(),
                         color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
                         fontFamily = Jost,
                         fontWeight = FontWeight.Bold,
-                        fontSize = 12.sp,
-                        lineHeight = 14.sp,
-                        modifier = Modifier.sizeIn(maxHeight = 14.dp)
+                        fontSize = 10.sp,
+                        lineHeight = 12.sp,
+                        modifier = Modifier.align(Alignment.BottomCenter)
                     )
                 }
+//                Column(
+//                    verticalArrangement = Arrangement.Center,
+//                    horizontalAlignment = Alignment.CenterHorizontally,
+//                    modifier = Modifier.fillMaxSize()
+//                ) {
+//                    if (cost != null) Text(
+//                        text = when(cost) {
+//                            -2 -> "X"
+//                            else -> cost.toString()
+//                        },
+//                        color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
+//                        fontFamily = Jost,
+//                        fontWeight = FontWeight.Bold,
+//                        fontSize = 16.sp,
+//                        lineHeight = 18.sp,
+//                        modifier = Modifier.sizeIn(maxHeight = 18.dp)
+//                    )
+//                    Text(
+//                        text = aspectShortName.toString(),
+//                        color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
+//                        fontFamily = Jost,
+//                        fontWeight = FontWeight.Bold,
+//                        fontSize = 12.sp,
+//                        lineHeight = 14.sp,
+//                        modifier = Modifier.sizeIn(maxHeight = 14.dp)
+//                    )
+//                }
             }
         } else {
             AsyncImage(

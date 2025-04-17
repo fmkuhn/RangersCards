@@ -95,37 +95,30 @@ fun FullDeckStatsItem(
                             }),
                             contentDescription = null,
                             tint = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
-                            modifier = Modifier.size(52.dp)
+                            modifier = Modifier.fillMaxSize(0.9f)
                         )
-                        Column(
-                            verticalArrangement = Arrangement.Center,
-                            horizontalAlignment = Alignment.CenterHorizontally,
-                            modifier = Modifier.fillMaxSize()
-                        ) {
-                            Text(
-                                text = stat.toString(),
-                                color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
-                                fontFamily = Jost,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 26.sp,
-                                lineHeight = 28.sp,
-                                modifier = Modifier.sizeIn(maxHeight = 28.dp)
-                            )
-                            Text(
-                                text = stringResource(when(index) {
-                                    0 -> R.string.awa_styled_card_text
-                                    1 -> R.string.spi_styled_card_text
-                                    2 -> R.string.fit_styled_card_text
-                                    else -> R.string.foc_styled_card_text
-                                }),
-                                color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
-                                fontFamily = Jost,
-                                fontWeight = FontWeight.Bold,
-                                fontSize = 18.sp,
-                                lineHeight = 20.sp,
-                                modifier = Modifier.sizeIn(maxHeight = 20.dp)
-                            )
-                        }
+                        Text(
+                            text = stat.toString(),
+                            color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
+                            fontFamily = Jost,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 30.sp,
+                            lineHeight = 32.sp,
+                        )
+                        Text(
+                            text = stringResource(when(index) {
+                                0 -> R.string.awa_styled_card_text
+                                1 -> R.string.spi_styled_card_text
+                                2 -> R.string.fit_styled_card_text
+                                else -> R.string.foc_styled_card_text
+                            }),
+                            color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
+                            fontFamily = Jost,
+                            fontWeight = FontWeight.Bold,
+                            fontSize = 16.sp,
+                            lineHeight = 18.sp,
+                            modifier = Modifier.align(Alignment.BottomCenter)
+                        )
                     }
                 }
             }
