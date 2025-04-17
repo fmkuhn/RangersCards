@@ -161,6 +161,7 @@ fun CampaignsScreen(
                         }
                     ).collectAsState(null)
                     CampaignListItem(
+                        cycleId = item.cycleId,
                         name = item.name,
                         day = item.day,
                         currentLocation = item.currentLocation,

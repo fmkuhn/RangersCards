@@ -747,10 +747,10 @@ class CampaignViewModel(
         }
     }
 
-    fun getRemovedSetsInfo(): Map<String, Pair<Int, Int>> {
+    fun getRemovedSetsInfo(): Map<String, Pair<Int?, Int>> {
         val campaign = campaign.value!!
-        val maps = CampaignMaps.generalSetsMap + CampaignMaps.getMapLocations(false)
-        val removedSets = mutableMapOf<String, Pair<Int, Int>>()
+        val maps = CampaignMaps.generalSetsMap + CampaignMaps.getMapLocations(false, campaign.cycleId)
+        val removedSets = mutableMapOf<String, Pair<Int?, Int>>()
         campaign.removed.forEach { removed ->
             val fromPath = Path.fromValue(removed.setId)
             val fromMaps = maps[removed.setId]
@@ -784,10 +784,11 @@ class CampaignViewModel(
         }
     }
 
-    fun getAllRemovedSets(): Map<String, Pair<Int, Int>> {
-        val maps = CampaignMaps.generalSetsMap + CampaignMaps.getMapLocations(false)
-        val paths = Path.entries
-        val sets = mutableMapOf<String, Pair<Int, Int>>()
+    fun getAllRemovedSets(): Map<String, Pair<Int?, Int>> {
+        val cycleId = campaign.value!!.cycleId
+        val maps = CampaignMaps.generalSetsMap + CampaignMaps.getMapLocations(false, cycleId)
+        val paths = Path.entries.filter { it.cycles.contains(cycleId) }
+        val sets = mutableMapOf<String, Pair<Int?, Int>>()
         maps.forEach { (key, value) ->
             sets[key] = value.iconResId to value.nameResId
         }

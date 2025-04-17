@@ -5,6 +5,8 @@ import kotlinx.serialization.json.JsonElement
 
 data class CampaignListItemProjection(
     val id: String,
+    @ColumnInfo(name = "cycle_id")
+    val cycleId: String,
     val name: String,
     val day: Int,
     @ColumnInfo(name = "current_location")

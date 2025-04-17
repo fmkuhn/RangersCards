@@ -8,13 +8,15 @@ object CampaignMaps {
 
     val campaignCyclesMap by lazy {
         mapOf(
-            "core" to R.string.core_cycle
+            "core" to R.string.core_cycle,
+            //"loa" to R.string.loa_cycle
         )
     }
 
     val startingLocations by lazy {
         mapOf(
-            "core" to "lone_tree_station"
+            "core" to "lone_tree_station",
+            "loa" to "lone_tree_station"
         )
     }
 
@@ -33,124 +35,206 @@ object CampaignMaps {
         )
     }
 
-    private fun connections(): List<Connection> {
-        return listOf(
-            Connection("atrox_mountain", "northern_outpost", Path.WOODS),
-            Connection("atrox_mountain", "golden_shore", Path.LAKESHORE),
-            Connection("atrox_mountain", "lone_tree_station", Path.MOUNTAIN_PASS),
-            Connection("golden_shore", "northern_outpost", Path.WOODS),
-            Connection("golden_shore", "mount_nim", Path.LAKESHORE),
-            Connection("northern_outpost", "mount_nim", Path.MOUNTAIN_PASS),
-            Connection("white_sky", "mount_nim", Path.MOUNTAIN_PASS),
-            Connection("white_sky", "lone_tree_station", Path.LAKESHORE),
-            Connection("white_sky", "boulder_field", Path.WOODS),
-            Connection("lone_tree_station", "boulder_field", Path.WOODS),
-            Connection("lone_tree_station", "ancestors_grove", Path.OLD_GROWTH),
-            Connection("ancestors_grove", "boulder_field", Path.WOODS),
-            Connection("kobos_market", "boulder_field", Path.GRASSLAND),
-            Connection("kobos_market", "ancestors_grove", Path.MOUNTAIN_PASS),
-            Connection("the_plummet", "ancestors_grove", Path.MOUNTAIN_PASS),
-            Connection("the_plummet", "kobos_market", Path.LAKESHORE),
-            Connection("the_plummet", "the_concordant_ziggurats", Path.RAVINE),
-            Connection("headwaters_station", "the_concordant_ziggurats", Path.RIVER),
-            Connection("meadow", "the_concordant_ziggurats", Path.GRASSLAND),
-            Connection("meadow", "greenbriar_knoll", Path.GRASSLAND),
-            Connection("meadow", "stoneweaver_bridge", Path.GRASSLAND),
-            Connection("meadow", "rings_of_the_moon", Path.RAVINE),
-            Connection("the_concordant_ziggurats", "rings_of_the_moon", Path.RIVER),
-            Connection("the_concordant_ziggurats", "archeological_outpost", Path.GRASSLAND),
-            Connection("rings_of_the_moon", "archeological_outpost", Path.RAVINE),
-            Connection("rings_of_the_moon", "the_alluvial_ruins", Path.RIVER),
-            Connection("archeological_outpost", "the_alluvial_ruins", Path.MOUNTAIN_PASS),
-            Connection("archeological_outpost", "watchers_rock", Path.RAVINE),
-            Connection("the_tumbledown", "watchers_rock", Path.MOUNTAIN_PASS),
-            Connection("kobos_market", "spire", Path.LAKESHORE),
-            Connection("white_sky", "spire", Path.RIVER),
-            Connection("the_philosophers_garden", "spire", Path.OLD_GROWTH),
-            Connection("the_philosophers_garden", "the_fractured_wall", Path.WOODS),
-            Connection("mount_nim", "the_fractured_wall", Path.MOUNTAIN_PASS),
-            Connection("the_high_basin", "the_fractured_wall", Path.LAKESHORE),
-            Connection("the_furrow", "the_fractured_wall", Path.MOUNTAIN_PASS),
-            Connection("the_high_basin", "the_furrow", Path.LAKESHORE),
-            Connection("the_high_basin", "branch", Path.OLD_GROWTH),
-            Connection("the_philosophers_garden", "branch", Path.OLD_GROWTH),
-            Connection("crossroads_station", "branch", Path.OLD_GROWTH),
-            Connection("crossroads_station", "spire", Path.GRASSLAND),
-            Connection("terravore", "the_furrow", Path.RAVINE),
-            Connection("crossroads_station", "biologists_outpost", Path.OLD_GROWTH),
-            Connection("the_high_basin", "biologists_outpost", Path.RIVER),
-            Connection("stoneweaver_bridge", "biologists_outpost", Path.RIVER),
-            Connection("stoneweaver_bridge", "spire", Path.RIVER),
-            Connection("stoneweaver_bridge", "greenbriar_knoll", Path.RAVINE),
-            Connection("spire", "greenbriar_knoll", Path.WOODS),
-            Connection("biologists_outpost", "mound_of_the_navigator", Path.WOODS),
-            Connection("terravore", "mound_of_the_navigator", Path.OLD_GROWTH),
-            Connection("stoneweaver_bridge", "mound_of_the_navigator", Path.RAVINE),
-            Connection("the_greenbridge", "mound_of_the_navigator", Path.SWAMP),
-            Connection("the_greenbridge", "sunken_outpost", Path.SWAMP),
-            Connection("michaels_bog", "sunken_outpost", Path.SWAMP),
-            Connection("michaels_bog", "the_cypress_citadel", Path.SWAMP),
-            Connection("michaels_bog", "the_frowning_gate", Path.SWAMP),
-            Connection("sunken_outpost", "the_frowning_gate", Path.SWAMP),
-            Connection("the_alluvial_ruins", "the_frowning_gate", Path.RAVINE),
-            Connection("bowl_of_the_sun", "the_frowning_gate", Path.MOUNTAIN_PASS),
-            Connection("the_alluvial_ruins", "stoneweaver_bridge", Path.RIVER),
-            Connection("the_alluvial_ruins", "bowl_of_the_sun", Path.RAVINE),
-            Connection("the_tumbledown", "bowl_of_the_sun", Path.MOUNTAIN_PASS),
-            Connection("the_tumbledown", "the_alluvial_ruins", Path.RIVER),
-        )
+    private fun connections(cycleId: String): List<Connection> {
+        return when(cycleId) {
+            "core" -> listOf(
+                Connection("atrox_mountain", "northern_outpost", Path.WOODS),
+                Connection("atrox_mountain", "golden_shore", Path.LAKESHORE),
+                Connection("atrox_mountain", "lone_tree_station", Path.MOUNTAIN_PASS),
+                Connection("golden_shore", "northern_outpost", Path.WOODS),
+                Connection("golden_shore", "mount_nim", Path.LAKESHORE),
+                Connection("northern_outpost", "mount_nim", Path.MOUNTAIN_PASS),
+                Connection("white_sky", "mount_nim", Path.MOUNTAIN_PASS),
+                Connection("white_sky", "lone_tree_station", Path.LAKESHORE),
+                Connection("white_sky", "boulder_field", Path.WOODS),
+                Connection("lone_tree_station", "boulder_field", Path.WOODS),
+                Connection("lone_tree_station", "ancestors_grove", Path.OLD_GROWTH),
+                Connection("ancestors_grove", "boulder_field", Path.WOODS),
+                Connection("kobos_market", "boulder_field", Path.GRASSLAND),
+                Connection("kobos_market", "ancestors_grove", Path.MOUNTAIN_PASS),
+                Connection("the_plummet", "ancestors_grove", Path.MOUNTAIN_PASS),
+                Connection("the_plummet", "kobos_market", Path.LAKESHORE),
+                Connection("the_plummet", "the_concordant_ziggurats", Path.RAVINE),
+                Connection("headwaters_station", "the_concordant_ziggurats", Path.RIVER),
+                Connection("meadow", "the_concordant_ziggurats", Path.GRASSLAND),
+                Connection("meadow", "greenbriar_knoll", Path.GRASSLAND),
+                Connection("meadow", "stoneweaver_bridge", Path.GRASSLAND),
+                Connection("meadow", "rings_of_the_moon", Path.RAVINE),
+                Connection("the_concordant_ziggurats", "rings_of_the_moon", Path.RIVER),
+                Connection("the_concordant_ziggurats", "archeological_outpost", Path.GRASSLAND),
+                Connection("rings_of_the_moon", "archeological_outpost", Path.RAVINE),
+                Connection("rings_of_the_moon", "the_alluvial_ruins", Path.RIVER),
+                Connection("archeological_outpost", "the_alluvial_ruins", Path.MOUNTAIN_PASS),
+                Connection("archeological_outpost", "watchers_rock", Path.RAVINE),
+                Connection("the_tumbledown", "watchers_rock", Path.MOUNTAIN_PASS),
+                Connection("kobos_market", "spire", Path.LAKESHORE),
+                Connection("white_sky", "spire", Path.RIVER),
+                Connection("the_philosophers_garden", "spire", Path.OLD_GROWTH),
+                Connection("the_philosophers_garden", "the_fractured_wall", Path.WOODS),
+                Connection("mount_nim", "the_fractured_wall", Path.MOUNTAIN_PASS),
+                Connection("the_high_basin", "the_fractured_wall", Path.LAKESHORE),
+                Connection("the_furrow", "the_fractured_wall", Path.MOUNTAIN_PASS),
+                Connection("the_high_basin", "the_furrow", Path.LAKESHORE),
+                Connection("the_high_basin", "branch", Path.OLD_GROWTH),
+                Connection("the_philosophers_garden", "branch", Path.OLD_GROWTH),
+                Connection("crossroads_station", "branch", Path.OLD_GROWTH),
+                Connection("crossroads_station", "spire", Path.GRASSLAND),
+                Connection("terravore", "the_furrow", Path.RAVINE),
+                Connection("crossroads_station", "biologists_outpost", Path.OLD_GROWTH),
+                Connection("the_high_basin", "biologists_outpost", Path.RIVER),
+                Connection("stoneweaver_bridge", "biologists_outpost", Path.RIVER),
+                Connection("stoneweaver_bridge", "spire", Path.RIVER),
+                Connection("stoneweaver_bridge", "greenbriar_knoll", Path.RAVINE),
+                Connection("spire", "greenbriar_knoll", Path.WOODS),
+                Connection("biologists_outpost", "mound_of_the_navigator", Path.WOODS),
+                Connection("terravore", "mound_of_the_navigator", Path.OLD_GROWTH),
+                Connection("stoneweaver_bridge", "mound_of_the_navigator", Path.RAVINE),
+                Connection("the_greenbridge", "mound_of_the_navigator", Path.SWAMP),
+                Connection("the_greenbridge", "sunken_outpost", Path.SWAMP),
+                Connection("michaels_bog", "sunken_outpost", Path.SWAMP),
+                Connection("michaels_bog", "the_cypress_citadel", Path.SWAMP),
+                Connection("michaels_bog", "the_frowning_gate", Path.SWAMP),
+                Connection("sunken_outpost", "the_frowning_gate", Path.SWAMP),
+                Connection("the_alluvial_ruins", "the_frowning_gate", Path.RAVINE),
+                Connection("bowl_of_the_sun", "the_frowning_gate", Path.MOUNTAIN_PASS),
+                Connection("the_alluvial_ruins", "stoneweaver_bridge", Path.RIVER),
+                Connection("the_alluvial_ruins", "bowl_of_the_sun", Path.RAVINE),
+                Connection("the_tumbledown", "bowl_of_the_sun", Path.MOUNTAIN_PASS),
+                Connection("the_tumbledown", "the_alluvial_ruins", Path.RIVER),
+            )
+            "loa" -> listOf(
+                Connection("greenbriar_knoll", "the_concordant_ziggurats", Path.GRASSLAND),
+                Connection("spire", "the_chimney", Path.NONE),
+                Connection("the_chimney", "oasis_of_sunlight", Path.FLOODED_RUINS),
+                Connection("oasis_of_sunlight", "scuttler_network", Path.CAVE_SYSTEM),
+                Connection("scuttler_network", "orlins_vault", Path.FUNGAL_FOREST),
+                Connection("the_chimney", "orlins_vault", Path.ANCIENT_RUINS),
+                Connection("the_chimney", "desert_of_endless_night", Path.FLOODED_RUINS),
+                Connection("orlins_vault", "desert_of_endless_night", Path.CAVE_SYSTEM),
+                Connection("desert_of_endless_night", "drenching_chamber", Path.CAVE_SYSTEM),
+                Connection("the_chimney", "drenching_chamber", Path.FUNGAL_FOREST),
+                Connection("scuttler_network", "terminal_artery", Path.FLOODED_RUINS, ConnectionRestriction.FLOODED_PASSAGE),
+                Connection("orlins_vault", "branching_artery", Path.ANCIENT_RUINS, ConnectionRestriction.LOCKED_PASSAGE),
+                Connection("drenching_chamber", "severed_artery", Path.FLOODED_RUINS, ConnectionRestriction.FLOODED_PASSAGE),
+                Connection("branching_artery", "terminal_artery", Path.ANCIENT_RUINS),
+                Connection("branching_artery", "severed_artery", Path.ANCIENT_RUINS),
+                Connection("terminal_artery", "mycelial_conclave", Path.FUNGAL_FOREST),
+                Connection("branching_artery", "mycelial_conclave", Path.FUNGAL_FOREST),
+                Connection("branching_artery", "silent_dormitories", Path.DEEP_ROOTS),
+                Connection("severed_artery", "silent_dormitories", Path.ANCIENT_RUINS),
+                Connection("severed_artery", "cerulean_curtain", Path.CAVE_SYSTEM),
+                Connection("terminal_artery", "carbonforged_maze", Path.FLOODED_RUINS, ConnectionRestriction.LOCKED_PASSAGE),
+                Connection("cerulean_curtain", "the_cistern", Path.FLOODED_RUINS, ConnectionRestriction.OVERGROWN_PASSAGE),
+                Connection("carbonforged_maze", "arboretum_of_memory", Path.CAVE_SYSTEM),
+                Connection("carbonforged_maze", "talpids_squeeze", Path.FUNGAL_FOREST),
+                Connection("arboretum_of_memory", "talpids_squeeze", Path.FLOODED_RUINS),
+                Connection("the_cistern", "the_verdant_sphere", Path.DEEP_ROOTS),
+                Connection("the_verdant_sphere", "inverted_forest", Path.DEEP_ROOTS),
+                Connection("the_cistern", "inverted_forest", Path.CAVE_SYSTEM),
+                Connection("inverted_forest", "the_rootway", Path.FUNGAL_FOREST),
+                Connection("the_verdant_sphere", "the_rootway", Path.DEEP_ROOTS),
+                Connection("talpids_squeeze", "the_cage", Path.ANCIENT_RUINS, ConnectionRestriction.OVERGROWN_PASSAGE),
+                Connection("the_rootway", "the_cage", Path.ANCIENT_RUINS, ConnectionRestriction.LOCKED_PASSAGE),
+                Connection("lone_tree_station", "boulder_field", Path.WOODS),
+                Connection("lone_tree_station", "ancestors_grove", Path.OLD_GROWTH),
+                Connection("ancestors_grove", "boulder_field", Path.WOODS),
+                Connection("kobos_market", "boulder_field", Path.GRASSLAND),
+                Connection("kobos_market", "ancestors_grove", Path.MOUNTAIN_PASS),
+                Connection("the_plummet", "ancestors_grove", Path.MOUNTAIN_PASS),
+                Connection("the_plummet", "kobos_market", Path.LAKESHORE),
+                Connection("the_plummet", "the_concordant_ziggurats", Path.RAVINE),
+                Connection("headwaters_station", "the_concordant_ziggurats", Path.RIVER),
+                Connection("kobos_market", "spire", Path.LAKESHORE),
+                Connection("spire", "greenbriar_knoll", Path.WOODS),
+            )
+            else -> emptyList()
+        }
     }
 
-    private fun paths(): List<MapLocation> {
-        return listOf(
-            MapLocation("atrox_mountain", R.string.atrox_mountain, R.drawable.atrox_mountain),
-            MapLocation("northern_outpost", R.string.northern_outpost, R.drawable.northern_outpost),
-            MapLocation("lone_tree_station", R.string.lone_tree_station, R.drawable.lone_tree_station),
-            MapLocation("white_sky", R.string.white_sky, R.drawable.white_sky),
-            MapLocation("golden_shore", R.string.golden_shore, R.drawable.golden_shore),
-            MapLocation("mount_nim", R.string.mount_nim, R.drawable.mount_nim),
-            MapLocation("ancestors_grove", R.string.ancestors_grove, R.drawable.ancestors_grove),
-            MapLocation("kobos_market", R.string.kobos_market, R.drawable.kobos_market),
-            MapLocation("boulder_field", R.string.boulder_field, R.drawable.boulder_field),
-            MapLocation("the_fractured_wall", R.string.the_fractured_wall, R.drawable.the_fractured_wall),
-            MapLocation("the_philosophers_garden", R.string.the_philosophers_garden, R.drawable.the_philosophers_garden),
-            MapLocation("the_high_basin", R.string.the_high_basin, R.drawable.the_high_basin),
-            MapLocation("branch", R.string.branch, R.drawable.branch),
-            MapLocation("spire", R.string.spire, R.drawable.spire),
-            MapLocation("crossroads_station", R.string.crossroads_station, R.drawable.crossroads_station),
-            MapLocation("the_furrow", R.string.the_furrow, R.drawable.the_furrow),
-            MapLocation("biologists_outpost", R.string.biologists_outpost, R.drawable.biologists_outpost),
-            MapLocation("terravore", R.string.terravore, R.drawable.terravore),
-            MapLocation("mound_of_the_navigator", R.string.mound_of_the_navigator, R.drawable.mound_of_the_navigator),
-            MapLocation("the_greenbridge", R.string.the_greenbridge, R.drawable.the_greenbridge),
-            MapLocation("michaels_bog", R.string.michaels_bog, R.drawable.michaels_bog),
-            MapLocation("the_cypress_citadel", R.string.the_cypress_citadel, R.drawable.the_cypress_citadel),
-            MapLocation("marsh_of_rebirth", R.string.marsh_of_rebirth, R.drawable.marsh_of_rebirth),
-            MapLocation("sunken_outpost", R.string.sunken_outpost, R.drawable.sunken_outpost),
-            MapLocation("the_frowning_gate", R.string.the_frowning_gate, R.drawable.the_frowning_gate),
-            MapLocation("bowl_of_the_sun", R.string.bowl_of_the_sun, R.drawable.bowl_of_the_sun),
-            MapLocation("the_alluvial_ruins", R.string.the_alluvial_ruins, R.drawable.the_alluvial_ruins),
-            MapLocation("the_tumbledown", R.string.the_tumbledown, R.drawable.the_tumbledown),
-            MapLocation("watchers_rock", R.string.watchers_rock, R.drawable.watchers_rock),
-            MapLocation("archeological_outpost", R.string.archeological_outpost, R.drawable.archeological_outpost),
-            MapLocation("rings_of_the_moon", R.string.rings_of_the_moon, R.drawable.rings_of_the_moon),
-            MapLocation("the_concordant_ziggurats", R.string.the_concordant_ziggurats, R.drawable.the_concordant_ziggurats),
-            MapLocation("meadow", R.string.meadow, R.drawable.meadow),
-            MapLocation("stoneweaver_bridge", R.string.stoneweaver_bridge, R.drawable.stoneweaver_bridge),
-            MapLocation("greenbriar_knoll", R.string.greenbriar_knoll, R.drawable.greenbriar_knoll),
-            MapLocation("the_plummet", R.string.the_plummet, R.drawable.the_plummet),
-            MapLocation("headwaters_station", R.string.headwaters_station, R.drawable.headwaters_station)
-        )
+    private fun paths(cycleId: String): List<MapLocation> {
+        return when(cycleId) {
+            "core" -> listOf(
+                MapLocation("atrox_mountain", R.string.atrox_mountain, R.drawable.atrox_mountain),
+                MapLocation("northern_outpost", R.string.northern_outpost, R.drawable.northern_outpost),
+                MapLocation("lone_tree_station", R.string.lone_tree_station, R.drawable.lone_tree_station),
+                MapLocation("white_sky", R.string.white_sky, R.drawable.white_sky),
+                MapLocation("golden_shore", R.string.golden_shore, R.drawable.golden_shore),
+                MapLocation("mount_nim", R.string.mount_nim, R.drawable.mount_nim),
+                MapLocation("ancestors_grove", R.string.ancestors_grove, R.drawable.ancestors_grove),
+                MapLocation("kobos_market", R.string.kobos_market, R.drawable.kobos_market),
+                MapLocation("boulder_field", R.string.boulder_field, R.drawable.boulder_field),
+                MapLocation("the_fractured_wall", R.string.the_fractured_wall, R.drawable.the_fractured_wall),
+                MapLocation("the_philosophers_garden", R.string.the_philosophers_garden, R.drawable.the_philosophers_garden),
+                MapLocation("the_high_basin", R.string.the_high_basin, R.drawable.the_high_basin),
+                MapLocation("branch", R.string.branch, R.drawable.branch),
+                MapLocation("spire", R.string.spire, R.drawable.spire),
+                MapLocation("crossroads_station", R.string.crossroads_station, R.drawable.crossroads_station),
+                MapLocation("the_furrow", R.string.the_furrow, R.drawable.the_furrow),
+                MapLocation("biologists_outpost", R.string.biologists_outpost, R.drawable.biologists_outpost),
+                MapLocation("terravore", R.string.terravore, R.drawable.terravore),
+                MapLocation("mound_of_the_navigator", R.string.mound_of_the_navigator, R.drawable.mound_of_the_navigator),
+                MapLocation("the_greenbridge", R.string.the_greenbridge, R.drawable.the_greenbridge),
+                MapLocation("michaels_bog", R.string.michaels_bog, R.drawable.michaels_bog),
+                MapLocation("the_cypress_citadel", R.string.the_cypress_citadel, R.drawable.the_cypress_citadel),
+                MapLocation("marsh_of_rebirth", R.string.marsh_of_rebirth, R.drawable.marsh_of_rebirth),
+                MapLocation("sunken_outpost", R.string.sunken_outpost, R.drawable.sunken_outpost),
+                MapLocation("the_frowning_gate", R.string.the_frowning_gate, R.drawable.the_frowning_gate),
+                MapLocation("bowl_of_the_sun", R.string.bowl_of_the_sun, R.drawable.bowl_of_the_sun),
+                MapLocation("the_alluvial_ruins", R.string.the_alluvial_ruins, R.drawable.the_alluvial_ruins),
+                MapLocation("the_tumbledown", R.string.the_tumbledown, R.drawable.the_tumbledown),
+                MapLocation("watchers_rock", R.string.watchers_rock, R.drawable.watchers_rock),
+                MapLocation("archeological_outpost", R.string.archeological_outpost, R.drawable.archeological_outpost),
+                MapLocation("rings_of_the_moon", R.string.rings_of_the_moon, R.drawable.rings_of_the_moon),
+                MapLocation("the_concordant_ziggurats", R.string.the_concordant_ziggurats, R.drawable.the_concordant_ziggurats),
+                MapLocation("meadow", R.string.meadow, R.drawable.meadow),
+                MapLocation("stoneweaver_bridge", R.string.stoneweaver_bridge, R.drawable.stoneweaver_bridge),
+                MapLocation("greenbriar_knoll", R.string.greenbriar_knoll, R.drawable.greenbriar_knoll),
+                MapLocation("the_plummet", R.string.the_plummet, R.drawable.the_plummet),
+                MapLocation("headwaters_station", R.string.headwaters_station, R.drawable.headwaters_station)
+            )
+            "loa" -> listOf(
+                MapLocation("lone_tree_station", R.string.lone_tree_station, R.drawable.lone_tree_station),
+                MapLocation("ancestors_grove", R.string.ancestors_grove, R.drawable.ancestors_grove),
+                MapLocation("kobos_market", R.string.kobos_market, R.drawable.kobos_market),
+                MapLocation("boulder_field", R.string.boulder_field, R.drawable.boulder_field),
+                MapLocation("spire", R.string.spire, R.drawable.spire),
+                MapLocation("the_concordant_ziggurats", R.string.the_concordant_ziggurats, R.drawable.the_concordant_ziggurats),
+                MapLocation("greenbriar_knoll", R.string.greenbriar_knoll, R.drawable.greenbriar_knoll),
+                MapLocation("the_plummet", R.string.the_plummet, R.drawable.the_plummet),
+                MapLocation("headwaters_station", R.string.headwaters_station, R.drawable.headwaters_station),
+                MapLocation("the_chimney", R.string.the_chimney, R.drawable.the_chimney),
+                MapLocation("oasis_of_sunlight", R.string.oasis_of_sunlight, R.drawable.oasis_of_sunlight),
+                MapLocation("scuttler_network", R.string.scuttler_network, R.drawable.scuttler_network),
+                MapLocation("drenching_chamber", R.string.drenching_chamber, R.drawable.drenching_chamber),
+                MapLocation("desert_of_endless_night", R.string.desert_of_endless_night, R.drawable.desert_of_endless_night),
+                MapLocation("orlins_vault", R.string.orlins_vault, R.drawable.orlins_vault),
+                MapLocation("severed_artery", R.string.severed_artery, R.drawable.artery),
+                MapLocation("branching_artery", R.string.branching_artery, R.drawable.artery),
+                MapLocation("terminal_artery", R.string.terminal_artery, R.drawable.artery),
+                MapLocation("silent_dormitories", R.string.silent_dormitories, R.drawable.silent_dormitories),
+                MapLocation("cerulean_curtain", R.string.cerulean_curtain, R.drawable.cerulean_curtain),
+                MapLocation("mycelial_conclave", R.string.mycelial_conclave, R.drawable.mycelial_conclave),
+                MapLocation("carbonforged_maze", R.string.carbonforged_maze, R.drawable.carbonforged_maze),
+                MapLocation("the_cistern", R.string.the_cistern, R.drawable.the_cistern),
+                MapLocation("inverted_forest", R.string.inverted_forest, R.drawable.inverted_forest),
+                MapLocation("the_verdant_sphere", R.string.the_verdant_sphere, R.drawable.the_verdant_sphere),
+                MapLocation("the_rootway", R.string.the_rootway, R.drawable.the_rootway),
+                MapLocation("arboretum_of_memory", R.string.arboretum_of_memory, R.drawable.arboretum_of_memory),
+                MapLocation("talpids_squeeze", R.string.talpids_squeeze, R.drawable.talpids_squeeze),
+                MapLocation("the_cage", R.string.the_cage, R.drawable.the_cage)
+            )
+            else -> emptyList()
+        }
     }
 
-    fun getMapLocations(needConnections: Boolean): Map<String, MapLocation> {
-        val results = paths().associateBy { it.id }
-        if (needConnections) connections().forEach { connection ->
+    fun getMapLocations(needConnections: Boolean, cycleId: String): Map<String, MapLocation> {
+        val results = paths(cycleId).associateBy { it.id }
+        if (needConnections) connections(cycleId).forEach { connection ->
             val locA = results[connection.locA]
             val locB = results[connection.locB]
             if (locA != null && locB != null) {
-                val connectionB = MapConnection(connection.locB, connection.path)
-                val connectionA = MapConnection(connection.locA, connection.path)
+                val connectionB = MapConnection(connection.locB, connection.path, connection.restriction)
+                val connectionA = MapConnection(connection.locA, connection.path, null)
                 if (!locA.connections.contains(connectionB)) locA.connections.add(connectionB)
                 if (!locB.connections.contains(connectionA)) locB.connections.add(connectionA)
             }
@@ -223,15 +307,26 @@ object CampaignMaps {
     }
 }
 
-enum class Path(val value: String, @StringRes val nameResId: Int, @DrawableRes val iconResId: Int) {
-    WOODS("woods", R.string.woods, R.drawable.woods),
-    MOUNTAIN_PASS("mountain_pass", R.string.mountain_pass, R.drawable.mountain_pass),
-    OLD_GROWTH("old_growth", R.string.old_growth, R.drawable.old_growth),
-    LAKESHORE("lakeshore", R.string.lakeshore, R.drawable.lakeshore),
-    GRASSLAND("grassland", R.string.grassland, R.drawable.grassland),
-    RAVINE("ravine", R.string.ravine, R.drawable.ravine),
-    SWAMP("swamp", R.string.swamp, R.drawable.swamp),
-    RIVER("river", R.string.river, R.drawable.river);
+enum class Path(
+    val value: String,
+    @StringRes val nameResId: Int,
+    @DrawableRes val iconResId: Int?,
+    val cycles: List<String>,
+) {
+    NONE("none", R.string.current_path_terrain_none, null, listOf("loa")),
+    WOODS("woods", R.string.woods, R.drawable.woods, listOf("core", "loa")),
+    MOUNTAIN_PASS("mountain_pass", R.string.mountain_pass, R.drawable.mountain_pass, listOf("core", "loa")),
+    OLD_GROWTH("old_growth", R.string.old_growth, R.drawable.old_growth, listOf("core", "loa")),
+    LAKESHORE("lakeshore", R.string.lakeshore, R.drawable.lakeshore, listOf("core", "loa")),
+    GRASSLAND("grassland", R.string.grassland, R.drawable.grassland, listOf("core", "loa")),
+    RAVINE("ravine", R.string.ravine, R.drawable.ravine, listOf("core", "loa")),
+    SWAMP("swamp", R.string.swamp, R.drawable.swamp, listOf("core")),
+    RIVER("river", R.string.river, R.drawable.river, listOf("core", "loa")),
+    ANCIENT_RUINS("ancient_ruins", R.string.ancient_ruins, R.drawable.ancient_ruins, listOf("loa")),
+    FLOODED_RUINS("flooded_ruins", R.string.flooded_ruins, R.drawable.flooded_ruins, listOf("loa")),
+    DEEP_ROOTS("deep_roots", R.string.deep_roots, R.drawable.deep_roots, listOf("loa")),
+    FUNGAL_FOREST("fungal_forest", R.string.fungal_forest, R.drawable.fungal_forest, listOf("loa")),
+    CAVE_SYSTEM("cave_system", R.string.cave_system, R.drawable.cave_system, listOf("loa"));
 
     companion object {
         fun fromValue(value: String): Path? {
@@ -240,22 +335,40 @@ enum class Path(val value: String, @StringRes val nameResId: Int, @DrawableRes v
     }
 }
 
+enum class ConnectionRestriction(
+    val value: String,
+    @StringRes val nameResId: Int,
+    @DrawableRes val iconResId: Int,
+    val cycles: List<String>,
+) {
+    FLOODED_PASSAGE("flooded_passage", R.string.flooded_passage, R.drawable.flooded_passage, listOf("loa")),
+    LOCKED_PASSAGE("locked_passage", R.string.locked_passage, R.drawable.locked_passage, listOf("loa")),
+    OVERGROWN_PASSAGE("overgrown_passage", R.string.overgrown_passage, R.drawable.overgrown_passage, listOf("loa"));
+
+    companion object {
+        fun fromValue(value: String): ConnectionRestriction? {
+            return entries.firstOrNull { it.value == value }
+        }
+    }
+}
+
 data class Connection(
     val locA: String,
     val locB: String,
-    val path: Path
+    val path: Path,
+    val restriction: ConnectionRestriction? = null
 )
 
 data class MapConnection(
     val id: String,
-    val path: Path
+    val path: Path,
+    val restriction: ConnectionRestriction?
 )
 
 data class MapLocation(
     val id: String,
     @StringRes val nameResId: Int,
     @DrawableRes val iconResId: Int,
-    val cycles: List<String> = listOf("core"),
     val connections: MutableList<MapConnection> = mutableListOf()
 )
 

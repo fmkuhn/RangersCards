@@ -100,6 +100,7 @@ fun CampaignJourneyScreen(
                     Spacer(modifier = Modifier.height(8.dp))
                     // Render travel day details
                     TravelDayRow(
+                        cycleId = campaign!!.cycleId,
                         travelDay = travelDay,
                         currentDay = campaign?.currentDay ?: 1,
                         isExpanded = isExpanded
@@ -113,6 +114,7 @@ fun CampaignJourneyScreen(
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TravelDayRow(
+    cycleId: String,
     travelDay: CampaignTravelDay,
     currentDay: Int,
     isExpanded: Boolean,
@@ -124,7 +126,7 @@ fun TravelDayRow(
     val finalLocation = lastEntry?.location ?: travelDay.startingLocation
     // Whether the last travel entry was camped
     val camped = lastEntry?.camped ?: false
-    val locationsMap = CampaignMaps.getMapLocations(false)
+    val locationsMap = CampaignMaps.getMapLocations(false, cycleId)
     if (isExpanded) FlowRow(
         modifier = Modifier
             .fillMaxWidth()
@@ -168,7 +170,7 @@ fun TravelDayRow(
                     .align(Alignment.CenterVertically)
             )
             val path = Path.fromValue(entry.pathTerrain)
-            if (path != null) {
+            if (path?.iconResId != null) {
                 Icon(
                     painter = painterResource(id = path.iconResId),
                     contentDescription = path.name,
@@ -293,7 +295,7 @@ fun TravelDayRow(
                 )
             }
             val path = Path.fromValue(entry.pathTerrain)
-            if (path != null) item {
+            if (path?.iconResId != null) item {
                 Icon(
                     painter = painterResource(id = path.iconResId),
                     contentDescription = path.name,

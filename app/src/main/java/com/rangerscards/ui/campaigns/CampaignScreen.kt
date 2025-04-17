@@ -304,6 +304,7 @@ fun CampaignScreen(
                 }
                 item {
                     CampaignCurrentPositionCard(
+                        campaignState!!.cycleId,
                         campaignState!!.currentLocation,
                         campaignState!!.currentPathTerrain
                     ) { navController.navigate(

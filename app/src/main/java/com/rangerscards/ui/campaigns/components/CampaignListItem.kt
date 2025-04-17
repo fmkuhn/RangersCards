@@ -36,6 +36,7 @@ import kotlinx.serialization.json.jsonPrimitive
 @OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun CampaignListItem(
+    cycleId: String,
     name: String,
     day: Int,
     currentLocation: String,
@@ -98,7 +99,7 @@ fun CampaignListItem(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        val location = CampaignMaps.getMapLocations(false)[currentLocation]
+                        val location = CampaignMaps.getMapLocations(false, cycleId)[currentLocation]
                         if (location != null) {
                             Icon(
                                 painterResource(location.iconResId),

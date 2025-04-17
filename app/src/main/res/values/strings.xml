@@ -379,4 +379,36 @@
     <string name="diagnostics_clear_coil_cache">Clear image cache</string>
     <string name="diagnostics_clear_coil_cache_cleared">Image cache is cleared.</string>
 
+    //loa campaign
+    <string name="loa_cycle">Legacy of Ancestors</string>
+    <string name="ancient_ruins">Ancient Ruins</string>
+    <string name="flooded_ruins">Flooded Ruins</string>
+    <string name="deep_roots">Deep Roots</string>
+    <string name="fungal_forest">Fungal Forest</string>
+    <string name="cave_system">Cave System</string>
+    <string name="flooded_passage">Flooded Passage</string>
+    <string name="locked_passage">Locked Passage</string>
+    <string name="overgrown_passage">Overgrown Passage</string>
+    <string name="the_chimney">The Chimney</string>
+    <string name="oasis_of_sunlight">Oasis of Sunlight</string>
+    <string name="scuttler_network">Scuttler Network</string>
+    <string name="drenching_chamber">Drenching Chamber</string>
+    <string name="desert_of_endless_night">Desert of Endless Night</string>
+    <string name="orlins_vault">Orlin\'s Vault</string>
+    <string name="severed_artery">Severed Artery</string>
+    <string name="branching_artery">Branching Artery</string>
+    <string name="terminal_artery">Terminal Artery</string>
+    <string name="silent_dormitories">Silent Dormitories</string>
+    <string name="cerulean_curtain">Cerulean Curtain</string>
+    <string name="mycelial_conclave">Mycelial Conclave</string>
+    <string name="carbonforged_maze">Carbonforged Maze</string>
+    <string name="the_cistern">The Cistern</string>
+    <string name="inverted_forest">Inverted Forest</string>
+    <string name="the_verdant_sphere">The Verdant Sphere</string>
+    <string name="the_rootway">The Rootway</string>
+    <string name="arboretum_of_memory">Arboretum of Memory</string>
+    <string name="talpids_squeeze">Talpid\'s Squeeze</string>
+    <string name="the_cage">The Cage</string>
+    <string name="connection_restriction_data_type">Connection restriction</string>
+
 </resources>

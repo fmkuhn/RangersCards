@@ -31,7 +31,7 @@ import com.rangerscards.ui.theme.Jost
 @Composable
 fun CampaignRemovedCards(
     onAdd: () -> Unit,
-    removedSets: Map<String, Pair<Int, Int>>,
+    removedSets: Map<String, Pair<Int?, Int>>,
     removed: List<CampaignRemoved>,
     onRemove: (String) -> Unit,
 ) {
@@ -86,7 +86,7 @@ fun CampaignRemovedCards(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
-                                    painterResource(removedSetInfo.first),
+                                    painterResource(removedSetInfo.first ?: R.drawable.broken_image_32dp),
                                     contentDescription = null,
                                     tint = Color.Unspecified,
                                     modifier = Modifier.size(32.dp)

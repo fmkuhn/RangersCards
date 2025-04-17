@@ -42,6 +42,7 @@ import androidx.compose.ui.window.DialogProperties
 import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.R
 import com.rangerscards.data.objects.CampaignMaps
+import com.rangerscards.data.objects.ConnectionRestriction
 import com.rangerscards.data.objects.Path
 import com.rangerscards.ui.campaigns.CampaignViewModel
 import com.rangerscards.ui.campaigns.components.CampaignDialog
@@ -70,8 +71,9 @@ fun TravelDialog(
     var isCamping by rememberSaveable { mutableStateOf(false) }
     var selectedLocation by rememberSaveable { mutableStateOf("") }
     var selectedPathTerrain by rememberSaveable { mutableStateOf("") }
+    var selectedConnectionRestriction by rememberSaveable { mutableStateOf("") }
     val coroutine = rememberCoroutineScope()
-    val locationsMap by remember(campaign) { mutableStateOf(CampaignMaps.getMapLocations(true)) }
+    val locationsMap by remember(campaign) { mutableStateOf(CampaignMaps.getMapLocations(true, campaign!!.cycleId)) }
     val currentLocation by remember { derivedStateOf { locationsMap[campaign!!.currentLocation]!! } }
     val isLegitTravel by remember { derivedStateOf {
         selectedLocation.isNotEmpty() && selectedPathTerrain.isNotEmpty()
@@ -183,7 +185,7 @@ fun TravelDialog(
                         val currentPathTerrain = Path
                             .fromValue(selectedPathTerrain)!!
                         Icon(
-                            painterResource(currentPathTerrain.iconResId),
+                            painterResource(currentPathTerrain.iconResId ?: R.drawable.broken_image_32dp),
                             contentDescription = null,
                             tint = Color.Unspecified,
                             modifier = Modifier.size(32.dp)
@@ -226,6 +228,40 @@ fun TravelDialog(
                         )
                     }
                 }
+            }
+            if (selectedConnectionRestriction.isNotEmpty())
+                Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
+                    Text(
+                        text = stringResource(R.string.connection_restriction_data_type),
+                        color = CustomTheme.colors.d30,
+                        fontFamily = Jost,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 18.sp,
+                        lineHeight = 20.sp,
+                    )
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        val currentConnectionRestriction = ConnectionRestriction
+                            .fromValue(selectedConnectionRestriction)!!
+                        Icon(
+                            painterResource(currentConnectionRestriction.iconResId),
+                            contentDescription = null,
+                            tint = Color.Unspecified,
+                            modifier = Modifier.size(32.dp)
+                        )
+                        Text(
+                            text = stringResource(currentConnectionRestriction.nameResId),
+                            color = CustomTheme.colors.d30,
+                            fontFamily = Jost,
+                            fontWeight = FontWeight.Normal,
+                            fontSize = 16.sp,
+                            lineHeight = 18.sp,
+                            modifier = Modifier.weight(1f)
+                        )
+                    }
             }
             Row(
                 modifier = Modifier.padding(horizontal = 8.dp).clickable {
@@ -325,6 +361,8 @@ fun TravelDialog(
                             Row(
                                 modifier = Modifier.fillMaxWidth().clickable {
                                     selectedLocation = key
+                                    selectedConnectionRestriction = currentLocation.connections
+                                        .firstOrNull { it.id == key }?.restriction?.value ?: ""
                                     showDialogPicker = null
                                 },
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -355,6 +393,7 @@ fun TravelDialog(
                                 modifier = Modifier.fillMaxWidth().clickable {
                                     selectedLocation = location.id
                                     selectedPathTerrain = location.path.value
+                                    selectedConnectionRestriction = location.restriction?.value ?: ""
                                     showDialogPicker = null
                                 },
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -381,7 +420,7 @@ fun TravelDialog(
                             HorizontalDivider(color = CustomTheme.colors.l10)
                         }
                     }
-                    else -> Path.entries.forEach { path ->
+                    else -> Path.entries.filter { it.cycles.contains(campaign!!.cycleId) }.forEach { path ->
                         item(path.value) {
                             Row(
                                 modifier = Modifier.fillMaxWidth().clickable {
@@ -392,7 +431,7 @@ fun TravelDialog(
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
                                 Icon(
-                                    painterResource(path.iconResId),
+                                    painterResource(path.iconResId ?: R.drawable.broken_image_32dp),
                                     contentDescription = null,
                                     tint = Color.Unspecified,
                                     modifier = Modifier.size(40.dp)

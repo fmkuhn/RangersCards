@@ -29,6 +29,7 @@ import com.rangerscards.ui.theme.Jost
 
 @Composable
 fun CampaignCurrentPositionCard(
+    cycleId: String,
     location: String,
     pathTerrain: String?,
     onRecordedJourney: () -> Unit)
@@ -59,7 +60,7 @@ fun CampaignCurrentPositionCard(
                             fontSize = 18.sp,
                             lineHeight = 20.sp,
                         )
-                        val currentLocation = CampaignMaps.getMapLocations(false)[location]!!
+                        val currentLocation = CampaignMaps.getMapLocations(false, cycleId)[location]!!
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
@@ -98,7 +99,7 @@ fun CampaignCurrentPositionCard(
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             if (currentPathTerrain != null) Icon(
-                                painterResource(currentPathTerrain.iconResId),
+                                painterResource(currentPathTerrain.iconResId ?: R.drawable.broken_image_32dp),
                                 contentDescription = null,
                                 tint = Color.Unspecified,
                                 modifier = Modifier.size(32.dp)
