@@ -407,11 +407,11 @@ class DeckViewModel(
             ) {
                 problems.add("personality")
             }
-            if (specialtyCount < 10) {
-                problems.add("specialty")
-            }
             if (backgroundCount < 10) {
                 problems.add("background")
+            }
+            if (specialtyCount < 10) {
+                problems.add("specialty")
             }
             if (splashCount < 2) {
                 problems.add("outside_interest")
