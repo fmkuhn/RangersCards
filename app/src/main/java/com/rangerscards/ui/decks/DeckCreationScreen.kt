@@ -8,7 +8,6 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.fillMaxHeight
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -22,8 +21,6 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.TabRow
 import androidx.compose.material3.TabRowDefaults
 import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
@@ -62,6 +59,7 @@ import com.rangerscards.data.objects.DeckMetaMaps
 import com.rangerscards.data.objects.StarterDecks
 import com.rangerscards.ui.components.CustomTab
 import com.rangerscards.ui.components.DataPicker
+import com.rangerscards.ui.components.RangersRadioButton
 import com.rangerscards.ui.components.SquareButton
 import com.rangerscards.ui.decks.components.StarterDeck
 import com.rangerscards.ui.settings.UserUIState
@@ -404,13 +402,9 @@ fun DeckCreationScreen(
                                 lineHeight = 20.sp,
                                 modifier = Modifier.weight(1f)
                             )
-                            RadioButton(
+                            RangersRadioButton(
                                 selected = taboo,
                                 onClick = { taboo = !taboo },
-                                colors = RadioButtonDefaults.colors().copy(
-                                    selectedColor = CustomTheme.colors.m,
-                                    unselectedColor = CustomTheme.colors.m
-                                ),
                                 modifier = Modifier.size(32.dp)
                             )
                         }
@@ -432,13 +426,9 @@ fun DeckCreationScreen(
                                 lineHeight = 22.sp,
                                 modifier = Modifier.weight(1f)
                             )
-                            RadioButton(
+                            RangersRadioButton(
                                 selected = isUploading,
                                 onClick = { isUploading = !isUploading },
-                                colors = RadioButtonDefaults.colors().copy(
-                                    selectedColor = CustomTheme.colors.m,
-                                    unselectedColor = CustomTheme.colors.m
-                                ),
                                 modifier = Modifier.size(32.dp)
                             )
                         }

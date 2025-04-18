@@ -22,8 +22,6 @@ import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -41,6 +39,7 @@ import androidx.compose.ui.unit.IntOffset
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rangerscards.R
+import com.rangerscards.ui.components.RangersRadioButton
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
 
@@ -264,14 +263,10 @@ fun DrawerSectionButtonRow(
                 )
             }
         }
-        if (radioButton != null) RadioButton(
+        if (radioButton != null) RangersRadioButton(
             selected = radioButton,
             onClick = onClick,
             enabled = isClickable,
-            colors = RadioButtonDefaults.colors().copy(
-                selectedColor = CustomTheme.colors.m,
-                unselectedColor = CustomTheme.colors.m
-            ),
             modifier = Modifier.size(12.dp)
         )
     }

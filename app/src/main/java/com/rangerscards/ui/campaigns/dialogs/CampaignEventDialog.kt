@@ -11,8 +11,6 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
@@ -40,6 +38,7 @@ import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.R
 import com.rangerscards.ui.campaigns.CampaignViewModel
 import com.rangerscards.ui.campaigns.components.CampaignDialog
+import com.rangerscards.ui.components.RangersRadioButton
 import com.rangerscards.ui.components.SquareButton
 import com.rangerscards.ui.settings.components.SettingsBaseCard
 import com.rangerscards.ui.theme.CustomTheme
@@ -126,13 +125,9 @@ fun CampaignEventDialog(
                         lineHeight = 22.sp,
                         modifier = Modifier.weight(1f)
                     )
-                    RadioButton(
+                    RangersRadioButton(
                         selected = crossedOut,
                         onClick = { crossedOut = !crossedOut },
-                        colors = RadioButtonDefaults.colors().copy(
-                            selectedColor = CustomTheme.colors.m,
-                            unselectedColor = CustomTheme.colors.m
-                        ),
                         modifier = Modifier.size(32.dp)
                     )
                 }

@@ -7,8 +7,6 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.Icon
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -19,6 +17,7 @@ import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import com.rangerscards.ui.components.RangersRadioButton
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
 
@@ -56,13 +55,9 @@ fun SettingsRadioButtonRow(
                 lineHeight = 22.sp,
                 modifier = Modifier.weight(1f)
             )
-            RadioButton(
+            RangersRadioButton(
                 selected = isSelected,
                 onClick = { onClick() },
-                colors = RadioButtonDefaults.colors().copy(
-                    selectedColor = CustomTheme.colors.m,
-                    unselectedColor = CustomTheme.colors.m
-                ),
                 modifier = Modifier.size(32.dp)
             )
         }

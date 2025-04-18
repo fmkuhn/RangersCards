@@ -17,8 +17,6 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
-import androidx.compose.material3.RadioButton
-import androidx.compose.material3.RadioButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
@@ -46,6 +44,7 @@ import com.rangerscards.data.objects.ConnectionRestriction
 import com.rangerscards.data.objects.Path
 import com.rangerscards.ui.campaigns.CampaignViewModel
 import com.rangerscards.ui.campaigns.components.CampaignDialog
+import com.rangerscards.ui.components.RangersRadioButton
 import com.rangerscards.ui.components.SquareButton
 import com.rangerscards.ui.settings.components.SettingsBaseCard
 import com.rangerscards.ui.theme.CustomTheme
@@ -103,13 +102,9 @@ fun TravelDialog(
                     lineHeight = 22.sp,
                     modifier = Modifier.weight(1f)
                 )
-                RadioButton(
+                RangersRadioButton(
                     selected = showAllLocations,
                     onClick = { showAllLocations = !showAllLocations },
-                    colors = RadioButtonDefaults.colors().copy(
-                        selectedColor = CustomTheme.colors.m,
-                        unselectedColor = CustomTheme.colors.m
-                    ),
                     modifier = Modifier.size(32.dp)
                 )
             }
@@ -279,13 +274,9 @@ fun TravelDialog(
                     lineHeight = 22.sp,
                     modifier = Modifier.weight(1f)
                 )
-                RadioButton(
+                RangersRadioButton(
                     selected = isCamping,
                     onClick = { isCamping = !isCamping },
-                    colors = RadioButtonDefaults.colors().copy(
-                        selectedColor = CustomTheme.colors.m,
-                        unselectedColor = CustomTheme.colors.m
-                    ),
                     modifier = Modifier.size(32.dp)
                 )
             }
