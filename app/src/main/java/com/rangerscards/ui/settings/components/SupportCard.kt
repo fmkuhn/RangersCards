@@ -31,7 +31,7 @@ import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
 
 const val boostyText = "Boosty"
-const val boostyLink = "https://boosty.to/rangerscards"
+const val boostyLink = "https://boosty.to/rangerscards/donate"
 
 @Composable
 fun SupportCard(
