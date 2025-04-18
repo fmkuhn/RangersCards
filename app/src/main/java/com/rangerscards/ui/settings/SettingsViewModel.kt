@@ -470,6 +470,10 @@ class SettingsViewModel(
         // Clear disk cache.
         imageLoader.diskCache?.clear()
     }
+
+    fun clearApolloCache() {
+        apolloClient.apolloStore.clearAll()
+    }
 }
 
 suspend fun <T> performFirebaseOperationWithRetry(
