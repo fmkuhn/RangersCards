@@ -298,10 +298,10 @@ fun CardListItemApproachContainer(
     isDarkTheme: Boolean
 ) {
     val approachMap = mapOf(
-        R.drawable.conflict to approachConflict,
-        R.drawable.reason to approachReason,
+        R.drawable.connection to approachConnection,
         R.drawable.exploration to approachExploration,
-        R.drawable.connection to approachConnection
+        R.drawable.reason to approachReason,
+        R.drawable.conflict to approachConflict,
     ).mapNotNull { (res, value) ->
         value?.let { res to it }
     }.toMap()
