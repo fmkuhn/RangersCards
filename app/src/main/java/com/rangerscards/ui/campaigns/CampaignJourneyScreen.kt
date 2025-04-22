@@ -255,7 +255,7 @@ fun TravelDayRow(
         }
     }
     else LazyRow(
-        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp).height(110.dp),
+        modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp),
         verticalAlignment = Alignment.CenterVertically,
         horizontalArrangement = Arrangement.spacedBy(8.dp)
     ) {
