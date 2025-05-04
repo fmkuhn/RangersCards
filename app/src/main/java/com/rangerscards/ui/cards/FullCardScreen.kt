@@ -82,6 +82,9 @@ fun FullCardScreen(
                     setName = fullCard!!.setName,
                     setSize = fullCard!!.setSize,
                     setPosition = fullCard!!.setPosition,
+                    subsetSize = fullCard!!.subsetSize,
+                    subsetPosition = fullCard!!.subsetPosition,
+                    packShortName = fullCard!!.packShortName,
                     isDarkTheme = isDarkTheme
                 )
             }

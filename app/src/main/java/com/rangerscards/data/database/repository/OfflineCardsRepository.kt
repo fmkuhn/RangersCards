@@ -13,7 +13,7 @@ import java.util.Locale
 
 class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
 
-    override suspend fun updateAllCards(cards: List<Card>) = cardDao.updateAll(cards)
+    override suspend fun insertAllCards(cards: List<Card>) = cardDao.insertAll(cards)
 
     override suspend fun upsertAllCards(cards: List<Card>) = cardDao.upsertAll(cards)
 
@@ -72,6 +72,6 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
         else "real_composite:($searchQuery)"
     }
 
-    override fun getCardById(cardCode: String, taboo: Boolean, packIds: List<String>): Flow<FullCardProjection> =
-        cardDao.getCardById(cardCode, taboo, packIds)
+    override fun getCardById(cardCode: String, taboo: Boolean): Flow<FullCardProjection?> =
+        cardDao.getCardById(cardCode, taboo)
 }

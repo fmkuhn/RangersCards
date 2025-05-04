@@ -86,6 +86,7 @@ import com.rangerscards.ui.decks.DeckCreationScreen
 import com.rangerscards.ui.decks.DecksScreen
 import com.rangerscards.ui.decks.DecksViewModel
 import com.rangerscards.ui.settings.SettingsAboutScreen
+import com.rangerscards.ui.settings.SettingsCollectionScreen
 import com.rangerscards.ui.settings.SettingsDiagnosticsScreen
 import com.rangerscards.ui.settings.SettingsFriendsScreen
 import com.rangerscards.ui.settings.SettingsScreen
@@ -191,6 +192,13 @@ fun RangersNavHost(
                                     launchSingleTop = true
                                 }
                             },
+                            navigateToCollection = {
+                                navController.navigate(
+                                    "${BottomNavScreen.Settings.route}/collection"
+                                ) {
+                                    launchSingleTop = true
+                                }
+                            },
                             settingsViewModel = settingsViewModel,
                             contentPadding = innerPadding
                         )
@@ -227,6 +235,16 @@ fun RangersNavHost(
                     )
                     else CardsDownloadingCircularProgressIndicator()
                     title = stringResource(R.string.diagnostics_button)
+                    actions = null
+                    switch = null
+                }
+                composable(BottomNavScreen.Settings.route + "/collection") {
+                    SettingsCollectionScreen(
+                        settingsViewModel = settingsViewModel,
+                        isDarkTheme = isDarkTheme,
+                        contentPadding = innerPadding
+                    )
+                    title = stringResource(R.string.collection_header)
                     actions = null
                     switch = null
                 }
@@ -454,7 +472,7 @@ fun RangersNavHost(
                         cardId = cardId,
                         isDarkTheme = isDarkTheme,
                         contentPadding = innerPadding,
-                        isEditing = isEditing
+                        isEditing = isEditing,
                     )
                 }
                 val typeIndexArgument = "typeIndexArgument"
@@ -662,7 +680,7 @@ fun RangersNavHost(
                         } else {
                             CardsDownloadingCircularProgressIndicator()
                         }
-                        title = if (campaign.value != null) stringResource(CampaignMaps.campaignCyclesMap[campaign.value!!.cycleId]!!)
+                        title = if (campaign.value != null) stringResource(CampaignMaps.campaignCyclesMap[campaign.value!!.cycleId] ?: R.string.core_cycle)
                         else ""
                         actions = {
                             IconButton(
@@ -933,6 +951,7 @@ fun RangersNavHost(
                         isDarkTheme = isDarkTheme,
                         contentPadding = innerPadding,
                     )
+                    actions = null
                 }
             }
         }

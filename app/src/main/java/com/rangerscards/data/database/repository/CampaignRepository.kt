@@ -28,5 +28,5 @@ interface CampaignRepository {
 
     fun getRewards(taboo: Boolean, packId: String): Flow<List<CardListItemProjection>>
 
-    fun getCardById(cardCode: String, taboo: Boolean, packId: String): Flow<FullCardProjection>
+    fun getCardById(cardCode: String, taboo: Boolean): Flow<FullCardProjection>
 }

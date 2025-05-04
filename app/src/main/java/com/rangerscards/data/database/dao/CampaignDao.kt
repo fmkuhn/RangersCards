@@ -135,7 +135,7 @@ interface CampaignDao {
                 type_name, traits, equip, harm, progress, token_plurals, token_count, text, flavor, level,
                 set_name, set_size, set_position, pack_short_name, subset_name, subset_position, subset_size,
                 sun_challenge, mountain_challenge, crest_challenge
-            FROM card WHERE code = :cardCode AND (:taboo IS 1 AND taboo_id IS NOT NULL) AND pack_id IN (:packId)
+            FROM card WHERE code = :cardCode AND (:taboo IS 1 AND taboo_id IS NOT NULL)
             UNION ALL
             -- Case 2: When taboo is set but no override exists, return the default card
             SELECT taboo_id, aspect_id, aspect_short_name, cost, image_src, real_image_src, name,
@@ -143,7 +143,7 @@ interface CampaignDao {
                 type_name, traits, equip, harm, progress, token_plurals, token_count, text, flavor, level,
                 set_name, set_size, set_position, pack_short_name, subset_name, subset_position, subset_size,
                 sun_challenge, mountain_challenge, crest_challenge
-            FROM card AS c WHERE code = :cardCode AND (:taboo IS 1 AND taboo_id IS NULL) AND pack_id IN (:packId)
+            FROM card AS c WHERE code = :cardCode AND (:taboo IS 1 AND taboo_id IS NULL)
               AND NOT EXISTS ( SELECT 1 FROM card c2 WHERE c2.code = c.code AND c2.taboo_id IS NOT NULL)
             UNION ALL
             -- Case 3: Taboo not set – return default card
@@ -152,7 +152,7 @@ interface CampaignDao {
                 type_name, traits, equip, harm, progress, token_plurals, token_count, text, flavor, level,
                 set_name, set_size, set_position, pack_short_name, subset_name, subset_position, subset_size,
                 sun_challenge, mountain_challenge, crest_challenge
-            FROM card WHERE code = :cardCode AND (:taboo IS 0 AND taboo_id IS NULL) AND pack_id IN (:packId)
+            FROM card WHERE code = :cardCode AND (:taboo IS 0 AND taboo_id IS NULL)
         )""")
-    fun getCardById(cardCode: String, taboo: Boolean, packId: String): Flow<FullCardProjection>
+    fun getCardById(cardCode: String, taboo: Boolean): Flow<FullCardProjection>
 }

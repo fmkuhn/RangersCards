@@ -30,6 +30,7 @@ fun FullCardSetInfo(
     name: String,
     size: Int,
     position: Int,
+    packShortName: String?,
     isDarkTheme: Boolean
 ) {
     Row(
@@ -76,7 +77,8 @@ fun FullCardSetInfo(
                 modifier = Modifier.padding(8.dp)
             ) {
                 Text(
-                    text = name + " - " + stringResource(R.string.set_info, position, size),
+                    text = name + " - " + stringResource(R.string.set_info, position, size) +
+                            if (packShortName != null) " ($packShortName)" else "",
                     color = CustomTheme.colors.d20,
                     fontFamily = Jost,
                     fontWeight = FontWeight.Medium,

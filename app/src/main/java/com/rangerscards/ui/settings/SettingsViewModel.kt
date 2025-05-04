@@ -63,7 +63,7 @@ data class UserUIState(
 
 data class UserSettings(
     val taboo: Boolean = false,
-    val collection: List<String> = listOf("core")
+    val collection: List<String> = emptyList()
 )
 
 val SUPPORTED_LANGUAGES = listOf("en", "ru", "de", "fr", "it")
@@ -223,7 +223,7 @@ class SettingsViewModel(
                                 taboo = it.data!!.settings?.adhere_taboos ?: false,
                                 collection = it.data!!.settings?.pack_collection
                                     ?.jsonArray?.map { element -> element.jsonPrimitive.content }
-                                    ?: listOf("core")
+                                    ?: emptyList()
                             )
                         )
                     }
@@ -294,29 +294,21 @@ class SettingsViewModel(
         }
     }
 
-    fun setCollection(collection: List<String>, context: Context) {
-        viewModelScope.launch {
-            if (userUiState.value.currentUser != null) {
-                val token = getCurrentToken(context)
-                val response = apolloClient.mutation(SetPackCollectionMutation(
-                    userUiState.value.currentUser!!.uid,
-                    buildJsonArray { collection.forEach { add(it) } })
-                ).addHttpHeader("Authorization", "Bearer $token")
-                    .execute()
-                if (response.data != null) getUserInfo(context, userUiState.value.currentUser!!.uid)
-                userPreferencesRepository.saveCollectionPreference(collection)
-                _userUiState.update {
-                    it.copy(
-                        settings = it.settings.copy(collection = collection)
-                    )
-                }
-            } else {
-                userPreferencesRepository.saveCollectionPreference(collection)
-                _userUiState.update {
-                    it.copy(
-                        settings = it.settings.copy(collection = collection)
-                    )
-                }
+    suspend fun setCollection(collection: List<String>, context: Context) {
+        if (userUiState.value.currentUser != null) {
+            val token = getCurrentToken(context)
+            val response = apolloClient.mutation(SetPackCollectionMutation(
+                userUiState.value.currentUser!!.uid,
+                buildJsonArray { collection.forEach { add(it) } })
+            ).addHttpHeader("Authorization", "Bearer $token")
+                .execute()
+            if (response.data != null) getUserInfo(context, userUiState.value.currentUser!!.uid)
+        } else {
+            userPreferencesRepository.saveCollectionPreference(collection)
+            _userUiState.update {
+                it.copy(
+                    settings = it.settings.copy(collection = collection)
+                )
             }
         }
     }
@@ -338,12 +330,10 @@ class SettingsViewModel(
             val response = apolloClient.query(GetAllCardsQuery(language))
                 .fetchPolicy(FetchPolicy.NetworkOnly).execute()
             if (response.data != null) {
-                if (cardsRepository.isExists()) cardsRepository.updateAllCards(response.data!!.cards.toCards(language))
-                else cardsRepository.upsertAllCards(response.data!!.cards.toCards(language))
+                if (cardsRepository.isExists()) cardsRepository.upsertAllCards(response.data!!.cards.toCards(language))
+                else cardsRepository.insertAllCards(response.data!!.cards.toCards(language))
                 val timestamp = response.data!!.all_updated_at.getOrNull(0)?.updated_at.toString()
-                userPreferencesRepository.saveCardsUpdatedTimestamp(
-                    timestamp
-                )
+                userPreferencesRepository.saveCardsUpdatedTimestamp(timestamp)
                 _cardsUpdatedAt.update { timestamp }
             }
         }.invokeOnCompletion {

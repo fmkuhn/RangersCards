@@ -9,7 +9,7 @@ object CampaignMaps {
     val campaignCyclesMap by lazy {
         mapOf(
             "core" to R.string.core_cycle,
-            //"loa" to R.string.loa_cycle
+            "loa" to R.string.loa_expansion
         )
     }
 
@@ -248,6 +248,11 @@ object CampaignMaps {
                 1 to listOf("1"),
                 3 to listOf("94.1"),
                 4 to listOf("1.04"),
+            ),
+            "loa" to mapOf(
+                1 to listOf("1"),
+                3 to listOf("94.1"),
+                4 to listOf("1.04"),
             )
         )
     }
@@ -255,6 +260,19 @@ object CampaignMaps {
     fun weather(cycleId: String): List<Weather> {
         return when(cycleId) {
             "core" -> listOf(
+                Weather(1, 3, R.string.weather_perfect_day),
+                Weather(4, 7, R.string.weather_downpour),
+                Weather(8, 9, R.string.weather_perfect_day),
+                Weather(10, 12, R.string.weather_downpour),
+                Weather(13, 14, R.string.weather_howling_winds),
+                Weather(15, 17, R.string.weather_downpour),
+                Weather(18, 20, R.string.weather_howling_winds),
+                Weather(21, 22, R.string.weather_perfect_day),
+                Weather(23, 25, R.string.weather_downpour),
+                Weather(26, 28, R.string.weather_howling_winds),
+                Weather(29, 30, R.string.weather_perfect_day),
+            )
+            "loa" -> listOf(
                 Weather(1, 3, R.string.weather_perfect_day),
                 Weather(4, 7, R.string.weather_downpour),
                 Weather(8, 9, R.string.weather_perfect_day),

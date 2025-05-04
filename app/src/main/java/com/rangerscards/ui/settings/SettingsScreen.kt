@@ -27,6 +27,7 @@ fun SettingsScreen(
     navigateToAbout: () -> Unit,
     navigateToDiagnostics: () -> Unit,
     navigateToFriends: () -> Unit,
+    navigateToCollection: () -> Unit,
     settingsViewModel: SettingsViewModel = viewModel(factory = AppViewModelProvider.Factory),
     contentPadding: PaddingValues = PaddingValues(0.dp),
     modifier: Modifier = Modifier,
@@ -54,7 +55,8 @@ fun SettingsScreen(
             CardsCard(
                 isDarkTheme = isDarkTheme,
                 settingsViewModel = settingsViewModel,
-                userUIState = user
+                userUIState = user,
+                navigateToCollection = { navigateToCollection.invoke() }
             )
         }
         item {

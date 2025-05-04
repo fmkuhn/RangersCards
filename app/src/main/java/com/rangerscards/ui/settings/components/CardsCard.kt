@@ -32,7 +32,6 @@ import com.rangerscards.ui.settings.UserUIState
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
 import kotlinx.coroutines.launch
-import kotlinx.serialization.json.jsonArray
 import java.util.Locale
 
 @Composable
@@ -40,6 +39,7 @@ fun CardsCard(
     isDarkTheme: Boolean,
     settingsViewModel: SettingsViewModel,
     userUIState: UserUIState,
+    navigateToCollection: () -> Unit,
     modifier: Modifier = Modifier
 ) {
     var openLanguagePickerDialog by rememberSaveable { mutableStateOf(false) }
@@ -57,7 +57,7 @@ fun CardsCard(
     ) {
         SettingsBaseCard(
             isDarkTheme = isDarkTheme,
-            labelIdRes = R.string.saving_deck_changes_header
+            labelIdRes = R.string.saving_changes_header
         ) {
             Column(
                 modifier = Modifier
@@ -174,7 +174,7 @@ fun CardsCard(
                 trailingIcon = R.drawable.edit_32dp,
                 headerId = R.string.collection_header,
                 text = pluralStringResource(id = R.plurals.expansions_amount, count = amount, amount),
-                onClick = { /*TODO:Implement collection page*/ }
+                onClick = navigateToCollection
             )
         }
         SquareButton(

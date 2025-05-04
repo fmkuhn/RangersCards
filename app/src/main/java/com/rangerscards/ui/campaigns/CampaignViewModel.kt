@@ -703,7 +703,7 @@ class CampaignViewModel(
     fun getRewardsCards(): Flow<List<CardListItemProjection>> = campaignRepository.getRewards(_taboo.value, _packId.value)
 
     fun getRewardById(cardCode: String): Flow<FullCardProjection> =
-        campaignRepository.getCardById(cardCode, _taboo.value, _packId.value)
+        campaignRepository.getCardById(cardCode, _taboo.value)
 
     suspend fun addCampaignReward(id: String, user: FirebaseUser?) {
         val campaign = campaign.value!!

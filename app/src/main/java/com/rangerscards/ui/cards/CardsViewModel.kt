@@ -1,14 +1,13 @@
 package com.rangerscards.ui.cards
 
-import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
-import com.rangerscards.data.database.card.CardListItemProjection
-import com.rangerscards.data.database.repository.CardsRepository
-import com.rangerscards.data.database.card.FullCardProjection
 import com.rangerscards.data.UserPreferencesRepository
+import com.rangerscards.data.database.card.CardListItemProjection
+import com.rangerscards.data.database.card.FullCardProjection
+import com.rangerscards.data.database.repository.CardsRepository
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
@@ -110,9 +109,9 @@ class CardsViewModel(
     }
 
     fun setPackIds(packIds: List<String>) {
-        _packIds.update { packIds }
+        _packIds.update { listOf("core") + packIds }
     }
 
-    fun getCardById(cardCode: String): Flow<FullCardProjection> =
-        cardsRepository.getCardById(cardCode, _taboo.value, _packIds.value)
+    fun getCardById(cardCode: String): Flow<FullCardProjection?> =
+        cardsRepository.getCardById(cardCode, _taboo.value)
 }

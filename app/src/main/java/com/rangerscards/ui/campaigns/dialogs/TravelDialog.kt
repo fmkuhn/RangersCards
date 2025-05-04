@@ -317,7 +317,7 @@ fun TravelDialog(
     ) {
         SettingsBaseCard(
             isDarkTheme = isDarkTheme,
-            labelIdRes = R.string.saving_deck_changes_header
+            labelIdRes = R.string.saving_changes_header
         ) {
             Column(
                 modifier = Modifier

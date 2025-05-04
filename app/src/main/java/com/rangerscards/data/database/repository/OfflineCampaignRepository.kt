@@ -59,6 +59,6 @@ class OfflineCampaignRepository(
 
     override fun getRewards(taboo: Boolean, packId: String): Flow<List<CardListItemProjection>> = campaignDao.getAllRewards(taboo, packId)
 
-    override fun getCardById(cardCode: String, taboo: Boolean, packId: String): Flow<FullCardProjection> =
-        campaignDao.getCardById(cardCode, taboo, packId)
+    override fun getCardById(cardCode: String, taboo: Boolean): Flow<FullCardProjection> =
+        campaignDao.getCardById(cardCode, taboo)
 }

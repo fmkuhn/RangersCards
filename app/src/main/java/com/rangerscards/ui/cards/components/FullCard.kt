@@ -42,6 +42,9 @@ fun FullCard(
     setName: String,
     setSize: Int,
     setPosition: Int,
+    subsetSize: Int?,
+    subsetPosition: Int?,
+    packShortName: String?,
     //TODO:Implement campaign cards
 //    sunChallenge: String?,
 //    mountainChallenge: String?,
@@ -102,8 +105,9 @@ fun FullCard(
                 aspectShortName,
                 level,
                 setName,
-                setSize,
-                setPosition,
+                subsetSize ?: setSize,
+                subsetPosition ?: setPosition,
+                packShortName,
                 isDarkTheme
             )
         }
@@ -144,6 +148,9 @@ fun FullCardScreenPreview() {
                 setName = "Reward",
                 setSize = 31,
                 setPosition = 2,
+                subsetPosition = null,
+                subsetSize = null,
+                packShortName = null,
                 isDarkTheme = isSystemInDarkTheme(),
                 name = "Scuttler g Tunnel\nnew g line an some more"
             )

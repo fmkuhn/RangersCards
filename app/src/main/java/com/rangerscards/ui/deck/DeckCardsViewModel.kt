@@ -131,6 +131,6 @@ class DeckCardsViewModel(
     }
 
     fun setPackIds(packIds: List<String>) {
-        _packIds.update { packIds }
+        _packIds.update { listOf("core") + packIds }
     }
 }

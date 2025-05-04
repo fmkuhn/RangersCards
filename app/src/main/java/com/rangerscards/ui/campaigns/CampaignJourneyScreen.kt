@@ -161,16 +161,16 @@ fun TravelDayRow(
         }
         // Render each travel entry
         travelDay.travel.forEach { entry ->
-            Icon(
-                painterResource(R.drawable.arrow_forward_32dp),
-                contentDescription = "Arrow",
-                tint = CustomTheme.colors.m,
-                modifier = Modifier
-                    .size(24.dp)
-                    .align(Alignment.CenterVertically)
-            )
             val path = Path.fromValue(entry.pathTerrain)
             if (path?.iconResId != null) {
+                Icon(
+                    painterResource(R.drawable.arrow_forward_32dp),
+                    contentDescription = "Arrow",
+                    tint = CustomTheme.colors.m,
+                    modifier = Modifier
+                        .size(24.dp)
+                        .align(Alignment.CenterVertically)
+                )
                 Icon(
                     painter = painterResource(id = path.iconResId),
                     contentDescription = path.name,
@@ -286,23 +286,25 @@ fun TravelDayRow(
         }
         // Render each travel entry
         travelDay.travel.forEach { entry ->
-            item {
-                Icon(
-                    painterResource(R.drawable.arrow_forward_32dp),
-                    contentDescription = "Arrow",
-                    tint = CustomTheme.colors.m,
-                    modifier = Modifier.size(24.dp)
-                )
-            }
             val path = Path.fromValue(entry.pathTerrain)
-            if (path?.iconResId != null) item {
-                Icon(
-                    painter = painterResource(id = path.iconResId),
-                    contentDescription = path.name,
-                    tint = Color.Unspecified,
-                    modifier = Modifier
-                        .size(48.dp)
-                )
+            if (path?.iconResId != null) {
+                item {
+                    Icon(
+                        painterResource(R.drawable.arrow_forward_32dp),
+                        contentDescription = "Arrow",
+                        tint = CustomTheme.colors.m,
+                        modifier = Modifier.size(24.dp)
+                    )
+                }
+                item {
+                    Icon(
+                        painter = painterResource(id = path.iconResId),
+                        contentDescription = path.name,
+                        tint = Color.Unspecified,
+                        modifier = Modifier
+                            .size(48.dp)
+                    )
+                }
             }
             // If not camped, show an arrow and location icon.
             if (!entry.camped) {

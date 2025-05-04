@@ -8,7 +8,7 @@ import kotlinx.coroutines.flow.Flow
 
 interface CardsRepository {
 
-    suspend fun updateAllCards(cards: List<Card>)
+    suspend fun insertAllCards(cards: List<Card>)
 
     suspend fun upsertAllCards(cards: List<Card>)
 
@@ -25,5 +25,5 @@ interface CardsRepository {
         packIds: List<String>
     ): Flow<PagingData<CardListItemProjection>>
 
-    fun getCardById(cardCode: String, taboo: Boolean, packIds: List<String>): Flow<FullCardProjection>
+    fun getCardById(cardCode: String, taboo: Boolean): Flow<FullCardProjection?>
 }
