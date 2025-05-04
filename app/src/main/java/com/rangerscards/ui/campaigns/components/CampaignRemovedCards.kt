@@ -85,8 +85,8 @@ fun CampaignRemovedCards(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    painterResource(removedSetInfo.first ?: R.drawable.broken_image_32dp),
+                                if (removedSetInfo.first != null) Icon(
+                                    painterResource(removedSetInfo.first!!),
                                     contentDescription = null,
                                     tint = Color.Unspecified,
                                     modifier = Modifier.size(32.dp)

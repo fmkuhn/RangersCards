@@ -179,8 +179,8 @@ fun TravelDialog(
                     if (selectedPathTerrain.isNotEmpty()) {
                         val currentPathTerrain = Path
                             .fromValue(selectedPathTerrain)!!
-                        Icon(
-                            painterResource(currentPathTerrain.iconResId ?: R.drawable.broken_image_32dp),
+                        if (currentPathTerrain.iconResId != null) Icon(
+                            painterResource(currentPathTerrain.iconResId),
                             contentDescription = null,
                             tint = Color.Unspecified,
                             modifier = Modifier.size(32.dp)
@@ -421,8 +421,8 @@ fun TravelDialog(
                                 horizontalArrangement = Arrangement.spacedBy(8.dp),
                                 verticalAlignment = Alignment.CenterVertically
                             ) {
-                                Icon(
-                                    painterResource(path.iconResId ?: R.drawable.broken_image_32dp),
+                                if (path.iconResId != null) Icon(
+                                    painterResource(path.iconResId),
                                     contentDescription = null,
                                     tint = Color.Unspecified,
                                     modifier = Modifier.size(40.dp)

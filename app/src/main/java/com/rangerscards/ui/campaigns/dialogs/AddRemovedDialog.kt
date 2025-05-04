@@ -125,8 +125,8 @@ fun AddRemovedDialog(
                 ) {
                     if (selectedSetId.isNotEmpty()) {
                         val setInfo = allRemovedSets[selectedSetId]!!
-                        Icon(
-                            painterResource(setInfo.first ?: R.drawable.broken_image_32dp),
+                        if (setInfo.first != null) Icon(
+                            painterResource(setInfo.first!!),
                             contentDescription = null,
                             tint = Color.Unspecified,
                             modifier = Modifier.size(32.dp)
@@ -226,8 +226,8 @@ fun AddRemovedDialog(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            Icon(
-                                painterResource(value.first ?: R.drawable.broken_image_32dp),
+                            if (value.first != null) Icon(
+                                painterResource(value.first!!),
                                 contentDescription = null,
                                 tint = Color.Unspecified,
                                 modifier = Modifier.size(40.dp)
