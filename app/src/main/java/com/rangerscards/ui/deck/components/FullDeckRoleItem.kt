@@ -104,7 +104,7 @@ fun FullDeckRoleItem(
             }
             BasicText(
                 text = text,
-                inlineContent = CardTextParser.inlineIconsMap,
+                inlineContent = CardTextParser.inlineIconsMap(CustomTheme.colors.d30),
                 style = TextStyle(
                     color = CustomTheme.colors.d30,
                     fontFamily = Jost,

@@ -4,6 +4,7 @@ import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -206,8 +207,8 @@ object CardTextParser {
         return parseSegment(rawText, 0, endTag = null, aspectId).first
     }
 
-    val inlineIconsMap by lazy {
-        mapOf(
+    fun inlineIconsMap(color: Color): Map<String, InlineTextContent> {
+        return mapOf(
             "conflict" to InlineTextContent(
                 Placeholder(
                     width = 16.sp,
@@ -218,7 +219,7 @@ object CardTextParser {
                 Icon(
                     painter = painterResource(R.drawable.conflict),
                     contentDescription = "Conflict Icon",
-                    tint = CustomTheme.colors.d30
+                    tint = color
                 )
             },
             "reason" to InlineTextContent(
@@ -231,7 +232,7 @@ object CardTextParser {
                 Icon(
                     painter = painterResource(R.drawable.reason),
                     contentDescription = "Reason Icon",
-                    tint = CustomTheme.colors.d30
+                    tint = color
                 )
             },
             "exploration" to InlineTextContent(
@@ -244,7 +245,7 @@ object CardTextParser {
                 Icon(
                     painter = painterResource(R.drawable.exploration),
                     contentDescription = "Exploration Icon",
-                    tint = CustomTheme.colors.d30
+                    tint = color
                 )
             },
             "connection" to InlineTextContent(
@@ -257,7 +258,7 @@ object CardTextParser {
                 Icon(
                     painter = painterResource(R.drawable.connection),
                     contentDescription = "Connection Icon",
-                    tint = CustomTheme.colors.d30
+                    tint = color
                 )
             },
             "harm" to InlineTextContent(
@@ -270,7 +271,7 @@ object CardTextParser {
                 Icon(
                     painter = painterResource(R.drawable.harm),
                     contentDescription = "Harm Icon",
-                    tint = CustomTheme.colors.d30
+                    tint = color
                 )
             },
             "progress" to InlineTextContent(
@@ -283,7 +284,7 @@ object CardTextParser {
                 Icon(
                     painter = painterResource(R.drawable.progress),
                     contentDescription = "Progress Icon",
-                    tint = CustomTheme.colors.d30
+                    tint = color
                 )
             },
             "ranger" to InlineTextContent(
@@ -296,35 +297,35 @@ object CardTextParser {
                 Icon(
                     painter = painterResource(R.drawable.ranger),
                     contentDescription = "Ranger Icon",
-                    tint = CustomTheme.colors.d30
+                    tint = color
                 )
             },
-//        "sun" to InlineTextContent(
-//            Placeholder(
-//                width = 16.sp,
-//                height = 16.sp,
-//                placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
-//            )
-//        ) {
-//            Icon(
-//                painter = painterResource(R.drawable.ranger),
-//                contentDescription = "Ranger Icon",
-//                tint = CustomTheme.colors.d30
-//            )
-//        },
-//        "mountain" to InlineTextContent(
-//            Placeholder(
-//                width = 16.sp,
-//                height = 16.sp,
-//                placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
-//            )
-//        ) {
-//            Icon(
-//                painter = painterResource(R.drawable.ranger),
-//                contentDescription = "Ranger Icon",
-//                tint = CustomTheme.colors.d30
-//            )
-//        },
+            "sun" to InlineTextContent(
+                Placeholder(
+                    width = 16.sp,
+                    height = 16.sp,
+                    placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
+                )
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.sun),
+                    contentDescription = "Sun Icon",
+                    tint = color
+                )
+            },
+            "mountain" to InlineTextContent(
+                Placeholder(
+                    width = 16.sp,
+                    height = 16.sp,
+                    placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
+                )
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.mountain),
+                    contentDescription = "Mountain Icon",
+                    tint = color
+                )
+            },
             "crest" to InlineTextContent(
                 Placeholder(
                     width = 16.sp,
@@ -334,8 +335,8 @@ object CardTextParser {
             ) {
                 Icon(
                     painter = painterResource(R.drawable.crest),
-                    contentDescription = "Ranger Icon",
-                    tint = CustomTheme.colors.d30
+                    contentDescription = "Crest Icon",
+                    tint = color
                 )
             },
         )

@@ -9,6 +9,7 @@ object DeckMetaMaps {
             "shepherd" to R.string.shepherd_background,
             "forager" to R.string.forager_background,
             "artisan" to R.string.artisan_background,
+            "talespinner" to R.string.talespinner_background
         )
     }
     val specialty by lazy {
@@ -17,6 +18,7 @@ object DeckMetaMaps {
             "shaper" to R.string.shaper_specialty,
             "conciliator" to R.string.conciliator_specialty,
             "artificer" to R.string.artificer_specialty,
+            "spirit_speaker" to R.string.spirit_speaker_specialty
         )
     }
 }

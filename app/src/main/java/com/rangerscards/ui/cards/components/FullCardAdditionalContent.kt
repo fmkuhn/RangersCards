@@ -36,6 +36,7 @@ import java.util.Locale
 fun FullCardAdditionalContent(
     aspectId: String?,
     traits: String?,
+    typeId: String?,
     typeName: String?,
     equip: Int?,
     harm: Int?,
@@ -69,6 +70,7 @@ fun FullCardAdditionalContent(
             aspectId,
             equip,
             harm,
+            typeId,
             progress,
             tokenPlurals,
             tokenCount,
@@ -82,13 +84,14 @@ fun AdditionalElements(
     aspectId: String?,
     equip: Int?,
     harm: Int?,
+    typeId: String?,
     progress: Int?,
     tokenPlurals: String?,
     tokenCount: Int?,
     isDarkTheme: Boolean
 ) {
     if (equip != null) EquipRow(aspectId, equip)
-    if (harm != null) Surface(
+    if (harm != null || typeId == "being") Surface(
         modifier = Modifier.size(36.dp),
         color = CustomTheme.colors.red,
         shape = CustomTheme.shapes.small
@@ -109,7 +112,7 @@ fun AdditionalElements(
                 verticalArrangement = Arrangement.Center
             ) {
                 Text(
-                    text = harm.toString(),
+                    text = harm?.toString() ?: "/",
                     color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
                     fontFamily = Jost,
                     fontWeight = FontWeight.Bold,
@@ -199,7 +202,7 @@ fun TokenContainer(
             modifier = Modifier.padding(bottom = 4.dp, start = 4.dp, end = 4.dp)
         ) {
             Text(
-                text = tokenCount.toString(),
+                text = if (tokenCount == -2) "X" else tokenCount.toString(),
                 color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
                 fontFamily = Jost,
                 fontWeight = FontWeight.Bold,

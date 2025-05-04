@@ -195,7 +195,7 @@ fun DeckCreationScreen(
                     when (tabIndex) {
                         0 -> {
                             item {
-                                val roles = decksViewModel.getRoles(specialty, taboo, packIds).collectAsLazyPagingItems()
+                                val roles = decksViewModel.getRoles(specialty, taboo, listOf("core") + packIds).collectAsLazyPagingItems()
                                 Column(
                                     modifier = Modifier
                                         .fillMaxWidth()

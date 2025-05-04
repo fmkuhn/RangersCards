@@ -99,6 +99,7 @@ fun CampaignRewardFullScreen(
                             approachExploration = fullCard!!.approachExploration,
                             approachConnection = fullCard!!.approachConnection,
                             typeName = fullCard!!.typeName,
+                            typeId = fullCard!!.typeId,
                             traits = fullCard!!.traits,
                             equip = fullCard!!.equip,
                             harm = fullCard!!.harm,
@@ -114,6 +115,9 @@ fun CampaignRewardFullScreen(
                             subsetSize = fullCard!!.subsetSize,
                             subsetPosition = fullCard!!.subsetPosition,
                             packShortName = fullCard!!.packShortName,
+                            sunChallenge = fullCard!!.sunChallenge,
+                            mountainChallenge = fullCard!!.mountainChallenge,
+                            crestChallenge = fullCard!!.crestChallenge,
                             isDarkTheme = isDarkTheme
                         )
                     }

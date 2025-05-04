@@ -29,6 +29,7 @@ fun FullCard(
     approachReason: Int?,
     approachExploration: Int?,
     approachConnection: Int?,
+    typeId: String?,
     typeName: String?,
     traits: String?,
     equip: Int?,
@@ -45,10 +46,9 @@ fun FullCard(
     subsetSize: Int?,
     subsetPosition: Int?,
     packShortName: String?,
-    //TODO:Implement campaign cards
-//    sunChallenge: String?,
-//    mountainChallenge: String?,
-//    crestChallenge: String?,
+    sunChallenge: String?,
+    mountainChallenge: String?,
+    crestChallenge: String?,
     isDarkTheme: Boolean,
     name: String,
 ) {
@@ -86,6 +86,7 @@ fun FullCard(
             //Content block
             FullCardContent(
                 aspectId,
+                typeId,
                 typeName,
                 traits,
                 equip,
@@ -95,6 +96,9 @@ fun FullCard(
                 tokenCount,
                 text,
                 flavor,
+                sunChallenge,
+                mountainChallenge,
+                crestChallenge,
                 imageSrc,
                 isDarkTheme
             )
@@ -136,6 +140,7 @@ fun FullCardScreenPreview() {
                 approachExploration = 1,
                 approachConnection = 1,
                 typeName = null,
+                typeId = null,
                 traits = "Being / Companion / Mammal",
                 equip = 2,
                 harm = 1,
@@ -152,7 +157,10 @@ fun FullCardScreenPreview() {
                 subsetSize = null,
                 packShortName = null,
                 isDarkTheme = isSystemInDarkTheme(),
-                name = "Scuttler g Tunnel\nnew g line an some more"
+                name = "Scuttler g Tunnel\nnew g line an some more",
+                sunChallenge = null,
+                mountainChallenge = null,
+                crestChallenge = null,
             )
         }
     }

@@ -24,6 +24,8 @@ data class FullCardProjection(
     val approachExploration: Int?,
     @ColumnInfo(name = "approach_connection")
     val approachConnection: Int?,
+    @ColumnInfo(name = "type_id")
+    val typeId: String?,
     @ColumnInfo(name = "type_name")
     val typeName: String?,
     val traits: String?,

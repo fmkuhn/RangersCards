@@ -414,5 +414,7 @@
     <string name="connection_restriction_data_type">Connection restriction</string>
 
     <string name="sotv_expansion">Stewards of the Valley</string>
+    <string name="talespinner_background">Talespinner</string>
+    <string name="spirit_speaker_specialty">Spirit Speaker</string>
 
 </resources>

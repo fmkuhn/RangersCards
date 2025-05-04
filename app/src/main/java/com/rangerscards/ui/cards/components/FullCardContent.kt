@@ -12,6 +12,7 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun FullCardContent(
     aspectId: String?,
+    typeId: String?,
     typeName: String?,
     traits: String?,
     equip: Int?,
@@ -21,6 +22,9 @@ fun FullCardContent(
     tokenCount: Int?,
     text: String?,
     flavor: String?,
+    sunChallenge: String?,
+    mountainChallenge: String?,
+    crestChallenge: String?,
     imageSrc: String?,
     isDarkTheme: Boolean
 ) {
@@ -34,6 +38,7 @@ fun FullCardContent(
         FullCardAdditionalContent(
             aspectId,
             traits,
+            typeId,
             typeName,
             equip,
             harm,
@@ -42,7 +47,7 @@ fun FullCardContent(
             tokenCount,
             isDarkTheme
         )
-        FullCardTextContent(aspectId, text, flavor)
+        FullCardTextContent(aspectId, text, flavor, sunChallenge, mountainChallenge, crestChallenge, isDarkTheme)
         FullCardImageContainer(imageSrc)
     }
 }

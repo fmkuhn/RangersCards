@@ -98,8 +98,8 @@ fun CampaignCurrentPositionCard(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            if (currentPathTerrain != null) Icon(
-                                painterResource(currentPathTerrain.iconResId ?: R.drawable.broken_image_32dp),
+                            if (currentPathTerrain?.iconResId != null) Icon(
+                                painterResource(currentPathTerrain.iconResId),
                                 contentDescription = null,
                                 tint = Color.Unspecified,
                                 modifier = Modifier.size(32.dp)
