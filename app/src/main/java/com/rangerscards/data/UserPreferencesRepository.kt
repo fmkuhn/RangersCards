@@ -66,7 +66,7 @@ class UserPreferencesRepository(
                 throw it
             }
         }.map { preferences ->
-            preferences[COLLECTION]?.split(",")?.filter { it.isNotBlank() } ?: listOf("core")
+            preferences[COLLECTION]?.split(",")?.filter { it.isNotBlank() } ?: emptyList()
         }
 
     val cardsUpdatedAt: Flow<String> = dataStore.data.catch {

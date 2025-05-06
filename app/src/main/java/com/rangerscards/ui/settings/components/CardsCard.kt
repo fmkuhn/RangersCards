@@ -10,7 +10,9 @@ import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -47,6 +49,12 @@ fun CardsCard(
     var showLoadingDialog by rememberSaveable { mutableStateOf(false) }
     val coroutine = rememberCoroutineScope()
     val context = LocalContext.current.applicationContext
+    var amount by rememberSaveable { mutableIntStateOf(userUIState.settings.collection.size) }
+    var taboo by rememberSaveable { mutableStateOf(userUIState.settings.taboo) }
+    LaunchedEffect(userUIState.settings) {
+        amount = userUIState.settings.collection.size
+        taboo = userUIState.settings.taboo
+    }
     if (showLoadingDialog) Dialog(
         onDismissRequest = { showLoadingDialog = false },
         properties = DialogProperties(
@@ -168,7 +176,6 @@ fun CardsCard(
                 modifier = Modifier.padding(horizontal = 8.dp),
                 color = CustomTheme.colors.l10
             )
-            val amount = userUIState.settings.collection.size
             SettingsClickableSurface(
                 leadingIcon = R.drawable.cards_32dp,
                 trailingIcon = R.drawable.edit_32dp,
@@ -191,10 +198,10 @@ fun CardsCard(
         SettingsRadioButtonRow(
             text = stringResource(id = R.string.use_taboo),
             onClick = { coroutine.launch { showLoadingDialog = true
-                settingsViewModel.setTaboo(context)
+                settingsViewModel.setTaboo(!taboo, context)
             }.invokeOnCompletion { showLoadingDialog = false } },
             leadingIcon = R.drawable.uncommon_wisdom,
-            isSelected = userUIState.settings.taboo
+            isSelected = taboo
         )
     }
 }

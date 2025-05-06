@@ -16,7 +16,7 @@ android {
         applicationId = "com.rangerscards"
         minSdk = 24
         targetSdk = 35
-        versionCode = 28
+        versionCode = 29
         versionName = "1.2.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
@@ -61,7 +61,7 @@ dependencies {
     implementation("androidx.core:core-splashscreen:1.0.1")
 
     // Import the Firebase BoM
-    implementation(platform("com.google.firebase:firebase-bom:33.12.0"))
+    implementation(platform("com.google.firebase:firebase-bom:33.13.0"))
     implementation("com.google.firebase:firebase-auth")
 
     // Import Apollo Kotlin
@@ -70,10 +70,10 @@ dependencies {
     implementation("com.apollographql.apollo:apollo-normalized-cache-sqlite:4.1.1")
 
     //Import Room
-    implementation("androidx.room:room-ktx:2.7.0")
-    implementation("androidx.room:room-runtime:2.7.0")
-    implementation("androidx.room:room-paging:2.7.0")
-    ksp("androidx.room:room-compiler:2.7.0")
+    implementation("androidx.room:room-ktx:2.7.1")
+    implementation("androidx.room:room-runtime:2.7.1")
+    implementation("androidx.room:room-paging:2.7.1")
+    ksp("androidx.room:room-compiler:2.7.1")
 
     //Import Paging
     implementation("androidx.paging:paging-runtime-ktx:3.3.6")
@@ -91,7 +91,7 @@ dependencies {
     implementation("androidx.lifecycle:lifecycle-viewmodel-compose:2.8.7")
     implementation("androidx.activity:activity-compose:1.10.1")
     implementation("androidx.navigation:navigation-compose:2.8.9")
-    implementation(platform("androidx.compose:compose-bom:2025.04.00"))
+    implementation(platform("androidx.compose:compose-bom:2025.04.01"))
     implementation("androidx.compose.ui:ui")
     implementation("androidx.compose.ui:ui-graphics")
     implementation("androidx.compose.ui:ui-tooling-preview")
@@ -105,7 +105,7 @@ dependencies {
 
     androidTestImplementation("androidx.test.ext:junit:1.2.1")
     androidTestImplementation("androidx.test.espresso:espresso-core:3.6.1")
-    androidTestImplementation(platform("androidx.compose:compose-bom:2025.04.00"))
+    androidTestImplementation(platform("androidx.compose:compose-bom:2025.04.01"))
     androidTestImplementation("androidx.compose.ui:ui-test-junit4")
 
     debugImplementation("androidx.compose.ui:ui-tooling")

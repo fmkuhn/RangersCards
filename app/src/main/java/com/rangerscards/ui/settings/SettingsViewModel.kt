@@ -217,15 +217,14 @@ class SettingsViewModel(
                 .addHttpHeader("Authorization", "Bearer $token")
                 .toFlow()
                 .collect {
-                    if (it.data != null) _userUiState.update { uiState ->
-                        uiState.copy(userInfo = it.data,
-                            settings = UserSettings(
-                                taboo = it.data!!.settings?.adhere_taboos ?: false,
-                                collection = it.data!!.settings?.pack_collection
-                                    ?.jsonArray?.map { element -> element.jsonPrimitive.content }
-                                    ?: emptyList()
-                            )
-                        )
+                    if (it.data != null) {
+                        _userUiState.update { uiState ->
+                            uiState.copy(userInfo = it.data)
+                        }
+                        userPreferencesRepository.saveTabooPreference(it.data!!.settings?.adhere_taboos ?: false)
+                        userPreferencesRepository.saveCollectionPreference(it.data!!.settings?.pack_collection
+                            ?.jsonArray?.map { element -> element.jsonPrimitive.content }
+                            ?: emptyList())
                     }
                 }
         }
@@ -275,22 +274,16 @@ class SettingsViewModel(
         }
     }
 
-    suspend fun setTaboo(context: Context) {
-        val taboo = !userUiState.value.settings.taboo
+    suspend fun setTaboo(taboo: Boolean, context: Context) {
         if (userUiState.value.currentUser != null) {
             val token = getCurrentToken(context)
             val response = apolloClient.mutation(SetAdhereTaboosMutation(
                 userUiState.value.currentUser!!.uid,
                 taboo)
             ).addHttpHeader("Authorization", "Bearer $token").execute()
-            if (response.data != null) getUserInfo(context, userUiState.value.currentUser!!.uid)
+            if (response.data != null) userPreferencesRepository.saveTabooPreference(taboo)
         } else {
             userPreferencesRepository.saveTabooPreference(taboo)
-            _userUiState.update {
-                it.copy(
-                    settings = it.settings.copy(taboo = taboo)
-                )
-            }
         }
     }
 
@@ -302,14 +295,9 @@ class SettingsViewModel(
                 buildJsonArray { collection.forEach { add(it) } })
             ).addHttpHeader("Authorization", "Bearer $token")
                 .execute()
-            if (response.data != null) getUserInfo(context, userUiState.value.currentUser!!.uid)
+            if (response.data != null) userPreferencesRepository.saveCollectionPreference(collection)
         } else {
             userPreferencesRepository.saveCollectionPreference(collection)
-            _userUiState.update {
-                it.copy(
-                    settings = it.settings.copy(collection = collection)
-                )
-            }
         }
     }
 
