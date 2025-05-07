@@ -187,20 +187,31 @@ fun PresenceContainer(presence: Int, isDarkTheme: Boolean) {
         color = CustomTheme.colors.purple,
         shape = CustomTheme.shapes.small
     ) {
-        Column(
-            modifier = Modifier.fillMaxSize(),
-            horizontalAlignment = Alignment.CenterHorizontally,
-            verticalArrangement = Arrangement.Center
+        Box(
+            contentAlignment = Alignment.Center,
+            modifier = Modifier.fillMaxSize()
         ) {
-            Text(
-                text = presence.toString(),
-                color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
-                fontFamily = Jost,
-                fontWeight = FontWeight.Bold,
-                fontSize = 20.sp,
-                lineHeight = 22.sp,
-                textAlign = TextAlign.Center,
+            Icon(
+                painterResource(R.drawable.presence),
+                contentDescription = null,
+                tint = if (isDarkTheme) CustomTheme.colors.l10.copy(alpha = 0.5f) else CustomTheme.colors.d10.copy(alpha = 0.5f),
+                modifier = Modifier.size(32.dp)
             )
+            Column(
+                modifier = Modifier.fillMaxSize(),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
+            ) {
+                Text(
+                    text = presence.toString(),
+                    color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
+                    fontFamily = Jost,
+                    fontWeight = FontWeight.Bold,
+                    fontSize = 20.sp,
+                    lineHeight = 22.sp,
+                    textAlign = TextAlign.Center,
+                )
+            }
         }
     }
 }
