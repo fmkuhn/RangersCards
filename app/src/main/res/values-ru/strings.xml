@@ -317,6 +317,6 @@
     <string name="diagnostics_clear_local_data_cleared">Локальные данные очищены.</string>
     <string name="diagnostics_clear_coil_cache">Очистить кэш изображений</string>
     <string name="diagnostics_clear_coil_cache_cleared">Кэш изображений очищен.</string>
-    <string name="diagnostics_clear_apollo_cache">Очистить кэш сетевых запросов.</string>
+    <string name="diagnostics_clear_apollo_cache">Очистить кэш сетевых запросов</string>
     <string name="diagnostics_clear_apollo_cache_cleared">Сетевой кэш очищен.</string>
 </resources>
