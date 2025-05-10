@@ -55,7 +55,8 @@ fun SettingsCard(
                     text = stringResource(id = R.string.system_theme, systemThemeText),
                     onClick = { openThemeDialog = false
                         if (themeInt != 2) settingsViewModel.selectTheme(2) },
-                    isSelected = themeInt == 2
+                    isSelected = themeInt == 2,
+                    isSingleValue = true
                 )
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 8.dp),
@@ -65,7 +66,8 @@ fun SettingsCard(
                     text = stringResource(id = R.string.light_theme),
                     onClick = { openThemeDialog = false
                         if (themeInt != 0) settingsViewModel.selectTheme(0) },
-                    isSelected = themeInt == 0
+                    isSelected = themeInt == 0,
+                    isSingleValue = true
                 )
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 8.dp),
@@ -75,7 +77,8 @@ fun SettingsCard(
                     text = stringResource(id = R.string.dark_theme),
                     onClick = { openThemeDialog = false
                         if (themeInt != 1) settingsViewModel.selectTheme(1) },
-                    isSelected = themeInt == 1
+                    isSelected = themeInt == 1,
+                    isSingleValue = true
                 )
             }
         }

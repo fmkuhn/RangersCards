@@ -105,7 +105,8 @@ fun CardsCard(
                     onClick = { openLanguagePickerDialog = false
                         if (selectedLocale.language != "en")
                             settingsViewModel.updateLocale("en", context) },
-                    isSelected = selectedLocale.language == "en"
+                    isSelected = selectedLocale.language == "en",
+                    isSingleValue = true
                 )
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 8.dp),
@@ -116,7 +117,8 @@ fun CardsCard(
                     onClick = { openLanguagePickerDialog = false
                         if (selectedLocale.language != "ru")
                             settingsViewModel.updateLocale("ru", context) },
-                    isSelected = selectedLocale.language == "ru"
+                    isSelected = selectedLocale.language == "ru",
+                    isSingleValue = true
                 )
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 8.dp),
@@ -127,7 +129,8 @@ fun CardsCard(
                     onClick = { openLanguagePickerDialog = false
                         if (selectedLocale.language != "de")
                             settingsViewModel.updateLocale("de", context) },
-                    isSelected = selectedLocale.language == "de"
+                    isSelected = selectedLocale.language == "de",
+                    isSingleValue = true
                 )
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 8.dp),
@@ -138,7 +141,8 @@ fun CardsCard(
                     onClick = { openLanguagePickerDialog = false
                         if (selectedLocale.language != "fr")
                             settingsViewModel.updateLocale("fr", context) },
-                    isSelected = selectedLocale.language == "fr"
+                    isSelected = selectedLocale.language == "fr",
+                    isSingleValue = true
                 )
                 HorizontalDivider(
                     modifier = Modifier.padding(horizontal = 8.dp),
@@ -149,7 +153,8 @@ fun CardsCard(
                     onClick = { openLanguagePickerDialog = false
                         if (selectedLocale.language != "it")
                             settingsViewModel.updateLocale("it", context) },
-                    isSelected = selectedLocale.language == "it"
+                    isSelected = selectedLocale.language == "it",
+                    isSingleValue = true
                 )
             }
         }
