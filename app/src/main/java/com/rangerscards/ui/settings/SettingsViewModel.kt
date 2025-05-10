@@ -221,10 +221,12 @@ class SettingsViewModel(
                         _userUiState.update { uiState ->
                             uiState.copy(userInfo = it.data)
                         }
-                        userPreferencesRepository.saveTabooPreference(it.data!!.settings?.adhere_taboos ?: false)
-                        userPreferencesRepository.saveCollectionPreference(it.data!!.settings?.pack_collection
-                            ?.jsonArray?.map { element -> element.jsonPrimitive.content }
-                            ?: emptyList())
+                        if (it.isLast) {
+                            userPreferencesRepository.saveTabooPreference(it.data!!.settings?.adhere_taboos ?: false)
+                            userPreferencesRepository.saveCollectionPreference(it.data!!.settings?.pack_collection
+                                ?.jsonArray?.map { element -> element.jsonPrimitive.content }
+                                ?: emptyList())
+                        }
                     }
                 }
         }
