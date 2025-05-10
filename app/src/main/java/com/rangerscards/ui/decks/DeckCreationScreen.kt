@@ -27,6 +27,7 @@ import androidx.compose.material3.TabRowDefaults.tabIndicatorOffset
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -91,7 +92,7 @@ fun DeckCreationScreen(
     var name by rememberSaveable { mutableStateOf("") }
     var isUploading by rememberSaveable { mutableStateOf(false) }
     var taboo by rememberSaveable { mutableStateOf(user.settings.taboo) }
-    val packIds = remember { user.settings.collection.toMutableStateList() }
+    var packIds = remember { user.settings.collection.toMutableStateList() }
     var selectedStarterDeck by rememberSaveable { mutableIntStateOf(-1) }
     var background by rememberSaveable { mutableStateOf("") }
     var specialty by rememberSaveable { mutableStateOf("") }
@@ -104,6 +105,9 @@ fun DeckCreationScreen(
         }
     }
     val context = LocalContext.current.applicationContext
+    LaunchedEffect(user.settings) {
+        packIds = user.settings.collection.toMutableStateList()
+    }
     Column(
         modifier = modifier
             .background(CustomTheme.colors.l30)
@@ -322,7 +326,19 @@ fun DeckCreationScreen(
                                                             HorizontalDivider(color = CustomTheme.colors.l10)
                                                         }
                                                     }
-                                                    else -> items(
+                                                    else -> if (roles.itemCount <= 0) item("no_roles") {
+                                                        Text(
+                                                            text = stringResource(R.string.no_roles),
+                                                            modifier = Modifier
+                                                                .fillMaxWidth()
+                                                                .padding(horizontal = 16.dp, vertical = 8.dp),
+                                                            color = CustomTheme.colors.d30,
+                                                            fontFamily = Jost,
+                                                            fontWeight = FontWeight.Medium,
+                                                            fontSize = 18.sp,
+                                                            lineHeight = 22.sp,
+                                                        )
+                                                    } else items(
                                                         count = roles.itemCount,
                                                         key = roles.itemKey(CardListItemProjection::id),
                                                         contentType = roles.itemContentType { it }

@@ -132,6 +132,7 @@
     <string name="specialty_placeholder">Choose specialty</string>
     <string name="role">Role</string>
     <string name="role_placeholder">Choose role</string>
+    <string name="no_roles">No matching roles with current collections</string>
     <string name="starter_deck_name_postfix">(Starter)</string>
 
     //Deck errors
