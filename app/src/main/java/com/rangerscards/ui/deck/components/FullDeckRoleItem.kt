@@ -44,7 +44,7 @@ import com.rangerscards.ui.theme.Jost
 fun FullDeckRoleItem(
     tabooId: String?,
     imageSrc: String?,
-    name: String,
+    name: String?,
     text: AnnotatedString,
     campaignName: String?,
     onClick: () -> Unit,
@@ -87,7 +87,7 @@ fun FullDeckRoleItem(
                 verticalAlignment = Alignment.CenterVertically
             ) {
                 Text(
-                    text = name,
+                    text = name ?: "",
                     color = CustomTheme.colors.d30,
                     fontFamily = Jost,
                     fontWeight = FontWeight.Medium,

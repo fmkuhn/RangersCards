@@ -262,7 +262,7 @@ class DeckViewModel(
         cards: List<CardDeckListItemProjection>
     ): Flow<Pair<List<String>, Pair<Int, Int?>>> {
         val isUpgrade = originalDeck.value?.previousId != null
-        val problems = mutableListOf<String>()
+        val problems = mutableSetOf<String>()
         // Build stats mapping
         val stats = mapOf(
             "AWA" to statsList[0],
@@ -283,17 +283,14 @@ class DeckViewModel(
         cards.forEach { card ->
             val cardCount = updatableValues.value!!.slots[card.code] ?: 0
             if (cardCount > 2) {
-                if (card.setId != "malady" && !problems.contains("too_many_duplicates")) {
+                if (card.setId != "malady") {
                     problems.add("too_many_duplicates")
                 }
-            } else if (!isUpgrade && cardCount != 2 && !problems.contains("need_two_cards")) {
+            } else if (!isUpgrade && cardCount != 2) {
                 problems.add("need_two_cards")
             }
             if (card.aspectId != null && card.level != null) {
-                if ((stats[card.aspectId] ?: 0) < card.level &&
-                    !problems.contains("invalid_aspect_levels")) {
-                        problems.add("invalid_aspect_levels")
-                }
+                if ((stats[card.aspectId] ?: 0) < card.level)  problems.add("invalid_aspect_levels")
             }
         }
         if (isUpgrade) {
@@ -418,7 +415,7 @@ class DeckViewModel(
             }
         }
         return flow {
-            emit(problems to (if (splashCount == 2) splashCount to splashResId else 0 to null))
+            emit(problems.toList() to (if (splashCount == 2) splashCount to splashResId else 0 to null))
         }
     }
 
@@ -919,7 +916,7 @@ fun Deck.toDeckState(): FullDeckState {
         description = this.description,
         createdAt = this.createdAt,
         updatedAt = this.updatedAt,
-        roleId = this.meta.jsonObject["role"]!!.jsonPrimitive.content,
+        roleId = this.meta.jsonObject["role"]?.jsonPrimitive?.content.toString(),
         background = this.meta.jsonObject["background"]!!.jsonPrimitive.content,
         specialty = this.meta.jsonObject["specialty"]!!.jsonPrimitive.content,
         problems = this.meta.jsonObject["problem"]?.jsonArray?.map { it.jsonPrimitive.content },

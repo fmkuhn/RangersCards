@@ -506,16 +506,16 @@ fun DeckScreen(
                             FullDeckRoleItem(
                                 tabooId = role?.tabooId,
                                 imageSrc = role?.realImageSrc,
-                                name = role?.name.toString(),
-                                text = CardTextParser.parseCustomText(role?.text.toString(), null),
+                                name = role?.name,
+                                text = CardTextParser.parseCustomText(role?.text, null),
                                 campaignName = deck.campaignName,
-                                onClick = {
+                                onClick = if (role != null) {{
                                     navController.navigate(
                                         "deck/card/${deck.roleId}"
                                     ) {
                                         launchSingleTop = true
                                     }
-                                }
+                                }} else { {} }
                             )
                             val stats =
                                 listOf(values!!.awa, values!!.spi, values!!.fit, values!!.foc)
@@ -646,7 +646,7 @@ fun DeckScreen(
                                                 approachExploration = card.approachExploration,
                                                 name = card.name.toString(),
                                                 typeName = card.typeName,
-                                                traits = card.typeName,
+                                                traits = card.traits,
                                                 level = card.level,
                                                 isDarkTheme = isDarkTheme,
                                                 currentAmount = amount,
@@ -681,7 +681,9 @@ fun DeckScreen(
                                     showIcon = deck.nextId == null && (user == null || user.uid == deck.userId
                                             || deck.userId.isEmpty()),
                                     label = stringResource(R.string.background) + ": " +
-                                            stringResource(DeckMetaMaps.background[deck.background]!!),
+                                            if (DeckMetaMaps.background[deck.background] != null)
+                                                stringResource(DeckMetaMaps.background[deck.background]!!)
+                                            else "",
                                     onClick = {
                                         deckViewModel.enterEditMode()
                                         navController.navigate(
@@ -705,7 +707,7 @@ fun DeckScreen(
                                                 approachExploration = card.approachExploration,
                                                 name = card.name.toString(),
                                                 typeName = card.typeName,
-                                                traits = card.typeName,
+                                                traits = card.traits,
                                                 level = card.level,
                                                 isDarkTheme = isDarkTheme,
                                                 currentAmount = amount,
@@ -740,7 +742,9 @@ fun DeckScreen(
                                     showIcon = deck.nextId == null && (user == null || user.uid == deck.userId
                                             || deck.userId.isEmpty()),
                                     label = stringResource(R.string.specialty) + ": " +
-                                            stringResource(DeckMetaMaps.specialty[deck.specialty]!!),
+                                            if (DeckMetaMaps.specialty[deck.specialty] != null)
+                                                stringResource(DeckMetaMaps.specialty[deck.specialty]!!)
+                                            else "",
                                     onClick = {
                                         deckViewModel.enterEditMode()
                                         navController.navigate(
@@ -764,7 +768,7 @@ fun DeckScreen(
                                                 approachExploration = card.approachExploration,
                                                 name = card.name.toString(),
                                                 typeName = card.typeName,
-                                                traits = card.typeName,
+                                                traits = card.traits,
                                                 level = card.level,
                                                 isDarkTheme = isDarkTheme,
                                                 currentAmount = amount,
@@ -861,7 +865,7 @@ fun DeckScreen(
                                                 approachExploration = card.approachExploration,
                                                 name = card.name.toString(),
                                                 typeName = card.typeName,
-                                                traits = card.typeName,
+                                                traits = card.traits,
                                                 level = card.level,
                                                 isDarkTheme = isDarkTheme,
                                                 currentAmount = amount,
@@ -956,7 +960,7 @@ fun DeckScreen(
                                                 approachExploration = card.approachExploration,
                                                 name = card.name.toString(),
                                                 typeName = card.typeName,
-                                                traits = card.typeName,
+                                                traits = card.traits,
                                                 level = card.level,
                                                 isDarkTheme = isDarkTheme,
                                                 currentAmount = amount,
@@ -1008,7 +1012,7 @@ fun DeckScreen(
                                         approachExploration = card.approachExploration,
                                         name = card.name.toString(),
                                         typeName = card.typeName,
-                                        traits = card.typeName,
+                                        traits = card.traits,
                                         level = card.level,
                                         isDarkTheme = isDarkTheme,
                                         currentAmount = currentAmount,
@@ -1055,7 +1059,7 @@ fun DeckScreen(
                                                     approachExploration = card.approachExploration,
                                                     name = card.name.toString(),
                                                     typeName = card.typeName,
-                                                    traits = card.typeName,
+                                                    traits = card.traits,
                                                     level = card.level,
                                                     isDarkTheme = isDarkTheme,
                                                     charForAmount = "+",
@@ -1088,7 +1092,7 @@ fun DeckScreen(
                                                     approachExploration = card.approachExploration,
                                                     name = card.name.toString(),
                                                     typeName = card.typeName,
-                                                    traits = card.typeName,
+                                                    traits = card.traits,
                                                     level = card.level,
                                                     isDarkTheme = isDarkTheme,
                                                     currentAmount = deck.removedCards[card.code],
@@ -1120,7 +1124,7 @@ fun DeckScreen(
                                                     approachExploration = card.approachExploration,
                                                     name = card.name.toString(),
                                                     typeName = card.typeName,
-                                                    traits = card.typeName,
+                                                    traits = card.traits,
                                                     level = card.level,
                                                     isDarkTheme = isDarkTheme,
                                                     charForAmount = "+",
@@ -1153,7 +1157,7 @@ fun DeckScreen(
                                                     approachExploration = card.approachExploration,
                                                     name = card.name.toString(),
                                                     typeName = card.typeName,
-                                                    traits = card.typeName,
+                                                    traits = card.traits,
                                                     level = card.level,
                                                     isDarkTheme = isDarkTheme,
                                                     currentAmount = deck.returnedCollectionCards[card.code],

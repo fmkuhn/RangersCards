@@ -32,13 +32,15 @@ object CardTextParser {
      */
     @Composable
     private fun parseSegment(
-        text: String,
+        text: String?,
         start: Int,
         endTag: String? = null,
         aspectId: String?
     ): Pair<AnnotatedString, Int> {
         val builder = AnnotatedString.Builder()
         var index = start
+
+        if (text == null) return Pair(builder.toAnnotatedString(), index)
 
         while (index < text.length) {
             // If an expected closing tag is found at the current index, finish this segment.
@@ -203,7 +205,7 @@ object CardTextParser {
      * This is the function you would call from your composable.
      */
     @Composable
-    fun parseCustomText(rawText: String, aspectId: String?): AnnotatedString {
+    fun parseCustomText(rawText: String?, aspectId: String?): AnnotatedString {
         return parseSegment(rawText, 0, endTag = null, aspectId).first
     }
 
