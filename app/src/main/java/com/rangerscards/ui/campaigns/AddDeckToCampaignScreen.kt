@@ -154,11 +154,11 @@ fun AddDeckToCampaignScreen(
                 val role by campaignViewModel.getRole(
                     item.meta.jsonObject["role"]?.jsonPrimitive?.content.toString()
                 ).collectAsState(null)
-                if (role != null) DeckListItem(
+                DeckListItem(
                     meta = item.meta,
-                    imageSrc = role!!.realImageSrc!!,
+                    imageSrc = role?.realImageSrc,
                     name = item.name,
-                    role = role!!.name!!,
+                    role = role?.name,
                     onClick = { coroutine.launch { showLoadingDialog = true
                         campaignViewModel.addDeckCampaign(item.id, user)
                     }.invokeOnCompletion { showLoadingDialog = false

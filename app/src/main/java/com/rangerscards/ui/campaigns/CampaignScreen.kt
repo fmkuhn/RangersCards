@@ -516,11 +516,11 @@ fun CampaignScreen(
                         }
                         if (campaignState!!.decks.isNotEmpty()) campaignState!!.decks.forEach { deck ->
                             val role = campaignViewModel.getRole(deck.role).collectAsState(null).value
-                            if (role != null) DeckListItem(
+                            DeckListItem(
                                 meta = deck.meta,
-                                imageSrc = role.realImageSrc!!,
+                                imageSrc = role?.realImageSrc,
                                 name = deck.name,
-                                role = role.name!!,
+                                role = role?.name,
                                 onClick = { if (!campaignState!!.uploaded || userUIState.currentUser?.uid == deck.userId)
                                     navController.navigate(
                                         "deck/${deck.id}"

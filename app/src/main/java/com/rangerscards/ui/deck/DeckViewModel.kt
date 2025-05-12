@@ -729,14 +729,11 @@ class DeckViewModel(
                 if (originalDeck.value!!.campaignId.toString() != "null") {
                     val deck = originalDeck.value!!.toDeck(updatableValues.value!!, problems)
                     val campaign = campaignRepository.getCampaignById(deck.campaignId.toString())
-                    val newDeck = buildJsonObject {
-                        put(deck.id, buildJsonArray {
-                            add(newName)
-                            add(deck.meta)
-                            add(campaign.latestDecks.jsonObject[deck.id]?.jsonArray?.get(2)?.jsonObject
-                                ?: JsonObject(emptyMap()
-                                ))
-                        })
+                    val newDeck = buildJsonArray {
+                        add(newName)
+                        add(deck.meta)
+                        add(campaign.latestDecks.jsonObject[deck.id]?.jsonArray?.get(2)?.jsonObject
+                            ?: JsonObject(emptyMap()))
                     }
                     val newDeckValues = buildJsonObject {
                         campaign.latestDecks.jsonObject.forEach { (key, value) ->
@@ -807,8 +804,6 @@ class DeckViewModel(
                 deckRepository.updateDeck(previousDeck.copy(nextId = null,
                     updatedAt = getCurrentDateTime()))
                 deckToOpen.update { previousId }
-                //{"c19b0513-3dad-4967-80a8-9e058955c89a"
-                // :["Forager - Shaper (Стартовый)",{"role":"01079","background":"forager","specialty":"shaper"},{"":null}]}
                 if (originalDeck.value!!.campaignId.toString() != "null") {
                     val deck = originalDeck.value!!
                     val campaign = campaignRepository.getCampaignById(deck.campaignId.toString())
@@ -896,6 +891,74 @@ class DeckViewModel(
                 tabooSetId = if (taboo) CURRENT_TABOO_SET else null,
                 updatedAt = getCurrentDateTime()
             ))
+        }
+    }
+
+    suspend fun changeRole(background: String, specialty: String, role: String, user: FirebaseUser?, problems: List<String>?) {
+        val deck = originalDeck.value!!
+        val values = updatableValues.value!!
+        if (deck.uploaded) {
+            val token = user!!.getIdToken(true).await().token
+            val newDeck = apolloClient.mutation(SaveDeckMutation(
+                id = deck.id.toInt(),
+                name = deck.name,
+                foc = values.foc,
+                fit = values.fit,
+                awa = values.awa,
+                spi = values.spi,
+                meta = buildJsonObject {
+                    put("role", role)
+                    put("background", background)
+                    put("specialty", specialty)
+                },
+                slots = buildJsonObject {
+                    values.slots.forEach { (key, value) -> put(key, value) } },
+                sideSlots = buildJsonObject {
+                    values.sideSlots.forEach { (key, value) -> put(key, value) } },
+                extraSlots = buildJsonObject {
+                    values.extraSlots.forEach { (key, value) -> put(key, value) } }
+            )).addHttpHeader("Authorization", "Bearer $token").execute()
+            if (newDeck.data != null) {
+                deckRepository.updateDeck(
+                    newDeck.data!!.update_rangers_deck_by_pk!!.deck.toDeck(true)
+                )
+            }
+        } else {
+            val deckDB = originalDeck.value!!.toDeck(updatableValues.value!!, problems)
+            deckRepository.updateDeck(deckDB.copy(
+                meta = buildJsonObject {
+                    put("role", role)
+                    put("background", background)
+                    put("specialty", specialty)
+                },
+                updatedAt = getCurrentDateTime()
+            ))
+            if (deck.campaignId.toString() != "null") {
+                val campaign = campaignRepository.getCampaignById(deckDB.campaignId.toString())
+                val newDeck = buildJsonArray {
+                    add(deckDB.name)
+                    add(buildJsonObject {
+                        put("role", role)
+                        put("background", background)
+                        put("specialty", specialty)
+                    })
+                    add(campaign.latestDecks.jsonObject[deckDB.id]?.jsonArray?.get(2)?.jsonObject
+                        ?: JsonObject(emptyMap()))
+                }
+                val newDeckValues = buildJsonObject {
+                    campaign.latestDecks.jsonObject.forEach { (key, value) ->
+                        if (key == deckDB.id) {
+                            put(key, newDeck)  // Replace the target key
+                        } else {
+                            put(key, value)  // Keep other keys unchanged
+                        }
+                    }
+                }
+                campaignRepository.updateCampaign(campaign.copy(
+                    latestDecks = newDeckValues,
+                    updatedAt = getCurrentDateTime()
+                ))
+            }
         }
     }
 }

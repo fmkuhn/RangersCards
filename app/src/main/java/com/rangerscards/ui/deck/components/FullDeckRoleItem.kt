@@ -13,6 +13,8 @@ import androidx.compose.foundation.text.BasicText
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
@@ -48,6 +50,7 @@ fun FullDeckRoleItem(
     text: AnnotatedString,
     campaignName: String?,
     onClick: () -> Unit,
+    onEdit: () -> Unit,
 ) {
     Row(
         modifier = Modifier.fillMaxWidth().clickable(onClick = onClick),
@@ -149,6 +152,18 @@ fun FullDeckRoleItem(
                     overflow = TextOverflow.Ellipsis,
                 )
             }
+        }
+        IconButton(
+            onClick = onEdit,
+            colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
+            modifier = Modifier.size(32.dp),
+        ) {
+            Icon(
+                painterResource(id = R.drawable.edit_32dp),
+                contentDescription = null,
+                tint = CustomTheme.colors.m,
+                modifier = Modifier.size(32.dp)
+            )
         }
     }
 }

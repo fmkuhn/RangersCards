@@ -498,7 +498,7 @@ fun DeckScreen(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     item(key = "description/${deckId}") {
-                        if (role == null) deckViewModel.getRole(deck.roleId, deck.tabooSetId != null)
+                        deckViewModel.getRole(deck.roleId, deck.tabooSetId != null)
                         Column(
                             modifier = Modifier.fillMaxWidth(),
                             verticalArrangement = Arrangement.spacedBy(8.dp)
@@ -515,7 +515,14 @@ fun DeckScreen(
                                     ) {
                                         launchSingleTop = true
                                     }
-                                }} else { {} }
+                                }} else { {} },
+                                onEdit = {
+                                    navController.navigate(
+                                        "deck/roleChanging"
+                                    ) {
+                                        launchSingleTop = true
+                                    }
+                                }
                             )
                             val stats =
                                 listOf(values!!.awa, values!!.spi, values!!.fit, values!!.foc)

@@ -78,6 +78,7 @@ import com.rangerscards.ui.cards.components.RangersSpoilerSwitch
 import com.rangerscards.ui.components.RangersTopAppBar
 import com.rangerscards.ui.deck.DeckCardsSearchingListScreen
 import com.rangerscards.ui.deck.DeckCardsViewModel
+import com.rangerscards.ui.deck.DeckChangingRole
 import com.rangerscards.ui.deck.DeckFullCardScreen
 import com.rangerscards.ui.deck.DeckFullCardWithPagerScreen
 import com.rangerscards.ui.deck.DeckScreen
@@ -439,6 +440,34 @@ fun RangersNavHost(
                         deckViewModel = deckViewModel,
                         deckId = deckId,
                         user = user.currentUser,
+                        isDarkTheme = isDarkTheme,
+                        contentPadding = innerPadding
+                    )
+                    title = ""
+                    actions = null
+                    switch = null
+                }
+                composable("deck/roleChanging") { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("deck/{$deckIdArgument}")
+                    }
+                    val deckViewModel: DeckViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val decksViewModel: DecksViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = backStackEntry
+                    )
+                    val user by settingsViewModel.userUiState.collectAsState()
+                    DeckChangingRole(
+                        onCancel = {
+                            navController.navigateUp()
+                        },
+                        onSave = { navController.navigateUp() },
+                        decksViewModel = decksViewModel,
+                        deckViewModel = deckViewModel,
+                        user = user,
                         isDarkTheme = isDarkTheme,
                         contentPadding = innerPadding
                     )

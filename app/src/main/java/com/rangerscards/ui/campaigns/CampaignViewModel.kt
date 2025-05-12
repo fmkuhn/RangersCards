@@ -1014,7 +1014,7 @@ fun Campaign.toCampaignState(): CampaignState {
             CampaignDeck(
                 it.key,
                 value[0].jsonPrimitive.content,
-                meta["role"]!!.jsonPrimitive.content,
+                meta["role"]?.jsonPrimitive?.content ?: "",
                 meta,
                 user.keys.first(),
                 user.values.first().jsonPrimitive.content
