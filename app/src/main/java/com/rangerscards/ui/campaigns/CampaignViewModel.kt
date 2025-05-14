@@ -410,7 +410,7 @@ class CampaignViewModel(
         _packId.update { id }
     }
 
-    suspend fun removeDeckCampaign(deckId: String, user: FirebaseUser?) {
+    suspend fun removeDeckCampaign(deckId: String, user: FirebaseUser?, updateCampaign: Boolean = true) {
         val campaign = campaign.value!!
         if (campaign.uploaded) {
             val token = user!!.getIdToken(true).await().token
@@ -439,11 +439,13 @@ class CampaignViewModel(
                     campaignRewards = null
                 ))
             }
-            val campaignEntry = campaignRepository.getCampaignById(campaign.id)
-            campaignRepository.updateCampaign(campaignEntry.copy(
-                latestDecks = JsonObject(campaignEntry.latestDecks.jsonObject.filterKeys { it != deckId }),
-                updatedAt = getCurrentDateTime()
-            ))
+            if (updateCampaign) {
+                val campaignEntry = campaignRepository.getCampaignById(campaign.id)
+                campaignRepository.updateCampaign(campaignEntry.copy(
+                    latestDecks = JsonObject(campaignEntry.latestDecks.jsonObject.filterKeys { it != deckId }),
+                    updatedAt = getCurrentDateTime()
+                ))
+            }
         }
     }
 
@@ -489,7 +491,6 @@ class CampaignViewModel(
             .addHttpHeader("Authorization", "Bearer $token")
             .fetchPolicy(FetchPolicy.NetworkOnly).execute()
         if (response.data != null) {
-            Log.d("test", response.data.toString())
             deckRepository.upsertDeck(response.data!!.deck!!.deck.toDeck(true))
             friendDeckIdToOpen.update { response.data!!.deck!!.deck.id.toString() }
         }
@@ -592,12 +593,7 @@ class CampaignViewModel(
             campaignRepository.deleteCampaign(campaign.id)
         } else {
             deckIds.forEach {
-                val deck = deckRepository.getDeck(it)!!
-                deckRepository.updateDeck(deck.copy(
-                    campaignId = null,
-                    campaignName = null,
-                    campaignRewards = null
-                ))
+                removeDeckCampaign(it, user, false)
             }
             campaignRepository.deleteCampaign(campaign.id)
         }
@@ -614,7 +610,7 @@ class CampaignViewModel(
             )
         ).addHttpHeader("Authorization", "Bearer $token").execute()
         deckIds.forEach {
-            removeDeckCampaign(it, user)
+            removeDeckCampaign(it, user, false)
         }
         campaignRepository.deleteCampaign(campaign.id)
     }

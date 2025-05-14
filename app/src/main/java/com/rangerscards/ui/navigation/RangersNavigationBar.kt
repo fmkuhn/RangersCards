@@ -71,16 +71,21 @@ fun RangersNavigationBar(
         modifier = Modifier.sizeIn(maxHeight = 70.dp)
     ) {
         bottomNavItems.forEach { bottomNavItem ->
+            val isSelected = currentRoute == bottomNavItem.route ||
+                    currentRoute?.startsWith(bottomNavItem.route) == true
             NavigationBarItem(
-                selected = currentRoute == bottomNavItem.route ||
-                        currentRoute?.startsWith(bottomNavItem.route) == true,
-                onClick = { navController.navigate(bottomNavItem.route) {
-                    popUpTo(navController.graph.findStartDestination().id) {
-                        saveState = true
-                        inclusive = false
+                selected = isSelected,
+                onClick = { if (isSelected) {
+                    navController.popBackStack(bottomNavItem.startDestination, false)
+                } else {
+                    navController.navigate(bottomNavItem.route) {
+                        popUpTo(navController.graph.findStartDestination().id) {
+                            saveState = true
+                            inclusive = false
+                        }
+                        launchSingleTop = true
+                        restoreState = true
                     }
-                    launchSingleTop = true
-                    restoreState = true
                 } },
                 icon = { Icon(
                     painterResource(id = bottomNavItem.icon),
