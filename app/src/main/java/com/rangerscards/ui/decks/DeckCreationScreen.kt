@@ -104,7 +104,7 @@ fun DeckCreationScreen(
                     (background.isNotEmpty() && specialty.isNotEmpty() && role.first.isNotEmpty())
         }
     }
-    val context = LocalContext.current.applicationContext
+    val context = LocalContext.current
     LaunchedEffect(user.settings) {
         packIds = user.settings.collection.toMutableStateList()
     }
@@ -426,7 +426,7 @@ fun DeckCreationScreen(
                         }
                     }
                     item {
-                        if (user.currentUser != null && decksViewModel.isConnected(context)) Row(
+                        if (user.currentUser != null && decksViewModel.isConnected(context.applicationContext)) Row(
                             modifier = Modifier
                                 .padding(horizontal = 16.dp, vertical = 4.dp)
                                 .clickable { isUploading = !isUploading },

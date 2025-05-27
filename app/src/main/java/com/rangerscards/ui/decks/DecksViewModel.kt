@@ -2,6 +2,7 @@ package com.rangerscards.ui.decks
 
 import android.content.Context
 import android.net.ConnectivityManager
+import androidx.appcompat.app.AppCompatActivity
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
@@ -151,6 +152,7 @@ class DecksViewModel(
         taboo: Boolean,
         context: Context
     ) {
+        val activity = (context as? AppCompatActivity)!!
         if (isUploading) {
             val token = user.currentUser!!.getIdToken(true).await().token
             if (starterDeckId >= 0) {
@@ -160,8 +162,8 @@ class DecksViewModel(
                 val specialtyLocalized = DeckMetaMaps
                     .specialty[starterDeck.meta.jsonObject["specialty"]?.jsonPrimitive?.content]
                 val newDeck = apolloClient.mutation(CreateDeckMutation(
-                    name = name.ifEmpty { "${context.getString(backgroundLocalized!!)} - " +
-                            "${context.getString(specialtyLocalized!!)} $postfix" },
+                    name = name.ifEmpty { "${activity.getString(backgroundLocalized!!)} - " +
+                            "${activity.getString(specialtyLocalized!!)} $postfix" },
                     foc = starterDeck.foc,
                     fit = starterDeck.fit,
                     awa = starterDeck.awa,
@@ -179,8 +181,8 @@ class DecksViewModel(
                 val backgroundLocalized = DeckMetaMaps.background[background]
                 val specialtyLocalized = DeckMetaMaps.specialty[specialty]
                 val newDeck = apolloClient.mutation(CreateDeckMutation(
-                    name = name.ifEmpty { "${context.getString(backgroundLocalized!!)} - " +
-                            context.getString(specialtyLocalized!!) },
+                    name = name.ifEmpty { "${activity.getString(backgroundLocalized!!)} - " +
+                            activity.getString(specialtyLocalized!!) },
                     foc = 3,
                     fit = 3,
                     awa = 3,
@@ -210,8 +212,8 @@ class DecksViewModel(
                 decksRepository.insertDeck(
                     createLocalDeck(
                         id = uuid,
-                        deckName = name.ifEmpty { "${context.getString(backgroundLocalized!!)} - " +
-                                "${context.getString(specialtyLocalized!!)} $postfix" },
+                        deckName = name.ifEmpty { "${activity.getString(backgroundLocalized!!)} - " +
+                                "${activity.getString(specialtyLocalized!!)} $postfix" },
                         meta = starterDeck.meta,
                         slots = starterDeck.slots,
                         awa = starterDeck.awa,
@@ -227,8 +229,8 @@ class DecksViewModel(
                 val specialtyLocalized = DeckMetaMaps.specialty[specialty]
                 decksRepository.insertDeck(createLocalDeck(
                     id = uuid,
-                    deckName = name.ifEmpty { "${context.getString(backgroundLocalized!!)} - " +
-                            context.getString(specialtyLocalized!!) },
+                    deckName = name.ifEmpty { "${activity.getString(backgroundLocalized!!)} - " +
+                            activity.getString(specialtyLocalized!!) },
                     meta = buildJsonObject {
                         put("role", role)
                         put("background", background)
