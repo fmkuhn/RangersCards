@@ -1,7 +1,124 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="cards_updating">Aktualisiere Karten</string>
+
+    //BottomNavBar
+    <string name="settings_nav_bar_button">Einstellungen</string>
+    <string name="cards_nav_bar_button">Karten</string>
+    <string name="decks_nav_bar_button">Decks</string>
+    <string name="campaigns_nav_bar_button">Kampagnen</string>
+
+    //Settings screen strings
+    <string name="account_title">RangersDB-Konto</string>
+    <string name="text_when_not_logged_in">Diese Ap funktioniert auch ohne ein Konto wunderbar.\nEine Anmeldung erlaubt Dir, Kampagnen und Decks zwischen Geräten und mit RangersDB zu synchronisieren.</string>
+    <string name="sign_in_to_app_account_button">In der App anmelden</string>
+    <string name="sign_in_up_to_app_account_title">Anmelden</string>
+    <string name="email_placeholder">E-Mail-Adresse</string>
+    <string name="password_placeholder">Passwort</string>
+    <string name="sign_in_to_account_button">Mit Deinem Konto anmelden</string>
+    <string name="sign_up_to_app_account_button">Ein neues Konto anlegen</string>
+    <string name="sign_out_account_button">Abmelden</string>
+    <string name="delete_account_button">Konto löschen</string>
+    <string name="sign_out_account_title">Von RangersDB abmelden?</string>
+    <string name="delete_account_title">Bestätige Kontolöschung</string>
+    <string name="sign_out_account_text">Bist Du sicher, dass Du Dich von RangersDB abmelden willst?\n\nAlle Kampagnen, die Du hochgeladen hast oder die mit Dir geteilt wurden, und Decks von RangersDB werden von diesem Gerät entfernt. Diese können erneut heruntergeladen werden, wenn Du Dich wieder anmeldest.\n\nAnmerkung: Falls Du vor Kurzem offline Änderungen vorgenommen hast, können diese verloren gehen.</string>
+    <string name="cancel_button">Abbrechen</string>
+    <string name="done_button">Done</string>
+    <string name="account_name_header">Account name</string>
+    <string name="friends_amount_header">Freunde</string>
+    <plurals name="friends_amount">
+        <item quantity="one">%d Freund</item>
+        <item quantity="other">%d Freunde</item>
+    </plurals>
+    <plurals name="friends_request_amount">
+        <item quantity="one">%d Freundschaftsanfrage</item>
+        <item quantity="other">%d Freundschaftsanfragen</item>
+    </plurals>
+    <string name="search_friends">Suche nach Freunden</string>
+    <string name="your_friends">Deine Freunde</string>
+    <string name="sent_requests">Gesendete Freundschaftsanfragen</string>
+    <string name="received_requests">Empfangene Freundschaftsanfragen</string>
+    <string name="search_results">Suchergebnisse</string>
+    <string name="no_matching_results">Keine Ergebnisse für \"%s\" gefunden.</string>
+    <string name="settings_title">Einstellungen</string>
+    <string name="theme_header">Aussehen</string>
+    <string name="light_theme">Hell</string>
+    <string name="dark_theme">Dunkel</string>
+    <string name="system_theme">Default (%s)</string>
+    <string name="english_search_results_radio_button">Englische Ergebnisse bei der Suche miteinbeziehen</string>
+    <string name="cards_title">Karten</string>
+    <string name="language_header">Sprache</string>
+    <string name="info_text_about_locale_switching">Nach dem Ändern der Sprache müssen die übersetzten Karten von RangersDB heruntergeladen werden. Das erfordert eine Internetverbindung kann einige Zeit in Anspruch nehmen.</string>
+    <string name="collection_header">Sammlung</string>
+    <plurals name="expansions_amount">
+        <item quantity="one">%d Erweiterung</item>
+        <item quantity="other">%d Erweiterungen</item>
+    </plurals>
+    <string name="update_cards_button">Karten aktualisieren</string>
+    <string name="rules_button">Regeln</string>
+    <string name="authentication_failed_toast">Authentifizierung fehlgeschlagen.</string>
+    <string name="invalid_password_toast">Ungültiges Passwort. Es muss mindestens 6 Zeichen lang sein.</string>
+    <string name="invalid_email_toast">Ungültige E-Mail-Adresse.</string>
+    <string name="account_successfully_deleted_toast">Account successfully deleted.</string>
+    <string name="invalid_credentials_toast">Ungültige Zugangsdaten.</string>
+    <string name="handle_already_taken_toast">Dieser Name ist leider schon vergeben.</string>
+    <string name="invalid_handle_toast">Ungültiger Name. Er muss zwischen 2 und 22 Zeichen lang sein.</string>
+    <string name="socials_title">Soziale Netzwerke</string>
+    <string name="socials_text">Chatte mit anderen Earthborne Rangers Spielern:</string>
+    <string name="discord_button">Discord</string>
+    <string name="telegram_button">Telegram</string>
+    <string name="support_title">Unterstützung</string>
+    <string name="support_text">Unterstütze Rangers Cards via %s.</string>
+    <string name="about_button">Über Rangers Cards</string>
+    <string name="backup_data_button">Daten sichern</string>
+    <string name="diagnostics_button">Diagnose</string>
+    <string name="contact_us_button">Kontaktiere uns</string>
+
+    //About screen
+    <string name="about_text">Die in dieser App dargestellten Informationen über Earthborne Rangers, egal ob grafisch oder wörtlich, sind durch Earthborne Games urheberrechtlich geschützt. Diese App wird weder von Earthborne Games entwickelt noch unterstützt und ist auch sonst in keiner Weise mit ihnen verbunden.\n\Diese App wurde von Eugene Karelin als ein Fan-Projekt entwickelt, um die Earthborne Rangers-Fangemeinde zu unterstützen. Wenn Du viele Decks oder Kampagnen verwalten musst, hoffe ich, dass sich die App dafür als nützlich erweist.</string>
+    <string name="about_email_text">Feedback and Bug Reports gerne via E-Mail an %s</string>
+    <string name="about_rangersdb_text">Vielen Dank an RangersDB.com für die Bereitstellung der strukturierten Daten, den API-Zugriff und den Zugriff auf die Kartenbilder. Ohne deren kontinuierliche Unterstützung wäre dieses Projekt nicht möglich.</string>
+    <string name="icon_attribution">Quellenangaben für Icons:</string>
+
+    //Cards screen
+    <string name="no_matching_cards">Keine passenden Karten für \"%s\" gefunden</string>
+    <string name="no_matching_cards_filtered">Keine passenden Karten gefunden</string>
+    <string name="search_for_card">Suche nach einer Karte</string>
+    <string name="set_info">%d von %d</string>
     <string name="awa_styled_card_text">WAH</string>
     <string name="fit_styled_card_text">FIT</string>
     <string name="foc_styled_card_text">RUH</string>
     <string name="spi_styled_card_text">SOV</string>
+    <string name="show_card_image">Größeres Kartenbild anzeigen</string>
+    <string name="hide_card_image">Kleineres Kartenbild anzeigen</string>
+
+    //Decks screen
+    <string name="traveler_background">Reisender</string>
+    <string name="shepherd_background">Hirte</string>
+    <string name="forager_background">Sammler</string>
+    <string name="artisan_background">Werker</string>
+    <string name="explorer_specialty">Forscher</string>
+    <string name="shaper_specialty">Former</string>
+    <string name="conciliator_specialty">Vermittler</string>
+    <string name="artificer_specialty">Schöpfer</string>
+    <string name="search_decks">Suche nach Decks</string>
+    <string name="no_matching_decks">Keine passenden Decks für \"%s\" gefunden</string>
+    <string name="no_decks">Du hast noch keine Decks.\n\nDrücke auf das +, um ein neues zu erstellen.</string>
+    <string name="new_deck">Neues Deck</string>
+    <string name="custom_deck_tab">Eigenes Deck</string>
+    <string name="starter_deck_tab">Einsteigerdeck</string>
+    <string name="deck_creation_name_label">Name</string>
+    <string name="deck_creation_name_placeholder">Gib diesem Deck einen Namen.</string>
+    <string name="starter_deck_title">Wähle ein Einsteigerdeck:</string>
+    <string name="upload_to_rangersdb">Auf RangersDB erstellen</string>
+    <string name="use_taboo">Follow the Elder\'s Book of Uncommon Wisdom</string>
+    <string name="create_deck_button">Deck erstellen</string>
+    <string name="background">Vorgeschichte</string>
+    <string name="background_placeholder">Wähle eine Vorgeschichte</string>
+    <string name="specialty">Expertise</string>
+    <string name="specialty_placeholder">Wähle eine Expertise</string>
+    <string name="role">Berufung</string>
+    <string name="role_placeholder">Wähle eine Berufung</string>
+    <string name="no_roles">Es gibt keine passende Berufung in Deiner Sammlung</string>
+    <string name="starter_deck_name_postfix">(Einsteiger)</string>
 </resources>
