@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">RangersCards</string>
-
     <string name="cards_updating">Aktualisiere Karten</string>
 
     //BottomNavBar
@@ -29,19 +27,11 @@
     <string name="account_name_header">Account name</string>
     <string name="friends_amount_header">Freunde</string>
     <plurals name="friends_amount">
-        <item quantity="zero">%d Freunde</item>
         <item quantity="one">%d Freund</item>
-        <item quantity="two">%d Freunde</item>
-        <item quantity="few">%d Freunde</item>
-        <item quantity="many">%d Freunde</item>
         <item quantity="other">%d Freunde</item>
     </plurals>
     <plurals name="friends_request_amount">
-        <item quantity="zero">%d Freundschaftsanfragen</item>
         <item quantity="one">%d Freundschaftsanfrage</item>
-        <item quantity="two">%d Freundschaftsanfragen</item>
-        <item quantity="few">%d Freundschaftsanfragen</item>
-        <item quantity="many">%d Freundschaftsanfragen</item>
         <item quantity="other">%d Freundschaftsanfragen</item>
     </plurals>
     <string name="search_friends">Suche nach Freunden</string>
@@ -61,11 +51,7 @@
     <string name="info_text_about_locale_switching">Nach dem Ändern der Sprache müssen die übersetzten Karten von RangersDB heruntergeladen werden. Das erfordert eine Internetverbindung kann einige Zeit in Anspruch nehmen.</string>
     <string name="collection_header">Sammlung</string>
     <plurals name="expansions_amount">
-        <item quantity="zero">%d Erweiterungen</item>
         <item quantity="one">%d Erweiterung</item>
-        <item quantity="two">%d Erweiterungen</item>
-        <item quantity="few">%d Erweiterungen</item>
-        <item quantity="many">%d Erweiterungen</item>
         <item quantity="other">%d Erweiterungen</item>
     </plurals>
     <string name="update_cards_button">Karten aktualisieren</string>
