@@ -1,11 +1,14 @@
 package com.rangerscards.ui.deck.components
 
+import android.content.ClipData
+import android.widget.Toast
 import androidx.annotation.DrawableRes
 import androidx.annotation.StringRes
 import androidx.compose.animation.core.animateIntOffsetAsState
 import androidx.compose.animation.core.tween
 import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.BoxScope
@@ -26,10 +29,14 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalClipboard
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.platform.LocalDensity
+import androidx.compose.ui.platform.toClipEntry
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontStyle
@@ -42,6 +49,7 @@ import com.rangerscards.R
 import com.rangerscards.ui.components.RangersRadioButton
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
+import kotlinx.coroutines.launch
 
 @Composable
 fun BoxScope.DeckRightSideDrawer(
@@ -60,6 +68,7 @@ fun BoxScope.DeckRightSideDrawer(
     toNextDeck: (() -> Unit)?,
     cloneDeck: () -> Unit,
     upload: (() -> Unit)?,
+    url: String?,
     deleteDeck: () -> Unit,
 ) {
     // Get the current density for converting Dp to pixels.
@@ -179,10 +188,10 @@ fun BoxScope.DeckRightSideDrawer(
                             HorizontalDivider(color = CustomTheme.colors.l10)
                             DrawerSectionButtonRow(
                                 R.drawable.language_32dp,
-                                stringResource(
-                                    R.string.upload_to_rangersdb
-                                ),
+                                stringResource(if (url == null) R.string.upload_to_rangersdb
+                                else R.string.view_on_rangersdb),
                                 upload,
+                                url = url
                             )
                         }
                         HorizontalDivider(color = CustomTheme.colors.l10)
@@ -230,10 +239,30 @@ fun DrawerSectionButtonRow(
     isClickable: Boolean = true,
     additionalText: String? = null,
     radioButton: Boolean? = null,
+    url: String? = null,
 ) {
-
+    val clipboard = LocalClipboard.current
+    val context = LocalContext.current
+    val successMessage = stringResource(R.string.copy_link_to_rangersdb)
+    val coroutine = rememberCoroutineScope()
     Row(
-        modifier = Modifier.fillMaxWidth().clickable(enabled = isClickable) { onClick() },
+        modifier = Modifier.fillMaxWidth()
+            .combinedClickable(
+                enabled = isClickable,
+                onClick = onClick,
+                onLongClick = if (url != null) {{
+                    val clipData = ClipData.newPlainText(/* label = */ "URL", url)
+                    coroutine.launch {
+                        clipboard.setClipEntry(clipData.toClipEntry())
+                    }.invokeOnCompletion {
+                        Toast.makeText(
+                            context,
+                            successMessage,
+                            Toast.LENGTH_SHORT
+                        ).show()
+                    }
+                }} else { {} }
+            ),
         verticalAlignment = Alignment.CenterVertically
     ) {
         Icon(

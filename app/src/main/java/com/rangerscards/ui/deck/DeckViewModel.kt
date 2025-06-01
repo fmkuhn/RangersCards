@@ -1,7 +1,9 @@
 package com.rangerscards.ui.deck
 
 import android.content.Context
+import android.content.Intent
 import android.net.ConnectivityManager
+import android.net.Uri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.ApolloClient
@@ -24,6 +26,7 @@ import com.rangerscards.data.database.repository.DeckRepository
 import com.rangerscards.ui.decks.CURRENT_TABOO_SET
 import com.rangerscards.ui.decks.getCurrentDateTime
 import com.rangerscards.ui.decks.toDeck
+import com.rangerscards.ui.settings.SUPPORTED_LANGUAGES
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentMap
@@ -51,6 +54,7 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
+import java.util.Locale
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -960,6 +964,14 @@ class DeckViewModel(
                 ))
             }
         }
+    }
+    fun openLink(link: String, context: Context) {
+        context.startActivity(
+            Intent(
+                Intent.ACTION_VIEW,
+                Uri.parse(link)
+            ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
+        )
     }
 }
 

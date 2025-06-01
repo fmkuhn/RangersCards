@@ -74,12 +74,14 @@ import com.rangerscards.ui.deck.components.FullDeckProblemsItem
 import com.rangerscards.ui.deck.components.FullDeckRoleItem
 import com.rangerscards.ui.deck.components.FullDeckStatsItem
 import com.rangerscards.ui.navigation.BottomNavScreen
+import com.rangerscards.ui.settings.SUPPORTED_LANGUAGES
 import com.rangerscards.ui.settings.components.SettingsBaseCard
 import com.rangerscards.ui.settings.components.SettingsInputField
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
 import kotlinx.coroutines.delay
 import kotlinx.coroutines.launch
+import java.util.Locale
 
 enum class DialogType {
     Save,
@@ -90,6 +92,8 @@ enum class DialogWithInputType {
     Name,
     Clone
 }
+
+const val deckLink = "rangersdb.com/decks/view"
 
 @Composable
 fun DeckScreen(
@@ -1185,6 +1189,9 @@ fun DeckScreen(
                     }
                 }
                 val isTabooSet = deck.tabooSetId != null
+                val locale = Locale.getDefault().language.substring(0..1)
+                val supportedLocale = if (SUPPORTED_LANGUAGES.contains(locale)) locale
+                else ""
                 DeckRightSideDrawer(
                     isOpen = drawerOpen,
                     onClick = { drawerOpen = !drawerOpen },
@@ -1236,7 +1243,14 @@ fun DeckScreen(
                         launchSingleTop = true
                     } }} else null,
                     cloneDeck = { showInputDialog = DialogWithInputType.Clone },
-                    upload = if (deck.uploaded || user == null) null else {{
+                    upload = if (user == null) null
+                    else if (deck.uploaded) {{
+                        deckViewModel.openLink(if (supportedLocale.isNotEmpty())
+                            "https://" + supportedLocale + ".$deckLink/$deckId"
+                        else "https://$deckLink/$deckId", context
+                        )
+                    }}
+                    else {{
                         if (deck.nextId != null || deck.previousId != null) {
                             Toast.makeText(
                                 context,
@@ -1262,6 +1276,10 @@ fun DeckScreen(
                             }
                             else navController.navigateUp() }
                     }},
+                    url = if (deck.uploaded) {
+                        if (supportedLocale.isNotEmpty()) "https://" + supportedLocale + ".$deckLink/$deckId"
+                        else "https://$deckLink/$deckId"
+                    } else null,
                     deleteDeck = { showActionDialog = DialogType.Delete }
                 )
             }
