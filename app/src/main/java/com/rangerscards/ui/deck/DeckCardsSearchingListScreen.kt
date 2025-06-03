@@ -208,7 +208,8 @@ fun DeckCardsSearchingListScreen(
                     val item = cardsLazyItems[index] ?: return@items
                     val showHeader = if (index == 0) true
                     else cardsLazyItems[index - 1]?.setName != item.setName
-                    if (showHeader && (typeIndex in 0..2)) RowTypeDivider(text = item.setName.toString())
+                    if (showHeader && (deck!!.previousId == null || typeIndex in 0..2))
+                        RowTypeDivider(text = item.setName.toString())
                     val amount = values?.slots?.get(item.code) ?: 0
                     CardListItem(
                         tabooId = item.tabooId,

@@ -3,6 +3,7 @@ package com.rangerscards.data.database.repository
 import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
+import androidx.sqlite.db.SimpleSQLiteQuery
 import com.rangerscards.data.database.card.CardDeckListItemProjection
 import com.rangerscards.data.database.dao.DeckDao
 import com.rangerscards.data.database.deck.Deck
@@ -41,30 +42,79 @@ class OfflineDeckRepository(private val deckDao: DeckDao) : DeckRepository {
         showAllSpoilers: Boolean,
         packIds: List<String>
     ): Flow<PagingData<CardDeckListItemProjection>> {
-        // Create a Pager that wraps the PagingSource from the DAO.
-        val pagingSourceFactory = if (!deckInfo.isUpgrade) {
+        val rawQuery = if (!deckInfo.isUpgrade) {
             when(typeIndex) {
-                0 -> deckDao.getPersonalityCards(deckInfo.taboo, packIds)
-                1 -> deckDao.getBackgroundCards(deckInfo.background, deckInfo.taboo, packIds)
-                2 -> deckDao.getSpecialtyCards(deckInfo.specialty, deckInfo.taboo, packIds)
-                else -> deckDao.getOutsideInterestCards(deckInfo.background, deckInfo.specialty, deckInfo.taboo, packIds)
+                0 -> buildSearchCardsQuery(
+                    additionalClause = "set_id = 'personality' AND pack_id IN (${packIds.joinToString { "?" }})",
+                    orderByClause = "aspect_id, set_position",
+                    taboo = deckInfo.taboo,
+                    packIds = packIds
+                )
+                1 -> buildSearchCardsQuery(
+                    additionalClause = "set_id = ? AND set_type_id = 'background' AND type_id != 'role' AND pack_id IN (${packIds.joinToString { "?" }})",
+                    orderByClause = "aspect_id, set_position",
+                    background = deckInfo.background,
+                    taboo = deckInfo.taboo,
+                    packIds = packIds
+                )
+                2 -> buildSearchCardsQuery(
+                    additionalClause = "set_id = ? AND set_type_id = 'specialty' AND type_id != 'role' AND pack_id IN (${packIds.joinToString { "?" }})",
+                    orderByClause = "aspect_id, set_position",
+                    specialty = deckInfo.specialty,
+                    taboo = deckInfo.taboo,
+                    packIds = packIds
+                )
+                else -> buildSearchCardsQuery(
+                    additionalClause = "set_id != ? AND set_id != ? AND type_id != 'role' AND set_id != 'personality' AND real_traits NOT LIKE '%expert%' AND pack_id IN (${packIds.joinToString { "?" }})",
+                    orderByClause = "(set_type_id IS NULL), set_type_id, set_id, set_position",
+                    background = deckInfo.background,
+                    specialty = deckInfo.specialty,
+                    taboo = deckInfo.taboo,
+                    packIds = packIds
+                )
             }
         } else {
             when(typeIndex) {
-                0 -> if (showAllSpoilers) deckDao.getAllRewards(deckInfo.taboo, packIds)
-                else deckDao.getRewards(deckInfo.rewards, deckInfo.taboo)
-                1 -> deckDao.getAllMaladies(deckInfo.taboo, packIds)
-                2 -> deckDao.getAllCards(deckInfo.taboo, packIds)
-                else -> deckDao.getExtraCards(deckInfo.extraSlots, deckInfo.taboo)
+                0 -> if (showAllSpoilers) buildSearchCardsQuery(
+                    additionalClause = "set_id == 'reward' AND pack_id IN (${packIds.joinToString { "?" }})",
+                    orderByClause = "(set_type_id IS NULL), set_type_id, set_id, set_position",
+                    taboo = deckInfo.taboo,
+                    packIds = packIds
+                ) else buildSearchCardsQuery(
+                    additionalClause = "code IN (${deckInfo.rewards.joinToString { "?" }})",
+                    orderByClause = "(set_type_id IS NULL), set_type_id, set_id, set_position",
+                    rewards = deckInfo.rewards,
+                    taboo = deckInfo.taboo
+                )
+                1 -> buildSearchCardsQuery(
+                    additionalClause = "set_id == 'malady' AND pack_id IN (${packIds.joinToString { "?" }})",
+                    orderByClause = "(set_type_id IS NULL), set_type_id, set_id, set_position",
+                    taboo = deckInfo.taboo,
+                    packIds = packIds
+                )
+                2 -> buildSearchCardsQuery(
+                    additionalClause = "spoiler = 'false' OR (spoiler IS NULL AND NOT EXISTS (SELECT 1 FROM card WHERE spoiler = 'false')) AND type_id != 'role' AND pack_id IN (${packIds.joinToString { "?" }})",
+                    orderByClause = "(set_type_id IS NULL), set_type_id, set_id, set_position",
+                    taboo = deckInfo.taboo,
+                    packIds = packIds
+                )
+                else -> buildSearchCardsQuery(
+                    additionalClause = "code IN (${deckInfo.extraSlots.joinToString { "?" }})",
+                    orderByClause = "(set_type_id IS NULL), set_type_id, set_id, set_position",
+                    extraSlots = deckInfo.extraSlots,
+                    taboo = deckInfo.taboo
+                )
             }
         }
+
+        // Create a Pager that wraps the PagingSource from the DAO.
         return Pager(
             config = PagingConfig(
                 pageSize = 20,
                 enablePlaceholders = false,
                 initialLoadSize = 40
             ),
-            pagingSourceFactory = { pagingSourceFactory }
+            pagingSourceFactory = { deckDao.searchCardsRaw(rawQuery) }
         ).flow
     }
 
@@ -95,35 +145,185 @@ class OfflineDeckRepository(private val deckDao: DeckDao) : DeckRepository {
             createQueryString(stemedString, includeEnglish, language)
         }
 
-        // Create a Pager that wraps the PagingSource from the DAO.
-        val pagingSourceFactory = if (!deckInfo.isUpgrade) {
+        val rawQuery = if (!deckInfo.isUpgrade) {
             when(typeIndex) {
-                0 -> deckDao.searchPersonalityCards(ftsQuery, deckInfo.taboo, packIds)
-                1 -> deckDao.searchBackgroundCards(ftsQuery, deckInfo.background, deckInfo.taboo, packIds)
-                2 -> deckDao.searchSpecialtyCards(ftsQuery, deckInfo.specialty, deckInfo.taboo, packIds)
-                else -> deckDao.searchOutsideInterestCards(ftsQuery, deckInfo.background, deckInfo.specialty, deckInfo.taboo, packIds)
+                0 -> buildSearchCardsQuery(
+                    searchQuery = ftsQuery,
+                    additionalClause = "set_id = 'personality' AND pack_id IN (${packIds.joinToString { "?" }})",
+                    orderByClause = "aspect_id, set_position",
+                    taboo = deckInfo.taboo,
+                    packIds = packIds
+                )
+                1 -> buildSearchCardsQuery(
+                    searchQuery = ftsQuery,
+                    additionalClause = "set_id = ? AND set_type_id = 'background' AND type_id != 'role' AND pack_id IN (${packIds.joinToString { "?" }})",
+                    orderByClause = "aspect_id, set_position",
+                    background = deckInfo.background,
+                    taboo = deckInfo.taboo,
+                    packIds = packIds
+                )
+                2 -> buildSearchCardsQuery(
+                    searchQuery = ftsQuery,
+                    additionalClause = "set_id = ? AND set_type_id = 'specialty' AND type_id != 'role' AND pack_id IN (${packIds.joinToString { "?" }})",
+                    orderByClause = "aspect_id, set_position",
+                    specialty = deckInfo.specialty,
+                    taboo = deckInfo.taboo,
+                    packIds = packIds
+                )
+                else -> buildSearchCardsQuery(
+                    searchQuery = ftsQuery,
+                    additionalClause = "set_id != ? AND set_id != ? AND type_id != 'role' AND set_id != 'personality' AND real_traits NOT LIKE '%expert%' AND pack_id IN (${packIds.joinToString { "?" }})",
+                    orderByClause = "(set_type_id IS NULL), set_type_id, set_id, set_position",
+                    background = deckInfo.background,
+                    specialty = deckInfo.specialty,
+                    taboo = deckInfo.taboo,
+                    packIds = packIds
+                )
             }
         } else {
             when(typeIndex) {
-                0 -> if (showAllSpoilers) deckDao.searchAllRewards(ftsQuery, deckInfo.taboo, packIds)
-                else deckDao.searchRewards(ftsQuery, deckInfo.rewards, deckInfo.taboo)
-                1 -> deckDao.searchAllMaladies(ftsQuery, deckInfo.taboo, packIds)
-                2 -> deckDao.searchAllCards(ftsQuery, deckInfo.taboo, packIds)
-                else -> deckDao.searchExtraCards(ftsQuery, deckInfo.extraSlots, deckInfo.taboo)
+                0 -> if (showAllSpoilers) buildSearchCardsQuery(
+                    searchQuery = ftsQuery,
+                    additionalClause = "set_id == 'reward' AND pack_id IN (${packIds.joinToString { "?" }})",
+                    orderByClause = "(set_type_id IS NULL), set_type_id, set_id, set_position",
+                    taboo = deckInfo.taboo,
+                    packIds = packIds
+                ) else buildSearchCardsQuery(
+                    searchQuery = ftsQuery,
+                    additionalClause = "code IN (${deckInfo.rewards.joinToString { "?" }})",
+                    orderByClause = "(set_type_id IS NULL), set_type_id, set_id, set_position",
+                    rewards = deckInfo.rewards,
+                    taboo = deckInfo.taboo
+                )
+                1 -> buildSearchCardsQuery(
+                    searchQuery = ftsQuery,
+                    additionalClause = "set_id == 'malady' AND pack_id IN (${packIds.joinToString { "?" }})",
+                    orderByClause = "(set_type_id IS NULL), set_type_id, set_id, set_position",
+                    taboo = deckInfo.taboo,
+                    packIds = packIds
+                )
+                2 -> buildSearchCardsQuery(
+                    searchQuery = ftsQuery,
+                    additionalClause = "spoiler = 'false' OR (spoiler IS NULL AND NOT EXISTS (SELECT 1 FROM card WHERE spoiler = 'false')) AND type_id != 'role' AND pack_id IN (${packIds.joinToString { "?" }})",
+                    orderByClause = "(set_type_id IS NULL), set_type_id, set_id, set_position",
+                    taboo = deckInfo.taboo,
+                    packIds = packIds
+                )
+                else -> buildSearchCardsQuery(
+                    searchQuery = ftsQuery,
+                    additionalClause = "code IN (${deckInfo.extraSlots.joinToString { "?" }})",
+                    orderByClause = "(set_type_id IS NULL), set_type_id, set_id, set_position",
+                    extraSlots = deckInfo.extraSlots,
+                    taboo = deckInfo.taboo
+                )
             }
         }
+
+        // Create a Pager that wraps the PagingSource from the DAO.
         return Pager(
             config = PagingConfig(
                 pageSize = 20,
                 enablePlaceholders = false,
                 initialLoadSize = 40
             ),
-            pagingSourceFactory = { pagingSourceFactory }
+            pagingSourceFactory = { deckDao.searchCardsRaw(rawQuery) }
         ).flow
     }
 
     private fun createQueryString(searchQuery: String, includeEnglish: Boolean, language: String): String {
         return if (!includeEnglish || language == "en") "composite:($searchQuery)"
         else "real_composite:($searchQuery)"
+    }
+
+    private fun buildSearchCardsQuery(
+        searchQuery: String = "",
+        additionalClause: String = "",
+        orderByClause: String,
+        background: String = "",
+        specialty: String = "",
+        rewards: List<String> = emptyList(),
+        extraSlots: List<String> = emptyList(),
+        taboo: String? = null,
+        packIds: List<String> = emptyList()
+    ): SimpleSQLiteQuery {
+        val isNotEmpty = searchQuery.isNotEmpty()
+        val sql = StringBuilder().apply {
+            append("""
+            SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, 
+            name, type_name, traits, real_traits, level, set_id, set_type_id, deck_limit,
+            approach_connection, approach_reason, approach_conflict, approach_exploration
+            FROM (
+        """.trimIndent())
+
+            // Case 1: taboo override cards
+            append("""
+            SELECT card.id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, 
+                real_image_src, name, type_name, traits, real_traits, level, set_id, set_type_id, 
+                set_position, deck_limit, approach_connection, approach_reason, approach_conflict, approach_exploration
+            FROM card
+            ${if (isNotEmpty) "JOIN card_fts ON card.id = card_fts.id" else ""}
+            WHERE $additionalClause
+              ${if (isNotEmpty) "AND (card_fts MATCH ?)" else ""}
+              AND (? IS NOT NULL) AND (taboo_id = ?)
+        """.trimIndent())
+            append("\nUNION ALL\n")
+
+            // Case 2: default card when taboo override absent
+            append("""
+            SELECT card.id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, 
+                real_image_src, name, type_name, traits, real_traits, level, set_id, set_type_id, 
+                set_position, deck_limit, approach_connection, approach_reason, approach_conflict, approach_exploration
+            FROM card
+            ${if (isNotEmpty) "JOIN card_fts ON card.id = card_fts.id" else ""}
+            WHERE $additionalClause
+              ${if (isNotEmpty) "AND (card_fts MATCH ?)" else ""}
+              AND (? IS NOT NULL)
+              AND NOT EXISTS (
+                  SELECT 1 FROM card t
+                  WHERE t.code = card.code
+                    AND t.taboo_id = ?
+              )
+        """.trimIndent())
+            append("\nUNION ALL\n")
+
+            // Case 3: no taboo
+            append("""
+            SELECT card.id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, 
+                real_image_src, name, type_name, traits, real_traits, level, set_id, set_type_id, 
+                set_position, deck_limit, approach_connection, approach_reason, approach_conflict, approach_exploration
+            FROM card
+            ${if (isNotEmpty) "JOIN card_fts ON card.id = card_fts.id" else ""}
+            WHERE $additionalClause
+              ${if (isNotEmpty) "AND (card_fts MATCH ?)" else ""}
+              AND (? IS NULL AND taboo_id IS NULL)
+        """.trimIndent())
+
+            append("""
+            ) 
+            ORDER BY $orderByClause
+        """.trimIndent())
+        }
+
+        // now collect args in the exact same order as the placeholders
+        val args = mutableListOf<Any?>().apply {
+            repeat(2) {
+                if (background.isNotEmpty()) add(background)
+                if (specialty.isNotEmpty()) add(specialty)
+                if (rewards.isNotEmpty()) addAll(rewards)
+                if (extraSlots.isNotEmpty()) addAll(extraSlots)
+                if (packIds.isNotEmpty()) addAll(packIds)
+                if (isNotEmpty) add(searchQuery)
+                repeat(2) { add(taboo) }
+            }
+            if (background.isNotEmpty()) add(background)
+            if (specialty.isNotEmpty()) add(specialty)
+            if (rewards.isNotEmpty()) addAll(rewards)
+            if (extraSlots.isNotEmpty()) addAll(extraSlots)
+            if (packIds.isNotEmpty()) addAll(packIds)
+            if (isNotEmpty) add(searchQuery)
+            add(taboo)
+        }
+
+        return SimpleSQLiteQuery(sql.toString(), args.toTypedArray())
     }
 }

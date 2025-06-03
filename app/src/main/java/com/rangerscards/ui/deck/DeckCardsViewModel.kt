@@ -62,13 +62,13 @@ class DeckCardsViewModel(
     // Exposes the paginated search results as PagingData.
     @OptIn(ExperimentalCoroutinesApi::class)
     val searchResults: Flow<PagingData<CardDeckListItemProjection>> =
-        combine(_searchQuery, _deckInfo, _typeIndex, _showAllSpoilers, _packIds) { query, deckInfo, typeIndex, showAllSpoilers, packIds ->
-            Quintuple(query.trim(), deckInfo, typeIndex, showAllSpoilers, packIds)
-        }.flatMapLatest { (query, deckInfo, typeIndex, showAllSpoilers, packIds) ->
+        combine(_searchQuery, _deckInfo, _typeIndex, _showAllSpoilers, _includeEnglish) { query, deckInfo, typeIndex, showAllSpoilers, includeEnglish ->
+            Quintuple(query.trim(), deckInfo, typeIndex, showAllSpoilers, includeEnglish)
+        }.flatMapLatest { (query, deckInfo, typeIndex, showAllSpoilers, includeEnglish) ->
             // When the search query or include flag changes, perform a new search.
             if (deckInfo != null) {
                 if (query.isEmpty()) {
-                    deckRepository.getAllCards(deckInfo, typeIndex, showAllSpoilers, packIds)
+                    deckRepository.getAllCards(deckInfo, typeIndex, showAllSpoilers, _packIds.value)
                         .catch { throwable ->
                             // Log the error.
                             throwable.printStackTrace()
@@ -79,11 +79,11 @@ class DeckCardsViewModel(
                     deckRepository.searchCards(
                         searchQuery = query,
                         deckInfo = deckInfo,
-                        includeEnglish = _includeEnglish.value,
+                        includeEnglish = includeEnglish,
                         typeIndex = typeIndex,
                         showAllSpoilers = showAllSpoilers,
                         language = Locale.getDefault().language.substring(0..1),
-                        packIds = packIds
+                        packIds = _packIds.value
                     ).catch { throwable ->
                         // Log the error.
                         throwable.printStackTrace()
