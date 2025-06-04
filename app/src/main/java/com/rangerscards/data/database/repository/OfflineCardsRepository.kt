@@ -5,6 +5,7 @@ import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.sqlite.db.SimpleSQLiteQuery
 import com.rangerscards.data.CardFilterOptions
+import com.rangerscards.data.CardFilters
 import com.rangerscards.data.database.card.Card
 import com.rangerscards.data.database.card.CardListItemProjection
 import com.rangerscards.data.database.card.FullCardProjection
@@ -27,7 +28,7 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
         packIds: List<String>,
         filterOptions: CardFilterOptions
     ): Flow<PagingData<CardListItemProjection>> {
-        val rawQuery = buildSearchCardsQuery(spoiler = spoiler, taboo = taboo, packIds = packIds)
+        val rawQuery = buildSearchCardsQuery(spoiler, taboo, packIds, filterOptions)
         // Create a Pager that wraps the PagingSource from the DAO.
         return Pager(
             config = PagingConfig(
@@ -64,7 +65,7 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
                 .joinToString(separator = " ", transform = { "$it*" })
             createQueryString(stemedString, includeEnglish, language)
         }
-        val rawQuery = buildSearchCardsQuery(ftsQuery, spoiler, taboo, packIds)
+        val rawQuery = buildSearchCardsQuery(spoiler, taboo, packIds, filterOptions.copy(searchQuery = ftsQuery))
         // Create a Pager that wraps the PagingSource from the DAO.
         return Pager(
             config = PagingConfig(
@@ -85,13 +86,16 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
         cardDao.getCardById(cardCode, taboo)
 
     private fun buildSearchCardsQuery(
-        searchQuery: String = "",
         spoiler: Boolean,
         taboo: Boolean,
-        packIds: List<String>
+        packIds: List<String>,
+        filterOptions: CardFilterOptions
     ): SimpleSQLiteQuery {
-        val isNotEmpty = searchQuery.isNotEmpty()
-        val packsString = packIds.joinToString { "?" }
+        val isNotEmpty = filterOptions.searchQuery.isNotEmpty()
+        val isFilteredPacks = filterOptions.packs.isNotEmpty()
+        val packsString = if (isFilteredPacks) filterOptions.packs.joinToString { "?" }
+            else packIds.joinToString { "?" }
+        val filtersClause = CardFilters.buildFiltersClause(filterOptions)
         val sql = StringBuilder().apply {
             append("""
             SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name,
@@ -110,6 +114,7 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
               ${if (isNotEmpty) "AND (card_fts MATCH ?)" else ""}
               AND pack_id IN ($packsString)
               AND (? IS 1 AND taboo_id IS NOT NULL)
+              ${if (filtersClause.isNotEmpty()) "AND ($filtersClause)" else ""}
         """.trimIndent())
             append("\nUNION ALL\n")
 
@@ -129,6 +134,7 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
                   WHERE c2.code = card.code
                     AND c2.taboo_id IS NOT NULL
               )
+              ${if (filtersClause.isNotEmpty()) "AND ($filtersClause)" else ""}
         """.trimIndent())
             append("\nUNION ALL\n")
 
@@ -143,6 +149,7 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
               ${if (isNotEmpty) "AND (card_fts MATCH ?)" else ""}
               AND pack_id IN ($packsString)
               AND (? IS 0 AND taboo_id IS NULL)
+              ${if (filtersClause.isNotEmpty()) "AND ($filtersClause)" else ""}
         """.trimIndent())
 
             append("""
@@ -158,9 +165,9 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
             // 1-2) spoiler = ?
             repeat(2) { args.add(spoiler) }
             // 3) MATCH ?
-            if (isNotEmpty) args.add(searchQuery)
+            if (isNotEmpty) args.add(filterOptions.searchQuery)
             // 4) pack_id IN (?,?,…)
-            args.addAll(packIds)
+            args.addAll(if (isFilteredPacks) filterOptions.packs else packIds)
             // 5) (? = 1 OR ? = 0)
             args.add(if (taboo) 1 else 0)
         }
