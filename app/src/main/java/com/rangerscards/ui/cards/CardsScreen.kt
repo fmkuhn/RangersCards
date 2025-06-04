@@ -38,8 +38,6 @@ import com.rangerscards.ui.settings.UserUIState
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
 import kotlinx.coroutines.flow.drop
-import kotlinx.serialization.json.jsonArray
-import kotlinx.serialization.json.jsonPrimitive
 
 @Composable
 fun CardsScreen(
@@ -50,7 +48,7 @@ fun CardsScreen(
     navigateToCard: (Int) -> Unit,
     contentPadding: PaddingValues = PaddingValues(0.dp),
 ) {
-    val searchQuery by cardsViewModel.searchQuery.collectAsState()
+    val filterOptions by cardsViewModel.filterOptions.collectAsState()
     val spoiler by cardsViewModel.spoiler.collectAsState()
     val cardsLazyItems = cardsViewModel.searchResults.collectAsLazyPagingItems()
     // Remember a LazyListState to control and observe scroll position.
@@ -60,7 +58,7 @@ fun CardsScreen(
 
     // Whenever the search query changes, scroll the list back to the top.
     LaunchedEffect(Unit) {
-        snapshotFlow { searchQuery to spoiler }
+        snapshotFlow { filterOptions.searchQuery to spoiler }
             .drop(1)
             .collect {
                 // Scroll to the first item
@@ -88,7 +86,7 @@ fun CardsScreen(
             ),
     ) {
         RangersSearchOutlinedField(
-            query = searchQuery,
+            query = filterOptions.searchQuery,
             R.string.search_for_card,
             onQueryChanged = cardsViewModel::onSearchQueryChanged,
             onClearClicked = cardsViewModel::clearSearchQuery
@@ -106,9 +104,9 @@ fun CardsScreen(
                     modifier = Modifier.padding(16.dp).fillMaxWidth()
                 ) {
                     Text(
-                        text = if (searchQuery.isEmpty()) 
+                        text = if (filterOptions.searchQuery.isEmpty())
                             stringResource(R.string.no_matching_cards_filtered)
-                            else stringResource(id = R.string.no_matching_cards, searchQuery),
+                            else stringResource(id = R.string.no_matching_cards, filterOptions.searchQuery),
                         color = CustomTheme.colors.d30,
                         fontFamily = Jost,
                         fontWeight = FontWeight.Normal,

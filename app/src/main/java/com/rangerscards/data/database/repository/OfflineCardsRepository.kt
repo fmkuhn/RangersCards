@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.sqlite.db.SimpleSQLiteQuery
+import com.rangerscards.data.CardFilterOptions
 import com.rangerscards.data.database.card.Card
 import com.rangerscards.data.database.card.CardListItemProjection
 import com.rangerscards.data.database.card.FullCardProjection
@@ -20,8 +21,13 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
 
     override suspend fun isExists(): Boolean = cardDao.isExists()
 
-    override fun getAllCards(spoiler: Boolean, taboo: Boolean, packIds: List<String>): Flow<PagingData<CardListItemProjection>> {
-        val rawQuery = buildSearchCardsQuery(spoiler = spoiler, taboo =  taboo, packIds =  packIds)
+    override fun getAllCards(
+        spoiler: Boolean,
+        taboo: Boolean,
+        packIds: List<String>,
+        filterOptions: CardFilterOptions
+    ): Flow<PagingData<CardListItemProjection>> {
+        val rawQuery = buildSearchCardsQuery(spoiler = spoiler, taboo = taboo, packIds = packIds)
         // Create a Pager that wraps the PagingSource from the DAO.
         return Pager(
             config = PagingConfig(
@@ -34,7 +40,7 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
     }
 
     override fun searchCards(
-        searchQuery: String,
+        filterOptions: CardFilterOptions,
         includeEnglish: Boolean,
         spoiler: Boolean,
         language: String,
@@ -43,14 +49,14 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
     ): Flow<PagingData<CardListItemProjection>> {
         // Build the FTS query string
         val ftsQuery = if (language == "ru") {
-            val stemedString = searchQuery
+            val stemedString = filterOptions.searchQuery
                 .replace("\"(\\[\"]|.*)?\"".toRegex(), " ")
                 .split("[^\\p{Alnum}]+".toRegex())
                 .filter { it.isNotBlank() }
                 .joinToString(separator = " ", transform = { "${PorterStem.stem(it)}*" })
             createQueryString(stemedString, includeEnglish, language)
         } else {
-            val stemedString = searchQuery
+            val stemedString = filterOptions.searchQuery
                 .lowercase(Locale.forLanguageTag(language))
                 .replace("\"(\\[\"]|.*)?\"".toRegex(), " ")
                 .split("[^\\p{Alnum}]+".toRegex())

@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.rangerscards.data.CardFilterOptions
 import com.rangerscards.data.UserPreferencesRepository
 import com.rangerscards.data.database.card.CardDeckListItemProjection
 import com.rangerscards.data.database.repository.DeckRepository
@@ -36,10 +37,6 @@ class DeckCardsViewModel(
     userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
 
-    // Holds the current search term entered by the user.
-    private val _searchQuery = MutableStateFlow("")
-    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
-
     private val _deckInfo= MutableStateFlow<DeckInfo?>(null)
 
     private val _showAllSpoilers = MutableStateFlow(false)
@@ -59,16 +56,19 @@ class DeckCardsViewModel(
 
     private val _packIds = MutableStateFlow(listOf("core"))
 
+    private val _filterOptions = MutableStateFlow(CardFilterOptions())
+    val filterOptions: StateFlow<CardFilterOptions> = _filterOptions.asStateFlow()
+
     // Exposes the paginated search results as PagingData.
     @OptIn(ExperimentalCoroutinesApi::class)
     val searchResults: Flow<PagingData<CardDeckListItemProjection>> =
-        combine(_searchQuery, _deckInfo, _typeIndex, _showAllSpoilers, _includeEnglish) { query, deckInfo, typeIndex, showAllSpoilers, includeEnglish ->
-            Quintuple(query.trim(), deckInfo, typeIndex, showAllSpoilers, includeEnglish)
-        }.flatMapLatest { (query, deckInfo, typeIndex, showAllSpoilers, includeEnglish) ->
+        combine(_filterOptions, _deckInfo, _typeIndex, _showAllSpoilers, _includeEnglish) { filterOptions, deckInfo, typeIndex, showAllSpoilers, includeEnglish ->
+            Quintuple(filterOptions, deckInfo, typeIndex, showAllSpoilers, includeEnglish)
+        }.flatMapLatest { (filterOptions, deckInfo, typeIndex, showAllSpoilers, includeEnglish) ->
             // When the search query or include flag changes, perform a new search.
             if (deckInfo != null) {
-                if (query.isEmpty()) {
-                    deckRepository.getAllCards(deckInfo, typeIndex, showAllSpoilers, _packIds.value)
+                if (filterOptions.searchQuery.isEmpty()) {
+                    deckRepository.getAllCards(deckInfo, typeIndex, showAllSpoilers, _packIds.value, filterOptions)
                         .catch { throwable ->
                             // Log the error.
                             throwable.printStackTrace()
@@ -77,7 +77,7 @@ class DeckCardsViewModel(
                         }
                 } else {
                     deckRepository.searchCards(
-                        searchQuery = query,
+                        filterOptions = filterOptions,
                         deckInfo = deckInfo,
                         includeEnglish = includeEnglish,
                         typeIndex = typeIndex,
@@ -98,13 +98,13 @@ class DeckCardsViewModel(
      * Called when the user enters a new search term.
      */
     fun onSearchQueryChanged(newQuery: String) {
-        _searchQuery.update {
-            newQuery
+        _filterOptions.update {
+            it.copy(searchQuery = newQuery)
         }
     }
 
     fun clearSearchQuery() {
-        _searchQuery.update { "" }
+        _filterOptions.update { it.copy(searchQuery = "") }
     }
 
     fun updateDeckInfo(deck: FullDeckState, extraSlots: List<String>) {

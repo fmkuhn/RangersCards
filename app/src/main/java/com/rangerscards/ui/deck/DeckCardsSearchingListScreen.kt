@@ -59,7 +59,7 @@ fun DeckCardsSearchingListScreen(
     val values by deckViewModel.updatableValues.collectAsState()
     val deck by deckViewModel.originalDeck.collectAsState()
     val showAll by deckCardsViewModel.showAllSpoilers.collectAsState()
-    val searchQuery by deckCardsViewModel.searchQuery.collectAsState()
+    val filterOptions by deckCardsViewModel.filterOptions.collectAsState()
     val typeIndex by deckCardsViewModel.typeIndex.collectAsState()
     val cardsLazyItems = deckCardsViewModel.searchResults.collectAsLazyPagingItems()
     var isTypeIndexSet by rememberSaveable { mutableStateOf(false) }
@@ -68,7 +68,7 @@ fun DeckCardsSearchingListScreen(
 
     // Whenever the search query changes, scroll the list back to the top.
     LaunchedEffect(Unit) {
-        snapshotFlow { searchQuery to typeIndex }
+        snapshotFlow { filterOptions.searchQuery to typeIndex }
             .drop(1)
             .collect {
                 // Scroll to the first item
@@ -126,7 +126,7 @@ fun DeckCardsSearchingListScreen(
                 deckCardsViewModel::onTypeIndexChanged
             )
             RangersSearchOutlinedField(
-                query = searchQuery,
+                query = filterOptions.searchQuery,
                 R.string.search_for_card,
                 onQueryChanged = deckCardsViewModel::onSearchQueryChanged,
                 onClearClicked = deckCardsViewModel::clearSearchQuery
@@ -146,9 +146,9 @@ fun DeckCardsSearchingListScreen(
                             .fillMaxWidth()
                     ) {
                         Text(
-                            text = if (searchQuery.isEmpty())
+                            text = if (filterOptions.searchQuery.isEmpty())
                                 stringResource(R.string.no_matching_cards_filtered)
-                            else stringResource(id = R.string.no_matching_cards, searchQuery),
+                            else stringResource(id = R.string.no_matching_cards, filterOptions.searchQuery),
                             color = CustomTheme.colors.d30,
                             fontFamily = Jost,
                             fontWeight = FontWeight.Normal,

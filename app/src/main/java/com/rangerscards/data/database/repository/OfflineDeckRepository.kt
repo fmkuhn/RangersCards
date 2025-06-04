@@ -4,6 +4,7 @@ import androidx.paging.Pager
 import androidx.paging.PagingConfig
 import androidx.paging.PagingData
 import androidx.sqlite.db.SimpleSQLiteQuery
+import com.rangerscards.data.CardFilterOptions
 import com.rangerscards.data.database.card.CardDeckListItemProjection
 import com.rangerscards.data.database.dao.DeckDao
 import com.rangerscards.data.database.deck.Deck
@@ -40,7 +41,8 @@ class OfflineDeckRepository(private val deckDao: DeckDao) : DeckRepository {
         deckInfo: DeckInfo,
         typeIndex: Int,
         showAllSpoilers: Boolean,
-        packIds: List<String>
+        packIds: List<String>,
+        filterOptions: CardFilterOptions
     ): Flow<PagingData<CardDeckListItemProjection>> {
         val rawQuery = if (!deckInfo.isUpgrade) {
             when(typeIndex) {
@@ -119,7 +121,7 @@ class OfflineDeckRepository(private val deckDao: DeckDao) : DeckRepository {
     }
 
     override fun searchCards(
-        searchQuery: String,
+        filterOptions: CardFilterOptions,
         deckInfo: DeckInfo,
         includeEnglish: Boolean,
         typeIndex: Int,
@@ -129,14 +131,14 @@ class OfflineDeckRepository(private val deckDao: DeckDao) : DeckRepository {
     ): Flow<PagingData<CardDeckListItemProjection>> {
         // Build the FTS query string
         val ftsQuery = if (language == "ru") {
-            val stemedString = searchQuery
+            val stemedString = filterOptions.searchQuery
                 .replace("\"(\\[\"]|.*)?\"".toRegex(), " ")
                 .split("[^\\p{Alnum}]+".toRegex())
                 .filter { it.isNotBlank() }
                 .joinToString(separator = " ", transform = { "${PorterStem.stem(it)}*" })
             createQueryString(stemedString, includeEnglish, language)
         } else {
-            val stemedString = searchQuery
+            val stemedString = filterOptions.searchQuery
                 .lowercase(Locale.forLanguageTag(language))
                 .replace("\"(\\[\"]|.*)?\"".toRegex(), " ")
                 .split("[^\\p{Alnum}]+".toRegex())

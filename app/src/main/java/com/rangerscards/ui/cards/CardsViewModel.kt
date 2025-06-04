@@ -4,6 +4,7 @@ import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import androidx.paging.PagingData
 import androidx.paging.cachedIn
+import com.rangerscards.data.CardFilterOptions
 import com.rangerscards.data.UserPreferencesRepository
 import com.rangerscards.data.database.card.CardListItemProjection
 import com.rangerscards.data.database.card.FullCardProjection
@@ -34,10 +35,6 @@ class CardsViewModel(
     userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
 
-    // Holds the current search term entered by the user.
-    private val _searchQuery = MutableStateFlow("")
-    val searchQuery: StateFlow<String> = _searchQuery.asStateFlow()
-
     // Holds the current state of whether to include English search results.
     private val _includeEnglish: StateFlow<Boolean> =
         userPreferencesRepository.isIncludeEnglishSearchResults.stateIn(
@@ -53,15 +50,18 @@ class CardsViewModel(
     private val _taboo = MutableStateFlow(false)
     private val _packIds = MutableStateFlow(listOf("core"))
 
+    private val _filterOptions = MutableStateFlow(CardFilterOptions())
+    val filterOptions: StateFlow<CardFilterOptions> = _filterOptions.asStateFlow()
+
     // Exposes the paginated search results as PagingData.
     @OptIn(ExperimentalCoroutinesApi::class)
     val searchResults: Flow<PagingData<CardListItemProjection>> =
-        combine(_searchQuery, _includeEnglish, _spoiler, _taboo, _packIds) { query, include, spoiler, taboo, packIds ->
-            Quintuple(query.trim(), include, spoiler, taboo, packIds)
-        }.flatMapLatest { (query, include, spoiler, taboo, packIds) ->
+        combine(_filterOptions, _includeEnglish, _spoiler, _taboo, _packIds) { filterOptions, include, spoiler, taboo, packIds ->
+            Quintuple(filterOptions, include, spoiler, taboo, packIds)
+        }.flatMapLatest { (filterOptions, include, spoiler, taboo, packIds) ->
             // When the search query or include flag changes, perform a new search.
-            if (query.isEmpty()) {
-                cardsRepository.getAllCards(spoiler, taboo, packIds).catch { throwable ->
+            if (filterOptions.searchQuery.isEmpty()) {
+                cardsRepository.getAllCards(spoiler, taboo, packIds, filterOptions).catch { throwable ->
                     // Log the error.
                     throwable.printStackTrace()
                     // Return an empty PagingData on error so that the flow continues.
@@ -69,7 +69,7 @@ class CardsViewModel(
                 }
             } else {
                 cardsRepository.searchCards(
-                    searchQuery = query,
+                    filterOptions = filterOptions,
                     includeEnglish = include,
                     spoiler = spoiler,
                     language = Locale.getDefault().language.substring(0..1),
@@ -88,13 +88,13 @@ class CardsViewModel(
      * Called when the user enters a new search term.
      */
     fun onSearchQueryChanged(newQuery: String) {
-        _searchQuery.update {
-            newQuery
+        _filterOptions.update {
+            it.copy(searchQuery = newQuery)
         }
     }
 
     fun clearSearchQuery() {
-        _searchQuery.update { "" }
+        _filterOptions.update { it.copy(searchQuery = "") }
     }
 
     /**

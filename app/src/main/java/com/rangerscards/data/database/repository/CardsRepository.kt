@@ -1,6 +1,7 @@
 package com.rangerscards.data.database.repository
 
 import androidx.paging.PagingData
+import com.rangerscards.data.CardFilterOptions
 import com.rangerscards.data.database.card.Card
 import com.rangerscards.data.database.card.CardListItemProjection
 import com.rangerscards.data.database.card.FullCardProjection
@@ -14,10 +15,15 @@ interface CardsRepository {
 
     suspend fun isExists(): Boolean
 
-    fun getAllCards(spoiler: Boolean, taboo: Boolean, packIds: List<String>): Flow<PagingData<CardListItemProjection>>
+    fun getAllCards(
+        spoiler: Boolean,
+        taboo: Boolean,
+        packIds: List<String>,
+        filterOptions: CardFilterOptions
+    ): Flow<PagingData<CardListItemProjection>>
 
     fun searchCards(
-        searchQuery: String,
+        filterOptions: CardFilterOptions,
         includeEnglish: Boolean,
         spoiler: Boolean,
         language: String,

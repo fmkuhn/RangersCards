@@ -1,6 +1,7 @@
 package com.rangerscards.data.database.repository
 
 import androidx.paging.PagingData
+import com.rangerscards.data.CardFilterOptions
 import com.rangerscards.data.database.card.CardDeckListItemProjection
 import com.rangerscards.data.database.deck.Deck
 import com.rangerscards.data.database.deck.RoleCardProjection
@@ -31,11 +32,12 @@ interface DeckRepository {
         deckInfo: DeckInfo,
         typeIndex: Int,
         showAllSpoilers: Boolean,
-        packIds: List<String>
+        packIds: List<String>,
+        filterOptions: CardFilterOptions
     ): Flow<PagingData<CardDeckListItemProjection>>
 
     fun searchCards(
-        searchQuery: String,
+        filterOptions: CardFilterOptions,
         deckInfo: DeckInfo,
         includeEnglish: Boolean,
         typeIndex: Int,
