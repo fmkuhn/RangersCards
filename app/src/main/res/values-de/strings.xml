@@ -23,7 +23,7 @@
     <string name="delete_account_title">Bestätige Kontolöschung</string>
     <string name="sign_out_account_text">Bist Du sicher, dass Du Dich von RangersDB abmelden willst?\n\nAlle Kampagnen, die Du hochgeladen hast oder die mit Dir geteilt wurden, und Decks von RangersDB werden von diesem Gerät entfernt. Diese können erneut heruntergeladen werden, wenn Du Dich wieder anmeldest.\n\nAnmerkung: Falls Du vor Kurzem offline Änderungen vorgenommen hast, können diese verloren gehen.</string>
     <string name="cancel_button">Abbrechen</string>
-    <string name="done_button">Done</string>
+    <string name="done_button">Erledigt</string>
     <string name="account_name_header">Kontoname</string>
     <string name="friends_amount_header">Freunde</string>
     <plurals name="friends_amount">
@@ -153,7 +153,7 @@
         <item quantity="one"> + %d weiteres Problem</item>
         <item quantity="other"> + %d weitere Probleme</item>
     </plurals>
-    <string name="edit_deck_button">Edit</string>
+    <string name="edit_deck_button">Bearbeiten</string>
     <string name="cards_amount_in_deck">%d / 30 cards</string>
     <plurals name="maladies_amount">
         <item quantity="one">(%d Schwächung)</item>
@@ -223,8 +223,8 @@
     <string name="campaign">Kampagne</string>
     <string name="campaign_placeholder">Kampagne wählen</string>
     <string name="core_cycle">Grundspiel</string>
-    <string name="general_set_general">General</string>
-    <string name="general_set_the_valley">The Valley</string>
+    <string name="general_set_general">Standard</string>
+    <string name="general_set_the_valley">Das Tal</string>
 
     //Path types
     <string name="old_growth">Ur-Wald</string>
@@ -250,7 +250,7 @@
     <string name="the_philosophers_garden">Garten des Philosophen</string>
     <string name="the_high_basin">Der Hohe Spiegel</string>
     <string name="branch">Die Ästelei</string>
-    <string name="spire">Spire</string>
+    <string name="spire">Wolkenlanze</string>
     <string name="crossroads_station">Die Nahtstelle</string>
     <string name="the_furrow">Die Furche</string>
     <string name="biologists_outpost">Biologie-Stützpunkt</string>
@@ -294,8 +294,8 @@
 
     //Journey
     <string name="journey_title">Reise</string>
-    <string name="en_route_to">Auf dem Weg nach %s</string>
-    <string name="stayed_at">Stayed at %s</string>
+    <string name="en_route_to">Unterwegs nach %s</string>
+    <string name="stayed_at">Geblieben in %s</string>
 
     //End the day
     <string name="end_the_day">Tag beenden</string>
