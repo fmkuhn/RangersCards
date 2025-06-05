@@ -10,7 +10,7 @@
 
     //Settings screen strings
     <string name="account_title">RangersDB-Konto</string>
-    <string name="text_when_not_logged_in">Diese Ap funktioniert auch ohne ein Konto wunderbar.\nEine Anmeldung erlaubt Dir, Kampagnen und Decks zwischen Geräten und mit RangersDB zu synchronisieren.</string>
+    <string name="text_when_not_logged_in">Diese App funktioniert auch ohne ein Konto wunderbar.\nEine Anmeldung erlaubt Dir, Kampagnen und Decks zwischen Geräten und mit RangersDB zu synchronisieren.</string>
     <string name="sign_in_to_app_account_button">In der App anmelden</string>
     <string name="sign_in_up_to_app_account_title">Anmelden</string>
     <string name="email_placeholder">E-Mail-Adresse</string>
@@ -24,7 +24,7 @@
     <string name="sign_out_account_text">Bist Du sicher, dass Du Dich von RangersDB abmelden willst?\n\nAlle Kampagnen, die Du hochgeladen hast oder die mit Dir geteilt wurden, und Decks von RangersDB werden von diesem Gerät entfernt. Diese können erneut heruntergeladen werden, wenn Du Dich wieder anmeldest.\n\nAnmerkung: Falls Du vor Kurzem offline Änderungen vorgenommen hast, können diese verloren gehen.</string>
     <string name="cancel_button">Abbrechen</string>
     <string name="done_button">Done</string>
-    <string name="account_name_header">Account name</string>
+    <string name="account_name_header">Kontoname</string>
     <string name="friends_amount_header">Freunde</string>
     <plurals name="friends_amount">
         <item quantity="one">%d Freund</item>
@@ -121,4 +121,245 @@
     <string name="role_placeholder">Wähle eine Berufung</string>
     <string name="no_roles">Es gibt keine passende Berufung in Deiner Sammlung</string>
     <string name="starter_deck_name_postfix">(Einsteiger)</string>
+
+      //Deck errors
+    <string name="invalid_aspects">Gewählte Aspekte sind ungültig.</string>
+    <string name="too_many_duplicates">Zu viele Karten desselben Namens.</string>
+    <string name="need_two_cards">Du musst Deinem Startdeck zwei Exemplare jeder Karte hinzufügen.</string>
+    <string name="personality_error">Nicht genug Charakteristik-Karten.</string>
+    <string name="too_many_awa_personality">Zu viele WAH Charakteristik-Karten.</string>
+    <string name="too_many_spi_personality">Zu viele SOV Charakteristik-Karten.</string>
+    <string name="too_many_foc_personality">Zu viele RUH Charakteristik-Karten.</string>
+    <string name="too_many_fit_personality">Zu viele FIT Charakteristik-Karten.</string>
+    <string name="background_error">Nicht genug Vorgeschichte-Karten.</string>
+    <string name="too_many_background">Zu viele Karten der gewählten Vorgeschichte.</string>
+    <string name="specialty_error">Nicht genug Expertise-Karten.</string>
+    <string name="too_many_specialty">Zu viele Karten der gewählten Expertise.</string>
+    <string name="role_error">Du musst eine Berufung auswählen.</string>
+    <string name="outside_interest_error">Nicht genug Hobby-Karten.</string>
+    <string name="invalid_background">Enthält zu viele Karten, die nicht zu Deiner gewählten Vorgeschichte passen.</string>
+    <string name="invalid_specialty">Enthält zu viele Karten, die nicht zu Deiner gewählten Expertise passen.</string>
+    <string name="invalid_role">Deine Berufung passt nicht zu Deiner gewählten Expertise.</string>
+    <string name="invalid_aspect_levels">Dein Deck enthält Karten mit nicht erfüllten Aspekt-Voraussetzungen.</string>
+    <string name="invalid_outside_interest">Dein Hobby darf nicht das Merkmal Experte besitzen.</string>
+    <string name="too_many_outside_interest">Es sind zu viele Hobby-Karten in Deinem Deck.</string>
+    <string name="too_many_cards">Zu viele Karten. Wenn Du Deinem Deck im Nachtlager Belohnungskarten hinzufügst, musst Du dafür genauso viele andere Karten aus dem Deck entfernen.</string>
+    <string name="too_few_cards">Nicht genug Karten. Wenn Du im Nachtlager Belohnungskarten entfernst, musst Du Deinem Deck dafür wieder genauso viele Start-Karten hinzufügen.</string>
+
+    //FullDeck screen
+    <plurals name="more_problems">
+        <item quantity="one"> + %d weiteres Problem</item>
+        <item quantity="other"> + %d weitere Probleme</item>
+    </plurals>
+    <string name="edit_deck_button">Edit</string>
+    <string name="cards_amount_in_deck">%d / 30 cards</string>
+    <plurals name="maladies_amount">
+        <item quantity="one">(%d Schwächung)</item>
+        <item quantity="other">(%d Schwächungen)</item>
+    </plurals>
+    <string name="personality">Charakteristiken</string>
+    <string name="outside_interest">Hobby</string>
+    <string name="rewards_and_maladies">Belohnungen und Schwächungen</string>
+    <string name="side_deck">Side deck</string>
+    <string name="deck_changes">Änderungen</string>
+    <string name="deck_changes_added">Hinzugefügt</string>
+    <string name="deck_changes_removed">Entfernt</string>
+    <string name="deck_changes_added_collection">Aus der Sammlung hinzugefügt</string>
+    <string name="deck_changes_returned_collection">In die Sammlung zurückgelegt</string>
+    <string name="save_deck_button">Änderungen speichern</string>
+    <string name="background_as_outside_interest">Eine der gewählten Karten Deiner Vorgeschichte zählt als Dein Hobby.</string>
+    <string name="specialty_as_outside_interest">Eine der gewählten Karten Deiner Expertise zählt als Dein Hobby.</string>
+    <string name="reward_or_malady_in_starting_deck">Belohnungen und Schwächungen sind in Startdecks nicht erlaubt.</string>
+    <string name="save_deck_changes_header">Änderungen am Deck speichern?</string>
+    <string name="save_deck_changes_text">Du hast Änderungen an Deinem Deck vorgenommen, die noch nicht gespeichert wurden.</string>
+    <string name="save_deck_changes_button">Änderungen speichern</string>
+    <string name="discard_deck_changes_button">Änderungen verwerfen</string>
+    <string name="saving_changes_header">Speichert…</string>
+    <string name="editing_deck_screen_header">Deck bearbeiten</string>
+    <string name="rewards_search_tab">Belohnungen</string>
+    <string name="maladies_search_tab">Schwächungen</string>
+    <string name="collection_search_tab">Sammlung</string>
+    <string name="displaced_search_tab">Gespeicherte Karten</string>
+    <string name="show_all_button">Alle anzeigen</string>
+    <string name="personality_text">Wähle 4 verschiedene Charakteristiken, 1 für jeden Aspekt.</string>
+    <string name="background_text">Wähle 5 verschiedene Karten 5 für Deine gewählte Vorgeschichte.</string>
+    <string name="specialty_text">Wähle 5 verschiedene Karten für Deine gewählte Expertise.</string>
+    <string name="outside_interest_text">Wähle 1 Karte aus irgendeiner Vorgeschichte oder Expertise als Dein Hobby.\nAnmerkung: Karten Deiner gewählten Vorgeschichte/Expertise werden hier nicht angezeigt, aber Du darfst sie als Dein Hobby auswählen. Nutze dafür die anderen Reiter.</string>
+    <string name="collection_text">Manche Ereignisse während der Kampagne erlauben Dir, Karten aus Deinem Deck dauerhaft mit solchen aus der Sammlung zu tauschen (sog. permanente Verändeungen).\nNachdem Du eine neue Karte aus der Sammlung ausgewählt und eine Karte aus Deinem Deck entfernt hast, kannst Du eine Karte im Tab Gespeicherte Karten in die Sammlung 'zurücklegen'.</string>
+
+    //Deck Side Drawer
+    <string name="deck_section_header">Deck</string>
+    <string name="deck_section_deck_id">Deck #%s</string>
+    <string name="deck_section_notes">Notes</string>
+    <string name="tools_section_header">Tools</string>
+    <string name="tools_section_charts">Charts</string>
+    <string name="campaign_section_header">Kampagne</string>
+    <string name="campaign_section_camp">Nachtlager</string>
+    <string name="campaign_section_camp_additional_text">Zum Hinzufügen von Belohnungen und zur Nachverfolgung von Änderungen</string>
+    <string name="campaign_section_camp_warning">Fehler: Es gibt Probleme mit Deinem Deck!</string>
+    <string name="campaign_section_previous_deck">Vorherige Version</string>
+    <string name="campaign_section_next_deck">Nächste Version</string>
+    <string name="options_section_header">Optionen</string>
+    <string name="options_section_clone_deck">Deck klonen</string>
+    <string name="clone_deck_name_postfix">(Kopie)</string>
+    <string name="options_section_upload_deck">Zu RangersDB hochladen</string>
+    <string name="options_section_upload_deck_warning">Fehler: Deck enthält bereits Veränderungen!</string>
+    <string name="options_section_delete_deck">Deck löschen</string>
+    <string name="options_section_delete_current_deck">Aktuelle Version löschen</string>
+    <string name="options_section_delete_deck_all_versions">Alle Versionen des Decks löschen</string>
+    <string name="options_section_delete_deck_warning">Fehler: Deck wird in einer Kampagne verwendet!</string>
+    <string name="delete_deck_text">Bist Du sicher, dass Du dieses Deck löschen willst? Version: %d.</string>
+
+    //Campaigns screen
+    <string name="campaigns_current_day">Tag %d</string>
+    <string name="search_campaigns">Suche Kampagnen</string>
+    <string name="no_matching_campaigns">Keine passenden Kampagnen für \"%s\"</string>
+    <string name="no_campaigns">Es gibt noch keine Kampagnen.\n\nNutze das +, um eine neue zu erstellen.</string>
+    <string name="new_campaign">Neue Kampagne</string>
+    <string name="campaign_creation_name_placeholder">Gib dieser Kampagne einen Namen.</string>
+    <string name="create_campaign_button">Kampagne erstellen</string>
+    <string name="campaign">Kampagne</string>
+    <string name="campaign_placeholder">Kampagne wählen</string>
+    <string name="core_cycle">Grundspiel</string>
+    <string name="general_set_general">General</string>
+    <string name="general_set_the_valley">The Valley</string>
+
+    //Path types
+    <string name="old_growth">Ur-Wald</string>
+    <string name="mountain_pass">Bergpass</string>
+    <string name="woods">Wald</string>
+    <string name="lakeshore">Seeufer</string>
+    <string name="grassland">Grasland</string>
+    <string name="ravine">Schlucht</string>
+    <string name="swamp">Sumpf</string>
+    <string name="river">Fluss</string>
+
+    //Locations
+    <string name="atrox_mountain">Atrox-Berg</string>
+    <string name="northern_outpost">Nördlicher Außenposten</string>
+    <string name="lone_tree_station">Flurbaum-Basis</string>
+    <string name="white_sky">Himmelsnah</string>
+    <string name="golden_shore">Die Goldküste</string>
+    <string name="mount_nim">Nim-Spitzen</string>
+    <string name="ancestors_grove">Wurzeln der Ältesten</string>
+    <string name="kobos_market">Kobos Emporium</string>
+    <string name="boulder_field">Felsenmeer</string>
+    <string name="the_fractured_wall">Berstwall</string>
+    <string name="the_philosophers_garden">Garten des Philosophen</string>
+    <string name="the_high_basin">Der Hohe Spiegel</string>
+    <string name="branch">Die Ästelei</string>
+    <string name="spire">Spire</string>
+    <string name="crossroads_station">Die Nahtstelle</string>
+    <string name="the_furrow">Die Furche</string>
+    <string name="biologists_outpost">Biologie-Stützpunkt</string>
+    <string name="terravore">Erdfresser</string>
+    <string name="mound_of_the_navigator">Der Pfeiler des Navigators</string>
+    <string name="the_greenbridge">Die Grünbrücke</string>
+    <string name="michaels_bog">Michaels Moor</string>
+    <string name="the_cypress_citadel">Die Zypressenzitadelle</string>
+    <string name="marsh_of_rebirth">Moor der Wiedergeburt</string>
+    <string name="sunken_outpost">Versunkener Stützpunkt</string>
+    <string name="the_frowning_gate">Das Finstertor</string>
+    <string name="bowl_of_the_sun">Die Sonnenschale</string>
+    <string name="the_alluvial_ruins">Schwemmland-Ruinen</string>
+    <string name="the_tumbledown">Klippensturz</string>
+    <string name="watchers_rock">Das Auge am Rand</string>
+    <string name="archeological_outpost">Archäologischer Vorposten</string>
+    <string name="rings_of_the_moon">Mondringspitzen</string>
+    <string name="the_concordant_ziggurats">Die konkordanten Zikkurats</string>
+    <string name="meadow">Grünsee</string>
+    <string name="stoneweaver_bridge">Steinweberbrücke</string>
+    <string name="greenbriar_knoll">Stechwinden-Höhe</string>
+    <string name="the_plummet">Der Sturz</string>
+    <string name="headwaters_station">Oberlauf-Station</string>
+
+    //Campaign screen
+    <string name="current_location">Aktuelle Position</string>
+    <string name="current_path_terrain">Aktueller Terrain-Typ</string>
+    <string name="current_path_terrain_none">Keiner</string>
+    <string name="recorded_journey_button">Aufgezeichnete Reise</string>
+    <string name="extend_campaign_button">Kampagne verlängern</string>
+
+    //Weather
+    <string name="weather_perfect_day">Ein herrlicher Tag</string>
+    <string name="weather_downpour">Platzregen</string>
+    <string name="weather_howling_winds">Sturmböen</string>
+
+    //DayInfo
+    <string name="guide_entries">Kampagnenbucheinträge:</string>
+    <string name="guide_entry">Kampagnenbucheintrag</string>
+    <string name="add_guide_entry_button">Kampagnenbucheintrag hinzufügen</string>
+
+    //Journey
+    <string name="journey_title">Reise</string>
+    <string name="en_route_to">Auf dem Weg nach %s</string>
+    <string name="stayed_at">Stayed at %s</string>
+
+    //End the day
+    <string name="end_the_day">Tag beenden</string>
+    <string name="ending_day_number">Tag %d wird beendet.</string>
+    <string name="ending_day_warning">Diese Option sollte gewählt werden, wenn ein Ranger zu müde oder zu verletzt ist oder wenn es von der Kampagne oder einer Mission verlangt wird.\nWenn du dein Nachtlager aufschlagen möchtest während du an einen neuen Ort reist, nutze bitte den 'Reisen' Button.</string>
+
+    //Travel
+    <string name="travel_button">Reisen</string>
+    <string name="travel_header">Verlasse %s</string>
+    <string name="show_all_locations_radio_button">Alle Orte anzeigen</string>
+    <string name="location_data_type">Verbundener Ort</string>
+    <string name="travel_location_placeholder">Ort auswählen</string>
+    <string name="path_terrain_data_type">Terrain-Typ</string>
+    <string name="travel_path_terrain_placeholder">Terrain-Typ auswählen</string>
+    <string name="camp_radio_button">Nachtlager</string>
+    <string name="travel_without_camp_text">Die Ranger werden Tag %d mit ihren aktuellen Decks weiterspielen.</string>
+    <string name="travel_with_camp">Wenn das Nachtlager aufgeschlagen wird, endet Tag %d und verdiente Belohnungen können in die Decks getauscht werden.</string>
+
+    //Rangers section
+    <string name="rangers_section_header">— Ranger —</string>
+    <string name="add_ranger_button">Ranger hinzufügen</string>
+    <string name="no_decks_for_add">Keine geeigneten Decks.</string>
+
+    //Settings section
+    <string name="settings_section_header">— Einstellungen —</string>
+    <string name="add_remove_players_button">Spieler hinzufügen/entfernen</string>
+    <string name="upload_campaign_button">Zu RangersDB hochladen</string>
+    <string name="upload_campaign_warning">Fehler: Diese Kampagne ist bereits mit Decks verknüpft!</string>
+    <string name="delete_campaign_button">Kampagne löschen</string>
+    <string name="delete_campaign_confirmation">Bist Du Dir sicher, dass Du diese Kampagne löschen willst?</string>
+    <string name="leave_campaign_confirmation">Bist Du Dir sicher, dass Du diese Kampagne verlassen willst?</string>
+    <string name="leave_campaign_button">Kampagne verlassen</string>
+    
+    //Undo
+    <string name="undo_travel_header">Reiseschritte rückgängig machen</string>
+    <string name="undo_available_text">Wenn dir beim Reisen oder am Tagesende ein Fehler unterlaufen ist, kannst du die letzten Änderungen hier rückgängigmachen. Dies beeinflusst die Decks nicht.</string>
+    <string name="undo_unavailable_text">Es gibt keine Reiseschritte, die rückgängig gemacht werden können.</string>
+
+    //Campaign log section
+    <string name="campaign_log_header">Kampagnenlogbuch</string>
+    <string name="missions_campaign_log_tab">Missionen</string>
+    <string name="add_mission_button">Mission hinzufügen</string>
+    <string name="mission_header">Mission</string>
+    <string name="mission_day_input">Tag</string>
+    <string name="mission_progress">Fortschritt</string>
+    <string name="mission_completed">Abgeschlossen</string>
+    <string name="delete_mission_button">Mission löschen</string>
+    <string name="events_campaign_log_tab">Besondere Ereignisse</string>
+    <string name="record_event_button">Ereignis hinzufügen</string>
+    <string name="event_name_input">Was ist passiert</string>
+    <string name="event_header">Besonderes Ereignis</string>
+    <string name="event_crossed_out">Durchgestrichen</string>
+    <string name="removed_campaign_log_tab">Entfernte Karten</string>
+    <string name="remove_card_button">Karte entfernen</string>
+    <string name="removed_set_header">Set</string>
+    <string name="removed_select_set_text">Pfadkarten-Set auswählen</string>
+    <string name="removed_campaign_log_text">Hier findest du deine permanent entfernten Pfadkarten.</string>
+
+    //Errors handling
+    <string name="something_went_wrong">Etwas ist schiefgelaufen.</string>
+
+    //Diagnostics Screen
+    <string name="diagnostics_clear_local_data">Lokal gespeicherte Decks und Kampagnen löschen</string>
+    <string name="diagnostics_clear_local_data_cleared">Lokal gespeicherte Daten wurden gelöscht.</string>
+    <string name="diagnostics_clear_coil_cache">Bild-Cache leeren</string>
+    <string name="diagnostics_clear_coil_cache_cleared">Bild-Cache ist geleert.</string>
+    <string name="diagnostics_clear_apollo_cache">Netzwerk-Cache leeren</string>
+    <string name="diagnostics_clear_apollo_cache_cleared">Netzwerk-Cache ist geleert.</string>
 </resources>
