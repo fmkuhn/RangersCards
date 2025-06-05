@@ -82,7 +82,7 @@ fun CampaignMissionDialog(
         val checks = remember { mission.checks.toMutableStateList() }
         var completed by rememberSaveable { mutableStateOf(mission.completed) }
         CampaignDialog(
-            header = stringResource(id = R.string.event_header),
+            header = stringResource(id = R.string.mission_header),
             isDarkTheme = isDarkTheme,
             onBack = onBack
         ) {
