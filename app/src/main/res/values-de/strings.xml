@@ -185,7 +185,7 @@
     <string name="background_text">Wähle 5 verschiedene Karten 5 für Deine gewählte Vorgeschichte.</string>
     <string name="specialty_text">Wähle 5 verschiedene Karten für Deine gewählte Expertise.</string>
     <string name="outside_interest_text">Wähle 1 Karte aus irgendeiner Vorgeschichte oder Expertise als Dein Hobby.\nAnmerkung: Karten Deiner gewählten Vorgeschichte/Expertise werden hier nicht angezeigt, aber Du darfst sie als Dein Hobby auswählen. Nutze dafür die anderen Reiter.</string>
-    <string name="collection_text">Manche Ereignisse während der Kampagne erlauben Dir, Karten aus Deinem Deck dauerhaft mit solchen aus der Sammlung zu tauschen (sog. permanente Verändeungen).\nNachdem Du eine neue Karte aus der Sammlung ausgewählt und eine Karte aus Deinem Deck entfernt hast, kannst Du eine Karte im Tab Gespeicherte Karten in die Sammlung 'zurücklegen'.</string>
+    <string name="collection_text">Manche Ereignisse während der Kampagne erlauben Dir, Karten aus Deinem Deck dauerhaft mit solchen aus der Sammlung zu tauschen (sog. permanente Verändeungen).\nNachdem Du eine neue Karte aus der Sammlung ausgewählt und eine Karte aus Deinem Deck entfernt hast, kannst Du eine Karte im Tab Gespeicherte Karten in die Sammlung \'zurücklegen\'.</string>
 
     //Deck Side Drawer
     <string name="deck_section_header">Deck</string>
@@ -298,7 +298,7 @@
     //End the day
     <string name="end_the_day">Tag beenden</string>
     <string name="ending_day_number">Tag %d wird beendet.</string>
-    <string name="ending_day_warning">Diese Option sollte gewählt werden, wenn ein Ranger zu müde oder zu verletzt ist oder wenn es von der Kampagne oder einer Mission verlangt wird.\nWenn du dein Nachtlager aufschlagen möchtest während du an einen neuen Ort reist, nutze bitte den 'Reisen' Button.</string>
+    <string name="ending_day_warning">Diese Option sollte gewählt werden, wenn ein Ranger zu müde oder zu verletzt ist oder wenn es von der Kampagne oder einer Mission verlangt wird.\nWenn du dein Nachtlager aufschlagen möchtest während du an einen neuen Ort reist, nutze bitte den \'Reisen\' Button.</string>
 
     //Travel
     <string name="travel_button">Reisen</string>
