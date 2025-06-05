@@ -111,6 +111,8 @@
     <string name="deck_creation_name_placeholder">Gib diesem Deck einen Namen.</string>
     <string name="starter_deck_title">Wähle ein Einsteigerdeck:</string>
     <string name="upload_to_rangersdb">Auf RangersDB erstellen</string>
+    <string name="view_on_rangersdb">Auf RangersDB anschauen</string>
+    <string name="copy_link_to_rangersdb">Link in die Zwischenablage kopiert</string>
     <string name="use_taboo">Follow the Elder\'s Book of Uncommon Wisdom</string>
     <string name="create_deck_button">Deck erstellen</string>
     <string name="background">Vorgeschichte</string>
