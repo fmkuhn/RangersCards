@@ -11,9 +11,11 @@ import androidx.compose.material3.NavigationBarItemDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.layout.layout
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.navigation.NavGraph.Companion.findStartDestination
@@ -107,8 +109,31 @@ fun RangersNavigationBar(
                     CustomTheme.colors.d30,
                     CustomTheme.colors.d30,
                     CustomTheme.colors.d30,
-                )
+                ),
+                modifier = Modifier.ignoreHorizontalParentPadding(horizontal = 8.dp)
             )
         }
     }
 }
+
+fun Modifier.ignoreHorizontalParentPadding(horizontal: Dp): Modifier =
+    this.layout { measurable, constraints ->
+        // Convert the Dp into pixels:
+        val extraPx = horizontal.roundToPx()
+        // Make a new constraint that's wider by 2 * extraPx:
+        val newConstraints = constraints.copy(
+            minWidth = (constraints.minWidth - 2 * extraPx).coerceAtLeast(0),
+            maxWidth = constraints.maxWidth + 2 * extraPx
+        )
+        // Measure with the expanded width:
+        val placeable = measurable.measure(newConstraints)
+        // The layout size: we still honor the *original* constraints' height,
+        // but we size the width to fill whichever is larger (placeable or minWidth).
+        val width  = placeable.width.coerceAtLeast(constraints.minWidth)
+        val height = placeable.height
+
+        layout(width, height) {
+            // Place the content shifted left by extraPx, so its center stays aligned:
+            placeable.place(x = -extraPx, y = 0)
+        }
+    }

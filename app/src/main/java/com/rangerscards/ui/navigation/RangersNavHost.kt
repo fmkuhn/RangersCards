@@ -1,6 +1,5 @@
 package com.rangerscards.ui.navigation
 
-import android.net.Uri
 import androidx.compose.animation.AnimatedContentTransitionScope
 import androidx.compose.animation.AnimatedVisibility
 import androidx.compose.animation.EnterTransition
@@ -753,7 +752,7 @@ fun RangersNavHost(
                         campaignViewModel = campaignViewModel,
                         dayId = dayInfoId,
                         isDarkTheme = isDarkTheme,
-                        onBack = { navController.popBackStack() },
+                        onBack = { navController.popBackStack(destinationId = parentEntry.destination.id, inclusive = false) },
                         user = user.currentUser
                     )
                 }
@@ -785,7 +784,7 @@ fun RangersNavHost(
                     EndTheDayDialog(
                         campaignViewModel = campaignViewModel,
                         isDarkTheme = isDarkTheme,
-                        onBack = { navController.popBackStack() },
+                        onBack = { navController.popBackStack(destinationId = parentEntry.destination.id, inclusive = false) },
                         user = user.currentUser
                     )
                 }
@@ -801,7 +800,7 @@ fun RangersNavHost(
                     TravelDialog(
                         campaignViewModel = campaignViewModel,
                         isDarkTheme = isDarkTheme,
-                        onBack = { navController.popBackStack() },
+                        onBack = { navController.popBackStack(destinationId = parentEntry.destination.id, inclusive = false) },
                         user = user.currentUser
                     )
                 }
@@ -862,7 +861,7 @@ fun RangersNavHost(
                     UndoTravelDialog(
                         campaignViewModel = campaignViewModel,
                         isDarkTheme = isDarkTheme,
-                        onBack = { navController.popBackStack() },
+                        onBack = { navController.popBackStack(destinationId = parentEntry.destination.id, inclusive = false) },
                         user = user.currentUser
                     )
                 }
@@ -878,7 +877,7 @@ fun RangersNavHost(
                     AddRemovedDialog(
                         campaignViewModel = campaignViewModel,
                         isDarkTheme = isDarkTheme,
-                        onBack = { navController.popBackStack() },
+                        onBack = { navController.popBackStack(destinationId = parentEntry.destination.id, inclusive = false) },
                         user = user.currentUser
                     )
                 }
@@ -894,7 +893,7 @@ fun RangersNavHost(
                     RecordEventDialog(
                         campaignViewModel = campaignViewModel,
                         isDarkTheme = isDarkTheme,
-                        onBack = { navController.popBackStack() },
+                        onBack = { navController.popBackStack(destinationId = parentEntry.destination.id, inclusive = false) },
                         user = user.currentUser
                     )
                 }
@@ -914,9 +913,9 @@ fun RangersNavHost(
                     val user by settingsViewModel.userUiState.collectAsState()
                     CampaignEventDialog(
                         campaignViewModel = campaignViewModel,
-                        eventName = Uri.decode(eventName),
+                        eventName = eventName,
                         isDarkTheme = isDarkTheme,
-                        onBack = { navController.popBackStack() },
+                        onBack = { navController.popBackStack(destinationId = parentEntry.destination.id, inclusive = false) },
                         user = user.currentUser
                     )
                 }
@@ -932,7 +931,7 @@ fun RangersNavHost(
                     AddMissionDialog(
                         campaignViewModel = campaignViewModel,
                         isDarkTheme = isDarkTheme,
-                        onBack = { navController.popBackStack() },
+                        onBack = { navController.popBackStack(destinationId = parentEntry.destination.id, inclusive = false) },
                         user = user.currentUser
                     )
                 }
@@ -952,9 +951,9 @@ fun RangersNavHost(
                     val user by settingsViewModel.userUiState.collectAsState()
                     CampaignMissionDialog(
                         campaignViewModel = campaignViewModel,
-                        missionName = Uri.decode(missionName),
+                        missionName = missionName,
                         isDarkTheme = isDarkTheme,
-                        onBack = { navController.popBackStack() },
+                        onBack = { navController.popBackStack(destinationId = parentEntry.destination.id, inclusive = false) },
                         user = user.currentUser
                     )
                 }
