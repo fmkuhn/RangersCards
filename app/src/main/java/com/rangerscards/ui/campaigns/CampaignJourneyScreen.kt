@@ -5,7 +5,6 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
-import androidx.compose.foundation.layout.ExperimentalLayoutApi
 import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.IntrinsicSize
 import androidx.compose.foundation.layout.PaddingValues
@@ -36,7 +35,9 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.style.Hyphens
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -111,7 +112,6 @@ fun CampaignJourneyScreen(
     }
 }
 
-@OptIn(ExperimentalLayoutApi::class)
 @Composable
 fun TravelDayRow(
     cycleId: String,
@@ -156,7 +156,8 @@ fun TravelDayRow(
                 fontWeight = FontWeight.Normal,
                 fontSize = 14.sp,
                 lineHeight = 16.sp,
-                textAlign = TextAlign.Center
+                textAlign = TextAlign.Center,
+                style = TextStyle(hyphens = Hyphens.Auto)
             )
         }
         // Render each travel entry
@@ -212,7 +213,8 @@ fun TravelDayRow(
                             fontWeight = FontWeight.Normal,
                             fontSize = 14.sp,
                             lineHeight = 16.sp,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            style = TextStyle(hyphens = Hyphens.Auto)
                         )
                     }
                 }
@@ -250,6 +252,7 @@ fun TravelDayRow(
                     fontSize = 14.sp,
                     lineHeight = 16.sp,
                     textAlign = TextAlign.Center,
+                    style = TextStyle(hyphens = Hyphens.Auto)
                 )
             }
         }
@@ -280,7 +283,8 @@ fun TravelDayRow(
                     fontWeight = FontWeight.Normal,
                     fontSize = 14.sp,
                     lineHeight = 16.sp,
-                    textAlign = TextAlign.Center
+                    textAlign = TextAlign.Center,
+                    style = TextStyle(hyphens = Hyphens.Auto)
                 )
             }
         }
@@ -338,7 +342,8 @@ fun TravelDayRow(
                             fontWeight = FontWeight.Normal,
                             fontSize = 14.sp,
                             lineHeight = 16.sp,
-                            textAlign = TextAlign.Center
+                            textAlign = TextAlign.Center,
+                            style = TextStyle(hyphens = Hyphens.Auto)
                         )
                     }
                 }
@@ -377,6 +382,7 @@ fun TravelDayRow(
                         fontSize = 14.sp,
                         lineHeight = 16.sp,
                         textAlign = TextAlign.Center,
+                        style = TextStyle(hyphens = Hyphens.Auto)
                     )
                 }
             }

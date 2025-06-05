@@ -24,7 +24,11 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.key
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.runtime.setValue
 import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -33,6 +37,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Path
 import androidx.compose.ui.graphics.StrokeCap
 import androidx.compose.ui.graphics.drawscope.Stroke
+import androidx.compose.ui.layout.onGloballyPositioned
 import androidx.compose.ui.platform.LocalDensity
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -40,6 +45,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.text.style.TextDecoration
 import androidx.compose.ui.text.style.TextOverflow
+import androidx.compose.ui.unit.Dp
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rangerscards.R
@@ -56,6 +62,7 @@ fun TimeLineLazyRow(
 ) {
     val listState = rememberLazyListState()
     val localDensity = LocalDensity.current
+    var guideSectionHeightDp: Dp by remember { mutableStateOf(24.dp + with(localDensity) { (12.sp).toDp() }) }
     LaunchedEffect(Unit) {
         snapshotFlow { currentDay }
             .collect {
@@ -89,7 +96,13 @@ fun TimeLineLazyRow(
                                     verticalArrangement = Arrangement.spacedBy(4.dp),
                                 ) {
                                     if (dayInfo.guides.isNotEmpty()) Column(
-                                        modifier = Modifier.fillMaxWidth(),
+                                        modifier = Modifier.fillMaxWidth()
+                                            .onGloballyPositioned { layoutCoordinates ->
+                                                val dpValue = with(localDensity) {
+                                                    layoutCoordinates.size.height.toDp()
+                                                }
+                                                if (guideSectionHeightDp != dpValue) guideSectionHeightDp = dpValue
+                                            },
                                         horizontalAlignment = Alignment.CenterHorizontally
                                     ) {
                                         Icon(
@@ -108,7 +121,7 @@ fun TimeLineLazyRow(
                                             overflow = TextOverflow.Ellipsis
                                         )
                                     }
-                                    else Spacer(Modifier.height(40.dp))
+                                    else Spacer(Modifier.height(guideSectionHeightDp))
                                     DayIcon(currentDay, day, dayInfo.moonIconId, onClick)
                                 }
                             }
