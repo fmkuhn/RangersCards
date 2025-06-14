@@ -1,5 +1,6 @@
 package com.rangerscards.ui.cards.components
 
+import androidx.compose.animation.core.animateFloatAsState
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.background
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -23,8 +24,10 @@ import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.getValue
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.graphicsLayer
 import androidx.compose.ui.layout.ContentScale
@@ -383,6 +386,7 @@ fun CardListItemDeckInfo(
     onRemoveClick: (() -> Unit)?,
     onRemoveEnabled: Boolean
 ) {
+    val animatedAlpha by animateFloatAsState(targetValue = if ((currentAmount ?: 0) > 0) 1f else 0.5f)
     Row(
         modifier = Modifier.fillMaxHeight(),
         horizontalArrangement = Arrangement.spacedBy(4.dp),
@@ -402,7 +406,7 @@ fun CardListItemDeckInfo(
             )
         }
         if (currentAmount != null) Surface(
-            modifier = Modifier.fillMaxHeight(),
+            modifier = Modifier.fillMaxHeight().alpha(animatedAlpha),
             color = CustomTheme.colors.l10,
             shape = CustomTheme.shapes.small,
             shadowElevation = 4.dp
