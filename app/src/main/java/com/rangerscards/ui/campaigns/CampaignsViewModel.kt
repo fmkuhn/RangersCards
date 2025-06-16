@@ -192,7 +192,9 @@ class CampaignsViewModel(
             createdAt = getCurrentDateTime(),
             updatedAt = getCurrentDateTime(),
             latestDecks = JsonObject(emptyMap()),
-            access = JsonObject(emptyMap())
+            access = JsonObject(emptyMap()),
+            nextCampaignId = null,
+            previousCampaignId = null
         )
     }
 }
@@ -232,7 +234,10 @@ fun com.rangerscards.fragment.Campaign.toCampaign(uploaded: Boolean): Campaign {
         } },
         access = buildJsonObject { campaign.access.forEach {
             put(it.user!!.id, it.user.userInfo.handle)
-        } }
+        } },
+        //TODO:Change after graphql scheme
+        nextCampaignId = null,
+        previousCampaignId = null
     )
 }
 

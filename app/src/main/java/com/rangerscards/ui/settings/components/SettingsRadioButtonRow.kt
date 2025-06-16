@@ -63,14 +63,14 @@ fun SettingsRadioButtonRow(
                 onClick = { onClick() },
                 modifier = Modifier.size(32.dp)
             ) else RadioButton(
-            selected = isSelected,
-            onClick = { onClick() },
-            colors = RadioButtonDefaults.colors().copy(
-                selectedColor = CustomTheme.colors.m,
-                unselectedColor = CustomTheme.colors.m,
-            ),
-            modifier = Modifier.size(32.dp)
-        )
+                selected = isSelected,
+                onClick = { onClick() },
+                colors = RadioButtonDefaults.colors().copy(
+                    selectedColor = CustomTheme.colors.m,
+                    unselectedColor = CustomTheme.colors.m,
+                ),
+                modifier = Modifier.size(32.dp)
+            )
         }
     }
 }

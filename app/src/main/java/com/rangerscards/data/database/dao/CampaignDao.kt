@@ -41,12 +41,12 @@ interface CampaignDao {
     suspend fun deleteAllLocalCampaigns()
 
     @Query("SELECT id, cycle_id, name, day, current_location, latest_decks, access FROM campaign " +
-            "WHERE cycle_id != 'demo' ORDER BY updated_at DESC"
+            "WHERE cycle_id != 'demo' AND next_campaign_id IS NULL ORDER BY updated_at DESC"
     )
     fun getAllCampaigns(): PagingSource<Int, CampaignListItemProjection>
 
     @Query("SELECT id, cycle_id, name, day, current_location, latest_decks, access FROM campaign " +
-            "WHERE name LIKE :query AND cycle_id != 'demo' ORDER BY updated_at DESC"
+            "WHERE name LIKE :query AND cycle_id != 'demo' AND next_campaign_id IS NULL ORDER BY updated_at DESC"
     )
     fun searchCampaigns(query: String): PagingSource<Int, CampaignListItemProjection>
 

@@ -36,4 +36,8 @@ data class Campaign(
     @ColumnInfo(name = "latest_decks")
     val latestDecks: JsonElement,
     val access: JsonElement,
+    @ColumnInfo(name = "next_campaign_id")
+    val nextCampaignId: String?,
+    @ColumnInfo(name = "previous_campaign_id")
+    val previousCampaignId: String?,
 )
