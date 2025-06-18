@@ -428,15 +428,13 @@ class CampaignViewModel(
             var deck = deckRepository.getDeck(deckId)!!
             deckRepository.updateDeck(deck.copy(
                 campaignId = null,
-                campaignName = null,
-                campaignRewards = null
+                campaignName = null
             ))
             while (deck.previousId != null) {
                 deck = deckRepository.getDeck(deck.previousId!!)!!
                 deckRepository.updateDeck(deck.copy(
                     campaignId = null,
-                    campaignName = null,
-                    campaignRewards = null
+                    campaignName = null
                 ))
             }
             if (updateCampaign) {
