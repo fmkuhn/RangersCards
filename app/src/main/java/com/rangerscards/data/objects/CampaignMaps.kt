@@ -251,8 +251,7 @@ object CampaignMaps {
             ),
             "loa" to mapOf(
                 1 to listOf("1"),
-                3 to listOf("94.1"),
-                4 to listOf("1.04"),
+                4 to listOf("199.2"),
             )
         )
     }
@@ -273,17 +272,16 @@ object CampaignMaps {
                 Weather(29, 30, R.string.weather_perfect_day),
             )
             "loa" -> listOf(
-                Weather(1, 3, R.string.weather_perfect_day),
-                Weather(4, 7, R.string.weather_downpour),
-                Weather(8, 9, R.string.weather_perfect_day),
-                Weather(10, 12, R.string.weather_downpour),
-                Weather(13, 14, R.string.weather_howling_winds),
-                Weather(15, 17, R.string.weather_downpour),
-                Weather(18, 20, R.string.weather_howling_winds),
-                Weather(21, 22, R.string.weather_perfect_day),
-                Weather(23, 25, R.string.weather_downpour),
-                Weather(26, 28, R.string.weather_howling_winds),
-                Weather(29, 30, R.string.weather_perfect_day),
+                Weather(1, 3, R.string.weather_downpour, R.string.weather_enveloping_silence),
+                Weather(4, 6, R.string.weather_perfect_day, R.string.weather_glitterain),
+                Weather(7, 8, R.string.weather_howling_winds, R.string.weather_shimmering_runoff),
+                Weather(9, 12, R.string.weather_downpour, R.string.weather_enveloping_silence),
+                Weather(13, 15, R.string.weather_perfect_day, R.string.weather_glitterain),
+                Weather(16, 18, R.string.weather_downpour, R.string.weather_enveloping_silence),
+                Weather(19, 21, R.string.weather_perfect_day, R.string.weather_glitterain),
+                Weather(22, 23, R.string.weather_howling_winds, R.string.weather_shimmering_runoff),
+                Weather(24, 27, R.string.weather_downpour, R.string.weather_enveloping_silence),
+                Weather(28, 30, R.string.weather_perfect_day, R.string.weather_glitterain),
             )
             else -> emptyList()
         }
@@ -393,5 +391,6 @@ data class MapLocation(
 data class Weather(
     val start: Int,
     val end: Int,
-    @StringRes val nameResId: Int
+    @StringRes val nameResId: Int,
+    @StringRes val secondNameResId: Int? = null,
 )

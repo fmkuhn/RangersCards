@@ -421,4 +421,9 @@
     <string name="talespinner_background">Talespinner</string>
     <string name="spirit_speaker_specialty">Spirit Speaker</string>
 
+    //Loa Weather
+    <string name="weather_enveloping_silence">Enveloping Silence</string>
+    <string name="weather_glitterain">Glitterain</string>
+    <string name="weather_shimmering_runoff">Shimmering Runoff</string>
+
 </resources>

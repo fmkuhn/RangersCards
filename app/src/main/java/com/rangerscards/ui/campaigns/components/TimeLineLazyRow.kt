@@ -1,5 +1,6 @@
 package com.rangerscards.ui.campaigns.components
 
+import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
@@ -19,6 +20,7 @@ import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.rememberLazyListState
+import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -60,22 +62,20 @@ fun TimeLineLazyRow(
     currentDay: Int,
     onClick: (Int) -> Unit
 ) {
+    Log.d("test", currentDay.toString())
     val listState = rememberLazyListState()
     val localDensity = LocalDensity.current
     var guideSectionHeightDp: Dp by remember { mutableStateOf(24.dp + with(localDensity) { (12.sp).toDp() }) }
-    LaunchedEffect(Unit) {
-        snapshotFlow { currentDay }
-            .collect {
-                val weatherList = groupedDays.toList()
-                val currentIndex = weatherList.indexOfFirst { it.second.containsKey(currentDay) }
-                if (currentIndex >= 0) {
-                    val itemWidthPx = 40.dp
-                    val daysList = weatherList[currentIndex].second.toList()
-                    val dayIndex = daysList.indexOfFirst { it.first == currentDay }
-                    val offset = (4.dp + itemWidthPx) * dayIndex
-                    listState.animateScrollToItem(index = currentIndex, scrollOffset = with(localDensity) { offset.roundToPx() })
-                }
-            }
+    LaunchedEffect(currentDay) {
+        val weatherList = groupedDays.toList()
+        val currentIndex = weatherList.indexOfFirst { it.second.containsKey(currentDay) }
+        if (currentIndex >= 0) {
+            val itemWidthPx = 40.dp
+            val daysList = weatherList[currentIndex].second.toList()
+            val dayIndex = daysList.indexOfFirst { it.first == currentDay }
+            val offset = (4.dp + itemWidthPx) * dayIndex
+            listState.animateScrollToItem(index = currentIndex, scrollOffset = with(localDensity) { offset.roundToPx() })
+        }
     }
     LazyRow(
         state = listState,
@@ -142,6 +142,19 @@ fun TimeLineLazyRow(
                             textAlign = TextAlign.Center,
                             modifier = Modifier.fillMaxWidth()
                         )
+                        if (weather.secondNameResId != null) {
+                            HorizontalDivider(color = CustomTheme.colors.m, modifier = Modifier.width(24.dp))
+                            Text(
+                                text = stringResource(weather.secondNameResId),
+                                color = CustomTheme.colors.d30.copy(alpha = 0.7f),
+                                fontFamily = Jost,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 14.sp,
+                                lineHeight = 16.sp,
+                                textAlign = TextAlign.Center,
+                                modifier = Modifier.fillMaxWidth()
+                            )
+                        }
                     }
                 }
             }
