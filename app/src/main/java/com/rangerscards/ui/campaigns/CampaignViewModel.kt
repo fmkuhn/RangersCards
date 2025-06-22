@@ -21,6 +21,7 @@ import com.rangerscards.DeleteCampaignMutation
 import com.rangerscards.ExtendCampaignMutation
 import com.rangerscards.GetCampaignQuery
 import com.rangerscards.GetDeckQuery
+import com.rangerscards.GetMyDecksQuery
 import com.rangerscards.LeaveCampaignMutation
 import com.rangerscards.RemoveDeckCampaignMutation
 import com.rangerscards.RemoveFriendFromCampaignMutation
@@ -36,6 +37,7 @@ import com.rangerscards.UpdateUploadedMutation
 import com.rangerscards.data.database.campaign.Campaign
 import com.rangerscards.data.database.card.CardListItemProjection
 import com.rangerscards.data.database.card.FullCardProjection
+import com.rangerscards.data.database.deck.Deck
 import com.rangerscards.data.database.deck.RoleCardProjection
 import com.rangerscards.data.database.repository.CampaignRepository
 import com.rangerscards.data.database.repository.DeckRepository
@@ -44,6 +46,7 @@ import com.rangerscards.data.objects.Path
 import com.rangerscards.data.objects.Weather
 import com.rangerscards.ui.decks.getCurrentDateTime
 import com.rangerscards.ui.decks.toDeck
+import com.rangerscards.ui.decks.toDecks
 import kotlinx.coroutines.flow.Flow
 import kotlinx.coroutines.flow.MutableStateFlow
 import kotlinx.coroutines.flow.StateFlow
@@ -81,7 +84,9 @@ data class CampaignState(
     val history: List<CampaignHistory>,
     val calendar: Map<Int, List<String>>,
     val decks: List<CampaignDeck>,
-    val access: Map<String, String>
+    val access: Map<String, String>,
+    val previousCampaignId: String?,
+    val nextCampaignId: String?
 )
 
 data class CampaignMission(
@@ -425,18 +430,24 @@ class CampaignViewModel(
                 .fetchPolicy(FetchPolicy.NetworkOnly).execute()
             if (response.data != null) deckRepository.updateDeck(response.data!!.deck!!.deck.toDeck(true))
         } else {
-            var deck = deckRepository.getDeck(deckId)!!
-            deckRepository.updateDeck(deck.copy(
-                campaignId = null,
-                campaignName = null
-            ))
-            while (deck.previousId != null) {
-                deck = deckRepository.getDeck(deck.previousId!!)!!
-                deckRepository.updateDeck(deck.copy(
+            val decks: MutableList<Deck> = mutableListOf()
+            var deck = deckRepository.getDeck(deckId)
+            if (deck != null) {
+                decks.add(deck.copy(
+                    updatedAt = getCurrentDateTime(),
                     campaignId = null,
                     campaignName = null
                 ))
+                while (deck!!.previousId != null) {
+                    deck = deckRepository.getDeck(deck.previousId!!)
+                    decks.add(deck!!.copy(
+                        updatedAt = getCurrentDateTime(),
+                        campaignId = null,
+                        campaignName = null
+                    ))
+                }
             }
+            deckRepository.upsertDecks(decks)
             if (updateCampaign) {
                 val campaignEntry = campaignRepository.getCampaignById(campaign.id)
                 campaignRepository.updateCampaign(campaignEntry.copy(
@@ -574,7 +585,6 @@ class CampaignViewModel(
 
     suspend fun deleteCampaign(user: FirebaseUser?) {
         val campaign = campaign.value!!
-        val deckIds = campaign.decks.map { it.id }
         if (campaign.uploaded) {
             val token = user!!.getIdToken(true).await().token
             apolloClient.mutation(
@@ -582,16 +592,44 @@ class CampaignViewModel(
                     campaignId = campaign.id.toInt(),
                 )
             ).addHttpHeader("Authorization", "Bearer $token").execute()
-            deckIds.forEach {
-                val response = apolloClient.query(GetDeckQuery(it.toInt()))
-                    .addHttpHeader("Authorization", "Bearer $token")
-                    .fetchPolicy(FetchPolicy.NetworkOnly).execute()
-                if (response.data != null) deckRepository.updateDeck(response.data!!.deck!!.deck.toDeck(true))
-            }
+            val response = apolloClient.query(GetMyDecksQuery(userId = user.uid))
+                .addHttpHeader("Authorization", "Bearer $token")
+                .fetchPolicy(FetchPolicy.NetworkOnly).execute()
+            if (response.data != null) deckRepository.upsertDecks(response.data!!.decks.toDecks(true))
             campaignRepository.deleteCampaign(campaign.id)
         } else {
-            deckIds.forEach {
-                removeDeckCampaign(it, user, false)
+            if (campaign.previousCampaignId != null) {
+                val previousCampaign = campaignRepository.getCampaignById(campaign.previousCampaignId)
+                val currentCampaign = campaignRepository.getCampaignById(campaign.id)
+                campaignRepository.updateCampaign(
+                    previousCampaign.copy(
+                        latestDecks = currentCampaign.latestDecks,
+                        updatedAt = getCurrentDateTime(),
+                        nextCampaignId = null
+                    ))
+                val decks: MutableList<Deck> = mutableListOf()
+                for (deck in currentCampaign.latestDecks.jsonObject) {
+                    var deckDb = deckRepository.getDeck(deck.key)
+                    if (deckDb != null) {
+                        decks.add(deckDb.copy(
+                            updatedAt = getCurrentDateTime(),
+                            campaignId = currentCampaign.previousCampaignId,
+                        ))
+                        while (deckDb!!.previousId != null) {
+                            deckDb = deckRepository.getDeck(deckDb.previousId!!)
+                            decks.add(deckDb!!.copy(
+                                updatedAt = getCurrentDateTime(),
+                                campaignId = currentCampaign.previousCampaignId,
+                            ))
+                        }
+                    }
+                }
+                deckRepository.upsertDecks(decks)
+            } else {
+                val deckIds = campaign.decks.map { it.id }
+                deckIds.forEach {
+                    removeDeckCampaign(it, user, false)
+                }
             }
             campaignRepository.deleteCampaign(campaign.id)
         }
@@ -1014,6 +1052,8 @@ fun Campaign.toCampaignState(): CampaignState {
                 user.values.first().jsonPrimitive.content
             )
         },
-        access = this.access.jsonObject.mapValues { it.value.jsonPrimitive.content }
+        access = this.access.jsonObject.mapValues { it.value.jsonPrimitive.content },
+        previousCampaignId = this.previousCampaignId,
+        nextCampaignId = this.nextCampaignId
     )
 }

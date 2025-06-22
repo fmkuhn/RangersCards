@@ -13,9 +13,15 @@ interface CampaignsRepository {
 
     suspend fun syncCampaigns(networkCampaigns: List<Campaign>)
 
+    suspend fun upsertCampaigns(campaigns: List<Campaign>)
+
+    suspend fun getCampaignById(id: String): Campaign
+
     fun getAllCampaigns(): Flow<PagingData<CampaignListItemProjection>>
 
     fun searchCampaigns(query: String): Flow<PagingData<CampaignListItemProjection>>
+
+    fun getAllCampaignsForTransfer(cycleId: String): Flow<List<CampaignListItemProjection>>
 
     fun getRolesImages(ids: List<String>): Flow<List<RoleCardProjection>>
 

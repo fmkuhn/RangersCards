@@ -20,6 +20,11 @@ class OfflineCampaignsRepository(
     override suspend fun syncCampaigns(networkCampaigns: List<Campaign>) =
         campaignDao.syncCampaigns(networkCampaigns)
 
+    override suspend fun upsertCampaigns(campaigns: List<Campaign>) =
+        campaignDao.upsertAllCampaigns(campaigns)
+
+    override suspend fun getCampaignById(id: String): Campaign = campaignDao.getCampaignById(id)
+
     override fun getAllCampaigns(): Flow<PagingData<CampaignListItemProjection>> {
         // Create a Pager that wraps the PagingSource from the DAO.
         return Pager(
@@ -49,6 +54,9 @@ class OfflineCampaignsRepository(
             pagingSourceFactory = { campaignDao.searchCampaigns(newQuery) }
         ).flow
     }
+
+    override fun getAllCampaignsForTransfer(cycleId: String): Flow<List<CampaignListItemProjection>> =
+        campaignDao.getAllCampaignsForTransfer(cycleId)
 
     override fun getRolesImages(ids: List<String>): Flow<List<RoleCardProjection>> = campaignDao.getRolesImages(ids)
 

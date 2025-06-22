@@ -50,6 +50,11 @@ interface CampaignDao {
     )
     fun searchCampaigns(query: String): PagingSource<Int, CampaignListItemProjection>
 
+    @Query("SELECT id, cycle_id, name, day, current_location, latest_decks, access FROM campaign " +
+            "WHERE cycle_id != 'demo' AND cycle_id != :cycleId AND next_campaign_id IS NULL ORDER BY updated_at DESC"
+    )
+    fun getAllCampaignsForTransfer(cycleId: String): Flow<List<CampaignListItemProjection>>
+
     @Query("Select id, name, text, real_image_src, traits, taboo_id FROM card WHERE id IN (:ids)")
     fun getRolesImages(ids: List<String>): Flow<List<RoleCardProjection>>
 

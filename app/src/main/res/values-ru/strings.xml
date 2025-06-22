@@ -208,6 +208,7 @@
     <string name="create_campaign_button">Создать</string>
     <string name="campaign">Кампания</string>
     <string name="campaign_placeholder">Выберите кампанию</string>
+    <string name="transfer_campaign">Перенос кампании</string>
     <string name="core_cycle">База</string>
     <string name="general_set_general">Общий набор</string>
     <string name="general_set_the_valley">Долина</string>

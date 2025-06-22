@@ -12,9 +12,12 @@ import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.CreateCampaignMutation
 import com.rangerscards.GetMyCampaignsQuery
+import com.rangerscards.TransferCampaignMutation
 import com.rangerscards.data.database.campaign.Campaign
 import com.rangerscards.data.database.campaign.CampaignListItemProjection
+import com.rangerscards.data.database.deck.Deck
 import com.rangerscards.data.database.repository.CampaignsRepository
+import com.rangerscards.data.database.repository.DeckRepository
 import com.rangerscards.data.objects.TimestampNormilizer
 import com.rangerscards.ui.decks.getCurrentDateTime
 import com.rangerscards.ui.decks.toDeck
@@ -36,13 +39,15 @@ import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonArray
 import kotlinx.serialization.json.buildJsonObject
+import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.put
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
 class CampaignsViewModel(
     private val apolloClient: ApolloClient,
-    private val campaignsRepository: CampaignsRepository
+    private val campaignsRepository: CampaignsRepository,
+    private val deckRepository: DeckRepository,
 ) : ViewModel() {
     
     private val _campaignIdToOpen = MutableStateFlow("")
@@ -112,6 +117,8 @@ class CampaignsViewModel(
             }
         }.cachedIn(viewModelScope)
 
+    fun getTransferCampaigns(cycleId: String) = campaignsRepository.getAllCampaignsForTransfer(cycleId)
+
     fun getRolesImages(ids: List<String>): Flow<List<String>> =
         campaignsRepository.getRolesImages(ids).map { rolesList ->
             // Create a map from id to RoleCardProjection
@@ -140,29 +147,91 @@ class CampaignsViewModel(
         currentLocation: String,
         isUploading: Boolean,
         user: UserUIState,
+        transferCampaignId: String
     ) {
-        if (isUploading) {
-            val token = user.currentUser!!.getIdToken(true).await().token
-            val newCampaign = apolloClient.mutation(
-                CreateCampaignMutation(
-                name = name,
-                cycleId = cycleId,
-                currentLocation = currentLocation,
-            )
-            ).addHttpHeader("Authorization", "Bearer $token").execute()
-            if (newCampaign.data != null) {
-                campaignsRepository.insertCampaign(newCampaign.data!!.campaign!!.campaign.toCampaign(true))
-                _campaignIdToOpen.update { newCampaign.data!!.campaign!!.campaign.id.toString() }
+        if (transferCampaignId.isEmpty()) {
+            if (isUploading) {
+                val token = user.currentUser!!.getIdToken(true).await().token
+                val newCampaign = apolloClient.mutation(
+                    CreateCampaignMutation(
+                        name = name,
+                        cycleId = cycleId,
+                        currentLocation = currentLocation,
+                    )
+                ).addHttpHeader("Authorization", "Bearer $token").execute()
+                if (newCampaign.data != null) {
+                    campaignsRepository.insertCampaign(newCampaign.data!!.campaign!!.campaign.toCampaign(true))
+                    _campaignIdToOpen.update { newCampaign.data!!.campaign!!.campaign.id.toString() }
+                }
+            } else {
+                val uuid = Uuid.random().toString()
+                campaignsRepository.insertCampaign(createLocalCampaign(
+                    id = uuid,
+                    name = name,
+                    cycleId = cycleId,
+                    currentLocation = currentLocation,
+                ))
+                _campaignIdToOpen.update { uuid }
             }
-        } else {
-            val uuid = Uuid.random().toString()
-            campaignsRepository.insertCampaign(createLocalCampaign(
-                id = uuid,
-                name = name,
-                cycleId = cycleId,
-                currentLocation = currentLocation,
-            ))
-            _campaignIdToOpen.update { uuid }
+        }
+        else {
+            val isUploaded = transferCampaignId.toIntOrNull() != null
+            if (isUploaded) {
+                val token = user.currentUser!!.getIdToken(true).await().token
+                val newCampaign = apolloClient.mutation(
+                    TransferCampaignMutation(
+                        campaignId = transferCampaignId.toInt(),
+                        cycleId = cycleId,
+                        currentLocation = currentLocation,
+                    )
+                ).addHttpHeader("Authorization", "Bearer $token").execute()
+                if (newCampaign.data != null) {
+                    campaignsRepository.upsertCampaigns(newCampaign.data!!.campaign.map { it.campaign.toCampaign(true) })
+                    _campaignIdToOpen.update { newCampaign.data!!.campaign.first().campaign.id.toString() }
+                }
+            } else {
+                val uuid = Uuid.random().toString()
+                val previousCampaign = campaignsRepository.getCampaignById(transferCampaignId)
+                campaignsRepository.upsertCampaigns(listOf(
+                    previousCampaign.copy(
+                        latestDecks = JsonObject(emptyMap()),
+                        updatedAt = getCurrentDateTime(),
+                        nextCampaignId = uuid
+                    ),
+                    previousCampaign.copy(
+                        id = uuid,
+                        day = 1,
+                        extendedCalendar = null,
+                        cycleId = cycleId,
+                        currentLocation = currentLocation,
+                        currentPathTerrain = null,
+                        history = JsonArray(emptyList()),
+                        calendar = JsonArray(emptyList()),
+                        createdAt = getCurrentDateTime(),
+                        updatedAt = getCurrentDateTime(),
+                        previousCampaignId = previousCampaign.id
+                    )
+                ))
+                val decks: MutableList<Deck> = mutableListOf()
+                for (deck in previousCampaign.latestDecks.jsonObject) {
+                    var deckDb = deckRepository.getDeck(deck.key)
+                    if (deckDb != null) {
+                        decks.add(deckDb.copy(
+                            updatedAt = getCurrentDateTime(),
+                            campaignId = uuid,
+                        ))
+                        while (deckDb!!.previousId != null) {
+                            deckDb = deckRepository.getDeck(deckDb.previousId!!)
+                            decks.add(deckDb!!.copy(
+                                updatedAt = getCurrentDateTime(),
+                                campaignId = uuid,
+                            ))
+                        }
+                    }
+                }
+                deckRepository.upsertDecks(decks)
+                _campaignIdToOpen.update { uuid }
+            }
         }
     }
 
@@ -236,8 +305,8 @@ fun com.rangerscards.fragment.Campaign.toCampaign(uploaded: Boolean): Campaign {
             put(it.user!!.id, it.user.userInfo.handle)
         } },
         //TODO:Change after graphql scheme
-        nextCampaignId = null,
-        previousCampaignId = null
+        nextCampaignId = this.next_campaign_id?.toString(),
+        previousCampaignId = this.previous_campaign?.id?.toString()
     )
 }
 

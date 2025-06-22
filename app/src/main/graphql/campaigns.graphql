@@ -66,6 +66,22 @@ mutation updateUploaded(
   }
 }
 
+mutation transferCampaign(
+  $campaignId: Int!,
+  $cycleId: String!,
+  $currentLocation: String!,
+) {
+  campaign: rangers_transfer_campaign(
+    args: {
+      existing_campaign_id: $campaignId
+      cycle_code: $cycleId
+      current_location: $currentLocation
+    }
+  ) {
+    ...Campaign
+  }
+}
+
 subscription campaign(
   $campaignId: Int!
 ) {
@@ -360,7 +376,9 @@ mutation leaveCampaign(
 mutation deleteCampaign(
   $campaignId: Int!
 ) {
-  delete_rangers_campaign_by_pk(id: $campaignId) {
+  rangers_remove_campaign(
+    args: { campaign_id: $campaignId }
+  ) {
     id
   }
 }

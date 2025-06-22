@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.items
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.HorizontalDivider
@@ -19,6 +20,7 @@ import androidx.compose.material3.OutlinedTextField
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -41,7 +43,9 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
+import androidx.paging.compose.collectAsLazyPagingItems
 import com.rangerscards.R
+import com.rangerscards.data.database.campaign.CampaignListItemProjection
 import com.rangerscards.data.objects.CampaignMaps
 import com.rangerscards.ui.components.DataPicker
 import com.rangerscards.ui.components.RangersRadioButton
@@ -66,7 +70,9 @@ fun CampaignCreationScreen(
     var name by rememberSaveable { mutableStateOf("") }
     var isUploading by rememberSaveable { mutableStateOf(false) }
     var cycle by remember { mutableStateOf("") }
+    var transferCampaignInfo by remember { mutableStateOf("" to "") }
     var showDialogPicker by rememberSaveable { mutableStateOf(false) }
+    var showTransferDialogPicker by rememberSaveable { mutableStateOf(false) }
     val isLegit by remember {
         derivedStateOf {
             name.isNotEmpty() && cycle.isNotEmpty()
@@ -119,11 +125,14 @@ fun CampaignCreationScreen(
                         unfocusedIndicatorColor = CustomTheme.colors.m,
                         unfocusedLabelColor = CustomTheme.colors.d30,
                         focusedLabelColor = CustomTheme.colors.d30,
+                        disabledLabelColor = CustomTheme.colors.d30,
                         unfocusedPlaceholderColor = CustomTheme.colors.d30,
                         focusedPlaceholderColor = CustomTheme.colors.d30,
                         focusedContainerColor = Color.Transparent,
-                        unfocusedContainerColor = Color.Transparent
-                    )
+                        unfocusedContainerColor = Color.Transparent,
+                        disabledContainerColor = CustomTheme.colors.m
+                    ),
+                    enabled = transferCampaignInfo.second.isEmpty()
                 )
                 DataPicker(
                     onClick = { showDialogPicker = true },
@@ -133,6 +142,22 @@ fun CampaignCreationScreen(
                         text = stringResource(if (cycle.isEmpty())
                             R.string.campaign_placeholder
                         else CampaignMaps.campaignCyclesMap[cycle]!!),
+                        color = CustomTheme.colors.d30,
+                        fontFamily = Jost,
+                        fontWeight = FontWeight.Normal,
+                        fontSize = 16.sp,
+                        maxLines = 1,
+                        overflow = TextOverflow.Ellipsis
+                    )
+                }
+                if (cycle.isNotEmpty() && cycle != "core") DataPicker(
+                    onClick = { showTransferDialogPicker = true },
+                    type = R.string.transfer_campaign,
+                    isRequired = false
+                ) {
+                    Text(
+                        text = if (transferCampaignInfo.first.isEmpty()) stringResource(R.string.campaign_placeholder)
+                            else transferCampaignInfo.second,
                         color = CustomTheme.colors.d30,
                         fontFamily = Jost,
                         fontWeight = FontWeight.Normal,
@@ -180,13 +205,54 @@ fun CampaignCreationScreen(
                         }
                     }
                 }
+                if (showTransferDialogPicker) Dialog(
+                    onDismissRequest = { showTransferDialogPicker = false },
+                    properties = DialogProperties(
+                        dismissOnBackPress = true,
+                        dismissOnClickOutside = true,
+                        usePlatformDefaultWidth = false
+                    )
+                ) {
+                    val campaignsForTransfer by campaignsViewModel.getTransferCampaigns(cycle)
+                        .collectAsState(emptyList())
+                    SettingsBaseCard(
+                        isDarkTheme = isDarkTheme,
+                        labelIdRes = R.string.campaign
+                    ) {
+                        LazyColumn(modifier = Modifier.sizeIn(maxHeight = 400.dp)) {
+                            items(items = campaignsForTransfer, key = { campaign -> campaign.id }) { campaignForTransfer ->
+                                Text(
+                                    text = campaignForTransfer.name,
+                                    modifier = Modifier
+                                        .fillMaxWidth()
+                                        .clickable {
+                                            transferCampaignInfo = campaignForTransfer.id to campaignForTransfer.name
+                                            name = campaignForTransfer.name
+                                            showTransferDialogPicker = false
+                                        }
+                                        .padding(
+                                            horizontal = 16.dp,
+                                            vertical = 8.dp
+                                        ),
+                                    color = CustomTheme.colors.d30,
+                                    fontFamily = Jost,
+                                    fontWeight = FontWeight.Medium,
+                                    fontSize = 18.sp,
+                                    lineHeight = 22.sp,
+                                )
+                                HorizontalDivider(color = CustomTheme.colors.l10)
+                            }
+                        }
+                    }
+                }
                 val context = LocalContext.current.applicationContext
-                if (user.currentUser != null && campaignsViewModel.isConnected(context)) Row(
-                    modifier = Modifier
-                        .padding(horizontal = 16.dp, vertical = 4.dp)
-                        .clickable { isUploading = !isUploading },
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
+                if (user.currentUser != null && campaignsViewModel.isConnected(context)
+                    && transferCampaignInfo.first.isEmpty()) Row(
+                        modifier = Modifier
+                            .padding(horizontal = 16.dp, vertical = 4.dp)
+                            .clickable { isUploading = !isUploading },
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
                         text = stringResource(R.string.upload_to_rangersdb),
@@ -232,6 +298,7 @@ fun CampaignCreationScreen(
                                 isUploading = isUploading,
                                 currentLocation = CampaignMaps.startingLocations[cycle]!!,
                                 user = user,
+                                transferCampaignId = transferCampaignInfo.first
                             )
                         }.invokeOnCompletion {
                             onCreate.invoke(campaignsViewModel.campaignIdToOpen.value)

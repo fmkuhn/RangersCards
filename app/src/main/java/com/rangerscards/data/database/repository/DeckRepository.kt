@@ -20,6 +20,8 @@ interface DeckRepository {
 
     suspend fun upsertDeck(deck: Deck)
 
+    suspend fun upsertDecks(decks: List<Deck>)
+
     suspend fun deleteDeckById(id: String)
 
     suspend fun deleteDecksById(ids: List<String>)

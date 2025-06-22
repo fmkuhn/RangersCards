@@ -57,7 +57,8 @@ object AppViewModelProvider {
         //Initializer for CampaignsViewModel
         initializer {
             CampaignsViewModel(rangersApplication().container.apolloClient,
-                rangersApplication().container.campaignsRepository)
+                rangersApplication().container.campaignsRepository,
+                rangersApplication().container.deckRepository)
         }
 
         //Initializer for CampaignViewModel

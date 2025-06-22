@@ -4,253 +4,6 @@ schema {
   subscription: subscription_root
 }
 
-"""
-Boolean expression to compare columns of type "Boolean". All fields are combined with logical 'AND'.
-"""
-input Boolean_comparison_exp {
-  _eq: Boolean
-  _gt: Boolean
-  _gte: Boolean
-  _in: [Boolean!]
-  _is_null: Boolean
-  _lt: Boolean
-  _lte: Boolean
-  _neq: Boolean
-  _nin: [Boolean!]
-}
-
-input CreateCampaignInput {
-  campaignId: String!
-  guided: Boolean
-  linked: LinkedCampaignId
-}
-
-type CreateCampaignOutput {
-  campaignId: Int!
-  campaignIdA: Int
-  campaignIdB: Int
-}
-
-input CreateDeckInput {
-  description: String
-  ignoreDeckLimitSlots: jsonb!
-  investigator: String!
-  meta: jsonb
-  name: String!
-  problem: String
-  slots: jsonb!
-  tabooSetId: Int
-  tags: String
-}
-
-type CreateDeckOutput {
-  deck: arkhamdb_deck
-  deckId: String!
-}
-
-type DeckId {
-  campaignId: Int!
-  id: Int!
-}
-
-input DeleteCampaignInput {
-  campaignId: String!
-  serverId: Int!
-}
-
-type DeleteCampaignOutput {
-  campaignId: Int!
-}
-
-input DeleteDeckInput {
-  deckId: Int!
-  deleteAllVersions: Boolean!
-}
-
-type DeleteDeckOutput {
-  success: Boolean!
-}
-
-enum EditAccessAction {
-  grant
-  revoke
-}
-
-input EditCampaignAccessInput {
-  action: EditAccessAction!
-  campaignId: String!
-  serverId: Int!
-  users: [String!]!
-}
-
-type EditCampaignAccessOutput {
-  campaignId: Int!
-}
-
-enum FriendRequestAction {
-  request
-  revoke
-}
-
-input FriendRequestInput {
-  action: FriendRequestAction!
-  userId: String!
-}
-
-type FriendRequestOutput {
-  success: Boolean!
-}
-
-"""
-Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'.
-"""
-input Int_comparison_exp {
-  _eq: Int
-  _gt: Int
-  _gte: Int
-  _in: [Int!]
-  _is_null: Boolean
-  _lt: Int
-  _lte: Int
-  _neq: Int
-  _nin: [Int!]
-}
-
-input LinkedCampaignId {
-  campaignIdA: String!
-  campaignIdB: String!
-}
-
-input LoginInput {
-  code: String!
-  redirectUri: String!
-  state: String!
-}
-
-type LoginOutput {
-  success: Boolean!
-}
-
-type LogoutOutput {
-  success: Boolean!
-}
-
-input MigrateLoginInput {
-  accessToken: String!
-  refreshToken: String!
-}
-
-type MigrateLoginOutput {
-  success: Boolean!
-}
-
-input RefreshDecksInput {
-  force: Boolean!
-}
-
-type RefreshDecksOutput {
-  updated: Boolean!
-}
-
-"""
-Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'.
-"""
-input String_comparison_exp {
-  _eq: String
-  _gt: String
-  _gte: String
-
-  """does the column match the given case-insensitive pattern"""
-  _ilike: String
-  _in: [String!]
-
-  """
-  does the column match the given POSIX regular expression, case insensitive
-  """
-  _iregex: String
-  _is_null: Boolean
-
-  """does the column match the given pattern"""
-  _like: String
-  _lt: String
-  _lte: String
-  _neq: String
-
-  """does the column NOT match the given case-insensitive pattern"""
-  _nilike: String
-  _nin: [String!]
-
-  """
-  does the column NOT match the given POSIX regular expression, case insensitive
-  """
-  _niregex: String
-
-  """does the column NOT match the given pattern"""
-  _nlike: String
-
-  """
-  does the column NOT match the given POSIX regular expression, case sensitive
-  """
-  _nregex: String
-
-  """does the column NOT match the given SQL regular expression"""
-  _nsimilar: String
-
-  """
-  does the column match the given POSIX regular expression, case sensitive
-  """
-  _regex: String
-
-  """does the column match the given SQL regular expression"""
-  _similar: String
-}
-
-input UpdateHandleInput {
-  handle: String!
-  userId: String
-}
-
-type UpdateHandleOutput {
-  success: Boolean!
-  user: users
-  userId: String!
-}
-
-input UpgradeDeckInput {
-  deckId: Int!
-  exiles: jsonb
-  xp: Int!
-}
-
-type UpgradeDeckOutput {
-  deckId: Int!
-  upgradedDeckId: Int!
-}
-
-input UploadLocalCampaignDeckInput {
-  arkhamDbId: Int!
-  localDeckId: String!
-}
-
-type UploadLocalCampaignDeckOutput {
-  deckIds: [DeckId!]!
-}
-
-type UserSearchResult {
-  handle: String!
-  id: String!
-}
-
-input UsersSearchInput {
-  continueToken: String
-  search: String!
-}
-
-type UsersSearchOutput {
-  hasMore: String!
-  users: [UserSearchResult!]!
-}
-
 scalar _text
 
 """
@@ -782,7 +535,8 @@ input all_card_delete_at_path_input {
 }
 
 """
-delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+delete the array element with specified index (negative integers count from the
+end). throws an error if top level container is not an array
 """
 input all_card_delete_elem_input {
   customization_options: Int
@@ -3084,7 +2838,8 @@ type all_card_updated_by_version_avg_fields {
 }
 
 """
-Boolean expression to filter rows from the table "all_card_updated_by_version". All fields are combined with a logical 'AND'.
+Boolean expression to filter rows from the table "all_card_updated_by_version".
+All fields are combined with a logical 'AND'.
 """
 input all_card_updated_by_version_bool_exp {
   _and: [all_card_updated_by_version_bool_exp!]
@@ -3500,7 +3255,8 @@ input all_card_updates {
   _delete_at_path: all_card_delete_at_path_input
 
   """
-  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  delete the array element with specified index (negative integers count from
+  the end). throws an error if top level container is not an array
   """
   _delete_elem: all_card_delete_elem_input
 
@@ -4159,7 +3915,8 @@ input arkhamdb_deck_delete_at_path_input {
 }
 
 """
-delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+delete the array element with specified index (negative integers count from the
+end). throws an error if top level container is not an array
 """
 input arkhamdb_deck_delete_elem_input {
   ignore_deck_limit_slots: Int
@@ -4487,7 +4244,8 @@ input arkhamdb_deck_updates {
   _delete_at_path: arkhamdb_deck_delete_at_path_input
 
   """
-  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  delete the array element with specified index (negative integers count from
+  the end). throws an error if top level container is not an array
   """
   _delete_elem: arkhamdb_deck_delete_elem_input
 
@@ -4852,6 +4610,21 @@ input bigint_comparison_exp {
   _lte: bigint
   _neq: bigint
   _nin: [bigint!]
+}
+
+"""
+Boolean expression to compare columns of type "Boolean". All fields are combined with logical 'AND'.
+"""
+input Boolean_comparison_exp {
+  _eq: Boolean
+  _gt: Boolean
+  _gte: Boolean
+  _in: [Boolean!]
+  _is_null: Boolean
+  _lt: Boolean
+  _lte: Boolean
+  _neq: Boolean
+  _nin: [Boolean!]
 }
 
 """
@@ -5917,7 +5690,8 @@ input campaign_deck_delete_at_path_input {
 }
 
 """
-delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+delete the array element with specified index (negative integers count from the
+end). throws an error if top level container is not an array
 """
 input campaign_deck_delete_elem_input {
   content: Int
@@ -6338,7 +6112,8 @@ input campaign_deck_updates {
   _delete_at_path: campaign_deck_delete_at_path_input
 
   """
-  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  delete the array element with specified index (negative integers count from
+  the end). throws an error if top level container is not an array
   """
   _delete_elem: campaign_deck_delete_elem_input
 
@@ -6433,7 +6208,8 @@ input campaign_delete_at_path_input {
 }
 
 """
-delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+delete the array element with specified index (negative integers count from the
+end). throws an error if top level container is not an array
 """
 input campaign_delete_elem_input {
   campaignNotes: Int
@@ -7743,7 +7519,8 @@ input campaign_updates {
   _delete_at_path: campaign_delete_at_path_input
 
   """
-  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  delete the array element with specified index (negative integers count from
+  the end). throws an error if top level container is not an array
   """
   _delete_elem: campaign_delete_elem_input
 
@@ -8501,7 +8278,8 @@ input card_delete_at_path_input {
 }
 
 """
-delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+delete the array element with specified index (negative integers count from the
+end). throws an error if top level container is not an array
 """
 input card_delete_elem_input {
   deck_options: Int
@@ -10913,7 +10691,8 @@ input card_updates {
   _delete_at_path: card_delete_at_path_input
 
   """
-  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  delete the array element with specified index (negative integers count from
+  the end). throws an error if top level container is not an array
   """
   _delete_elem: card_delete_elem_input
 
@@ -11180,7 +10959,8 @@ input chaos_bag_result_delete_at_path_input {
 }
 
 """
-delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+delete the array element with specified index (negative integers count from the
+end). throws an error if top level container is not an array
 """
 input chaos_bag_result_delete_elem_input {
   drawn: Int
@@ -11520,7 +11300,8 @@ input chaos_bag_result_updates {
   _delete_at_path: chaos_bag_result_delete_at_path_input
 
   """
-  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  delete the array element with specified index (negative integers count from
+  the end). throws an error if top level container is not an array
   """
   _delete_elem: chaos_bag_result_delete_elem_input
 
@@ -11911,7 +11692,8 @@ input conquest_card_delete_at_path_input {
 }
 
 """
-delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+delete the array element with specified index (negative integers count from the
+end). throws an error if top level container is not an array
 """
 input conquest_card_delete_elem_input {
   deck_rules: Int
@@ -13554,7 +13336,8 @@ input conquest_card_updates {
   _delete_at_path: conquest_card_delete_at_path_input
 
   """
-  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  delete the array element with specified index (negative integers count from
+  the end). throws an error if top level container is not an array
   """
   _delete_elem: conquest_card_delete_elem_input
 
@@ -14983,7 +14766,8 @@ input conquest_deck_delete_at_path_input {
 }
 
 """
-delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+delete the array element with specified index (negative integers count from the
+end). throws an error if top level container is not an array
 """
 input conquest_deck_delete_elem_input {
   meta: Int
@@ -15548,7 +15332,8 @@ input conquest_deck_updates {
   _delete_at_path: conquest_deck_delete_at_path_input
 
   """
-  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  delete the array element with specified index (negative integers count from
+  the end). throws an error if top level container is not an array
   """
   _delete_elem: conquest_deck_delete_elem_input
 
@@ -17713,6 +17498,35 @@ input conquest_users_updates {
   where: conquest_users_bool_exp!
 }
 
+input CreateCampaignInput {
+  campaignId: String!
+  guided: Boolean
+  linked: LinkedCampaignId
+}
+
+type CreateCampaignOutput {
+  campaignId: Int!
+  campaignIdA: Int
+  campaignIdB: Int
+}
+
+input CreateDeckInput {
+  description: String
+  ignoreDeckLimitSlots: jsonb!
+  investigator: String!
+  meta: jsonb
+  name: String!
+  problem: String
+  slots: jsonb!
+  tabooSetId: Int
+  tags: String
+}
+
+type CreateDeckOutput {
+  deck: arkhamdb_deck
+  deckId: String!
+}
+
 """ordering argument of a cursor"""
 enum cursor_ordering {
   """ascending ordering of the cursor"""
@@ -18277,6 +18091,45 @@ type cycle_var_samp_fields {
 """aggregate variance on columns"""
 type cycle_variance_fields {
   position: Float
+}
+
+type DeckId {
+  campaignId: Int!
+  id: Int!
+}
+
+input DeleteCampaignInput {
+  campaignId: String!
+  serverId: Int!
+}
+
+type DeleteCampaignOutput {
+  campaignId: Int!
+}
+
+input DeleteDeckInput {
+  deckId: Int!
+  deleteAllVersions: Boolean!
+}
+
+type DeleteDeckOutput {
+  success: Boolean!
+}
+
+enum EditAccessAction {
+  grant
+  revoke
+}
+
+input EditCampaignAccessInput {
+  action: EditAccessAction!
+  campaignId: String!
+  serverId: Int!
+  users: [String!]!
+}
+
+type EditCampaignAccessOutput {
+  campaignId: Int!
 }
 
 """
@@ -19205,6 +19058,20 @@ input friend_status_updates {
   where: friend_status_bool_exp!
 }
 
+enum FriendRequestAction {
+  request
+  revoke
+}
+
+input FriendRequestInput {
+  action: FriendRequestAction!
+  userId: String!
+}
+
+type FriendRequestOutput {
+  success: Boolean!
+}
+
 """
 columns and relationships of "full_card"
 """
@@ -19552,7 +19419,8 @@ input full_card_delete_at_path_input {
 }
 
 """
-delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+delete the array element with specified index (negative integers count from the
+end). throws an error if top level container is not an array
 """
 input full_card_delete_elem_input {
   deck_options: Int
@@ -20902,7 +20770,8 @@ input full_card_updates {
   _delete_at_path: full_card_delete_at_path_input
 
   """
-  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  delete the array element with specified index (negative integers count from
+  the end). throws an error if top level container is not an array
   """
   _delete_elem: full_card_delete_elem_input
 
@@ -21757,7 +21626,8 @@ input guide_input_delete_at_path_input {
 }
 
 """
-delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+delete the array element with specified index (negative integers count from the
+end). throws an error if top level container is not an array
 """
 input guide_input_delete_elem_input {
   payload: Int
@@ -22060,7 +21930,8 @@ input guide_input_updates {
   _delete_at_path: guide_input_delete_at_path_input
 
   """
-  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  delete the array element with specified index (negative integers count from
+  the end). throws an error if top level container is not an array
   """
   _delete_elem: guide_input_delete_elem_input
 
@@ -22122,6 +21993,21 @@ order by variance() on columns of table "guide_input"
 input guide_input_variance_order_by {
   campaign_id: order_by
   inserted_idx: order_by
+}
+
+"""
+Boolean expression to compare columns of type "Int". All fields are combined with logical 'AND'.
+"""
+input Int_comparison_exp {
+  _eq: Int
+  _gt: Int
+  _gte: Int
+  _in: [Int!]
+  _is_null: Boolean
+  _lt: Int
+  _lte: Int
+  _neq: Int
+  _nin: [Int!]
 }
 
 """
@@ -22331,7 +22217,8 @@ input investigator_data_delete_at_path_input {
 }
 
 """
-delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+delete the array element with specified index (negative integers count from the
+end). throws an error if top level container is not an array
 """
 input investigator_data_delete_elem_input {
   addedCards: Int
@@ -22789,7 +22676,8 @@ input investigator_data_updates {
   _delete_at_path: investigator_data_delete_at_path_input
 
   """
-  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  delete the array element with specified index (negative integers count from
+  the end). throws an error if top level container is not an array
   """
   _delete_elem: investigator_data_delete_elem_input
 
@@ -23233,6 +23121,11 @@ input latest_decks_variance_order_by {
   id: order_by
 }
 
+input LinkedCampaignId {
+  campaignIdA: String!
+  campaignIdB: String!
+}
+
 """
 columns and relationships of "local_decks"
 """
@@ -23554,6 +23447,29 @@ order by variance() on columns of table "local_decks"
 input local_decks_variance_order_by {
   campaign_id: order_by
   id: order_by
+}
+
+input LoginInput {
+  code: String!
+  redirectUri: String!
+  state: String!
+}
+
+type LoginOutput {
+  success: Boolean!
+}
+
+type LogoutOutput {
+  success: Boolean!
+}
+
+input MigrateLoginInput {
+  accessToken: String!
+  refreshToken: String!
+}
+
+type MigrateLoginOutput {
+  success: Boolean!
 }
 
 """mutation root"""
@@ -27220,6 +27136,31 @@ type mutation_root {
   ): rangers_deck
 
   """
+  execute VOLATILE function "rangers.remove_campaign" which returns "rangers.campaign"
+  """
+  rangers_remove_campaign(
+    """
+    input parameters for function "rangers_remove_campaign"
+    """
+    args: rangers_remove_campaign_args!
+
+    """distinct select on columns"""
+    distinct_on: [rangers_campaign_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [rangers_campaign_order_by!]
+
+    """filter the rows returned"""
+    where: rangers_campaign_bool_exp
+  ): [rangers_campaign!]!
+
+  """
   execute VOLATILE function "rangers.remove_campaign_deck" which returns "rangers.campaign"
   """
   rangers_remove_campaign_deck(
@@ -27295,6 +27236,31 @@ type mutation_root {
   ): [rangers_users!]!
 
   """
+  execute VOLATILE function "rangers.transfer_campaign" which returns "rangers.campaign"
+  """
+  rangers_transfer_campaign(
+    """
+    input parameters for function "rangers_transfer_campaign"
+    """
+    args: rangers_transfer_campaign_args!
+
+    """distinct select on columns"""
+    distinct_on: [rangers_campaign_select_column!]
+
+    """limit the number of rows returned"""
+    limit: Int
+
+    """skip the first n rows. Use only with order_by"""
+    offset: Int
+
+    """sort the rows by one or more columns"""
+    order_by: [rangers_campaign_order_by!]
+
+    """filter the rows returned"""
+    where: rangers_campaign_bool_exp
+  ): [rangers_campaign!]!
+
+  """
   execute VOLATILE function "rangers.update_friend_request" which returns "rangers.users"
   """
   rangers_update_friend_request(
@@ -27360,7 +27326,8 @@ type mutation_root {
     _delete_at_path: all_card_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: all_card_delete_elem_input
 
@@ -27395,7 +27362,8 @@ type mutation_root {
     _delete_at_path: all_card_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: all_card_delete_elem_input
 
@@ -27566,7 +27534,8 @@ type mutation_root {
     _delete_at_path: arkhamdb_deck_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: arkhamdb_deck_delete_elem_input
 
@@ -27601,7 +27570,8 @@ type mutation_root {
     _delete_at_path: arkhamdb_deck_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: arkhamdb_deck_delete_elem_input
 
@@ -27664,7 +27634,8 @@ type mutation_root {
     _delete_at_path: campaign_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: campaign_delete_elem_input
 
@@ -27733,7 +27704,8 @@ type mutation_root {
     _delete_at_path: campaign_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: campaign_delete_elem_input
 
@@ -27766,7 +27738,8 @@ type mutation_root {
     _delete_at_path: campaign_deck_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: campaign_deck_delete_elem_input
 
@@ -27801,7 +27774,8 @@ type mutation_root {
     _delete_at_path: campaign_deck_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: campaign_deck_delete_elem_input
 
@@ -27934,7 +27908,8 @@ type mutation_root {
     _delete_at_path: card_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: card_delete_elem_input
 
@@ -27969,7 +27944,8 @@ type mutation_root {
     _delete_at_path: card_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: card_delete_elem_input
 
@@ -28218,7 +28194,8 @@ type mutation_root {
     _delete_at_path: chaos_bag_result_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: chaos_bag_result_delete_elem_input
 
@@ -28253,7 +28230,8 @@ type mutation_root {
     _delete_at_path: chaos_bag_result_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: chaos_bag_result_delete_elem_input
 
@@ -28322,7 +28300,8 @@ type mutation_root {
     _delete_at_path: conquest_card_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: conquest_card_delete_elem_input
 
@@ -28357,7 +28336,8 @@ type mutation_root {
     _delete_at_path: conquest_card_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: conquest_card_delete_elem_input
 
@@ -28522,7 +28502,8 @@ type mutation_root {
     _delete_at_path: conquest_deck_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: conquest_deck_delete_elem_input
 
@@ -28557,7 +28538,8 @@ type mutation_root {
     _delete_at_path: conquest_deck_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: conquest_deck_delete_elem_input
 
@@ -29182,7 +29164,8 @@ type mutation_root {
     _delete_at_path: full_card_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: full_card_delete_elem_input
 
@@ -29217,7 +29200,8 @@ type mutation_root {
     _delete_at_path: full_card_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: full_card_delete_elem_input
 
@@ -29348,7 +29332,8 @@ type mutation_root {
     _delete_at_path: guide_input_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: guide_input_delete_elem_input
 
@@ -29383,7 +29368,8 @@ type mutation_root {
     _delete_at_path: guide_input_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: guide_input_delete_elem_input
 
@@ -29424,7 +29410,8 @@ type mutation_root {
     _delete_at_path: investigator_data_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: investigator_data_delete_elem_input
 
@@ -29459,7 +29446,8 @@ type mutation_root {
     _delete_at_path: investigator_data_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: investigator_data_delete_elem_input
 
@@ -29718,7 +29706,8 @@ type mutation_root {
     _delete_at_path: rangers_campaign_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: rangers_campaign_delete_elem_input
 
@@ -29787,7 +29776,8 @@ type mutation_root {
     _delete_at_path: rangers_campaign_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: rangers_campaign_delete_elem_input
 
@@ -29828,7 +29818,8 @@ type mutation_root {
     _delete_at_path: rangers_card_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: rangers_card_delete_elem_input
 
@@ -29863,7 +29854,8 @@ type mutation_root {
     _delete_at_path: rangers_card_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: rangers_card_delete_elem_input
 
@@ -29966,7 +29958,8 @@ type mutation_root {
     _delete_at_path: rangers_deck_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: rangers_deck_delete_elem_input
 
@@ -30001,7 +29994,8 @@ type mutation_root {
     _delete_at_path: rangers_deck_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: rangers_deck_delete_elem_input
 
@@ -30340,7 +30334,8 @@ type mutation_root {
     _delete_at_path: rangers_search_deck_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: rangers_search_deck_delete_elem_input
 
@@ -30816,7 +30811,8 @@ type mutation_root {
     _delete_at_path: rangers_user_settings_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: rangers_user_settings_delete_elem_input
 
@@ -30848,7 +30844,8 @@ type mutation_root {
     _delete_at_path: rangers_user_settings_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: rangers_user_settings_delete_elem_input
 
@@ -31083,7 +31080,8 @@ type mutation_root {
     _delete_at_path: user_settings_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: user_settings_delete_elem_input
 
@@ -31115,7 +31113,8 @@ type mutation_root {
     _delete_at_path: user_settings_delete_at_path_input
 
     """
-    delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+    delete the array element with specified index (negative integers count from
+    the end). throws an error if top level container is not an array
     """
     _delete_elem: user_settings_delete_elem_input
 
@@ -38212,10 +38211,14 @@ type rangers_campaign {
     path: String
   ): jsonb!
   name: String!
+  next_campaign_id: Int
   notes(
     """JSON select path"""
     path: String
   ): jsonb!
+
+  """An object relationship"""
+  previous_campaign: rangers_campaign
   removed(
     """JSON select path"""
     path: String
@@ -38490,6 +38493,7 @@ input rangers_campaign_append_input {
 type rangers_campaign_avg_fields {
   day: Float
   id: Float
+  next_campaign_id: Float
 }
 
 """
@@ -38516,7 +38520,9 @@ input rangers_campaign_bool_exp {
   latest_decks_aggregate: rangers_latest_deck_aggregate_bool_exp
   missions: jsonb_comparison_exp
   name: String_comparison_exp
+  next_campaign_id: Int_comparison_exp
   notes: jsonb_comparison_exp
+  previous_campaign: rangers_campaign_bool_exp
   removed: jsonb_comparison_exp
   rewards: jsonb_comparison_exp
   updated_at: timestamptz_comparison_exp
@@ -38547,7 +38553,8 @@ input rangers_campaign_delete_at_path_input {
 }
 
 """
-delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+delete the array element with specified index (negative integers count from the
+end). throws an error if top level container is not an array
 """
 input rangers_campaign_delete_elem_input {
   calendar: Int
@@ -38578,6 +38585,7 @@ input type for incrementing numeric columns in table "rangers.campaign"
 input rangers_campaign_inc_input {
   day: Int
   id: Int
+  next_campaign_id: Int
 }
 
 """
@@ -38599,7 +38607,9 @@ input rangers_campaign_insert_input {
   latest_decks: rangers_latest_deck_arr_rel_insert_input
   missions: jsonb
   name: String
+  next_campaign_id: Int
   notes: jsonb
+  previous_campaign: rangers_campaign_obj_rel_insert_input
   removed: jsonb
   rewards: jsonb
   updated_at: timestamptz
@@ -38615,6 +38625,7 @@ type rangers_campaign_max_fields {
   day: Int
   id: Int
   name: String
+  next_campaign_id: Int
   updated_at: timestamptz
   user_id: String
 }
@@ -38628,6 +38639,7 @@ type rangers_campaign_min_fields {
   day: Int
   id: Int
   name: String
+  next_campaign_id: Int
   updated_at: timestamptz
   user_id: String
 }
@@ -38679,7 +38691,9 @@ input rangers_campaign_order_by {
   latest_decks_aggregate: rangers_latest_deck_aggregate_order_by
   missions: order_by
   name: order_by
+  next_campaign_id: order_by
   notes: order_by
+  previous_campaign: rangers_campaign_order_by
   removed: order_by
   rewards: order_by
   updated_at: order_by
@@ -38743,6 +38757,9 @@ enum rangers_campaign_select_column {
   name
 
   """column name"""
+  next_campaign_id
+
+  """column name"""
   notes
 
   """column name"""
@@ -38774,6 +38791,7 @@ input rangers_campaign_set_input {
   id: Int
   missions: jsonb
   name: String
+  next_campaign_id: Int
   notes: jsonb
   removed: jsonb
   rewards: jsonb
@@ -38785,18 +38803,21 @@ input rangers_campaign_set_input {
 type rangers_campaign_stddev_fields {
   day: Float
   id: Float
+  next_campaign_id: Float
 }
 
 """aggregate stddev_pop on columns"""
 type rangers_campaign_stddev_pop_fields {
   day: Float
   id: Float
+  next_campaign_id: Float
 }
 
 """aggregate stddev_samp on columns"""
 type rangers_campaign_stddev_samp_fields {
   day: Float
   id: Float
+  next_campaign_id: Float
 }
 
 """
@@ -38824,6 +38845,7 @@ input rangers_campaign_stream_cursor_value_input {
   id: Int
   missions: jsonb
   name: String
+  next_campaign_id: Int
   notes: jsonb
   removed: jsonb
   rewards: jsonb
@@ -38835,6 +38857,7 @@ input rangers_campaign_stream_cursor_value_input {
 type rangers_campaign_sum_fields {
   day: Int
   id: Int
+  next_campaign_id: Int
 }
 
 """
@@ -38878,6 +38901,9 @@ enum rangers_campaign_update_column {
   name
 
   """column name"""
+  next_campaign_id
+
+  """column name"""
   notes
 
   """column name"""
@@ -38903,7 +38929,8 @@ input rangers_campaign_updates {
   _delete_at_path: rangers_campaign_delete_at_path_input
 
   """
-  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  delete the array element with specified index (negative integers count from
+  the end). throws an error if top level container is not an array
   """
   _delete_elem: rangers_campaign_delete_elem_input
 
@@ -38929,18 +38956,21 @@ input rangers_campaign_updates {
 type rangers_campaign_var_pop_fields {
   day: Float
   id: Float
+  next_campaign_id: Float
 }
 
 """aggregate var_samp on columns"""
 type rangers_campaign_var_samp_fields {
   day: Float
   id: Float
+  next_campaign_id: Float
 }
 
 """aggregate variance on columns"""
 type rangers_campaign_variance_fields {
   day: Float
   id: Float
+  next_campaign_id: Float
 }
 
 """
@@ -39151,7 +39181,8 @@ input rangers_card_delete_at_path_input {
 }
 
 """
-delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+delete the array element with specified index (negative integers count from the
+end). throws an error if top level container is not an array
 """
 input rangers_card_delete_elem_input {
   locations: Int
@@ -41230,7 +41261,8 @@ input rangers_card_updates {
   _delete_at_path: rangers_card_delete_at_path_input
 
   """
-  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  delete the array element with specified index (negative integers count from
+  the end). throws an error if top level container is not an array
   """
   _delete_elem: rangers_card_delete_elem_input
 
@@ -42350,7 +42382,8 @@ input rangers_deck_delete_at_path_input {
 }
 
 """
-delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+delete the array element with specified index (negative integers count from the
+end). throws an error if top level container is not an array
 """
 input rangers_deck_delete_elem_input {
   extra_slots: Int
@@ -43549,7 +43582,8 @@ input rangers_deck_updates {
   _delete_at_path: rangers_deck_delete_at_path_input
 
   """
-  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  delete the array element with specified index (negative integers count from
+  the end). throws an error if top level container is not an array
   """
   _delete_elem: rangers_deck_delete_elem_input
 
@@ -45330,6 +45364,10 @@ input rangers_publish_deck_args {
   deck_id: Int
 }
 
+input rangers_remove_campaign_args {
+  campaign_id: Int
+}
+
 input rangers_remove_campaign_deck_args {
   deck_id: Int
   old_campaign_id: Int
@@ -45504,7 +45542,8 @@ input rangers_search_deck_delete_at_path_input {
 }
 
 """
-delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+delete the array element with specified index (negative integers count from the
+end). throws an error if top level container is not an array
 """
 input rangers_search_deck_delete_elem_input {
   meta: Int
@@ -45892,7 +45931,8 @@ input rangers_search_deck_updates {
   _delete_at_path: rangers_search_deck_delete_at_path_input
 
   """
-  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  delete the array element with specified index (negative integers count from
+  the end). throws an error if top level container is not an array
   """
   _delete_elem: rangers_search_deck_delete_elem_input
 
@@ -48181,7 +48221,8 @@ type rangers_taboo_set_localized_aggregate_fields {
 }
 
 """
-Boolean expression to filter rows from the table "rangers.taboo_set_localized". All fields are combined with a logical 'AND'.
+Boolean expression to filter rows from the table "rangers.taboo_set_localized".
+All fields are combined with a logical 'AND'.
 """
 input rangers_taboo_set_localized_bool_exp {
   _and: [rangers_taboo_set_localized_bool_exp!]
@@ -48960,6 +49001,12 @@ input rangers_token_updates {
 
   """filter the rows which have to be updated"""
   where: rangers_token_bool_exp!
+}
+
+input rangers_transfer_campaign_args {
+  current_location: String
+  cycle_code: String
+  existing_campaign_id: Int
 }
 
 """
@@ -49932,7 +49979,8 @@ input rangers_user_received_friend_requests_arr_rel_insert_input {
 }
 
 """
-Boolean expression to filter rows from the table "rangers.user_received_friend_requests". All fields are combined with a logical 'AND'.
+Boolean expression to filter rows from the table
+"rangers.user_received_friend_requests". All fields are combined with a logical 'AND'.
 """
 input rangers_user_received_friend_requests_bool_exp {
   _and: [rangers_user_received_friend_requests_bool_exp!]
@@ -50267,7 +50315,8 @@ input rangers_user_sent_friend_requests_arr_rel_insert_input {
 }
 
 """
-Boolean expression to filter rows from the table "rangers.user_sent_friend_requests". All fields are combined with a logical 'AND'.
+Boolean expression to filter rows from the table
+"rangers.user_sent_friend_requests". All fields are combined with a logical 'AND'.
 """
 input rangers_user_sent_friend_requests_bool_exp {
   _and: [rangers_user_sent_friend_requests_bool_exp!]
@@ -50457,7 +50506,8 @@ input rangers_user_settings_delete_at_path_input {
 }
 
 """
-delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+delete the array element with specified index (negative integers count from the
+end). throws an error if top level container is not an array
 """
 input rangers_user_settings_delete_elem_input {
   pack_collection: Int
@@ -50611,7 +50661,8 @@ input rangers_user_settings_updates {
   _delete_at_path: rangers_user_settings_delete_at_path_input
 
   """
-  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  delete the array element with specified index (negative integers count from
+  the end). throws an error if top level container is not an array
   """
   _delete_elem: rangers_user_settings_delete_elem_input
 
@@ -51014,6 +51065,67 @@ input rangers_users_updates {
 
   """filter the rows which have to be updated"""
   where: rangers_users_bool_exp!
+}
+
+input RefreshDecksInput {
+  force: Boolean!
+}
+
+type RefreshDecksOutput {
+  updated: Boolean!
+}
+
+"""
+Boolean expression to compare columns of type "String". All fields are combined with logical 'AND'.
+"""
+input String_comparison_exp {
+  _eq: String
+  _gt: String
+  _gte: String
+
+  """does the column match the given case-insensitive pattern"""
+  _ilike: String
+  _in: [String!]
+
+  """
+  does the column match the given POSIX regular expression, case insensitive
+  """
+  _iregex: String
+  _is_null: Boolean
+
+  """does the column match the given pattern"""
+  _like: String
+  _lt: String
+  _lte: String
+  _neq: String
+
+  """does the column NOT match the given case-insensitive pattern"""
+  _nilike: String
+  _nin: [String!]
+
+  """
+  does the column NOT match the given POSIX regular expression, case insensitive
+  """
+  _niregex: String
+
+  """does the column NOT match the given pattern"""
+  _nlike: String
+
+  """
+  does the column NOT match the given POSIX regular expression, case sensitive
+  """
+  _nregex: String
+
+  """does the column NOT match the given SQL regular expression"""
+  _nsimilar: String
+
+  """
+  does the column match the given POSIX regular expression, case sensitive
+  """
+  _regex: String
+
+  """does the column match the given SQL regular expression"""
+  _similar: String
 }
 
 type subscription_root {
@@ -58425,6 +58537,37 @@ input timestamptz_comparison_exp {
   _nin: [timestamptz!]
 }
 
+input UpdateHandleInput {
+  handle: String!
+  userId: String
+}
+
+type UpdateHandleOutput {
+  success: Boolean!
+  user: users
+  userId: String!
+}
+
+input UpgradeDeckInput {
+  deckId: Int!
+  exiles: jsonb
+  xp: Int!
+}
+
+type UpgradeDeckOutput {
+  deckId: Int!
+  upgradedDeckId: Int!
+}
+
+input UploadLocalCampaignDeckInput {
+  arkhamDbId: Int!
+  localDeckId: String!
+}
+
+type UploadLocalCampaignDeckOutput {
+  deckIds: [DeckId!]!
+}
+
 """
 columns and relationships of "user_campaigns"
 """
@@ -59334,7 +59477,8 @@ input user_received_friend_requests_arr_rel_insert_input {
 }
 
 """
-Boolean expression to filter rows from the table "user_received_friend_requests". All fields are combined with a logical 'AND'.
+Boolean expression to filter rows from the table
+"user_received_friend_requests". All fields are combined with a logical 'AND'.
 """
 input user_received_friend_requests_bool_exp {
   _and: [user_received_friend_requests_bool_exp!]
@@ -59727,7 +59871,8 @@ input user_settings_delete_at_path_input {
 }
 
 """
-delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+delete the array element with specified index (negative integers count from the
+end). throws an error if top level container is not an array
 """
 input user_settings_delete_elem_input {
   in_collection: Int
@@ -59947,7 +60092,8 @@ input user_settings_updates {
   _delete_at_path: user_settings_delete_at_path_input
 
   """
-  delete the array element with specified index (negative integers count from the end). throws an error if top level container is not an array
+  delete the array element with specified index (negative integers count from
+  the end). throws an error if top level container is not an array
   """
   _delete_elem: user_settings_delete_elem_input
 
@@ -60492,6 +60638,21 @@ input users_updates {
 
   """filter the rows which have to be updated"""
   where: users_bool_exp!
+}
+
+type UserSearchResult {
+  handle: String!
+  id: String!
+}
+
+input UsersSearchInput {
+  continueToken: String
+  search: String!
+}
+
+type UsersSearchOutput {
+  hasMore: String!
+  users: [UserSearchResult!]!
 }
 
 scalar uuid

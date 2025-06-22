@@ -30,6 +30,7 @@ import com.rangerscards.ui.theme.Jost
 fun DataPicker(
     onClick: () -> Unit,
     @StringRes type: Int,
+    isRequired: Boolean = true,
     text: @Composable (RowScope.() -> Unit),
 ) {
     Surface(
@@ -49,12 +50,12 @@ fun DataPicker(
                 Text(
                     text = buildAnnotatedString {
                         append(stringResource(type))
-                        withStyle(
+                        if (isRequired) withStyle(
                             style = SpanStyle(color = CustomTheme.colors.warn)
                         ) {
-                            append("* ")
+                            append("*")
                         }
-                        append("- ")
+                        append(" - ")
                     },
                     color = CustomTheme.colors.d30,
                     fontFamily = Jost,
