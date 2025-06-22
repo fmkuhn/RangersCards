@@ -57,7 +57,7 @@ fun FullDeckStatsItem(
                         tint = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
                         modifier = Modifier.size(28.dp)
                             .background(color = color, CustomTheme.shapes.small)
-                            .clickable { if (stat in 1..2) onStatChange(index, stat + 1) }
+                            .clickable { if (stat in 1..3) onStatChange(index, stat + 1) }
                     )
                     Icon(
                         painterResource(R.drawable.arrow_drop_down_32dp),
@@ -65,7 +65,7 @@ fun FullDeckStatsItem(
                         tint = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
                         modifier = Modifier.size(28.dp)
                             .background(color = color, CustomTheme.shapes.small)
-                            .clickable { if (stat in 2..3) onStatChange(index, stat - 1) }
+                            .clickable { if (stat in 2..4) onStatChange(index, stat - 1) }
                     )
                 }
             }

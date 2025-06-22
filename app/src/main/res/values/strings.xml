@@ -386,6 +386,7 @@
     <string name="diagnostics_clear_apollo_cache_cleared">Network cache is cleared.</string>
 
     //loa campaign
+    <string name="general_set_the_arcology">The Arcology</string>
     <string name="loa_expansion">Legacy of Ancestors</string>
     <string name="ancient_ruins">Ancient Ruins</string>
     <string name="flooded_ruins">Flooded Ruins</string>

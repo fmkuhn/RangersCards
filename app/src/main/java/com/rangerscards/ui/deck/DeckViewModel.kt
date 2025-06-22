@@ -26,7 +26,6 @@ import com.rangerscards.data.database.repository.DeckRepository
 import com.rangerscards.ui.decks.CURRENT_TABOO_SET
 import com.rangerscards.ui.decks.getCurrentDateTime
 import com.rangerscards.ui.decks.toDeck
-import com.rangerscards.ui.settings.SUPPORTED_LANGUAGES
 import kotlinx.collections.immutable.PersistentMap
 import kotlinx.collections.immutable.persistentMapOf
 import kotlinx.collections.immutable.toPersistentMap
@@ -54,7 +53,6 @@ import kotlinx.serialization.json.jsonArray
 import kotlinx.serialization.json.jsonObject
 import kotlinx.serialization.json.jsonPrimitive
 import kotlinx.serialization.json.put
-import java.util.Locale
 import kotlin.uuid.ExperimentalUuidApi
 import kotlin.uuid.Uuid
 
@@ -274,12 +272,7 @@ class DeckViewModel(
             "FIT" to statsList[2],
             "FOC" to statsList[3],
         )
-        val checkStats = mutableListOf(0, 0)
-        stats.values.forEach {
-            if (it == 1) checkStats[0] += 1
-            if (it == 3) checkStats[1] += 1
-        }
-        if (checkStats[0] != 1 || checkStats[1] != 1) problems.add("invalid_aspects")
+        if (stats.values.sum() != 8 || stats.values.none { it == 1 }) problems.add("invalid_aspects")
         var splashCount = 0
         var splashResId: Int? = null
         val deckSize = cards.associateWith { updatableValues.value!!.slots[it.code] }

@@ -314,7 +314,6 @@ fun com.rangerscards.fragment.Campaign.toCampaign(uploaded: Boolean): Campaign {
         access = buildJsonObject { campaign.access.forEach {
             put(it.user!!.id, it.user.userInfo.handle)
         } },
-        //TODO:Change after graphql scheme
         nextCampaignId = this.next_campaign_id?.toString(),
         previousCampaignId = this.previous_campaign?.id?.toString()
     )

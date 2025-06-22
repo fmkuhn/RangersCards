@@ -20,19 +20,39 @@ object CampaignMaps {
         )
     }
 
-    val generalSetsMap by lazy {
-        mapOf(
-            "general" to MapLocation(
-                id = "general",
-                nameResId = R.string.general_set_general,
-                iconResId = R.drawable.general,
-            ),
-            "the_valley" to MapLocation(
-                id = "the_valley",
-                nameResId = R.string.general_set_the_valley,
-                iconResId = R.drawable.the_valley
+    fun generalSetsMap(cycleId: String): Map<String, MapLocation> {
+        return when(cycleId) {
+            "core" -> mapOf(
+                "general" to MapLocation(
+                    id = "general",
+                    nameResId = R.string.general_set_general,
+                    iconResId = R.drawable.general,
+                ),
+                "the_valley" to MapLocation(
+                    id = "the_valley",
+                    nameResId = R.string.general_set_the_valley,
+                    iconResId = R.drawable.the_valley
+                )
             )
-        )
+            "loa" -> mapOf(
+                "general" to MapLocation(
+                    id = "general",
+                    nameResId = R.string.general_set_general,
+                    iconResId = R.drawable.general,
+                ),
+                "the_valley" to MapLocation(
+                    id = "the_valley",
+                    nameResId = R.string.general_set_the_valley,
+                    iconResId = R.drawable.the_valley
+                ),
+                "the_arcology" to MapLocation(
+                    id = "the_arcology",
+                    nameResId = R.string.general_set_the_arcology,
+                    iconResId = R.drawable.broken_image_32dp //TODO:Change icon
+                )
+            )
+            else -> emptyMap()
+        }
     }
 
     private fun connections(cycleId: String): List<Connection> {
