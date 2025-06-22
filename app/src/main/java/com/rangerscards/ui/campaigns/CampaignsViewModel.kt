@@ -11,6 +11,7 @@ import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.google.firebase.auth.FirebaseUser
 import com.rangerscards.CreateCampaignMutation
+import com.rangerscards.GetCampaignQuery
 import com.rangerscards.GetMyCampaignsQuery
 import com.rangerscards.TransferCampaignMutation
 import com.rangerscards.data.database.campaign.Campaign
@@ -186,7 +187,16 @@ class CampaignsViewModel(
                     )
                 ).addHttpHeader("Authorization", "Bearer $token").execute()
                 if (newCampaign.data != null) {
-                    campaignsRepository.upsertCampaigns(newCampaign.data!!.campaign.map { it.campaign.toCampaign(true) })
+                    val oldCampaign = apolloClient.query(
+                        GetCampaignQuery(campaignId = transferCampaignId.toInt())
+                    ).addHttpHeader("Authorization", "Bearer $token")
+                        .fetchPolicy(FetchPolicy.NetworkOnly).execute()
+                    campaignsRepository.upsertCampaigns(
+                        listOf(
+                            newCampaign.data!!.campaign[0].campaign.toCampaign(true),
+                            oldCampaign.data!!.campaign!!.campaign.toCampaign(true)
+                        )
+                    )
                     _campaignIdToOpen.update { newCampaign.data!!.campaign.first().campaign.id.toString() }
                 }
             } else {

@@ -596,6 +596,13 @@ class CampaignViewModel(
                 .addHttpHeader("Authorization", "Bearer $token")
                 .fetchPolicy(FetchPolicy.NetworkOnly).execute()
             if (response.data != null) deckRepository.upsertDecks(response.data!!.decks.toDecks(true))
+            if (campaign.previousCampaignId != null) {
+                val oldCampaign = apolloClient.query(
+                    GetCampaignQuery(campaignId = campaign.previousCampaignId.toInt())
+                ).addHttpHeader("Authorization", "Bearer $token")
+                    .fetchPolicy(FetchPolicy.NetworkOnly).execute()
+                campaignRepository.updateCampaign(oldCampaign.data!!.campaign!!.campaign.toCampaign(true))
+            }
             campaignRepository.deleteCampaign(campaign.id)
         } else {
             if (campaign.previousCampaignId != null) {
