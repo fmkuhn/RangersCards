@@ -20,38 +20,31 @@ object CampaignMaps {
         )
     }
 
-    fun generalSetsMap(cycleId: String): Map<String, MapLocation> {
-        return when(cycleId) {
-            "core" -> mapOf(
+    fun generalSetsMap(cycleId: String = ""): Map<String, MapLocation> {
+        val generalSetsMap by lazy {
+            mapOf(
                 "general" to MapLocation(
                     id = "general",
                     nameResId = R.string.general_set_general,
                     iconResId = R.drawable.general,
+                    cycles = listOf("core", "loa")
                 ),
                 "the_valley" to MapLocation(
                     id = "the_valley",
                     nameResId = R.string.general_set_the_valley,
-                    iconResId = R.drawable.the_valley
-                )
-            )
-            "loa" -> mapOf(
-                "general" to MapLocation(
-                    id = "general",
-                    nameResId = R.string.general_set_general,
-                    iconResId = R.drawable.general,
-                ),
-                "the_valley" to MapLocation(
-                    id = "the_valley",
-                    nameResId = R.string.general_set_the_valley,
-                    iconResId = R.drawable.the_valley
+                    iconResId = R.drawable.the_valley,
+                    cycles = listOf("core", "loa")
                 ),
                 "the_arcology" to MapLocation(
                     id = "the_arcology",
                     nameResId = R.string.general_set_the_arcology,
-                    iconResId = R.drawable.broken_image_32dp //TODO:Change icon
+                    iconResId = R.drawable.the_arcology,
+                    cycles = listOf("loa")
                 )
             )
-            else -> emptyMap()
+        }
+        return if (cycleId.isEmpty()) generalSetsMap else generalSetsMap.filterValues {
+            mapLocation -> mapLocation.cycles.contains(cycleId)
         }
     }
 
@@ -172,82 +165,73 @@ object CampaignMaps {
     }
 
     private fun paths(cycleId: String): List<MapLocation> {
-        return when(cycleId) {
-            "core" -> listOf(
-                MapLocation("atrox_mountain", R.string.atrox_mountain, R.drawable.atrox_mountain),
-                MapLocation("northern_outpost", R.string.northern_outpost, R.drawable.northern_outpost),
-                MapLocation("lone_tree_station", R.string.lone_tree_station, R.drawable.lone_tree_station),
-                MapLocation("white_sky", R.string.white_sky, R.drawable.white_sky),
-                MapLocation("golden_shore", R.string.golden_shore, R.drawable.golden_shore),
-                MapLocation("mount_nim", R.string.mount_nim, R.drawable.mount_nim),
-                MapLocation("ancestors_grove", R.string.ancestors_grove, R.drawable.ancestors_grove),
-                MapLocation("kobos_market", R.string.kobos_market, R.drawable.kobos_market),
-                MapLocation("boulder_field", R.string.boulder_field, R.drawable.boulder_field),
-                MapLocation("the_fractured_wall", R.string.the_fractured_wall, R.drawable.the_fractured_wall),
-                MapLocation("the_philosophers_garden", R.string.the_philosophers_garden, R.drawable.the_philosophers_garden),
-                MapLocation("the_high_basin", R.string.the_high_basin, R.drawable.the_high_basin),
-                MapLocation("branch", R.string.branch, R.drawable.branch),
-                MapLocation("spire", R.string.spire, R.drawable.spire),
-                MapLocation("crossroads_station", R.string.crossroads_station, R.drawable.crossroads_station),
-                MapLocation("the_furrow", R.string.the_furrow, R.drawable.the_furrow),
-                MapLocation("biologists_outpost", R.string.biologists_outpost, R.drawable.biologists_outpost),
-                MapLocation("terravore", R.string.terravore, R.drawable.terravore),
-                MapLocation("mound_of_the_navigator", R.string.mound_of_the_navigator, R.drawable.mound_of_the_navigator),
-                MapLocation("the_greenbridge", R.string.the_greenbridge, R.drawable.the_greenbridge),
-                MapLocation("michaels_bog", R.string.michaels_bog, R.drawable.michaels_bog),
-                MapLocation("the_cypress_citadel", R.string.the_cypress_citadel, R.drawable.the_cypress_citadel),
-                MapLocation("marsh_of_rebirth", R.string.marsh_of_rebirth, R.drawable.marsh_of_rebirth),
-                MapLocation("sunken_outpost", R.string.sunken_outpost, R.drawable.sunken_outpost),
-                MapLocation("the_frowning_gate", R.string.the_frowning_gate, R.drawable.the_frowning_gate),
-                MapLocation("bowl_of_the_sun", R.string.bowl_of_the_sun, R.drawable.bowl_of_the_sun),
-                MapLocation("the_alluvial_ruins", R.string.the_alluvial_ruins, R.drawable.the_alluvial_ruins),
-                MapLocation("the_tumbledown", R.string.the_tumbledown, R.drawable.the_tumbledown),
-                MapLocation("watchers_rock", R.string.watchers_rock, R.drawable.watchers_rock),
-                MapLocation("archeological_outpost", R.string.archeological_outpost, R.drawable.archeological_outpost),
-                MapLocation("rings_of_the_moon", R.string.rings_of_the_moon, R.drawable.rings_of_the_moon),
-                MapLocation("the_concordant_ziggurats", R.string.the_concordant_ziggurats, R.drawable.the_concordant_ziggurats),
-                MapLocation("meadow", R.string.meadow, R.drawable.meadow),
-                MapLocation("stoneweaver_bridge", R.string.stoneweaver_bridge, R.drawable.stoneweaver_bridge),
-                MapLocation("greenbriar_knoll", R.string.greenbriar_knoll, R.drawable.greenbriar_knoll),
-                MapLocation("the_plummet", R.string.the_plummet, R.drawable.the_plummet),
-                MapLocation("headwaters_station", R.string.headwaters_station, R.drawable.headwaters_station)
+        val locationsList by lazy {
+            listOf(
+                MapLocation("atrox_mountain",           R.string.atrox_mountain,            R.drawable.atrox_mountain),
+                MapLocation("northern_outpost",         R.string.northern_outpost,          R.drawable.northern_outpost),
+                MapLocation("white_sky",                R.string.white_sky,                 R.drawable.white_sky),
+                MapLocation("golden_shore",             R.string.golden_shore,              R.drawable.golden_shore),
+                MapLocation("mount_nim",                R.string.mount_nim,                 R.drawable.mount_nim),
+                MapLocation("the_fractured_wall",       R.string.the_fractured_wall,        R.drawable.the_fractured_wall),
+                MapLocation("the_philosophers_garden",  R.string.the_philosophers_garden,   R.drawable.the_philosophers_garden),
+                MapLocation("the_high_basin",           R.string.the_high_basin,            R.drawable.the_high_basin),
+                MapLocation("branch",                   R.string.branch,                    R.drawable.branch),
+                MapLocation("crossroads_station",       R.string.crossroads_station,        R.drawable.crossroads_station),
+                MapLocation("the_furrow",               R.string.the_furrow,                R.drawable.the_furrow),
+                MapLocation("biologists_outpost",       R.string.biologists_outpost,        R.drawable.biologists_outpost),
+                MapLocation("terravore",                R.string.terravore,                 R.drawable.terravore),
+                MapLocation("mound_of_the_navigator",   R.string.mound_of_the_navigator,    R.drawable.mound_of_the_navigator),
+                MapLocation("the_greenbridge",          R.string.the_greenbridge,           R.drawable.the_greenbridge),
+                MapLocation("michaels_bog",             R.string.michaels_bog,              R.drawable.michaels_bog),
+                MapLocation("the_cypress_citadel",      R.string.the_cypress_citadel,       R.drawable.the_cypress_citadel),
+                MapLocation("marsh_of_rebirth",         R.string.marsh_of_rebirth,          R.drawable.marsh_of_rebirth),
+                MapLocation("sunken_outpost",           R.string.sunken_outpost,            R.drawable.sunken_outpost),
+                MapLocation("the_frowning_gate",        R.string.the_frowning_gate,         R.drawable.the_frowning_gate),
+                MapLocation("bowl_of_the_sun",          R.string.bowl_of_the_sun,           R.drawable.bowl_of_the_sun),
+                MapLocation("the_alluvial_ruins",       R.string.the_alluvial_ruins,        R.drawable.the_alluvial_ruins),
+                MapLocation("the_tumbledown",           R.string.the_tumbledown,            R.drawable.the_tumbledown),
+                MapLocation("watchers_rock",            R.string.watchers_rock,             R.drawable.watchers_rock),
+                MapLocation("archeological_outpost",    R.string.archeological_outpost,     R.drawable.archeological_outpost),
+                MapLocation("rings_of_the_moon",        R.string.rings_of_the_moon,         R.drawable.rings_of_the_moon),
+                MapLocation("meadow",                   R.string.meadow,                    R.drawable.meadow),
+                MapLocation("stoneweaver_bridge",       R.string.stoneweaver_bridge,        R.drawable.stoneweaver_bridge),
+                MapLocation("lone_tree_station",        R.string.lone_tree_station,         R.drawable.lone_tree_station,         cycles = listOf("core","loa")),
+                MapLocation("ancestors_grove",          R.string.ancestors_grove,           R.drawable.ancestors_grove,           cycles = listOf("core","loa")),
+                MapLocation("kobos_market",             R.string.kobos_market,              R.drawable.kobos_market,              cycles = listOf("core","loa")),
+                MapLocation("boulder_field",            R.string.boulder_field,             R.drawable.boulder_field,             cycles = listOf("core","loa")),
+                MapLocation("spire",                    R.string.spire,                     R.drawable.spire,                     cycles = listOf("core","loa")),
+                MapLocation("the_concordant_ziggurats", R.string.the_concordant_ziggurats,  R.drawable.the_concordant_ziggurats,  cycles = listOf("core","loa")),
+                MapLocation("greenbriar_knoll",         R.string.greenbriar_knoll,          R.drawable.greenbriar_knoll,          cycles = listOf("core","loa")),
+                MapLocation("the_plummet",              R.string.the_plummet,               R.drawable.the_plummet,               cycles = listOf("core","loa")),
+                MapLocation("headwaters_station",       R.string.headwaters_station,        R.drawable.headwaters_station,        cycles = listOf("core","loa")),
+                MapLocation("the_chimney",              R.string.the_chimney,               R.drawable.the_chimney,               cycles = listOf("loa")),
+                MapLocation("oasis_of_sunlight",        R.string.oasis_of_sunlight,         R.drawable.oasis_of_sunlight,         cycles = listOf("loa")),
+                MapLocation("scuttler_network",         R.string.scuttler_network,          R.drawable.scuttler_network,          cycles = listOf("loa")),
+                MapLocation("drenching_chamber",        R.string.drenching_chamber,         R.drawable.drenching_chamber,         cycles = listOf("loa")),
+                MapLocation("desert_of_endless_night",  R.string.desert_of_endless_night,   R.drawable.desert_of_endless_night,   cycles = listOf("loa")),
+                MapLocation("orlins_vault",             R.string.orlins_vault,              R.drawable.orlins_vault,              cycles = listOf("loa")),
+                MapLocation("severed_artery",           R.string.severed_artery,            R.drawable.artery,                    cycles = listOf("loa")),
+                MapLocation("branching_artery",         R.string.branching_artery,          R.drawable.artery,                    cycles = listOf("loa")),
+                MapLocation("terminal_artery",          R.string.terminal_artery,           R.drawable.artery,                    cycles = listOf("loa")),
+                MapLocation("silent_dormitories",       R.string.silent_dormitories,        R.drawable.silent_dormitories,        cycles = listOf("loa")),
+                MapLocation("cerulean_curtain",         R.string.cerulean_curtain,          R.drawable.cerulean_curtain,          cycles = listOf("loa")),
+                MapLocation("mycelial_conclave",        R.string.mycelial_conclave,         R.drawable.mycelial_conclave,         cycles = listOf("loa")),
+                MapLocation("carbonforged_maze",        R.string.carbonforged_maze,         R.drawable.carbonforged_maze,         cycles = listOf("loa")),
+                MapLocation("the_cistern",              R.string.the_cistern,               R.drawable.the_cistern,               cycles = listOf("loa")),
+                MapLocation("inverted_forest",          R.string.inverted_forest,           R.drawable.inverted_forest,           cycles = listOf("loa")),
+                MapLocation("the_verdant_sphere",       R.string.the_verdant_sphere,        R.drawable.the_verdant_sphere,        cycles = listOf("loa")),
+                MapLocation("the_rootway",              R.string.the_rootway,               R.drawable.the_rootway,               cycles = listOf("loa")),
+                MapLocation("arboretum_of_memory",      R.string.arboretum_of_memory,       R.drawable.arboretum_of_memory,       cycles = listOf("loa")),
+                MapLocation("talpids_squeeze",          R.string.talpids_squeeze,           R.drawable.talpids_squeeze,           cycles = listOf("loa")),
+                MapLocation("the_cage",                 R.string.the_cage,                  R.drawable.the_cage,                  cycles = listOf("loa")),
             )
-            "loa" -> listOf(
-                MapLocation("lone_tree_station", R.string.lone_tree_station, R.drawable.lone_tree_station),
-                MapLocation("ancestors_grove", R.string.ancestors_grove, R.drawable.ancestors_grove),
-                MapLocation("kobos_market", R.string.kobos_market, R.drawable.kobos_market),
-                MapLocation("boulder_field", R.string.boulder_field, R.drawable.boulder_field),
-                MapLocation("spire", R.string.spire, R.drawable.spire),
-                MapLocation("the_concordant_ziggurats", R.string.the_concordant_ziggurats, R.drawable.the_concordant_ziggurats),
-                MapLocation("greenbriar_knoll", R.string.greenbriar_knoll, R.drawable.greenbriar_knoll),
-                MapLocation("the_plummet", R.string.the_plummet, R.drawable.the_plummet),
-                MapLocation("headwaters_station", R.string.headwaters_station, R.drawable.headwaters_station),
-                MapLocation("the_chimney", R.string.the_chimney, R.drawable.the_chimney),
-                MapLocation("oasis_of_sunlight", R.string.oasis_of_sunlight, R.drawable.oasis_of_sunlight),
-                MapLocation("scuttler_network", R.string.scuttler_network, R.drawable.scuttler_network),
-                MapLocation("drenching_chamber", R.string.drenching_chamber, R.drawable.drenching_chamber),
-                MapLocation("desert_of_endless_night", R.string.desert_of_endless_night, R.drawable.desert_of_endless_night),
-                MapLocation("orlins_vault", R.string.orlins_vault, R.drawable.orlins_vault),
-                MapLocation("severed_artery", R.string.severed_artery, R.drawable.artery),
-                MapLocation("branching_artery", R.string.branching_artery, R.drawable.artery),
-                MapLocation("terminal_artery", R.string.terminal_artery, R.drawable.artery),
-                MapLocation("silent_dormitories", R.string.silent_dormitories, R.drawable.silent_dormitories),
-                MapLocation("cerulean_curtain", R.string.cerulean_curtain, R.drawable.cerulean_curtain),
-                MapLocation("mycelial_conclave", R.string.mycelial_conclave, R.drawable.mycelial_conclave),
-                MapLocation("carbonforged_maze", R.string.carbonforged_maze, R.drawable.carbonforged_maze),
-                MapLocation("the_cistern", R.string.the_cistern, R.drawable.the_cistern),
-                MapLocation("inverted_forest", R.string.inverted_forest, R.drawable.inverted_forest),
-                MapLocation("the_verdant_sphere", R.string.the_verdant_sphere, R.drawable.the_verdant_sphere),
-                MapLocation("the_rootway", R.string.the_rootway, R.drawable.the_rootway),
-                MapLocation("arboretum_of_memory", R.string.arboretum_of_memory, R.drawable.arboretum_of_memory),
-                MapLocation("talpids_squeeze", R.string.talpids_squeeze, R.drawable.talpids_squeeze),
-                MapLocation("the_cage", R.string.the_cage, R.drawable.the_cage)
-            )
-            else -> emptyList()
+        }
+        return if (cycleId.isEmpty()) locationsList else locationsList.filter {
+            mapLocation -> mapLocation.cycles.contains(cycleId)
         }
     }
 
-    fun getMapLocations(needConnections: Boolean, cycleId: String): Map<String, MapLocation> {
+    fun getMapLocations(needConnections: Boolean, cycleId: String = ""): Map<String, MapLocation> {
         val results = paths(cycleId).associateBy { it.id }
         if (needConnections) connections(cycleId).forEach { connection ->
             val locA = results[connection.locA]
@@ -405,7 +389,8 @@ data class MapLocation(
     val id: String,
     @StringRes val nameResId: Int,
     @DrawableRes val iconResId: Int,
-    val connections: MutableList<MapConnection> = mutableListOf()
+    val connections: MutableList<MapConnection> = mutableListOf(),
+    val cycles: List<String> = listOf("core")
 )
 
 data class Weather(
