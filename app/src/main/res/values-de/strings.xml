@@ -222,6 +222,7 @@
     <string name="create_campaign_button">Kampagne erstellen</string>
     <string name="campaign">Kampagne</string>
     <string name="campaign_placeholder">Kampagne wählen</string>
+    <string name="transfer_campaign">Kampagne übertragen</string>
     <string name="core_cycle">Grundspiel</string>
     <string name="general_set_general">Standard</string>
     <string name="general_set_the_valley">Das Tal</string>
