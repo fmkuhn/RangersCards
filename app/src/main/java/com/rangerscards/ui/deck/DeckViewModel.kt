@@ -587,8 +587,10 @@ class DeckViewModel(
             val newUuid = Uuid.random().toString()
             val values = updatableValues.value!!
             val deck = originalDeck.value!!.toDeck(values, problems)
+            var newRewards = deck.campaignRewards
             if (deck.campaignId.toString() != "null") {
                 val campaign = campaignRepository.getCampaignById(deck.campaignId.toString())
+                newRewards = campaign.rewards
                 val newDeck = buildJsonArray {
                     add(deck.name)
                     add(deck.meta)
@@ -621,6 +623,7 @@ class DeckViewModel(
                     values.sideSlots.forEach { (key, value) -> put(key, value) } },
                 createdAt = getCurrentDateTime(),
                 updatedAt = getCurrentDateTime(),
+                campaignRewards = newRewards
             ))
             deckToOpen.update { newUuid }
         }
