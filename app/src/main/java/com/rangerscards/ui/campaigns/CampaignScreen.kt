@@ -97,6 +97,7 @@ fun CampaignScreen(
     } }
     var isCampaignLogExpanded by rememberSaveable { mutableStateOf(false) }
     var campaignLogTypeIndex by rememberSaveable { mutableIntStateOf(0) }
+    var isCampaignMissionsOnlyActive by rememberSaveable { mutableStateOf(false) }
     LaunchedEffect(campaign) {
         if (userUIState.currentUser != null && !isSubscriptionStarted && campaign?.uploaded == true)
             campaignViewModel.startSubscription(campaign.id)
@@ -428,7 +429,9 @@ fun CampaignScreen(
                                             "${BottomNavScreen.Campaigns.route}/campaign/mission/${Uri.encode(it)}")
                                         {
                                             launchSingleTop = true
-                                        } }
+                                        } },
+                                        isOnlyActive = isCampaignMissionsOnlyActive,
+                                        onActiveClick = { isCampaignMissionsOnlyActive = !isCampaignMissionsOnlyActive },
                                     )
                                     1 -> {
                                         val rewards = campaignViewModel.getRewardsCards().collectAsState(emptyList())
@@ -478,7 +481,7 @@ fun CampaignScreen(
                                         ) {
                                             launchSingleTop = true
                                         } },
-                                        events = campaignState!!.events.distinctBy { it.name },
+                                        events = campaignState!!.events.distinctBy { it.name }.sortedBy { it.name },
                                         onClick = { navController.navigate(
                                             "${BottomNavScreen.Campaigns.route}/campaign/event/${Uri.encode(it)}"
                                         ) {
