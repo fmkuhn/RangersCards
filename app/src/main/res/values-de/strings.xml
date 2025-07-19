@@ -338,6 +338,7 @@
     //Campaign log section
     <string name="campaign_log_header">Kampagnenlogbuch</string>
     <string name="missions_campaign_log_tab">Missionen</string>
+    <string name="show_only_active_missions">Nur nicht abgeschlossene anzeigen</string>
     <string name="add_mission_button">Mission hinzufügen</string>
     <string name="mission_header">Mission</string>
     <string name="mission_day_input">Tag</string>
