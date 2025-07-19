@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Text
@@ -28,7 +29,9 @@ import com.rangerscards.ui.theme.Jost
 fun CampaignEvents(
     onAdd: () -> Unit,
     events: List<CampaignEvent>,
-    onClick: (String) -> Unit
+    onClick: (String) -> Unit,
+    state: LazyListState,
+    nestedConnectionModifier: Modifier
 ) {
     Column {
         SquareButton(
@@ -43,7 +46,8 @@ fun CampaignEvents(
             modifier = Modifier.padding(8.dp)
         )
         LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
+            state = state,
+            modifier = nestedConnectionModifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(8.dp)
         ) {

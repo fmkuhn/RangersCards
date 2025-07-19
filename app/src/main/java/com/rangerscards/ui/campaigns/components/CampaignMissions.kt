@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -38,6 +39,8 @@ fun CampaignMissions(
     onClick: (String) -> Unit,
     isOnlyActive: Boolean = false,
     onActiveClick: () -> Unit,
+    state: LazyListState,
+    nestedConnectionModifier: Modifier
 ) {
     Column {
         SettingsRadioButtonRow(
@@ -58,7 +61,8 @@ fun CampaignMissions(
             modifier = Modifier.padding(8.dp)
         )
         LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
+            state = state,
+            modifier = nestedConnectionModifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(8.dp)
         ) {
