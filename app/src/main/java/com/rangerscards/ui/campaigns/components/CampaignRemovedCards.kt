@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -34,6 +35,8 @@ fun CampaignRemovedCards(
     removedSets: Map<String, Pair<Int?, Int>>,
     removed: List<CampaignRemoved>,
     onRemove: (String) -> Unit,
+    state: LazyListState,
+    nestedConnectionModifier: Modifier
 ) {
     Column {
         Text(
@@ -57,7 +60,8 @@ fun CampaignRemovedCards(
             modifier = Modifier.padding(horizontal = 8.dp)
         )
         LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
+            state = state,
+            modifier = nestedConnectionModifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(8.dp)
         ) {

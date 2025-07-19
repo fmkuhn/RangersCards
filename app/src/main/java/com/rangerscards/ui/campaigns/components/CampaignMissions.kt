@@ -12,6 +12,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.width
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.LazyListState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Icon
@@ -27,6 +28,7 @@ import androidx.compose.ui.unit.sp
 import com.rangerscards.R
 import com.rangerscards.ui.campaigns.CampaignMission
 import com.rangerscards.ui.components.SquareButton
+import com.rangerscards.ui.settings.components.SettingsRadioButtonRow
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
 
@@ -35,8 +37,18 @@ fun CampaignMissions(
     onAdd: () -> Unit,
     missions: List<CampaignMission>,
     onClick: (String) -> Unit,
+    isOnlyActive: Boolean = false,
+    onActiveClick: () -> Unit,
+    state: LazyListState,
+    nestedConnectionModifier: Modifier
 ) {
     Column {
+        SettingsRadioButtonRow(
+            text = stringResource(R.string.show_only_active_missions),
+            onClick = onActiveClick,
+            modifier = Modifier,
+            isSelected = isOnlyActive
+        )
         SquareButton(
             stringId = R.string.add_mission_button,
             leadingIcon = R.drawable.add_circle_32dp,
@@ -49,11 +61,12 @@ fun CampaignMissions(
             modifier = Modifier.padding(8.dp)
         )
         LazyColumn(
-            modifier = Modifier.fillMaxWidth(),
+            state = state,
+            modifier = nestedConnectionModifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(8.dp)
         ) {
-            missions.forEach { mission ->
+            missions.filter { mission -> !isOnlyActive || !mission.completed }.forEach { mission ->
                 item(mission.name) {
                     Column(
                         modifier = Modifier.fillMaxWidth().clickable { onClick.invoke(mission.name) },

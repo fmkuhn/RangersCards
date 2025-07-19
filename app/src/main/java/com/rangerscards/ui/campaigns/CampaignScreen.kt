@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
+import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
@@ -39,8 +40,13 @@ import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.geometry.Offset
+import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
+import androidx.compose.ui.input.nestedscroll.NestedScrollSource
+import androidx.compose.ui.input.nestedscroll.nestedScroll
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
@@ -48,6 +54,7 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.input.ImeAction
 import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.style.TextAlign
+import androidx.compose.ui.unit.Velocity
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
@@ -64,6 +71,7 @@ import com.rangerscards.ui.campaigns.components.CampaignSettingsSection
 import com.rangerscards.ui.campaigns.components.CampaignTitleRow
 import com.rangerscards.ui.campaigns.components.TimeLineLazyRow
 import com.rangerscards.ui.cards.components.CardListItem
+import com.rangerscards.ui.components.RangersSearchOutlinedField
 import com.rangerscards.ui.components.ScrollableRangersTabs
 import com.rangerscards.ui.components.SquareButton
 import com.rangerscards.ui.decks.components.DeckListItem
@@ -73,6 +81,7 @@ import com.rangerscards.ui.settings.components.SettingsBaseCard
 import com.rangerscards.ui.settings.components.SettingsInputField
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
+import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
 
 @Composable
@@ -97,6 +106,31 @@ fun CampaignScreen(
     } }
     var isCampaignLogExpanded by rememberSaveable { mutableStateOf(false) }
     var campaignLogTypeIndex by rememberSaveable { mutableIntStateOf(0) }
+    var isCampaignMissionsOnlyActive by rememberSaveable { mutableStateOf(false) }
+    // one state + connection per tab:
+    val innerStates = List(4) { rememberLazyListState() }
+    val innerConnections = innerStates.map { _ ->
+        remember {
+            object : NestedScrollConnection {
+                override fun onPostScroll(consumed: Offset, available: Offset, source: NestedScrollSource): Offset {
+                    // let the inner list scroll first, then eat all leftover
+                    return available
+                }
+                override suspend fun onPostFling(consumed: Velocity, available: Velocity): Velocity {
+                    return available
+                }
+            }
+        }
+    }
+    var rewardsQuery by remember { mutableStateOf("") }
+    LaunchedEffect(Unit) {
+        snapshotFlow { rewardsQuery }
+            .drop(1)
+            .collect {
+                // Scroll to the first item
+                innerStates[1].animateScrollToItem(0)
+            }
+    }
     LaunchedEffect(campaign) {
         if (userUIState.currentUser != null && !isSubscriptionStarted && campaign?.uploaded == true)
             campaignViewModel.startSubscription(campaign.id)
@@ -428,12 +462,29 @@ fun CampaignScreen(
                                             "${BottomNavScreen.Campaigns.route}/campaign/mission/${Uri.encode(it)}")
                                         {
                                             launchSingleTop = true
-                                        } }
+                                        } },
+                                        isOnlyActive = isCampaignMissionsOnlyActive,
+                                        onActiveClick = { isCampaignMissionsOnlyActive = !isCampaignMissionsOnlyActive },
+                                        state = innerStates[campaignLogTypeIndex],
+                                        nestedConnectionModifier = Modifier.nestedScroll(innerConnections[campaignLogTypeIndex]),
                                     )
                                     1 -> {
+                                        val innerState = innerStates[campaignLogTypeIndex]
+                                        RangersSearchOutlinedField(
+                                            query = rewardsQuery,
+                                            R.string.search_for_card,
+                                            onQueryChanged = { newQuery -> rewardsQuery = newQuery },
+                                            onClearClicked = { rewardsQuery = "" }
+                                        )
                                         val rewards = campaignViewModel.getRewardsCards().collectAsState(emptyList())
-                                        LazyColumn(modifier = Modifier.fillMaxWidth()) {
-                                            rewards.value.forEachIndexed { index, reward ->
+                                        LazyColumn(
+                                            state = innerState,
+                                            modifier = Modifier
+                                                .fillMaxWidth()
+                                                .nestedScroll(innerConnections[campaignLogTypeIndex])
+                                        ) {
+                                            rewards.value.filter { it.name!!.contains(rewardsQuery, true) }
+                                                .forEachIndexed { index, reward ->
                                                 val isAdded = campaignState!!.rewards.contains(reward.id)
                                                 item(reward.id) {
                                                     CardListItem(
@@ -478,12 +529,14 @@ fun CampaignScreen(
                                         ) {
                                             launchSingleTop = true
                                         } },
-                                        events = campaignState!!.events.distinctBy { it.name },
+                                        events = campaignState!!.events.distinctBy { it.name }.sortedBy { it.name },
                                         onClick = { navController.navigate(
                                             "${BottomNavScreen.Campaigns.route}/campaign/event/${Uri.encode(it)}"
                                         ) {
                                             launchSingleTop = true
-                                        } }
+                                        } },
+                                        state = innerStates[campaignLogTypeIndex],
+                                        nestedConnectionModifier = Modifier.nestedScroll(innerConnections[campaignLogTypeIndex]),
                                     )
                                     3 -> CampaignRemovedCards(
                                         onAdd = { navController.navigate(
@@ -495,7 +548,9 @@ fun CampaignScreen(
                                         removed = campaignState!!.removed.distinctBy { it.name },
                                         onRemove = { removedName -> coroutine.launch { showLoadingDialog = true
                                             campaignViewModel.updateCampaignRemoved(removedName, userUIState.currentUser)
-                                        }.invokeOnCompletion { showLoadingDialog = false }}
+                                        }.invokeOnCompletion { showLoadingDialog = false }},
+                                        state = innerStates[campaignLogTypeIndex],
+                                        nestedConnectionModifier = Modifier.nestedScroll(innerConnections[campaignLogTypeIndex]),
                                     )
                                 }
                             }
