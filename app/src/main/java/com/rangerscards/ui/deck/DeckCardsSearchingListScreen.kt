@@ -111,7 +111,7 @@ fun DeckCardsSearchingListScreen(
                 ),
         ) {
             ScrollableRangersTabs(
-                if (deck!!.previousId != null) listOf(
+                if (deck?.previousId != null) listOf(
                     R.string.rewards_search_tab,
                     R.string.maladies_search_tab,
                     R.string.collection_search_tab,
@@ -159,7 +159,7 @@ fun DeckCardsSearchingListScreen(
                     }
                 }
                 item {
-                    if (deck!!.previousId == null) Column(modifier = Modifier.fillMaxWidth()) {
+                    if (deck?.previousId == null) Column(modifier = Modifier.fillMaxWidth()) {
                         Text(
                             text = stringResource(when(typeIndex) {
                                 0 -> R.string.personality_text
@@ -208,7 +208,7 @@ fun DeckCardsSearchingListScreen(
                     val item = cardsLazyItems[index] ?: return@items
                     val showHeader = if (index == 0) true
                     else cardsLazyItems[index - 1]?.setName != item.setName
-                    if (showHeader && (deck!!.previousId == null || typeIndex in 0..2))
+                    if (showHeader && (deck?.previousId == null || typeIndex in 0..2))
                         RowTypeDivider(text = item.setName.toString())
                     val amount = values?.slots?.get(item.code) ?: 0
                     CardListItem(
