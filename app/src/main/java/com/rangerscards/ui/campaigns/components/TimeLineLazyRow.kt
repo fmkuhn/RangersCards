@@ -1,6 +1,5 @@
 package com.rangerscards.ui.campaigns.components
 
-import android.util.Log
 import androidx.annotation.DrawableRes
 import androidx.compose.foundation.BorderStroke
 import androidx.compose.foundation.Canvas
@@ -31,7 +30,6 @@ import androidx.compose.runtime.key
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.setValue
-import androidx.compose.runtime.snapshotFlow
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.clip
@@ -62,7 +60,6 @@ fun TimeLineLazyRow(
     currentDay: Int,
     onClick: (Int) -> Unit
 ) {
-    Log.d("test", currentDay.toString())
     val listState = rememberLazyListState()
     val localDensity = LocalDensity.current
     var guideSectionHeightDp: Dp by remember { mutableStateOf(24.dp + with(localDensity) { (12.sp).toDp() }) }
