@@ -156,6 +156,18 @@ fun CardsCard(
                     isSelected = selectedLocale.language == "it",
                     isSingleValue = true
                 )
+                HorizontalDivider(
+                    modifier = Modifier.padding(horizontal = 8.dp),
+                    color = CustomTheme.colors.l10
+                )
+                SettingsRadioButtonRow(
+                    text = Locale.forLanguageTag("es").displayLanguage,
+                    onClick = { openLanguagePickerDialog = false
+                        if (selectedLocale.language != "es")
+                            settingsViewModel.updateLocale("es", context) },
+                    isSelected = selectedLocale.language == "es",
+                    isSingleValue = true
+                )
             }
         }
     }

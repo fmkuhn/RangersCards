@@ -66,7 +66,7 @@ data class UserSettings(
     val collection: List<String> = emptyList()
 )
 
-val SUPPORTED_LANGUAGES = listOf("en", "ru", "de", "fr", "it")
+val SUPPORTED_LANGUAGES = listOf("en", "ru", "de", "fr", "it", "es")
 
 /**
  * ViewModel to maintain user's settings.
