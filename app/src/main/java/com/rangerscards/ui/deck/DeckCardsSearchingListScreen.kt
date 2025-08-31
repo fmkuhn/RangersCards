@@ -66,10 +66,6 @@ fun DeckCardsSearchingListScreen(
     // Remember a LazyListState to control and observe scroll position.
     val listState = rememberLazyListState()
 
-    LaunchedEffect(deck) {
-        if (deck == null) navigateUp()
-    }
-
     // Whenever the search query changes, scroll the list back to the top.
     LaunchedEffect(Unit) {
         snapshotFlow { filterOptions.searchQuery to typeIndex }
@@ -80,6 +76,7 @@ fun DeckCardsSearchingListScreen(
             }
     }
     LaunchedEffect(deck, values?.sideSlots) {
+        if (deck == null || values == null) navigateUp()
         deckCardsViewModel.updateDeckInfo(deck!!, values!!.sideSlots.keys.toList())
     }
     LaunchedEffect(Unit) {

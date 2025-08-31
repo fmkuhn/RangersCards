@@ -291,7 +291,7 @@ class CampaignViewModel(
      * Computes a list of TravelDay objects based on the campaign history.
      */
     fun buildTravelHistory(history: List<CampaignHistory>): List<CampaignTravelDay> {
-        val campaign = campaign.value!!
+        val campaign = campaign.value ?: return emptyList()
         // Group entries by day
         val daysMap = history.groupBy { it.day }
         val result = mutableListOf<CampaignTravelDay>()
