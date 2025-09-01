@@ -15,14 +15,14 @@
     <string name="text_when_not_logged_in">Esta aplicación funciona perfectamente sin necesidad de crear una cuenta.\nSin embargo, al iniciar sesión podrás sincronizar campañas y mazos entre dispositivos y con RangersDB.</string>
     <string name="sign_in_to_app_account_button">Iniciar sesión</string>
     <string name="sign_in_up_to_app_account_title">Iniciar sesión/Registro</string>
-    <string name="email_placeholder">Email address</string>
-    <string name="password_placeholder">Password</string>
+    <string name="email_placeholder">Email</string>
+    <string name="password_placeholder">Contraseña</string>
     <string name="sign_in_to_account_button">Iniciar sesión</string>
-    <string name="sign_up_to_app_account_button">Crear nueva cuenta</string>
+    <string name="sign_up_to_app_account_button">Crear cuenta</string>
     <string name="sign_out_account_button">Cerrar sesión</string>
-    <string name="delete_account_button">Eliminar tu cuenta</string>
-    <string name="sign_out_account_title">Cerrar sesión en RangersDB?</string>
-    <string name="delete_account_title">Confirmar borrado de cuenta</string>
+    <string name="delete_account_button">Eliminar cuenta</string>
+    <string name="sign_out_account_title">¿Cerrar sesión en RangersDB?</string>
+    <string name="delete_account_title">Confirmar eliminación de cuenta</string>
     <string name="sign_out_account_text">¿Estás seguro de que deseas cerrar sesión en RangersDB?\n\nTodas las campañas que hayas subido o que se hayan compartido contigo, así como las barajas de RangersDB, se eliminarán de este dispositivo. Podrás volver a sincronizarlas si vuelves a iniciar sesión.\n\nNota: si has realizado cambios recientemente mientras estabas sin conexión, es posible que se pierdan.</string>
     <string name="cancel_button">Cancelar</string>
     <string name="done_button">Hecho</string>
@@ -55,7 +55,7 @@
     <string name="light_theme">Claro</string>
     <string name="dark_theme">Oscuro</string>
     <string name="system_theme">Por defecto (%s)</string>
-    <string name="english_search_results_radio_button">Incluir resultado de búsquedas en inglés</string>
+    <string name="english_search_results_radio_button">Incluir resultados de búsqueda en inglés</string>
     <string name="cards_title">Cartas</string>
     <string name="language_header">Idioma</string>
     <string name="info_text_about_locale_switching">Para cambiar el idioma de la aplicación es necesario descargar la información traducida de RangersDB. Esto requiere conexión a Internet y puede tardar un poco.</string>
@@ -74,7 +74,7 @@
     <string name="invalid_password_toast">Contraseña no válida. Debe tener como mínimo 6 carácteres.</string>
     <string name="invalid_email_toast">Correo no válido.</string>
     <string name="account_successfully_deleted_toast">Cuenta eliminada correctamente.</string>
-    <string name="invalid_credentials_toast">Credenciales incorrectas..</string>
+    <string name="invalid_credentials_toast">Credenciales incorrectas.</string>
     <string name="handle_already_taken_toast">Lo siento, este nombre de usuario ya está en uso.</string>
     <string name="invalid_handle_toast">Usuario no válido. Debe tener entre 2 y 22 carácteres.</string>
     <string name="socials_title">Social</string>
@@ -103,8 +103,8 @@
     <string name="fit_styled_card_text">APT</string>
     <string name="foc_styled_card_text">CON</string>
     <string name="spi_styled_card_text">VIT</string>
-    <string name="show_card_image">Ver carta grande</string>
-    <string name="hide_card_image">Ver carta pequeña</string>
+    <string name="show_card_image">Ampliar carta</string>
+    <string name="hide_card_image">Reducir carta</string>
 
     //Decks screen
     <string name="traveler_background">Viajero</string>
@@ -127,7 +127,7 @@
     <string name="upload_to_rangersdb">Subir a RangersDB</string>
     <string name="view_on_rangersdb">Ver en RangersDB</string>
     <string name="copy_link_to_rangersdb">Enlace copiado al portapapeles</string>
-    <string name="use_taboo">Seguir las reglas de Elder\'s Book of Uncommon Wisdom</string>
+    <string name="use_taboo">Seguir las reglas de «Elder\'s Book of Uncommon Wisdom»</string>
     <string name="create_deck_button">Crear mazo</string>
     <string name="background">Origen</string>
     <string name="background_placeholder">Elige un origen</string>
@@ -136,7 +136,7 @@
     <string name="role">Rol</string>
     <string name="role_placeholder">Elige un rol</string>
     <string name="no_roles">No se han encontrado roles en las colecciones actuales</string>
-    <string name="starter_deck_name_postfix">(Starter)</string>
+    <string name="starter_deck_name_postfix">(Inicio)</string>
 
     //Deck errors
     <string name="invalid_aspects">Los aspectos elegidos son inválidos.</string>
@@ -152,12 +152,12 @@
     <string name="specialty_error">Cartas de especialidad insuficientes.</string>
     <string name="too_many_specialty">Demasiadas cartas de especialidad seleccionadas.</string>
     <string name="role_error">Debes seleccionar una carta de rol.</string>
-    <string name="outside_interest_error">Carta de otros intereses insuficientes.</string>
+    <string name="outside_interest_error">Cartas de otros intereses insuficientes.</string>
     <string name="invalid_background">Demasiadas cartas que no coinciden con tu origen seleccionado.</string>
     <string name="invalid_specialty">Demasiadas cartas que no coinciden con tu especialidad seleccionada.</string>
     <string name="invalid_role">Tu carta de rol no coincide con la especialidad seleccionada.</string>
     <string name="invalid_aspect_levels">Tu mazo contiene demasiadas cartas con requisitos de aspecto no permitidos.</string>
-    <string name="invalid_outside_interest">Tu carta de otros intereses no puede ser de rasgo Experto.</string>
+    <string name="invalid_outside_interest">Tu carta de otros intereses no puede tener el rasgo Experto.</string>
     <string name="too_many_outside_interest">Demasiadas cartas de otros intereses en el mazo.</string>
     <string name="too_many_cards">Demasiadas cartas. Cuando realices cambios en el mazo mientras acampas, debes eliminar cartas para hacer espacio para las recompensas y mantener un mazo de 30 cartas.</string>
     <string name="too_few_cards">No hay suficientes cartas. Cuando se retiran cartas de recompensa durante el campamento, debes volver a añadir cartas de tu mazo original para mantener un mazo de 30 cartas.</string>
@@ -204,8 +204,8 @@
     <string name="displaced_search_tab">Cartas desplazadas</string>
     <string name="show_all_button">Mostrar todo</string>
     <string name="personality_text">Selecciona 4 cartas de personalidad diferentes, 1 para cada aspecto.</string>
-    <string name="background_text">Selecciona 5 cartas difrentes del origen escogido.</string>
-    <string name="specialty_text">Selecciona 5 cartas difrentes de la especialidad escogida.</string>
+    <string name="background_text">Selecciona 5 cartas difrentes del origen elegido.</string>
+    <string name="specialty_text">Selecciona 5 cartas difrentes de la especialidad elegida.</string>
     <string name="outside_interest_text">Selecciona 1 carta de cualquier origen o especialidad como otros intereses.\nNota: las tarjetas de tu origen/especialid adelegidos no se muestran aquí, pero tu otro interés puede ser de tu clase elegida si utilizas las otras pestañas para seleccionarlo.</string>
     <string name="collection_text">Algunos eventos de la campaña pueden permitirte intercambiar permanentemente cartas de tu mazo por otras de la colección.\nDespués de seleccionar una nueva carta de la colección y eliminar una de tu mazo, puedes ´devolver´ una carta a la colección utilizando la pestaña de cartas desplazadas.</string>
 
@@ -220,7 +220,7 @@
     <string name="campaign_section_camp_additional_text">Para añadir recompensas y seguir los cambios</string>
     <string name="campaign_section_camp_warning">Error: ¡Problemas con el mazo!</string>
     <string name="campaign_section_previous_deck">Mazo anterior</string>
-    <string name="campaign_section_next_deck">Siguiente mazo</string>
+    <string name="campaign_section_next_deck">Mazo siguiente</string>
     <string name="options_section_header">Opciones</string>
     <string name="options_section_clone_deck">Clonar mazo</string>
     <string name="clone_deck_name_postfix">(Copia)</string>
@@ -229,8 +229,8 @@
     <string name="options_section_delete_deck">Eliminar mazo</string>
     <string name="options_section_delete_current_deck">Eliminar versión actual</string>
     <string name="options_section_delete_deck_all_versions">Eliminar todas las versiones del mazo</string>
-    <string name="options_section_delete_deck_warning">Error: ¡Esta mazo está en una campaña!</string>
-    <string name="delete_deck_text">¿Estás seguro que quieres eliminar este mazo? Version: %d.</string>
+    <string name="options_section_delete_deck_warning">Error: ¡Este mazo está en una campaña!</string>
+    <string name="delete_deck_text">¿Seguro que quieres eliminar este mazo? Version: %d.</string>
 
     //Campaigns screen
     <string name="campaigns_current_day">Día %d</string>
@@ -241,7 +241,7 @@
     <string name="campaign_creation_name_placeholder">Elige un nombre para la campaña.</string>
     <string name="create_campaign_button">Crear campaña</string>
     <string name="campaign">Campaña</string>
-    <string name="campaign_placeholder">Elige campaña</string>
+    <string name="campaign_placeholder">Elegir campaña</string>
     <string name="transfer_campaign">Transferir campaña</string>
     <string name="core_cycle">Core</string>
     <string name="general_set_general">General</string>
@@ -346,8 +346,8 @@
     <string name="upload_campaign_button">Subir a RangersDB</string>
     <string name="upload_campaign_warning">Error: ¡Esta campaña contiene mazos!</string>
     <string name="delete_campaign_button">Eliminar campaña</string>
-    <string name="delete_campaign_confirmation">¿Estás seguro que quieres eliminar esta campaña?</string>
-    <string name="leave_campaign_confirmation">¿Estás seguro que quieres dejar esta campaña?</string>
+    <string name="delete_campaign_confirmation">¿Seguro que quieres eliminar esta campaña?</string>
+    <string name="leave_campaign_confirmation">¿Seguro que quieres dejar esta campaña?</string>
     <string name="leave_campaign_button">Dejar campaña</string>
     
     //Undo
