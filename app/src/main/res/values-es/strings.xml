@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="app_name" translatable="false">RangersCards</string>
-
     <string name="cards_updating">Actualizando cartas</string>
 
     //BottomNavBar
@@ -29,18 +27,12 @@
     <string name="account_name_header">Nombre de la cuenta</string>
     <string name="friends_amount_header">Amigos</string>
     <plurals name="friends_amount">
-        <item quantity="zero">%d amigos</item>
         <item quantity="one">%d amigo</item>
-        <item quantity="two">%d amigos</item>
-        <item quantity="few">%d amigos</item>
         <item quantity="many">%d amigos</item>
         <item quantity="other">%d amigos</item>
     </plurals>
     <plurals name="friends_request_amount">
-        <item quantity="zero">%d solicitudes pendientes</item>
         <item quantity="one">%d solicitud pendiente</item>
-        <item quantity="two">%d solicitudes pendientes</item>
-        <item quantity="few">%d solicitudes pendientes</item>
         <item quantity="many">%d solicitudes pendientes</item>
         <item quantity="other">%d solicitudes pendientes</item>
     </plurals>
@@ -61,10 +53,7 @@
     <string name="info_text_about_locale_switching">Para cambiar el idioma de la aplicación es necesario descargar la información traducida de RangersDB. Esto requiere conexión a Internet y puede tardar un poco.</string>
     <string name="collection_header">Colección</string>
     <plurals name="expansions_amount">
-        <item quantity="zero">%d expansiones</item>
         <item quantity="one">%d expansión</item>
-        <item quantity="two">%d expansiones</item>
-        <item quantity="few">%d expansiones</item>
         <item quantity="many">%d expansiones</item>
         <item quantity="other">%d expansiones</item>
     </plurals>
@@ -165,8 +154,6 @@
     //FullDeck screen
     <plurals name="more_problems">
         <item quantity="one"> + %d problema más</item>
-        <item quantity="two"> + %d problemas más</item>
-        <item quantity="few"> + %dproblemas más</item>
         <item quantity="many"> + %d problemas más</item>
         <item quantity="other"> + %d problemas más</item>
     </plurals>
@@ -174,8 +161,6 @@
     <string name="cards_amount_in_deck">%d / 30 cartas</string>
     <plurals name="maladies_amount">
         <item quantity="one">(%d enfermedad)</item>
-        <item quantity="two">(%d enfermedades)</item>
-        <item quantity="few">(%d enfermedades)</item>
         <item quantity="many">(%d enfermedades)</item>
         <item quantity="other">(%d enfermedades)</item>
     </plurals>
