@@ -1,4 +1,432 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
+    <string name="app_name" translatable="false">RangersCards</string>
+
+    <string name="cards_updating">Actualizando cartas</string>
+
+    //BottomNavBar
+    <string name="settings_nav_bar_button">Ajustes</string>
+    <string name="cards_nav_bar_button">Cartas</string>
+    <string name="decks_nav_bar_button">Mazos</string>
+    <string name="campaigns_nav_bar_button">Campañas</string>
+
+    //Settings screen strings
+    <string name="account_title">Cuenta RangersDB</string>
+    <string name="text_when_not_logged_in">Esta aplicación funciona perfectamente sin necesidad de crear una cuenta.\nSin embargo, al iniciar sesión podrás sincronizar campañas y mazos entre dispositivos y con RangersDB.</string>
+    <string name="sign_in_to_app_account_button">Iniciar sesión</string>
+    <string name="sign_in_up_to_app_account_title">Iniciar sesión/Registro</string>
+    <string name="email_placeholder">Email</string>
+    <string name="password_placeholder">Contraseña</string>
+    <string name="sign_in_to_account_button">Iniciar sesión</string>
+    <string name="sign_up_to_app_account_button">Crear cuenta</string>
+    <string name="sign_out_account_button">Cerrar sesión</string>
+    <string name="delete_account_button">Eliminar cuenta</string>
+    <string name="sign_out_account_title">¿Cerrar sesión en RangersDB?</string>
+    <string name="delete_account_title">Confirmar eliminación de cuenta</string>
+    <string name="sign_out_account_text">¿Estás seguro de que deseas cerrar sesión en RangersDB?\n\nTodas las campañas que hayas subido o que se hayan compartido contigo, así como las barajas de RangersDB, se eliminarán de este dispositivo. Podrás volver a sincronizarlas si vuelves a iniciar sesión.\n\nNota: si has realizado cambios recientemente mientras estabas sin conexión, es posible que se pierdan.</string>
+    <string name="cancel_button">Cancelar</string>
+    <string name="done_button">Hecho</string>
+    <string name="account_name_header">Nombre de la cuenta</string>
+    <string name="friends_amount_header">Amigos</string>
+    <plurals name="friends_amount">
+        <item quantity="zero">%d amigos</item>
+        <item quantity="one">%d amigo</item>
+        <item quantity="two">%d amigos</item>
+        <item quantity="few">%d amigos</item>
+        <item quantity="many">%d amigos</item>
+        <item quantity="other">%d amigos</item>
+    </plurals>
+    <plurals name="friends_request_amount">
+        <item quantity="zero">%d solicitudes pendientes</item>
+        <item quantity="one">%d solicitud pendiente</item>
+        <item quantity="two">%d solicitudes pendientes</item>
+        <item quantity="few">%d solicitudes pendientes</item>
+        <item quantity="many">%d solicitudes pendientes</item>
+        <item quantity="other">%d solicitudes pendientes</item>
+    </plurals>
+    <string name="search_friends">Buscar amigos</string>
+    <string name="your_friends">Tus amigos</string>
+    <string name="sent_requests">Enviar solicitud</string>
+    <string name="received_requests">Solicitudes recibidas</string>
+    <string name="search_results">Resultados de búsqueda</string>
+    <string name="no_matching_results">No se han encontrado resultados para \"%s\".</string>
+    <string name="settings_title">Configuración</string>
+    <string name="theme_header">Tema</string>
+    <string name="light_theme">Claro</string>
+    <string name="dark_theme">Oscuro</string>
+    <string name="system_theme">Por defecto (%s)</string>
+    <string name="english_search_results_radio_button">Incluir resultados de búsqueda en inglés</string>
+    <string name="cards_title">Cartas</string>
+    <string name="language_header">Idioma</string>
+    <string name="info_text_about_locale_switching">Para cambiar el idioma de la aplicación es necesario descargar la información traducida de RangersDB. Esto requiere conexión a Internet y puede tardar un poco.</string>
+    <string name="collection_header">Colección</string>
+    <plurals name="expansions_amount">
+        <item quantity="zero">%d expansiones</item>
+        <item quantity="one">%d expansión</item>
+        <item quantity="two">%d expansiones</item>
+        <item quantity="few">%d expansiones</item>
+        <item quantity="many">%d expansiones</item>
+        <item quantity="other">%d expansiones</item>
+    </plurals>
+    <string name="update_cards_button">Actualizar cartas</string>
+    <string name="rules_button">Reglas</string>
+    <string name="authentication_failed_toast">Fallo de autenticación.</string>
+    <string name="invalid_password_toast">Contraseña no válida. Debe tener como mínimo 6 carácteres.</string>
+    <string name="invalid_email_toast">Correo no válido.</string>
+    <string name="account_successfully_deleted_toast">Cuenta eliminada correctamente.</string>
+    <string name="invalid_credentials_toast">Credenciales incorrectas.</string>
+    <string name="handle_already_taken_toast">Lo siento, este nombre de usuario ya está en uso.</string>
+    <string name="invalid_handle_toast">Usuario no válido. Debe tener entre 2 y 22 carácteres.</string>
+    <string name="socials_title">Social</string>
+    <string name="socials_text">Chatea con otros jugadores de Earthborne Rangers:</string>
+    <string name="discord_button">Discord</string>
+    <string name="telegram_button">Telegram</string>
+    <string name="support_title">Soporte</string>
+    <string name="support_text">Soporte de cartas de Guardián en %s.</string>
+    <string name="about_button">About</string>
+    <string name="backup_data_button">Copia de seguridad</string>
+    <string name="diagnostics_button">Diagnóstico</string>
+    <string name="contact_us_button">Contactanos</string>
+
+    //About screen
+    <string name="about_text">La información presentada en esta aplicación sobre Earthborne Rangers, tanto literal como gráfica, es propiedad intelectual de Earthborne Games. Esta aplicación no ha sido producida, respaldada, apoyada ni está afiliada a Earthborne Games. \n\nEsta aplicación ha sido creada por Eugene Karelin como un proyecto de fans para ayudar a apoyar a la comunidad de Earthborne Rangers. Si te encuentras gestionando muchos mazos y campañas, espero que te resulte útil.</string>
+    <string name="about_email_text">Feedback y errores serán bienvenidos por correo a %s</string>
+    <string name="about_rangersdb_text">Muchas gracias a RangersDB.com por proporcionar los datos estructurados, el acceso a la API y el acceso a las imágenes de las tarjetas. Sin su continuo apoyo, este proyecto no habría sido posible.</string>
+    <string name="icon_attribution">Icono de atribución:</string>
+
+    //Cards screen
+    <string name="no_matching_cards">No se encuentran resultados para \"%s\"</string>
+    <string name="no_matching_cards_filtered">Ninguna carta encontrada</string>
+    <string name="search_for_card">Buscando cartas</string>
+    <string name="set_info">%d de %d</string>
+    <string name="awa_styled_card_text">PER</string>
+    <string name="fit_styled_card_text">APT</string>
+    <string name="foc_styled_card_text">CON</string>
+    <string name="spi_styled_card_text">VIT</string>
+    <string name="show_card_image">Ampliar carta</string>
+    <string name="hide_card_image">Reducir carta</string>
+
+    //Decks screen
+    <string name="traveler_background">Viajero</string>
+    <string name="shepherd_background">Pastor</string>
+    <string name="forager_background">Recolector</string>
+    <string name="artisan_background">Artesano</string>
+    <string name="explorer_specialty">Explorador</string>
+    <string name="shaper_specialty">Moldeador</string>
+    <string name="conciliator_specialty">Conciliador</string>
+    <string name="artificer_specialty">Inventor</string>
+    <string name="search_decks">Buscar mazos</string>
+    <string name="no_matching_decks">No se han encontrado mazos para \"%s\"</string>
+    <string name="no_decks">No tienes ningún mazo.\n\nUsa el botón + para crear uno.</string>
+    <string name="new_deck">Nuevo mazo</string>
+    <string name="custom_deck_tab">Mazo personalizado</string>
+    <string name="starter_deck_tab">Mazo de inicio</string>
+    <string name="deck_creation_name_label">Nombre</string>
+    <string name="deck_creation_name_placeholder">Añade un nombre para este mazo.</string>
+    <string name="starter_deck_title">Elige un mazo de inicio:</string>
+    <string name="upload_to_rangersdb">Subir a RangersDB</string>
+    <string name="view_on_rangersdb">Ver en RangersDB</string>
+    <string name="copy_link_to_rangersdb">Enlace copiado al portapapeles</string>
+    <string name="use_taboo">Seguir las reglas de «Elder\'s Book of Uncommon Wisdom»</string>
+    <string name="create_deck_button">Crear mazo</string>
+    <string name="background">Origen</string>
+    <string name="background_placeholder">Elige un origen</string>
+    <string name="specialty">Especialidad</string>
+    <string name="specialty_placeholder">Elige una especialidad</string>
+    <string name="role">Rol</string>
+    <string name="role_placeholder">Elige un rol</string>
+    <string name="no_roles">No se han encontrado roles en las colecciones actuales</string>
+    <string name="starter_deck_name_postfix">(Inicio)</string>
+
+    //Deck errors
+    <string name="invalid_aspects">Los aspectos elegidos son inválidos.</string>
+    <string name="too_many_duplicates">Demasiadas cartas con el mismo nombre.</string>
+    <string name="need_two_cards">Debes incluir 2 copias de cada carta en tu mazo inicial.</string>
+    <string name="personality_error">Cartas de personalidad insuficientes.</string>
+    <string name="too_many_awa_personality">Demasiadas carta de personalidad PER.</string>
+    <string name="too_many_spi_personality">Demasiadas carta de personalidad VIT</string>
+    <string name="too_many_foc_personality">Demasiadas carta de personalidad CON</string>
+    <string name="too_many_fit_personality">Demasiadas carta de personalidad APT</string>
+    <string name="background_error">Cartas de origen insuficientes.</string>
+    <string name="too_many_background">Demasiadas cartas de origen seleccionadas.</string>
+    <string name="specialty_error">Cartas de especialidad insuficientes.</string>
+    <string name="too_many_specialty">Demasiadas cartas de especialidad seleccionadas.</string>
+    <string name="role_error">Debes seleccionar una carta de rol.</string>
+    <string name="outside_interest_error">Cartas de otros intereses insuficientes.</string>
+    <string name="invalid_background">Demasiadas cartas que no coinciden con tu origen seleccionado.</string>
+    <string name="invalid_specialty">Demasiadas cartas que no coinciden con tu especialidad seleccionada.</string>
+    <string name="invalid_role">Tu carta de rol no coincide con la especialidad seleccionada.</string>
+    <string name="invalid_aspect_levels">Tu mazo contiene demasiadas cartas con requisitos de aspecto no permitidos.</string>
+    <string name="invalid_outside_interest">Tu carta de otros intereses no puede tener el rasgo Experto.</string>
+    <string name="too_many_outside_interest">Demasiadas cartas de otros intereses en el mazo.</string>
+    <string name="too_many_cards">Demasiadas cartas. Cuando realices cambios en el mazo mientras acampas, debes eliminar cartas para hacer espacio para las recompensas y mantener un mazo de 30 cartas.</string>
+    <string name="too_few_cards">No hay suficientes cartas. Cuando se retiran cartas de recompensa durante el campamento, debes volver a añadir cartas de tu mazo original para mantener un mazo de 30 cartas.</string>
+
+    //FullDeck screen
+    <plurals name="more_problems">
+        <item quantity="one"> + %d problema más</item>
+        <item quantity="two"> + %d problemas más</item>
+        <item quantity="few"> + %dproblemas más</item>
+        <item quantity="many"> + %d problemas más</item>
+        <item quantity="other"> + %d problemas más</item>
+    </plurals>
+    <string name="edit_deck_button">Editar</string>
+    <string name="cards_amount_in_deck">%d / 30 cartas</string>
+    <plurals name="maladies_amount">
+        <item quantity="one">(%d enfermedad)</item>
+        <item quantity="two">(%d enfermedades)</item>
+        <item quantity="few">(%d enfermedades)</item>
+        <item quantity="many">(%d enfermedades)</item>
+        <item quantity="other">(%d enfermedades)</item>
+    </plurals>
+    <string name="personality">Personalidad</string>
+    <string name="outside_interest">Otros intereses</string>
+    <string name="rewards_and_maladies">Recompensas y enfermedades</string>
+    <string name="side_deck">Side deck</string>
+    <string name="deck_changes">Cambios</string>
+    <string name="deck_changes_added">Añadidas</string>
+    <string name="deck_changes_removed">Eliminadas</string>
+    <string name="deck_changes_added_collection">Añadidas de la colección</string>
+    <string name="deck_changes_returned_collection">Devueltas a la colección</string>
+    <string name="save_deck_button">Guardar cambios</string>
+    <string name="background_as_outside_interest">Una de las cartas de origen elegidas cuenta como otros intereses.</string>
+    <string name="specialty_as_outside_interest">Una de las cartas de especialidad elegidas cuenta como otros intereses.</string>
+    <string name="reward_or_malady_in_starting_deck">Recompensas y enfermedades no están permitidas en los mazos de inicio.</string>
+    <string name="save_deck_changes_header">¿Guardar los cambios?</string>
+    <string name="save_deck_changes_text">Parece que tienes cambios sin guardar.</string>
+    <string name="save_deck_changes_button">Guardar cambios</string>
+    <string name="discard_deck_changes_button">Descartar cambios</string>
+    <string name="saving_changes_header">Guardando…</string>
+    <string name="editing_deck_screen_header">Editando mazo</string>
+    <string name="rewards_search_tab">Recompensas</string>
+    <string name="maladies_search_tab">Enfermedades</string>
+    <string name="collection_search_tab">Colección</string>
+    <string name="displaced_search_tab">Cartas desplazadas</string>
+    <string name="show_all_button">Mostrar todo</string>
+    <string name="personality_text">Selecciona 4 cartas de personalidad diferentes, 1 para cada aspecto.</string>
+    <string name="background_text">Selecciona 5 cartas difrentes del origen elegido.</string>
+    <string name="specialty_text">Selecciona 5 cartas difrentes de la especialidad elegida.</string>
+    <string name="outside_interest_text">Selecciona 1 carta de cualquier origen o especialidad como otros intereses.\nNota: las tarjetas de tu origen/especialid adelegidos no se muestran aquí, pero tu otro interés puede ser de tu clase elegida si utilizas las otras pestañas para seleccionarlo.</string>
+    <string name="collection_text">Algunos eventos de la campaña pueden permitirte intercambiar permanentemente cartas de tu mazo por otras de la colección.\nDespués de seleccionar una nueva carta de la colección y eliminar una de tu mazo, puedes ´devolver´ una carta a la colección utilizando la pestaña de cartas desplazadas.</string>
+
+    //Deck Side Drawer
+    <string name="deck_section_header">Mazo</string>
+    <string name="deck_section_deck_id">Mazo #%s</string>
+    <string name="deck_section_notes">Notas</string>
+    <string name="tools_section_header">Herramientas</string>
+    <string name="tools_section_charts">Gráficos</string>
+    <string name="campaign_section_header">Campaña</string>
+    <string name="campaign_section_camp">Acampar</string>
+    <string name="campaign_section_camp_additional_text">Para añadir recompensas y seguir los cambios</string>
+    <string name="campaign_section_camp_warning">Error: ¡Problemas con el mazo!</string>
+    <string name="campaign_section_previous_deck">Mazo anterior</string>
+    <string name="campaign_section_next_deck">Mazo siguiente</string>
+    <string name="options_section_header">Opciones</string>
+    <string name="options_section_clone_deck">Clonar mazo</string>
+    <string name="clone_deck_name_postfix">(Copia)</string>
+    <string name="options_section_upload_deck">Subir a RangersDB</string>
+    <string name="options_section_upload_deck_warning">Error: ¡El mazo tiene actualizaciones!</string>
+    <string name="options_section_delete_deck">Eliminar mazo</string>
+    <string name="options_section_delete_current_deck">Eliminar versión actual</string>
+    <string name="options_section_delete_deck_all_versions">Eliminar todas las versiones del mazo</string>
+    <string name="options_section_delete_deck_warning">Error: ¡Este mazo está en una campaña!</string>
+    <string name="delete_deck_text">¿Seguro que quieres eliminar este mazo? Version: %d.</string>
+
+    //Campaigns screen
+    <string name="campaigns_current_day">Día %d</string>
+    <string name="search_campaigns">Buscar campañas</string>
+    <string name="no_matching_campaigns">No se encuentran campañas para \"%s\"</string>
+    <string name="no_campaigns">No tienes campañas.\n\nUsa el botón + para crear una.</string>
+    <string name="new_campaign">Nueva campaña</string>
+    <string name="campaign_creation_name_placeholder">Elige un nombre para la campaña.</string>
+    <string name="create_campaign_button">Crear campaña</string>
+    <string name="campaign">Campaña</string>
+    <string name="campaign_placeholder">Elegir campaña</string>
+    <string name="transfer_campaign">Transferir campaña</string>
+    <string name="core_cycle">Core</string>
+    <string name="general_set_general">General</string>
+    <string name="general_set_the_valley">El Valle</string>
+
+    //Path types
+    <string name="old_growth">Arboleda</string>
+    <string name="mountain_pass">Montaña</string>
+    <string name="woods">Bosque</string>
+    <string name="lakeshore">Orilla del lago</string>
+    <string name="grassland">Pradera</string>
+    <string name="ravine">Barranco</string>
+    <string name="swamp">Ciénaga</string>
+    <string name="river">Río</string>
+
+    //Locations
+    <string name="atrox_mountain">Montaña Atrox</string>
+    <string name="northern_outpost">Puesto Norteño</string>
+    <string name="lone_tree_station">Estación Arbol Solitario</string>
+    <string name="white_sky">Cieloblanco</string>
+    <string name="golden_shore">Costa Dorada</string>
+    <string name="mount_nim">Monte Nim</string>
+    <string name="ancestors_grove">Arboleda de los caídos</string>
+    <string name="kobos_market">Mercado de Kobo</string>
+    <string name="boulder_field">Campo de pedruscos</string>
+    <string name="the_fractured_wall">El Muro Agrietado</string>
+    <string name="the_philosophers_garden">El Jardín del filósofo</string>
+    <string name="the_high_basin">La Cuenca Alta</string>
+    <string name="branch">Ramal</string>
+    <string name="spire">Aguja</string>
+    <string name="crossroads_station">Estación Nudo</string>
+    <string name="the_furrow">El Surco</string>
+    <string name="biologists_outpost">Puesto biológico</string>
+    <string name="terravore">Terravorador</string>
+    <string name="mound_of_the_navigator">Montículo del navegante</string>
+    <string name="the_greenbridge">Puenteverde</string>
+    <string name="michaels_bog">Lodazal de Michael</string>
+    <string name="the_cypress_citadel">La Ciudadela de los Cipreses</string>
+    <string name="marsh_of_rebirth">Pantano del Renacer</string>
+    <string name="sunken_outpost">Puesto hundido</string>
+    <string name="the_frowning_gate">La Puerta Ceñida</string>
+    <string name="bowl_of_the_sun">Recipiente del Sol</string>
+    <string name="the_alluvial_ruins">Ruinas aluviales</string>
+    <string name="the_tumbledown">Batacazo</string>
+    <string name="watchers_rock">Roca del Vigilante</string>
+    <string name="archeological_outpost">Puesto Arqeulógico</string>
+    <string name="rings_of_the_moon">Anillos de la Luna</string>
+    <string name="the_concordant_ziggurats">Los Zigurats Conexos</string>
+    <string name="meadow">Prado</string>
+    <string name="stoneweaver_bridge">Puente Tejepiedra</string>
+    <string name="greenbriar_knoll">Loma Zarzaverde</string>
+    <string name="the_plummet">Es Escarpado</string>
+    <string name="headwaters_station">Estación Cabecera</string>
+
+    //Campaign screen
+    <string name="current_location">Localización actual</string>
+    <string name="current_path_terrain">Terreno de Camino actual</string>
+    <string name="current_path_terrain_none">Ninguno</string>
+    <string name="recorded_journey_button">Registro de viaje</string>
+    <string name="extend_campaign_button">Ampliar campaña</string>
+
+    //Weather
+    <string name="weather_perfect_day">Un día perfecto</string>
+    <string name="weather_downpour">Chubascos</string>
+    <string name="weather_howling_winds">Viento huracanado</string>
+
+    //DayInfo
+    <string name="guide_entries">Entradas de diario:</string>
+    <string name="guide_entry">Entrada de diario</string>
+    <string name="add_guide_entry_button">Añadir entrada de diario</string>
+
+    //Journey
+    <string name="journey_title">Viaje</string>
+    <string name="en_route_to">De camino a %s</string>
+    <string name="stayed_at">Noche en %s</string>
+
+    //End the day
+    <string name="end_the_day">Terminar el día</string>
+    <string name="ending_day_number">Esto terminará el día %d.</string>
+    <string name="ending_day_warning">Esta opción debe utilizarse si un Guuardián está demasiado cansado, demasiado herido o si así lo indica el guía de la campaña o una misión.\nSi tiene intención de acampar mientras viajas a otra localización, usa el botón «Viajar».</string>
+
+    //Travel
+    <string name="travel_button">Viajar</string>
+    <string name="travel_header">Saliendo de %s</string>
+    <string name="show_all_locations_radio_button">Mostrar todas las localizaciones</string>
+    <string name="location_data_type">Localización</string>
+    <string name="travel_location_placeholder">Seleccionar localización</string>
+    <string name="path_terrain_data_type">Terreno de Camino</string>
+    <string name="travel_path_terrain_placeholder">Seleccionar terreno</string>
+    <string name="camp_radio_button">Acampar</string>
+    <string name="travel_without_camp_text">Los Guardianes continuarán jugando el día %d con su mazo actual.</string>
+    <string name="travel_with_camp">Acampar finalizará el día %d y permitirá intercambiar las recompensas obtenidas.</string>
+
+    //Rangers section
+    <string name="rangers_section_header">— Guardianes —</string>
+    <string name="add_ranger_button">Añadir Guardian</string>
+    <string name="no_decks_for_add">No hay mazos elegibles.</string>
+
+    //Settings section
+    <string name="settings_section_header">— Configuración —</string>
+    <string name="add_remove_players_button">Añadir/eliminar jugadores</string>
+    <string name="upload_campaign_button">Subir a RangersDB</string>
+    <string name="upload_campaign_warning">Error: ¡Esta campaña contiene mazos!</string>
+    <string name="delete_campaign_button">Eliminar campaña</string>
+    <string name="delete_campaign_confirmation">¿Seguro que quieres eliminar esta campaña?</string>
+    <string name="leave_campaign_confirmation">¿Seguro que quieres dejar esta campaña?</string>
+    <string name="leave_campaign_button">Dejar campaña</string>
     
+    //Undo
+    <string name="undo_travel_header">Deshacer viaje</string>
+    <string name="undo_available_text">Si cometiste un error al viajar o al finalizar el día, aquí puedes deshacer tus ediciones recientes. Las barajas no se modificarán.</string>
+    <string name="undo_unavailable_text">No hay cambios de viaje para deshacer.</string>
+
+    //Campaign log section
+    <string name="campaign_log_header">Registro de campaña</string>
+    <string name="missions_campaign_log_tab">Misiones</string>
+    <string name="show_only_active_missions">Mostrar solo activas</string>
+    <string name="add_mission_button">Añadir misión</string>
+    <string name="mission_header">Misión</string>
+    <string name="mission_day_input">Día</string>
+    <string name="mission_progress">Progreso</string>
+    <string name="mission_completed">Completada</string>
+    <string name="delete_mission_button">Eliminar misión</string>
+    <string name="events_campaign_log_tab">Eventos destacables</string>
+    <string name="record_event_button">Añadir evento</string>
+    <string name="event_name_input">¿Qué ha ocurrido?</string>
+    <string name="event_header">Evento destacable</string>
+    <string name="event_crossed_out">Tachado</string>
+    <string name="removed_campaign_log_tab">Cartas eliminadas</string>
+    <string name="remove_card_button">Eliminar carta</string>
+    <string name="removed_set_header">Set</string>
+    <string name="removed_select_set_text">Selecciona un set de cartas</string>
+    <string name="removed_campaign_log_text">Registra las cartas que has eliminado permanentemente del mazo de caminos.</string>
+
+    //Errors handling
+    <string name="something_went_wrong">Algo ha salido mal.</string>
+
+    //Diagnostics Screen
+    <string name="diagnostics_clear_local_data">Eliminar datos locales de mazos y campañas</string>
+    <string name="diagnostics_clear_local_data_cleared">Datos locales eliminados.</string>
+    <string name="diagnostics_clear_coil_cache">Eliminar caché de imágenes</string>
+    <string name="diagnostics_clear_coil_cache_cleared">Caché de imágenes eliminada.</string>
+    <string name="diagnostics_clear_apollo_cache">Eliminar caché de red</string>
+    <string name="diagnostics_clear_apollo_cache_cleared">Caché de red eliminada.</string>
+
+    //loa campaign
+    <string name="general_set_the_arcology">The Arcology</string>
+    <string name="loa_expansion">Legado de los Ancestros</string>
+    <string name="ancient_ruins">Ruinas ancestrales</string>
+    <string name="flooded_ruins">Ruinas inundadas</string>
+    <string name="deep_roots">Raíces profundas</string>
+    <string name="fungal_forest">Bosque micótico</string>
+    <string name="cave_system">Sistema de cuevas</string>
+    <string name="flooded_passage">Vía inundada</string>
+    <string name="locked_passage">Vía cerrada</string>
+    <string name="overgrown_passage">Vía descuidada</string>
+    <string name="the_chimney">La Chimenea</string>
+    <string name="oasis_of_sunlight">Oasis del Sol</string>
+    <string name="scuttler_network">Conjunto de pasadizos</string>
+    <string name="drenching_chamber">Cámara de inmersión</string>
+    <string name="desert_of_endless_night">Desierto de la noche eterna</string>
+    <string name="orlins_vault">Bóveda de Orlin</string>
+    <string name="severed_artery">Arteria cortada</string>
+    <string name="branching_artery">Arteria de bifurcación</string>
+    <string name="terminal_artery">Arteria terminal</string>
+    <string name="silent_dormitories">Estancias silenciosas</string>
+    <string name="cerulean_curtain">Cortina Cerúlea</string>
+    <string name="mycelial_conclave">Cónclave Fúngido</string>
+    <string name="carbonforged_maze">Laberinto de carbono forjado</string>
+    <string name="the_cistern">La Cisterna</string>
+    <string name="inverted_forest">Bosque invertido</string>
+    <string name="the_verdant_sphere">La Esfera Verde</string>
+    <string name="the_rootway">Senda de las raíces</string>
+    <string name="arboretum_of_memory">Arboreto de la memoria</string>
+    <string name="talpids_squeeze">Estrecho del Tálpido</string>
+    <string name="the_cage">La Caja</string>
+    <string name="connection_restriction_data_type">Restricción de conexión</string>
+
+    <string name="sotv_expansion">Protectores del Valle</string>
+    <string name="talespinner_background">Cuentahistorias</string>
+    <string name="spirit_speaker_specialty">Portavoz Espiritual</string>
+
+    //Loa Weather
+    <string name="weather_enveloping_silence">Silencio envolvente</string>
+    <string name="weather_glitterain">Brilluvia</string>
+    <string name="weather_shimmering_runoff">Escorrentía brillante</string>
+
 </resources>
