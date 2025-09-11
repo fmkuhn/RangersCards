@@ -354,7 +354,7 @@
     <string name="arboretum_of_memory">Дендрарий памяти</string>
     <string name="talpids_squeeze">Кротовый лаз</string>
     <string name="the_cage">Клетка</string>
-    <string name="connection_restriction_data_type">Ограничение пути</string>
+    <string name="connection_restriction_data_type">Заблокированный путь</string>
     <string name="sotv_expansion">Хранители долины</string>
     <string name="talespinner_background">Сказитель</string>
     <string name="spirit_speaker_specialty">Медиум</string>
