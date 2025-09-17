@@ -3,6 +3,7 @@ package com.rangerscards.ui.campaigns.dialogs
 import android.widget.Toast
 import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
+import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.fillMaxWidth
@@ -10,12 +11,17 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
+import androidx.compose.material3.Icon
+import androidx.compose.material3.IconButton
+import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.OutlinedTextField
+import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableIntStateOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.runtime.saveable.rememberSaveable
@@ -24,6 +30,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
@@ -68,17 +75,22 @@ fun CampaignEventDialog(
     } else {
         var name by rememberSaveable { mutableStateOf(event.name) }
         var crossedOut by rememberSaveable { mutableStateOf(event.crossedOut) }
+        var marks by rememberSaveable { mutableIntStateOf(event.marks) }
         CampaignDialog(
             header = stringResource(id = R.string.event_header),
             isDarkTheme = isDarkTheme,
             onBack = onBack
         ) {
             Column(
-                modifier = Modifier.fillMaxWidth().padding(8.dp),
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(8.dp),
                 verticalArrangement = Arrangement.spacedBy(8.dp)
             ) {
                 OutlinedTextField(
-                    modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(top = 8.dp),
                     value = name,
                     onValueChange = { name = it },
                     label = {
@@ -110,9 +122,73 @@ fun CampaignEventDialog(
                     )
                 )
                 Row(
-                    modifier = Modifier.padding(horizontal = 8.dp).clickable {
-                        crossedOut = !crossedOut
-                    },
+                    modifier = Modifier.padding(horizontal = 8.dp, vertical = 4.dp),
+                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                    verticalAlignment = Alignment.CenterVertically
+                ) {
+                    Text(
+                        text = stringResource(R.string.event_marks),
+                        color = CustomTheme.colors.d30,
+                        fontFamily = Jost,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 20.sp,
+                        lineHeight = 22.sp,
+                        modifier = Modifier.weight(1f)
+                    )
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp),
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        IconButton(
+                            onClick = { if (marks > 0) marks -= 1 },
+                            colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
+                            modifier = Modifier.size(32.dp),
+                            enabled = marks > 0
+                        ) {
+                            Icon(
+                                painterResource(id = R.drawable.remove_32dp),
+                                contentDescription = null,
+                                tint = CustomTheme.colors.m,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                        Surface(
+                            color = Color.Transparent,
+                        ) {
+                            Box(
+                                modifier = Modifier.padding(horizontal = 6.dp),
+                                contentAlignment = Alignment.Center
+                            ) {
+                                Text(
+                                    text = marks.toString(),
+                                    color = CustomTheme.colors.d10,
+                                    fontFamily = Jost,
+                                    fontWeight = FontWeight.Medium,
+                                    fontSize = 18.sp,
+                                )
+                            }
+                        }
+                        IconButton(
+                            onClick = { if (marks < 20) marks += 1 },
+                            colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
+                            modifier = Modifier.size(32.dp),
+                            enabled = marks < 20
+                        ) {
+                            Icon(
+                                painterResource(id = R.drawable.add_32dp),
+                                contentDescription = null,
+                                tint = CustomTheme.colors.m,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                    }
+                }
+                Row(
+                    modifier = Modifier
+                        .padding(horizontal = 8.dp)
+                        .clickable {
+                            crossedOut = !crossedOut
+                        },
                     horizontalArrangement = Arrangement.spacedBy(8.dp),
                     verticalAlignment = Alignment.CenterVertically
                 ) {
@@ -140,7 +216,7 @@ fun CampaignEventDialog(
                     disabledContainerColor = CustomTheme.colors.d10.copy(alpha = 0.3f)
                 ),
                 onClick = { coroutine.launch { showLoadingDialog = true
-                    campaignViewModel.updateCampaignEvents(eventName, name, crossedOut, user)
+                    campaignViewModel.updateCampaignEvents(eventName, name, crossedOut, marks, user)
                 }.invokeOnCompletion { showLoadingDialog = false
                     onBack.invoke()
                 } },

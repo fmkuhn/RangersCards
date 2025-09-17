@@ -12,8 +12,8 @@ import com.apollographql.apollo.api.Optional
 import com.apollographql.apollo.cache.normalized.FetchPolicy
 import com.apollographql.apollo.cache.normalized.fetchPolicy
 import com.google.firebase.auth.FirebaseUser
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.auth.auth
+import com.google.firebase.Firebase
 import com.rangerscards.CreateDeckMutation
 import com.rangerscards.GetMyDecksQuery
 import com.rangerscards.data.database.card.CardListItemProjection

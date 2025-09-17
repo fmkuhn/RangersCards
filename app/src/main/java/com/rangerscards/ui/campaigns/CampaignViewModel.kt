@@ -99,6 +99,7 @@ data class CampaignMission(
 data class CampaignEvent(
     val name: String,
     val crossedOut: Boolean,
+    val marks: Int = 0,
 )
 
 data class CampaignRemoved(
@@ -439,7 +440,7 @@ class CampaignViewModel(
                     campaignName = null
                 ))
                 while (deck!!.previousId != null) {
-                    deck = deckRepository.getDeck(deck.previousId!!)
+                    deck = deckRepository.getDeck(deck.previousId)
                     decks.add(deck!!.copy(
                         updatedAt = getCurrentDateTime(),
                         campaignId = null,
@@ -555,6 +556,7 @@ class CampaignViewModel(
                     events = buildJsonArray { campaign.events.forEach { add(buildJsonObject {
                         put("event", it.name)
                         put("crossed_out", it.crossedOut)
+                        put("marks", it.marks)
                     }) } },
                     removed = buildJsonArray { campaign.removed.forEach { add(buildJsonObject {
                         put("name", it.name)
@@ -623,7 +625,7 @@ class CampaignViewModel(
                             campaignId = currentCampaign.previousCampaignId,
                         ))
                         while (deckDb!!.previousId != null) {
-                            deckDb = deckRepository.getDeck(deckDb.previousId!!)
+                            deckDb = deckRepository.getDeck(deckDb.previousId)
                             decks.add(deckDb!!.copy(
                                 updatedAt = getCurrentDateTime(),
                                 campaignId = currentCampaign.previousCampaignId,
@@ -882,12 +884,13 @@ class CampaignViewModel(
         }
     }
 
-    suspend fun updateCampaignEvents(oldName: String, newName: String, crossedOut: Boolean, user: FirebaseUser?) {
+    suspend fun updateCampaignEvents(oldName: String, newName: String, crossedOut: Boolean, marks: Int, user: FirebaseUser?) {
         val campaign = campaign.value!!
-        val newEventsList = campaign.events.map { if (it.name == oldName) CampaignEvent(newName, crossedOut) else it }
+        val newEventsList = campaign.events.map { if (it.name == oldName) CampaignEvent(newName, crossedOut, marks) else it }
         val newJsonList = buildJsonArray { newEventsList.forEach { add(buildJsonObject {
             put("event", it.name)
             put("crossed_out", it.crossedOut)
+            put("marks", it.marks)
         }) } }
         if (campaign.uploaded) {
             val token = user!!.getIdToken(true).await().token
@@ -1022,7 +1025,8 @@ fun Campaign.toCampaignState(): CampaignState {
             val value = element.jsonObject
             CampaignEvent(
                 value["event"]!!.jsonPrimitive.content,
-                value["crossed_out"]?.jsonPrimitive?.content.toBoolean()
+                value["crossed_out"]?.jsonPrimitive?.content.toBoolean(),
+                value["marks"]?.jsonPrimitive?.content?.toInt() ?: 0
             )
         },
         rewards = this.rewards.jsonArray.map { it.jsonPrimitive.content },

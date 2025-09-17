@@ -31,7 +31,7 @@ fun CampaignEvents(
     events: List<CampaignEvent>,
     onClick: (String) -> Unit,
     state: LazyListState,
-    nestedConnectionModifier: Modifier
+    modifier: Modifier
 ) {
     Column {
         SquareButton(
@@ -47,17 +47,18 @@ fun CampaignEvents(
         )
         LazyColumn(
             state = state,
-            modifier = nestedConnectionModifier.fillMaxWidth(),
+            modifier = modifier.fillMaxWidth(),
             verticalArrangement = Arrangement.spacedBy(8.dp),
             contentPadding = PaddingValues(8.dp)
         ) {
             events.forEach { event ->
                 item(event.name) {
+                    val checks = "\u2713".repeat(event.marks)
                     Column(
                         modifier = Modifier.fillMaxWidth().clickable { onClick.invoke(event.name) }
                     ) {
                         Text(
-                            text = event.name,
+                            text = if (checks.isNotEmpty()) "${event.name} $checks" else event.name,
                             color = CustomTheme.colors.d30,
                             fontFamily = Jost,
                             fontWeight = FontWeight.Medium,
