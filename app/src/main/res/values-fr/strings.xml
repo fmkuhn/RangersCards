@@ -1,7 +1,425 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="awa_styled_card_text">VIG</string>
-    <string name="fit_styled_card_text">PHY</string>
-    <string name="foc_styled_card_text">CON</string>
-    <string name="spi_styled_card_text">ESP</string>
+
+  <string name="cards_updating">Mise à jour des Cartes</string>
+
+  //BottomNavBar
+  <string name="settings_nav_bar_button">Paramètres</string>
+  <string name="cards_nav_bar_button">Cartes</string>
+  <string name="decks_nav_bar_button">Decks</string>
+  <string name="campaigns_nav_bar_button">Campagnes</string>
+
+  //Settings screen strings
+  <string name="account_title">Compte RangersDB</string>
+  <string name="text_when_not_logged_in">Cette application fonctionne parfaitement sans compte.\nSe connecter te permet de synchroniser les campagnes et decks entre appareils et avec RangersDB.</string>
+  <string name="sign_in_to_app_account_button">Se connecter à l'application</string>
+  <string name="sign_in_up_to_app_account_title">Connexion</string>
+  <string name="email_placeholder">Adresse e-mail</string>
+  <string name="password_placeholder">Mot de passe</string>
+  <string name="sign_in_to_account_button">Se connecter avec ton compte</string>
+  <string name="sign_up_to_app_account_button">Créer un nouveau compte</string>
+  <string name="sign_out_account_button">Se déconnecter</string>
+  <string name="delete_account_button">Supprimer le compte</string>
+  <string name="sign_out_account_title">Se déconnecter de RangersDB ?</string>
+  <string name="delete_account_title">Confirmer la suppression du compte</string>
+  <string name="sign_out_account_text">Es-tu sûr de vouloir te déconnecter de RangersDB ?\n\nToutes les campagnes que tu as téléchargées ou qui ont été partagées avec toi, ainsi que les Decks de RangersDB, seront supprimés de cet appareil. Ils pourront être retéléchargés quand tu te reconnecteras.\n\nRemarque : si tu as récemment effectué des modifications hors ligne, elles pourraient être perdues.</string>
+  <string name="cancel_button">Annuler</string>
+  <string name="done_button">Terminé</string>
+  <string name="account_name_header">Nom de compte</string>
+  <string name="friends_amount_header">Amis</string>
+  <plurals name="friends_amount">
+    <item quantity="one">%d ami</item>
+    <item quantity="other">%d amis</item>
+  </plurals>
+  <plurals name="friends_request_amount">
+    <item quantity="one">%d demande d'amitié</item>
+    <item quantity="other">%d demandes d'amitié</item>
+  </plurals>
+  <string name="search_friends">Rechercher des amis</string>
+  <string name="your_friends">Tes amis</string>
+  <string name="sent_requests">Demandes d'amitié envoyées</string>
+  <string name="received_requests">Demandes d'amitié reçues</string>
+  <string name="search_results">Résultats de recherche</string>
+  <string name="no_matching_results">Aucun résultat pour "%s".</string>
+  <string name="settings_title">Paramètres</string>
+  <string name="theme_header">Apparence</string>
+  <string name="light_theme">Clair</string>
+  <string name="dark_theme">Sombre</string>
+  <string name="system_theme">Par défaut (%s)</string>
+  <string name="english_search_results_radio_button">Inclure les résultats en anglais dans la recherche</string>
+  <string name="cards_title">Cartes</string>
+  <string name="language_header">Langue</string>
+  <string name="info_text_about_locale_switching">Le changement de langue impose de télécharcher les cartes traduites depuis RangersDB. Cela nécessite une connexion Internet et peut prendre un certain temps.</string>
+  <string name="collection_header">Collection</string>
+  <plurals name="expansions_amount">
+    <item quantity="one">%d extension</item>
+    <item quantity="other">%d extensions</item>
+  </plurals>
+  <string name="update_cards_button">Mettre à jour les cartes</string>
+  <string name="rules_button">Règles</string>
+  <string name="authentication_failed_toast">Authentification échouée.</string>
+  <string name="invalid_password_toast">Mot de passe invalide. Il doit contenir au moins 6 caractères.</string>
+  <string name="invalid_email_toast">Adresse e-mail invalide.</string>
+  <string name="account_successfully_deleted_toast">Compte supprimé avec succès.</string>
+  <string name="invalid_credentials_toast">Identifiants invalides.</string>
+  <string name="handle_already_taken_toast">Ce nom est déjà pris.</string>
+  <string name="invalid_handle_toast">Nom invalide. Il doit comporter entre 2 et 22 caractères.</string>
+  <string name="socials_title">Réseaux sociaux</string>
+  <string name="socials_text">Discute avec d'autres joueurs d'Earthborne Rangers :</string>
+  <string name="discord_button">Discord</string>
+  <string name="telegram_button">Telegram</string>
+  <string name="support_title">Assistance</string>
+  <string name="support_text">Soutiens Rangers Cards via %s.</string>
+  <string name="about_button">À propos de Rangers Cards</string>
+  <string name="backup_data_button">Sauvegarder les données</string>
+  <string name="diagnostics_button">Diagnostic</string>
+  <string name="contact_us_button">Nous contacter</string>
+
+
+
+
+
+
+
+
+
+
+
+
+
+  //About screen
+  <string name="about_text">Les informations présentées dans cette application sur Earthborne Rangers, qu’elles soient graphiques ou textuelles, sont protégées par le droit d’auteur d’Earthborne Games. Cette application n’est ni développée ni soutenue par Earthborne Games et n’est en aucun cas affiliée à eux.\n\nCette application a été développée par Eugene Karelin en tant que projet de fan pour soutenir la communauté des fans d’Earthborne Rangers. Si tu dois gérer de nombreux decks ou campagnes, j’espère que l’application te sera utile.</string>
+  <string name="about_email_text">Feedback and Report de bug sont bienvenue par e-mail (en anglais) à %s</string>
+  <string name="about_rangersdb_text">Merci à RangersDB.com pour la fourniture des données structurées, l’accès à l’API et l’accès aux images des cartes. Sans leur soutien continu, ce projet ne serait pas possible.</string>
+  <string name="icon_attribution">Sources des icônes :</string>
+
+  //Cards screen
+  <string name="no_matching_cards">Aucune carte trouvée correspondant à \"%s\" </string>
+  <string name="no_matching_cards_filtered">Aucune carte correspondante trouvée</string>
+  <string name="search_for_card">Rechercher une carte</string>
+  <string name="set_info">%d sur %d</string>
+  <string name="awa_styled_card_text">VIG</string>
+  <string name="fit_styled_card_text">PHY</string>
+  <string name="foc_styled_card_text">CON</string>
+  <string name="spi_styled_card_text">ESP</string>
+  <string name="show_card_image">Afficher la carte en grand</string>
+  <string name="hide_card_image">Afficher la carte en plus petit</string>
+
+  //Decks screen
+  <string name="traveler_background">Voyageur</string>
+  <string name="shepherd_background">Berger</string>
+  <string name="forager_background">Cueilleur</string>
+  <string name="artisan_background">Artisan</string>
+  <string name="explorer_specialty">Chercheur</string>
+  <string name="shaper_specialty">Façonneur</string>
+  <string name="conciliator_specialty">Conciliateur</string>
+  <string name="artificer_specialty">Artificier</string>
+  <string name="search_decks">Rechercher des Decks</string>
+  <string name="no_matching_decks">Aucun deck correspondant à \"%s\" trouvé</string>
+  <string name="no_decks">Tu n’as encore aucun Deck.\n\nAppuie sur le + pour en créer un.</string>
+  <string name="new_deck">Nouveau Deck</string>
+  <string name="custom_deck_tab">Deck personnalisé</string>
+  <string name="starter_deck_tab">Deck de démarrage</string>
+  <string name="deck_creation_name_label">Nom</string>
+  <string name="deck_creation_name_placeholder">Donne un nom à ce Deck.</string>
+  <string name="starter_deck_title">Choisis un Deck de démarrage :</string>
+  <string name="upload_to_rangersdb">Charger sur RangersDB</string>
+  <string name="view_on_rangersdb">Voir sur RangersDB</string>
+  <string name="copy_link_to_rangersdb">Lien copié dans le presse-papiers</string>
+  <string name="use_taboo">Follow the Elder's Book of Uncommon Wisdom</string>
+  <string name="create_deck_button">Créer le Deck</string>
+  <string name="background">antécédent</string>
+  <string name="background_placeholder">Choisis un antécédent</string>
+  <string name="specialty">Spécialisation</string>
+  <string name="specialty_placeholder">Choisis une spécialisation</string>
+  <string name="role">Rôle</string>
+  <string name="role_placeholder">Choisis un role</string>
+  <string name="no_roles">Il n’y a aucun rôle correspondant dans ta collection</string>
+  <string name="starter_deck_name_postfix">(Débutant)</string>
+
+  //Deck errors
+  <string name="invalid_aspects">Les aspects choisis sont invalides.</string>
+  <string name="too_many_duplicates">Trop de cartes portant le même nom.</string>
+  <string name="need_two_cards">Tu dois ajouter deux exemplaires de chaque carte à ton Deck de départ.</string>
+  <string name="personality_error">Pas assez de cartes de personnalité.</string>
+  <string name="too_many_awa_personality">Trop de cartes de personnalité VIG.</string>
+  <string name="too_many_spi_personality">Trop de cartes de personnalité ESP.</string>
+  <string name="too_many_foc_personality">Trop de cartes de personnalité CON.</string>
+  <string name="too_many_fit_personality">Trop de cartes de personnalité PHY.</string>
+  <string name="background_error">Pas assez de cartes d'antécédent.</string>
+  <string name="too_many_background">Trop de cartes de l'antécédent choisi.</string>
+  <string name="specialty_error">Pas assez de cartes de spécialisation.</string>
+  <string name="too_many_specialty">Trop de cartes de spécialisation choisie.</string>
+  <string name="role_error">Tu dois sélectionner un rôle.</string>
+  <string name="outside_interest_error">Pas assez de cartes de centre d'intérêt.</string>
+  <string name="invalid_background">Contient trop de cartes qui ne correspondent pas à ton antécédent choisi.</string>
+  <string name="invalid_specialty">Contient trop de cartes qui ne correspondent pas à ta spécialisation choisie.</string>
+  <string name="invalid_role">Ton rôle ne correspond pas à ta spécialisation choisie.</string>
+  <string name="invalid_aspect_levels">Ton deck contient des cartes dont les conditions d'aspect ne sont pas remplies.</string>
+  <string name="invalid_outside_interest">Ton centre d'intérêt ne peut pas avoir le trait Expert.</string>
+  <string name="too_many_outside_interest">Il y a trop de cartes de centre d'intérêt dans ton deck.</string>
+  <string name="too_many_cards">Trop de cartes. Si tu ajoutes des cartes de récompense à ton Deck pendant le campement, tu dois en retirer pour garder le Deck à 30 cartes.</string>
+  <string name="too_few_cards">Pas assez de cartes. Si tu retires des cartes Récompense pendant le campement, tu dois remettre autant de cartes de ton deck d'origne pour avoir 30 cartes.</string>
+
+  //FullDeck screen
+  <plurals name="more_problems">
+    <item quantity="one"> + %d problème supplémentaire</item>
+    <item quantity="other"> + %d problèmes supplémentaires</item>
+  </plurals>
+  <string name="edit_deck_button">Modifier</string>
+  <string name="cards_amount_in_deck">%d / 30 cartes</string>
+  <plurals name="maladies_amount">
+    <item quantity="one">(%d trauma)</item>
+    <item quantity="other">(%d traumas)</item>
+  </plurals>
+  <string name="personality">personnalité</string>
+  <string name="outside_interest">centre d'intérêt</string>
+  <string name="rewards_and_maladies">Récompenses et Trauma</string>
+  <string name="side_deck">Side deck</string>
+  <string name="deck_changes">Modifications</string>
+  <string name="deck_changes_added">Ajouté</string>
+  <string name="deck_changes_removed">Retiré</string>
+  <string name="deck_changes_added_collection">Ajouté depuis la collection</string>
+  <string name="deck_changes_returned_collection">Rangé dans la collection</string>
+  <string name="save_deck_button">Enregistrer les modifications</string>
+  <string name="background_as_outside_interest">Une des cartes choisies de ton antécédent compte comme ton centre d'intérêt.</string>
+  <string name="specialty_as_outside_interest">Une des cartes choisies de ta spécialisation compte comme ton centre d'intérêt.</string>
+  <string name="reward_or_malady_in_starting_deck">Les récompenses et trauma ne sont pas autorisées dans les decks de départ.</string>
+  <string name="save_deck_changes_header">Enregistrer les modifications du deck ?</string>
+  <string name="save_deck_changes_text">Tu as apporté des modifications à ton deck qui n'ont pas encore été enregistrées.</string>
+  <string name="save_deck_changes_button">Enregistrer les modifications</string>
+  <string name="discard_deck_changes_button">Annuler les modifications</string>
+  <string name="saving_changes_header">Enregistrement…</string>
+  <string name="editing_deck_screen_header">Modifier le deck</string>
+  <string name="rewards_search_tab">Récompenses</string>
+  <string name="maladies_search_tab">Trauma</string>
+  <string name="collection_search_tab">Collection</string>
+  <string name="displaced_search_tab">Cartes écartées</string>
+  <string name="show_all_button">Tout afficher</string>
+  <string name="personality_text">Sélectionne 4 personnalités différentes, 1 pour chaque aspect.</string>
+  <string name="background_text">Sélectionne 5 cartes différentes pour ton antécédent choisi.</string>
+  <string name="specialty_text">Sélectionne 5 cartes différentes pour ton spécialisation choisie.</string>
+  <string name="outside_interest_text">Sélectionne 1 carte d'un quelconque antécédent ou spécialisation pour ton centre d'intérêt.\nRemarque : les cartes de tes antécédent et spécialisation choisis n'apparaissent pas ici, mais tu peux les sélectionner comme centre d'intérêt. Utilise les autres onglets.</string>
+  <string name="collection_text">Certains événements pendant la campagne te permettent d’échanger définitivement des cartes de ton deck avec celles de la collection (dites modifications permanentes).\nAprès avoir sélectionné une nouvelle carte de la collection et retiré une carte de ton deck, tu peux ranger une carte dans l’onglet Cartes écartées.</string>
+
+  //Deck Side Drawer
+  <string name="deck_section_header">Deck</string>
+  <string name="deck_section_deck_id">Deck #%s</string>
+  <string name="deck_section_notes">Notes</string>
+  <string name="tools_section_header">Outils</string>
+  <string name="tools_section_charts">Graphiques</string>
+  <string name="campaign_section_header">Campagne</string>
+  <string name="campaign_section_camp">Camper</string>
+  <string name="campaign_section_camp_additional_text">Pour ajouter des récompenses et suivre les modifications</string>
+  <string name="campaign_section_camp_warning">Erreur : des problèmes sont présents dans ton Deck !</string>
+  <string name="campaign_section_previous_deck">Version de Deck précédente</string>
+  <string name="campaign_section_next_deck">Version de Deck suivante</string>
+  <string name="options_section_header">Options</string>
+  <string name="options_section_clone_deck">Dupliquer le Deck</string>
+  <string name="clone_deck_name_postfix">(Copier)</string>
+  <string name="options_section_upload_deck">Téléverser sur RangersDB</string>
+  <string name="options_section_upload_deck_warning">Erreur : le Deck contient déjà des modifications !</string>
+  <string name="options_section_delete_deck">Supprimer le Deck</string>
+  <string name="options_section_delete_current_deck">Supprimer la version actuelle</string>
+  <string name="options_section_delete_deck_all_versions">Supprimer toutes les versions du Deck</string>
+  <string name="options_section_delete_deck_warning">Erreur : le Deck est utilisé dans une campagne !</string>
+  <string name="delete_deck_text">Es-tu sûr de vouloir supprimer ce Deck ? Version : %d.</string>
+
+  //Campaigns screen
+  <string name="campaigns_current_day">Jour %d</string>
+  <string name="search_campaigns">Rechercher des campagnes</string>
+  <string name="no_matching_campaigns">Aucune campagne correspondant à "%s"</string>
+  <string name="no_campaigns">Il n’y a encore aucune campagne.\n\nAppuie sur + pour en créer une.</string>
+  <string name="new_campaign">Nouvelle campagne</string>
+  <string name="campaign_creation_name_placeholder">Donne un nom à cette campagne.</string>
+  <string name="create_campaign_button">Créer la campagne</string>
+  <string name="campaign">Campagne</string>
+  <string name="campaign_placeholder">Choisis une campagne</string>
+  <string name="transfer_campaign">Transférer la campagne</string>
+  <string name="core_cycle">Jeu de base</string>
+  <string name="general_set_general">Général</string>
+  <string name="general_set_the_valley">La Vallée</string>
+
+  //Path types
+  <string name="old_growth">Forêt primaire</string>
+  <string name="mountain_pass">Col</string>
+  <string name="woods">Forêt</string>
+  <string name="lakeshore">Tourbière</string>
+  <string name="grassland">Steppe</string>
+  <string name="ravine">Ravin</string>
+  <string name="swamp">Marécage</string>
+  <string name="river">Rivière</string>
+
+  //Locations
+  <string name="atrox_mountain">Montagne des Atrox</string>
+  <string name="northern_outpost">Avant-Poste du nord</string>
+  <string name="lone_tree_station">Base de l'Arbre Solitaire</string>
+  <string name="white_sky">Blanc-Ciel</string>
+  <string name="golden_shore">Rivage doré</string>
+  <string name="mount_nim">Mont Nim</string>
+  <string name="ancestors_grove">Bosquet des ancêtres</string>
+  <string name="kobos_market">Marché de Kobo</string>
+  <string name="boulder_field">Chaos rocheux</string>
+  <string name="the_fractured_wall">Le Mur fracturé</string>
+  <string name="the_philosophers_garden">Le Jardin du Philosophe</string>
+  <string name="the_high_basin">Le Haut Bassin</string>
+  <string name="branch">Branche</string>
+  <string name="spire">Flèche</string>
+  <string name="crossroads_station">Base de la Croisée des Chemins</string>
+  <string name="the_furrow">Le sillon</string>
+  <string name="biologists_outpost">Avant-Poste Biologique</string>
+  <string name="terravore">Terravore</string>
+  <string name="mound_of_the_navigator">le Piton du navigateur</string>
+  <string name="the_greenbridge">Le Pont Végétal</string>
+  <string name="michaels_bog">Marais de Michael</string>
+  <string name="the_cypress_citadel">La Citadelle de Cyprès</string>
+  <string name="marsh_of_rebirth">Marais de la Renaissance</string>
+  <string name="sunken_outpost">Avant-poste Submergé</string>
+  <string name="the_frowning_gate">Le passage Torve</string>
+  <string name="bowl_of_the_sun">Vasque du Soleil</string>
+  <string name="the_alluvial_ruins">Les Ruines Alluviales</string>
+  <string name="the_tumbledown">Culbute</string>
+  <string name="watchers_rock">Rocher de la Vigie</string>
+  <string name="archeological_outpost">Avant-Poste Archéologique</string>
+  <string name="rings_of_the_moon">Anneaux Lunaires</string>
+  <string name="the_concordant_ziggurats">Les Ziggourats Jumelles</string>
+  <string name="meadow">Prairie</string>
+  <string name="stoneweaver_bridge">Pont de Pierre Tissée</string>
+  <string name="greenbriar_knoll">Tertre de Verbruyère</string>
+  <string name="the_plummet">L'Escarpement</string>
+  <string name="headwaters_station">Base de la source</string>
+
+  //Campaign screen
+  <string name="current_location">Position actuelle</string>
+  <string name="current_path_terrain">Type de terrain actuel</string>
+  <string name="current_path_terrain_none">Aucun</string>
+  <string name="recorded_journey_button">Voyage enregistré</string>
+  <string name="extend_campaign_button">Prolonger la campagne</string>
+
+  //Weather
+  <string name="weather_perfect_day">une Journée Parfaite</string>
+  <string name="weather_downpour">Averse</string>
+  <string name="weather_howling_winds">Vents Hurlants</string>
+
+  //DayInfo
+  <string name="guide_entries">Entrées du journal de campagne :</string>
+  <string name="guide_entry">Entrée du journal de campagne</string>
+  <string name="add_guide_entry_button">Ajouter une entrée de journal</string>
+
+  //Journey
+  <string name="journey_title">Voyage</string>
+  <string name="en_route_to">En route vers %s</string>
+  <string name="stayed_at">Arrêt à %s</string>
+
+  //End the day
+  <string name="end_the_day">Terminer le jour</string>
+  <string name="ending_day_number">Cela terminera le jour %d.</string>
+  <string name="ending_day_warning">Cette option doit être choisie lorsqu’un Ranger est trop fatigué, trop blessé ou si la campagne ou une mission l’exige.\nSi tu veux camper alors que tu te déplaces vers un nouvel endroit, utilise le bouton 'Voyager'.</string>
+
+  //Travel
+  <string name="travel_button">Voyager</string>
+  <string name="travel_header">Quitter %s</string>
+  <string name="show_all_locations_radio_button">Afficher tous les lieux</string>
+  <string name="location_data_type">Lieux connectés</string>
+  <string name="travel_location_placeholder">Choisir un lieu</string>
+  <string name="path_terrain_data_type">Type de terrain</string>
+  <string name="travel_path_terrain_placeholder">Choisir un type de terrain</string>
+  <string name="camp_radio_button">Camper</string>
+  <string name="travel_without_camp_text">Les Rangers continueront le jour %d avec leurs decks actuels.</string>
+  <string name="travel_with_camp">Si un campement est établi, le jour %d se termine et les récompenses gagnées peuvent être échangées dans les decks.</string>
+
+  //Rangers section
+  <string name="rangers_section_header">— Rangers —</string>
+  <string name="add_ranger_button">Ajouter un Ranger</string>
+  <string name="no_decks_for_add">Aucun déck approprié.</string>
+
+  //Settings section
+  <string name="settings_section_header">— Paramètres —</string>
+  <string name="add_remove_players_button">Ajouter/retirer des joueurs</string>
+  <string name="upload_campaign_button">Téléverser la campagne sur RangersDB</string>
+  <string name="upload_campaign_warning">Erreur : cette campagne contient des decks !</string>
+  <string name="delete_campaign_button">Supprimer la campagne</string>
+  <string name="delete_campaign_confirmation">Es-tu sûr de vouloir supprimer cette campagne ?</string>
+  <string name="leave_campaign_confirmation">Es-tu sûr de vouloir quitter cette campagne ?</string>
+  <string name="leave_campaign_button">Quitter la campagne</string>
+
+  //Undo
+  <string name="undo_travel_header">Annuler les voyages</string>
+  <string name="undo_available_text">Si une erreur est survenue lors du voyage ou de la fin de journée, tu peux annuler les derniers changements ici. Cela n’affecte pas les decks.</string>
+  <string name="undo_unavailable_text">Il n’y a aucun voyage à annuler.</string>
+
+  //Campaign log section
+  <string name="campaign_log_header">Journal de campagne</string>
+  <string name="missions_campaign_log_tab">Missions</string>
+  <string name="show_only_active_missions">Afficher seulement les actives</string>
+  <string name="add_mission_button">Ajouter une mission</string>
+  <string name="mission_header">Mission</string>
+  <string name="mission_day_input">Jour</string>
+  <string name="mission_progress">Progrès</string>
+  <string name="mission_completed">Terminé</string>
+  <string name="delete_mission_button">Supprimer la mission</string>
+  <string name="events_campaign_log_tab">Événements remarquables</string>
+  <string name="record_event_button">Ajouter un événement</string>
+  <string name="event_name_input">Qu’est-il arrivé?</string>
+  <string name="event_header">Événement remarquable</string>
+  <string name="event_crossed_out">Rayé</string>
+  <string name="removed_campaign_log_tab">Cartes retirées</string>
+  <string name="remove_card_button">Retirer une carte</string>
+  <string name="removed_set_header">Ensemble</string>
+  <string name="removed_select_set_text">Choisir un set de cartes Lieu</string>
+  <string name="removed_campaign_log_text">Tu trouveras ici tes cartes de Lieu définitivement retirées.</string>
+
+  //Errors handling
+  <string name="something_went_wrong">Quelque chose a mal tourné.</string>
+
+  //Diagnostics Screen
+  <string name="diagnostics_clear_local_data">Supprimer les paquets et campagnes enregistrés localement</string>
+  <string name="diagnostics_clear_local_data_cleared">Les données locales ont été supprimées.</string>
+  <string name="diagnostics_clear_coil_cache">Vider le cache d’images</string>
+  <string name="diagnostics_clear_coil_cache_cleared">Le cache d’images a été vidé.</string>
+  <string name="diagnostics_clear_apollo_cache">Vider le cache réseau</string>
+  <string name="diagnostics_clear_apollo_cache_cleared">Le cache réseau a été vidé.</string>
+
+  //loa campaign
+  <string name="general_set_the_arcology">L'Arcologie</string>
+  <string name="loa_expansion">L'Héritage des Ancêtres</string>
+  <string name="ancient_ruins">Ruines Antiques</string>
+  <string name="flooded_ruins">Ruines Inondées</string>
+  <string name="deep_roots">Racines profondes</string>
+  <string name="fungal_forest">Forêt Fongique</string>
+  <string name="cave_system">Réseau de Cavernes</string>
+  <string name="flooded_passage">Passage inondé</string>
+  <string name="locked_passage">Passage verrouillé</string>
+  <string name="overgrown_passage">Passage encombré de Végétation</string>
+  <string name="the_chimney">La Cheminée</string>
+  <string name="oasis_of_sunlight">Oasis de Lumière</string>
+  <string name="scuttler_network">Réseau Souterrain du Iule </string>
+  <string name="drenching_chamber">Chambre Arrosée</string>
+  <string name="desert_of_endless_night">Désert sous une Nuit Infinie</string>
+  <string name="orlins_vault">Chambre Souterraine d'Orlin</string>
+  <string name="severed_artery">Artère Sectionnée</string>
+  <string name="branching_artery">intersection d'Artères</string>
+  <string name="terminal_artery">Artère Terminale</string>
+  <string name="silent_dormitories">Dortoirs Silencieux</string>
+  <string name="cerulean_curtain">Rideau Céruléen</string>
+  <string name="mycelial_conclave">Conclave Mycélien</string>
+  <string name="carbonforged_maze">Labyrinthe en Carbone Forgé</string>
+  <string name="the_cistern">La Citerne</string>
+  <string name="inverted_forest">Forêt Renversée</string>
+  <string name="the_verdant_sphere">La Sphère Verdoyante</string>
+  <string name="the_rootway">La Voie Racinaire</string>
+  <string name="arboretum_of_memory">Taillis Mémoriel</string>
+  <string name="talpids_squeeze">La Compression de la Taupe</string>
+  <string name="the_cage">La Cage</string>
+  <string name="connection_restriction_data_type">Restriction de connexion</string>
+
+  <string name="sotv_expansion">Les Intendants de la Vallée</string>
+  <string name="talespinner_background">Conteur</string>
+  <string name="spirit_speaker_specialty">Chuchoteur Spirituel</string>
+
+  //Loa Weather
+  <string name="weather_enveloping_silence">Silence enveloppant</string>
+  <string name="weather_glitterain">Pluie scintillante</string>
+  <string name="weather_shimmering_runoff">Ruissellement Étincelant</string>
+
 </resources>
