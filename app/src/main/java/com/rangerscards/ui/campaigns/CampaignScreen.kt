@@ -536,7 +536,7 @@ fun CampaignScreen(
                                             launchSingleTop = true
                                         } },
                                         state = innerStates[campaignLogTypeIndex],
-                                        nestedConnectionModifier = Modifier.nestedScroll(innerConnections[campaignLogTypeIndex]),
+                                        modifier = Modifier.nestedScroll(innerConnections[campaignLogTypeIndex]),
                                     )
                                     3 -> CampaignRemovedCards(
                                         onAdd = { navController.navigate(
