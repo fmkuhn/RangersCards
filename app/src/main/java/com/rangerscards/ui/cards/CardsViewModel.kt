@@ -97,6 +97,14 @@ class CardsViewModel(
         _filterOptions.update { it.copy(searchQuery = "") }
     }
 
+    fun applyNewFilterOptions(newFilterOptions: CardFilterOptions) {
+        _filterOptions.update { newFilterOptions.copy(searchQuery = it.searchQuery) }
+    }
+
+    fun clearFilterOptions() {
+        _filterOptions.update { CardFilterOptions(searchQuery = it.searchQuery) }
+    }
+
     /**
      * Called when the user switches spoiler.
      */

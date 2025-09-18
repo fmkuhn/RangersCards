@@ -429,4 +429,65 @@
     <string name="weather_glitterain">Glitterain</string>
     <string name="weather_shimmering_runoff">Shimmering Runoff</string>
 
+    //Card Filters
+    <string name="filters_screen_header">Filters</string>
+    <string name="apply_button">Apply</string>
+    <string name="check_list_search_query_placeholder">Enter at least 2 letters</string>
+    <string name="types_filter_header">Types</string>
+    <string name="traits_filter_header">Traits</string>
+    <string name="sets_filter_header">Card sets</string>
+    <string name="cost_filter_header">Cost</string>
+    <string name="approaches_filter_header">Approach icons</string>
+    <string name="packs_filter_header">Packs</string>
+    <string name="aspects_filter_header">Aspect requirements</string>
+
+    //Types
+    <string name="types_filter_attachment">Attachment</string>
+    <string name="types_filter_attribute">Attribute</string>
+    <string name="types_filter_being">Being</string>
+    <string name="types_filter_feature">Feature</string>
+    <string name="types_filter_gear">Gear</string>
+    <string name="types_filter_moment">Moment</string>
+
+    //Traits
+    <string name="traits_filter_acquired">Acquired</string>
+    <string name="traits_filter_aid">Aid</string>
+    <string name="traits_filter_avian">Avian</string>
+    <string name="traits_filter_book">Book</string>
+    <string name="traits_filter_clothing">Clothing</string>
+    <string name="traits_filter_companion">Companion</string>
+    <string name="traits_filter_conduit">Conduit</string>
+    <string name="traits_filter_experience">Experience</string>
+    <string name="traits_filter_expert">Expert</string>
+    <string name="traits_filter_food">Food</string>
+    <string name="traits_filter_innate">Innate</string>
+    <string name="traits_filter_instrument">Instrument</string>
+    <string name="traits_filter_knowledge">Knowledge</string>
+    <string name="traits_filter_major">Major</string>
+    <string name="traits_filter_mammal">Mammal</string>
+    <string name="traits_filter_manifestation">Manifestation</string>
+    <string name="traits_filter_map">Map</string>
+    <string name="traits_filter_mod">Mod</string>
+    <string name="traits_filter_nature">Nature</string>
+    <string name="traits_filter_skill">Skill</string>
+    <string name="traits_filter_spirit">Spirit</string>
+    <string name="traits_filter_spiritual">Spiritual</string>
+    <string name="traits_filter_tale">Tale</string>
+    <string name="traits_filter_tech">Tech</string>
+    <string name="traits_filter_tool">Tool</string>
+    <string name="traits_filter_trail">Trail</string>
+    <string name="traits_filter_weapon">Weapon</string>
+    <string name="traits_filter_wisdom">Wisdom</string>
+
+    //Cost
+    <string name="cost_filter_start_value">Min cost</string>
+    <string name="cost_filter_end_value">Max cost</string>
+    <string name="cost_filter_include_x_cost">Include X cost</string>
+
+    //Approaches
+    <string name="approaches_filter_conflict">Conflict</string>
+    <string name="approaches_filter_connection">Connection</string>
+    <string name="approaches_filter_exploration">Exploration</string>
+    <string name="approaches_filter_reason">Reason</string>
+
 </resources>

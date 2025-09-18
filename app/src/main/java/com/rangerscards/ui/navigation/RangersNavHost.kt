@@ -74,6 +74,7 @@ import com.rangerscards.ui.cards.CardsScreen
 import com.rangerscards.ui.cards.CardsViewModel
 import com.rangerscards.ui.cards.FullCardScreen
 import com.rangerscards.ui.cards.components.RangersSpoilerSwitch
+import com.rangerscards.ui.components.CardsFilterScreen
 import com.rangerscards.ui.components.RangersTopAppBar
 import com.rangerscards.ui.deck.DeckCardsSearchingListScreen
 import com.rangerscards.ui.deck.DeckCardsViewModel
@@ -116,7 +117,7 @@ fun RangersNavHost(
     Scaffold(
         modifier = Modifier.safeDrawingPadding(),
         topBar = {
-            AnimatedVisibility(showBars) {
+            AnimatedVisibility(showBars && currentRoute?.let { !it.contains("filterOptions") } == true) {
                 RangersTopAppBar(
                     title = title,
                     canNavigateBack = bottomNavItems.none { it.startDestination == currentRoute },
@@ -279,7 +280,27 @@ fun RangersNavHost(
                         CardsDownloadingCircularProgressIndicator()
                     }
                     title = stringResource(BottomNavScreen.Cards.label)
-                    actions = {/*TODO: Implement action buttons*/}
+                    actions = {
+                        IconButton(
+                            onClick = {
+                                navController.navigate(
+                                    "${BottomNavScreen.Cards.route}/filterOptions"
+                                ) {
+                                    launchSingleTop = true
+                                }
+                            },
+                            colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
+                            modifier = Modifier.size(32.dp),
+                            enabled = !isCardsLoading
+                        ) {
+                            Icon(
+                                painterResource(id = R.drawable.filter_32dp),
+                                contentDescription = null,
+                                tint = CustomTheme.colors.m,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                    }
                     switch = {
                         val spoiler by cardsViewModel.spoiler.collectAsState()
                         RangersSpoilerSwitch(spoiler, cardsViewModel::onSpoilerChanged)
@@ -308,6 +329,27 @@ fun RangersNavHost(
                     title = ""
                     actions = null
                     switch = null
+                }
+                composable(route = BottomNavScreen.Cards.route + "/filterOptions") { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry(BottomNavScreen.Cards.startDestination)
+                    }
+                    val cardsViewModel: CardsViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val filterOptions by cardsViewModel.filterOptions.collectAsState()
+                    CardsFilterScreen(
+                        navigateUp = { navController.navigateUp() },
+                        clearFilterOptions = { cardsViewModel.clearFilterOptions()
+                            navController.navigateUp() },
+                        filterOptions = filterOptions,
+                        onApply = { newFilterOptions ->
+                            cardsViewModel.applyNewFilterOptions(newFilterOptions)
+                            navController.navigateUp() },
+                        isDarkTheme = isDarkTheme,
+                        contentPadding = innerPadding
+                    )
                 }
             }
             navigation(
@@ -536,6 +578,11 @@ fun RangersNavHost(
                             ) {
                                 launchSingleTop = true
                             }
+                        },
+                        navigateToFilters = {
+                            navController.navigate("deck/cardsList/{$typeIndexArgument}/filterOptions") {
+                                launchSingleTop = true
+                            }
                         }
                     )
                 }
@@ -572,6 +619,27 @@ fun RangersNavHost(
                         cardIndex = cardIndex,
                         isDarkTheme = isDarkTheme,
                         contentPadding = innerPadding,
+                    )
+                }
+                composable(route = "deck/cardsList/{$typeIndexArgument}/filterOptions") { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("deck/cardsList/{$typeIndexArgument}")
+                    }
+                    val deckCardsViewModel: DeckCardsViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val filterOptions by deckCardsViewModel.filterOptions.collectAsState()
+                    CardsFilterScreen(
+                        navigateUp = { navController.navigateUp() },
+                        clearFilterOptions = { deckCardsViewModel.clearFilterOptions()
+                            navController.navigateUp() },
+                        filterOptions = filterOptions,
+                        onApply = { newFilterOptions ->
+                            deckCardsViewModel.applyNewFilterOptions(newFilterOptions)
+                            navController.navigateUp() },
+                        isDarkTheme = isDarkTheme,
+                        contentPadding = innerPadding
                     )
                 }
             }
