@@ -12,7 +12,7 @@
   //Settings screen strings
   <string name="account_title">Compte RangersDB</string>
   <string name="text_when_not_logged_in">Cette application fonctionne parfaitement sans compte.\nSe connecter te permet de synchroniser les campagnes et decks entre appareils et avec RangersDB.</string>
-  <string name="sign_in_to_app_account_button">Se connecter à l'application</string>
+  <string name="sign_in_to_app_account_button">Se connecter à l\'application</string>
   <string name="sign_in_up_to_app_account_title">Connexion</string>
   <string name="email_placeholder">Adresse e-mail</string>
   <string name="password_placeholder">Mot de passe</string>
@@ -28,17 +28,25 @@
   <string name="account_name_header">Nom de compte</string>
   <string name="friends_amount_header">Amis</string>
   <plurals name="friends_amount">
+    <item quantity="zero">%d amis</item>
     <item quantity="one">%d ami</item>
+    <item quantity="two">%d amis</item>
+    <item quantity="few">%d amis</item>
+    <item quantity="many">%d amis</item>
     <item quantity="other">%d amis</item>
   </plurals>
   <plurals name="friends_request_amount">
-    <item quantity="one">%d demande d'amitié</item>
-    <item quantity="other">%d demandes d'amitié</item>
+    <item quantity="zero">%d demandes d\'amitié</item>
+    <item quantity="one">%d demande d\'amitié</item>
+    <item quantity="two">%d demandes d\'amitié</item>
+    <item quantity="few">%d demandes d\'amitié</item>
+    <item quantity="many">%d demandes d\'amitié</item>
+    <item quantity="other">%d demandes d\'amitié</item>
   </plurals>
   <string name="search_friends">Rechercher des amis</string>
   <string name="your_friends">Tes amis</string>
-  <string name="sent_requests">Demandes d'amitié envoyées</string>
-  <string name="received_requests">Demandes d'amitié reçues</string>
+  <string name="sent_requests">Demandes d\'amitié envoyées</string>
+  <string name="received_requests">Demandes d\'amitié reçues</string>
   <string name="search_results">Résultats de recherche</string>
   <string name="no_matching_results">Aucun résultat pour "%s".</string>
   <string name="settings_title">Paramètres</string>
@@ -52,7 +60,11 @@
   <string name="info_text_about_locale_switching">Le changement de langue impose de télécharcher les cartes traduites depuis RangersDB. Cela nécessite une connexion Internet et peut prendre un certain temps.</string>
   <string name="collection_header">Collection</string>
   <plurals name="expansions_amount">
+    <item quantity="zero">%d extensions</item>
     <item quantity="one">%d extension</item>
+    <item quantity="two">%d extensions</item>
+    <item quantity="few">%d extensions</item>
+    <item quantity="many">%d extensions</item>
     <item quantity="other">%d extensions</item>
   </plurals>
   <string name="update_cards_button">Mettre à jour les cartes</string>
@@ -65,7 +77,7 @@
   <string name="handle_already_taken_toast">Ce nom est déjà pris.</string>
   <string name="invalid_handle_toast">Nom invalide. Il doit comporter entre 2 et 22 caractères.</string>
   <string name="socials_title">Réseaux sociaux</string>
-  <string name="socials_text">Discute avec d'autres joueurs d'Earthborne Rangers :</string>
+  <string name="socials_text">Discute avec d\'autres joueurs d\'Earthborne Rangers :</string>
   <string name="discord_button">Discord</string>
   <string name="telegram_button">Telegram</string>
   <string name="support_title">Assistance</string>
@@ -74,18 +86,6 @@
   <string name="backup_data_button">Sauvegarder les données</string>
   <string name="diagnostics_button">Diagnostic</string>
   <string name="contact_us_button">Nous contacter</string>
-
-
-
-
-
-
-
-
-
-
-
-
 
   //About screen
   <string name="about_text">Les informations présentées dans cette application sur Earthborne Rangers, qu’elles soient graphiques ou textuelles, sont protégées par le droit d’auteur d’Earthborne Games. Cette application n’est ni développée ni soutenue par Earthborne Games et n’est en aucun cas affiliée à eux.\n\nCette application a été développée par Eugene Karelin en tant que projet de fan pour soutenir la communauté des fans d’Earthborne Rangers. Si tu dois gérer de nombreux decks ou campagnes, j’espère que l’application te sera utile.</string>
@@ -126,7 +126,7 @@
   <string name="upload_to_rangersdb">Charger sur RangersDB</string>
   <string name="view_on_rangersdb">Voir sur RangersDB</string>
   <string name="copy_link_to_rangersdb">Lien copié dans le presse-papiers</string>
-  <string name="use_taboo">Follow the Elder's Book of Uncommon Wisdom</string>
+  <string name="use_taboo">Follow the Elder\'s Book of Uncommon Wisdom</string>
   <string name="create_deck_button">Créer le Deck</string>
   <string name="background">antécédent</string>
   <string name="background_placeholder">Choisis un antécédent</string>
@@ -146,34 +146,40 @@
   <string name="too_many_spi_personality">Trop de cartes de personnalité ESP.</string>
   <string name="too_many_foc_personality">Trop de cartes de personnalité CON.</string>
   <string name="too_many_fit_personality">Trop de cartes de personnalité PHY.</string>
-  <string name="background_error">Pas assez de cartes d'antécédent.</string>
-  <string name="too_many_background">Trop de cartes de l'antécédent choisi.</string>
+  <string name="background_error">Pas assez de cartes d\'antécédent.</string>
+  <string name="too_many_background">Trop de cartes de l\'antécédent choisi.</string>
   <string name="specialty_error">Pas assez de cartes de spécialisation.</string>
   <string name="too_many_specialty">Trop de cartes de spécialisation choisie.</string>
   <string name="role_error">Tu dois sélectionner un rôle.</string>
-  <string name="outside_interest_error">Pas assez de cartes de centre d'intérêt.</string>
+  <string name="outside_interest_error">Pas assez de cartes de centre d\'intérêt.</string>
   <string name="invalid_background">Contient trop de cartes qui ne correspondent pas à ton antécédent choisi.</string>
   <string name="invalid_specialty">Contient trop de cartes qui ne correspondent pas à ta spécialisation choisie.</string>
   <string name="invalid_role">Ton rôle ne correspond pas à ta spécialisation choisie.</string>
-  <string name="invalid_aspect_levels">Ton deck contient des cartes dont les conditions d'aspect ne sont pas remplies.</string>
-  <string name="invalid_outside_interest">Ton centre d'intérêt ne peut pas avoir le trait Expert.</string>
-  <string name="too_many_outside_interest">Il y a trop de cartes de centre d'intérêt dans ton deck.</string>
+  <string name="invalid_aspect_levels">Ton deck contient des cartes dont les conditions d\'aspect ne sont pas remplies.</string>
+  <string name="invalid_outside_interest">Ton centre d\'intérêt ne peut pas avoir le trait Expert.</string>
+  <string name="too_many_outside_interest">Il y a trop de cartes de centre d\'intérêt dans ton deck.</string>
   <string name="too_many_cards">Trop de cartes. Si tu ajoutes des cartes de récompense à ton Deck pendant le campement, tu dois en retirer pour garder le Deck à 30 cartes.</string>
-  <string name="too_few_cards">Pas assez de cartes. Si tu retires des cartes Récompense pendant le campement, tu dois remettre autant de cartes de ton deck d'origne pour avoir 30 cartes.</string>
+  <string name="too_few_cards">Pas assez de cartes. Si tu retires des cartes Récompense pendant le campement, tu dois remettre autant de cartes de ton deck d\'origne pour avoir 30 cartes.</string>
 
   //FullDeck screen
   <plurals name="more_problems">
     <item quantity="one"> + %d problème supplémentaire</item>
+    <item quantity="two"> + %d problèmes supplémentaires</item>
+    <item quantity="few"> + %d problèmes supplémentaires</item>
+    <item quantity="many"> + %d problèmes supplémentaires</item>
     <item quantity="other"> + %d problèmes supplémentaires</item>
   </plurals>
   <string name="edit_deck_button">Modifier</string>
   <string name="cards_amount_in_deck">%d / 30 cartes</string>
   <plurals name="maladies_amount">
     <item quantity="one">(%d trauma)</item>
+    <item quantity="two">(%d traumas)</item>
+    <item quantity="few">(%d traumas)</item>
+    <item quantity="many">(%d traumas)</item>
     <item quantity="other">(%d traumas)</item>
   </plurals>
   <string name="personality">personnalité</string>
-  <string name="outside_interest">centre d'intérêt</string>
+  <string name="outside_interest">centre d\'intérêt</string>
   <string name="rewards_and_maladies">Récompenses et Trauma</string>
   <string name="side_deck">Side deck</string>
   <string name="deck_changes">Modifications</string>
@@ -182,11 +188,11 @@
   <string name="deck_changes_added_collection">Ajouté depuis la collection</string>
   <string name="deck_changes_returned_collection">Rangé dans la collection</string>
   <string name="save_deck_button">Enregistrer les modifications</string>
-  <string name="background_as_outside_interest">Une des cartes choisies de ton antécédent compte comme ton centre d'intérêt.</string>
-  <string name="specialty_as_outside_interest">Une des cartes choisies de ta spécialisation compte comme ton centre d'intérêt.</string>
+  <string name="background_as_outside_interest">Une des cartes choisies de ton antécédent compte comme ton centre d\'intérêt.</string>
+  <string name="specialty_as_outside_interest">Une des cartes choisies de ta spécialisation compte comme ton centre d\'intérêt.</string>
   <string name="reward_or_malady_in_starting_deck">Les récompenses et trauma ne sont pas autorisées dans les decks de départ.</string>
   <string name="save_deck_changes_header">Enregistrer les modifications du deck ?</string>
-  <string name="save_deck_changes_text">Tu as apporté des modifications à ton deck qui n'ont pas encore été enregistrées.</string>
+  <string name="save_deck_changes_text">Tu as apporté des modifications à ton deck qui n\'ont pas encore été enregistrées.</string>
   <string name="save_deck_changes_button">Enregistrer les modifications</string>
   <string name="discard_deck_changes_button">Annuler les modifications</string>
   <string name="saving_changes_header">Enregistrement…</string>
@@ -199,7 +205,7 @@
   <string name="personality_text">Sélectionne 4 personnalités différentes, 1 pour chaque aspect.</string>
   <string name="background_text">Sélectionne 5 cartes différentes pour ton antécédent choisi.</string>
   <string name="specialty_text">Sélectionne 5 cartes différentes pour ton spécialisation choisie.</string>
-  <string name="outside_interest_text">Sélectionne 1 carte d'un quelconque antécédent ou spécialisation pour ton centre d'intérêt.\nRemarque : les cartes de tes antécédent et spécialisation choisis n'apparaissent pas ici, mais tu peux les sélectionner comme centre d'intérêt. Utilise les autres onglets.</string>
+  <string name="outside_interest_text">Sélectionne 1 carte d\'un quelconque antécédent ou spécialisation pour ton centre d\'intérêt.\nRemarque : les cartes de tes antécédent et spécialisation choisis n\'apparaissent pas ici, mais tu peux les sélectionner comme centre d\'intérêt. Utilise les autres onglets.</string>
   <string name="collection_text">Certains événements pendant la campagne te permettent d’échanger définitivement des cartes de ton deck avec celles de la collection (dites modifications permanentes).\nAprès avoir sélectionné une nouvelle carte de la collection et retiré une carte de ton deck, tu peux ranger une carte dans l’onglet Cartes écartées.</string>
 
   //Deck Side Drawer
@@ -253,7 +259,7 @@
   //Locations
   <string name="atrox_mountain">Montagne des Atrox</string>
   <string name="northern_outpost">Avant-Poste du nord</string>
-  <string name="lone_tree_station">Base de l'Arbre Solitaire</string>
+  <string name="lone_tree_station">Base de l\'Arbre Solitaire</string>
   <string name="white_sky">Blanc-Ciel</string>
   <string name="golden_shore">Rivage doré</string>
   <string name="mount_nim">Mont Nim</string>
@@ -286,7 +292,7 @@
   <string name="meadow">Prairie</string>
   <string name="stoneweaver_bridge">Pont de Pierre Tissée</string>
   <string name="greenbriar_knoll">Tertre de Verbruyère</string>
-  <string name="the_plummet">L'Escarpement</string>
+  <string name="the_plummet">L\'Escarpement</string>
   <string name="headwaters_station">Base de la source</string>
 
   //Campaign screen
@@ -314,7 +320,7 @@
   //End the day
   <string name="end_the_day">Terminer le jour</string>
   <string name="ending_day_number">Cela terminera le jour %d.</string>
-  <string name="ending_day_warning">Cette option doit être choisie lorsqu’un Ranger est trop fatigué, trop blessé ou si la campagne ou une mission l’exige.\nSi tu veux camper alors que tu te déplaces vers un nouvel endroit, utilise le bouton 'Voyager'.</string>
+  <string name="ending_day_warning">Cette option doit être choisie lorsqu’un Ranger est trop fatigué, trop blessé ou si la campagne ou une mission l’exige.\nSi tu veux camper alors que tu te déplaces vers un nouvel endroit, utilise le bouton \'Voyager\'.</string>
 
   //Travel
   <string name="travel_button">Voyager</string>
@@ -381,8 +387,8 @@
   <string name="diagnostics_clear_apollo_cache_cleared">Le cache réseau a été vidé.</string>
 
   //loa campaign
-  <string name="general_set_the_arcology">L'Arcologie</string>
-  <string name="loa_expansion">L'Héritage des Ancêtres</string>
+  <string name="general_set_the_arcology">L\'Arcologie</string>
+  <string name="loa_expansion">L\'Héritage des Ancêtres</string>
   <string name="ancient_ruins">Ruines Antiques</string>
   <string name="flooded_ruins">Ruines Inondées</string>
   <string name="deep_roots">Racines profondes</string>
@@ -396,9 +402,9 @@
   <string name="scuttler_network">Réseau Souterrain du Iule </string>
   <string name="drenching_chamber">Chambre Arrosée</string>
   <string name="desert_of_endless_night">Désert sous une Nuit Infinie</string>
-  <string name="orlins_vault">Chambre Souterraine d'Orlin</string>
+  <string name="orlins_vault">Chambre Souterraine d\'Orlin</string>
   <string name="severed_artery">Artère Sectionnée</string>
-  <string name="branching_artery">intersection d'Artères</string>
+  <string name="branching_artery">intersection d\'Artères</string>
   <string name="terminal_artery">Artère Terminale</string>
   <string name="silent_dormitories">Dortoirs Silencieux</string>
   <string name="cerulean_curtain">Rideau Céruléen</string>
