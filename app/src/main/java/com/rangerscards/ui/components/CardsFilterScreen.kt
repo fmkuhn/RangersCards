@@ -520,7 +520,7 @@ fun CardsFilterScreen(
                                     onMinusClicked = {
                                         localFilterOptions = localFilterOptions.copy(
                                             aspectRequirements = localFilterOptions.aspectRequirements.copy(
-                                                awa = awa - 1
+                                                awa = if (awa > 1) awa - 1 else null
                                             )
                                         )
                                     },
@@ -540,7 +540,7 @@ fun CardsFilterScreen(
                                     onMinusClicked = {
                                         localFilterOptions = localFilterOptions.copy(
                                             aspectRequirements = localFilterOptions.aspectRequirements.copy(
-                                                spi = spi - 1
+                                                spi = if (spi > 1) spi - 1 else null
                                             )
                                         )
                                     },
@@ -560,7 +560,7 @@ fun CardsFilterScreen(
                                     onMinusClicked = {
                                         localFilterOptions = localFilterOptions.copy(
                                             aspectRequirements = localFilterOptions.aspectRequirements.copy(
-                                                foc = foc - 1
+                                                foc = if (foc > 1) foc - 1 else null
                                             )
                                         )
                                     },
@@ -580,7 +580,7 @@ fun CardsFilterScreen(
                                     onMinusClicked = {
                                         localFilterOptions = localFilterOptions.copy(
                                             aspectRequirements = localFilterOptions.aspectRequirements.copy(
-                                                fit = fit - 1
+                                                fit = if (fit > 1) fit - 1 else null
                                             )
                                         )
                                     },
