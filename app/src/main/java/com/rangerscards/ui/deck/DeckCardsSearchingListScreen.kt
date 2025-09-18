@@ -77,7 +77,7 @@ fun DeckCardsSearchingListScreen(
     }
     LaunchedEffect(deck, values?.sideSlots) {
         if (deck == null || values == null) navigateUp()
-        deckCardsViewModel.updateDeckInfo(deck!!, values!!.sideSlots.keys.toList())
+        else deckCardsViewModel.updateDeckInfo(deck!!, values!!.sideSlots.keys.toList())
     }
     LaunchedEffect(Unit) {
         if (!isTypeIndexSet){
