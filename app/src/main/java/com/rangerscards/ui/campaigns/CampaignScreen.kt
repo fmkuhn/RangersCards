@@ -79,6 +79,7 @@ import com.rangerscards.ui.navigation.BottomNavScreen
 import com.rangerscards.ui.settings.UserUIState
 import com.rangerscards.ui.settings.components.SettingsBaseCard
 import com.rangerscards.ui.settings.components.SettingsInputField
+import com.rangerscards.ui.settings.components.SettingsRadioButtonRow
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
 import kotlinx.coroutines.flow.drop
@@ -140,6 +141,7 @@ fun CampaignScreen(
         val settings = userUIState.settings
         campaignViewModel.setTaboo(settings.taboo)
         campaignViewModel.setPackId(campaignState?.cycleId ?: "core")
+        campaignViewModel.setCollection(settings.collection)
     }
     Column(
         modifier = Modifier
@@ -470,11 +472,18 @@ fun CampaignScreen(
                                     )
                                     1 -> {
                                         val innerState = innerStates[campaignLogTypeIndex]
+                                        val isShowAllRewards by campaignViewModel.showAllRewards.collectAsState()
                                         RangersSearchOutlinedField(
                                             query = rewardsQuery,
                                             R.string.search_for_card,
                                             onQueryChanged = { newQuery -> rewardsQuery = newQuery },
                                             onClearClicked = { rewardsQuery = "" }
+                                        )
+                                        SettingsRadioButtonRow(
+                                            text = stringResource(R.string.show_all_rewards_in_collection),
+                                            onClick = campaignViewModel::setShowAllRewards,
+                                            modifier = Modifier,
+                                            isSelected = isShowAllRewards
                                         )
                                         val rewards = campaignViewModel.getRewardsCards().collectAsState(emptyList())
                                         LazyColumn(

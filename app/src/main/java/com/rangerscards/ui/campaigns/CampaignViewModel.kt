@@ -406,6 +406,10 @@ class CampaignViewModel(
     private val _taboo = MutableStateFlow(false)
     private val _packId = MutableStateFlow("core")
 
+    val showAllRewards = MutableStateFlow(false)
+
+    private val _collection = MutableStateFlow(listOf("core"))
+
     fun getRole(id: String): Flow<RoleCardProjection?> = campaignRepository.getRole(id, _taboo.value)
 
     fun setTaboo(taboo: Boolean?) {
@@ -415,6 +419,15 @@ class CampaignViewModel(
     fun setPackId(id: String) {
         _packId.update { id }
     }
+
+    fun setShowAllRewards() {
+        showAllRewards.update { !it }
+    }
+
+    fun setCollection(collection: List<String>) {
+        _collection.update { collection + "core" }
+    }
+
 
     suspend fun removeDeckCampaign(deckId: String, user: FirebaseUser?, updateCampaign: Boolean = true) {
         val campaign = campaign.value!!
@@ -741,7 +754,15 @@ class CampaignViewModel(
         }
     }
 
-    fun getRewardsCards(): Flow<List<CardListItemProjection>> = campaignRepository.getRewards(_taboo.value, _packId.value)
+
+
+    fun getRewardsCards(): Flow<List<CardListItemProjection>> {
+        val filteredCollection = _collection.value.toSet().filter { if (_packId.value == "core") it != "loa" else true }
+        val packIds = if (showAllRewards.value) filteredCollection + _packId.value
+            else setOf(_packId.value)
+        campaign.value?.id
+        return campaignRepository.getRewards(_taboo.value, packIds.toList())
+    }
 
     fun getRewardById(cardCode: String): Flow<FullCardProjection> =
         campaignRepository.getCardById(cardCode, _taboo.value)

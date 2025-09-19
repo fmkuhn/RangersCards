@@ -26,7 +26,7 @@ interface CampaignRepository {
 
     suspend fun deleteCampaign(id: String)
 
-    fun getRewards(taboo: Boolean, packId: String): Flow<List<CardListItemProjection>>
+    fun getRewards(taboo: Boolean, packIds: List<String>): Flow<List<CardListItemProjection>>
 
     fun getCardById(cardCode: String, taboo: Boolean): Flow<FullCardProjection>
 }

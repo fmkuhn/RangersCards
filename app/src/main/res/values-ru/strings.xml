@@ -299,6 +299,7 @@
     <string name="undo_available_text">Если вы допустили ошибку во время путешествия или завершения дня, вы можете откатить свои последние изменения здесь. Колоды не будут изменены.</string>
     <string name="undo_unavailable_text">Нету путешествий, которые можно откатить.</string>
     <string name="campaign_log_header">Журнал кампании</string>
+    <string name="show_all_rewards_in_collection">Показывать все награды в коллекции</string>
     <string name="missions_campaign_log_tab">Миссии</string>
     <string name="show_only_active_missions">Показывать только активные</string>
     <string name="add_mission_button">Добавить миссию</string>

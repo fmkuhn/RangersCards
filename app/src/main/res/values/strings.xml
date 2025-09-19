@@ -356,6 +356,7 @@
 
     //Campaign log section
     <string name="campaign_log_header">Campaign log</string>
+    <string name="show_all_rewards_in_collection">Show all rewards in collection</string>
     <string name="missions_campaign_log_tab">Missions</string>
     <string name="show_only_active_missions">Show only active</string>
     <string name="add_mission_button">Add mission</string>

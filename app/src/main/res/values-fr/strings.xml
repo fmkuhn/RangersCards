@@ -28,18 +28,12 @@
   <string name="account_name_header">Nom de compte</string>
   <string name="friends_amount_header">Amis</string>
   <plurals name="friends_amount">
-    <item quantity="zero">%d amis</item>
     <item quantity="one">%d ami</item>
-    <item quantity="two">%d amis</item>
-    <item quantity="few">%d amis</item>
     <item quantity="many">%d amis</item>
     <item quantity="other">%d amis</item>
   </plurals>
   <plurals name="friends_request_amount">
-    <item quantity="zero">%d demandes d\'amitié</item>
     <item quantity="one">%d demande d\'amitié</item>
-    <item quantity="two">%d demandes d\'amitié</item>
-    <item quantity="few">%d demandes d\'amitié</item>
     <item quantity="many">%d demandes d\'amitié</item>
     <item quantity="other">%d demandes d\'amitié</item>
   </plurals>
@@ -60,10 +54,7 @@
   <string name="info_text_about_locale_switching">Le changement de langue impose de télécharcher les cartes traduites depuis RangersDB. Cela nécessite une connexion Internet et peut prendre un certain temps.</string>
   <string name="collection_header">Collection</string>
   <plurals name="expansions_amount">
-    <item quantity="zero">%d extensions</item>
     <item quantity="one">%d extension</item>
-    <item quantity="two">%d extensions</item>
-    <item quantity="few">%d extensions</item>
     <item quantity="many">%d extensions</item>
     <item quantity="other">%d extensions</item>
   </plurals>
@@ -164,8 +155,6 @@
   //FullDeck screen
   <plurals name="more_problems">
     <item quantity="one"> + %d problème supplémentaire</item>
-    <item quantity="two"> + %d problèmes supplémentaires</item>
-    <item quantity="few"> + %d problèmes supplémentaires</item>
     <item quantity="many"> + %d problèmes supplémentaires</item>
     <item quantity="other"> + %d problèmes supplémentaires</item>
   </plurals>
@@ -173,8 +162,6 @@
   <string name="cards_amount_in_deck">%d / 30 cartes</string>
   <plurals name="maladies_amount">
     <item quantity="one">(%d trauma)</item>
-    <item quantity="two">(%d traumas)</item>
-    <item quantity="few">(%d traumas)</item>
     <item quantity="many">(%d traumas)</item>
     <item quantity="other">(%d traumas)</item>
   </plurals>
