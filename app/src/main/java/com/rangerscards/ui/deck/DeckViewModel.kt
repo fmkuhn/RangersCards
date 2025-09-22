@@ -3,7 +3,7 @@ package com.rangerscards.ui.deck
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
-import android.net.Uri
+import androidx.core.net.toUri
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.apollographql.apollo.ApolloClient
@@ -272,7 +272,8 @@ class DeckViewModel(
             "FIT" to statsList[2],
             "FOC" to statsList[3],
         )
-        if (stats.values.sum() != 8 || stats.values.none { it == 1 }) problems.add("invalid_aspects")
+        if (stats.values.sum() != 8 || stats.values.none { it == 1 } || stats.values.count { it >= 3 } > 1)
+            problems.add("invalid_aspects")
         var splashCount = 0
         var splashResId: Int? = null
         val deckSize = cards.associateWith { updatableValues.value!!.slots[it.code] }
@@ -965,7 +966,7 @@ class DeckViewModel(
         context.startActivity(
             Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse(link)
+                link.toUri()
             ).addFlags(Intent.FLAG_ACTIVITY_NEW_TASK)
         )
     }

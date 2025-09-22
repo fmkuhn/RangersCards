@@ -1245,8 +1245,8 @@ fun DeckScreen(
                     cloneDeck = { showInputDialog = DialogWithInputType.Clone },
                     upload = if (user == null) null
                     else if (deck.uploaded) {{
-                        deckViewModel.openLink(if (supportedLocale.isNotEmpty())
-                            "https://" + supportedLocale + ".$deckLink/$deckId"
+                        deckViewModel.openLink(if (supportedLocale.isNotEmpty() && supportedLocale != "en")
+                            "https://$supportedLocale.$deckLink/$deckId"
                         else "https://$deckLink/$deckId", context
                         )
                     }}
@@ -1277,7 +1277,8 @@ fun DeckScreen(
                             else navController.navigateUp() }
                     }},
                     url = if (deck.uploaded) {
-                        if (supportedLocale.isNotEmpty()) "https://" + supportedLocale + ".$deckLink/$deckId"
+                        if (supportedLocale.isNotEmpty() && supportedLocale != "en")
+                            "https://$supportedLocale.$deckLink/$deckId"
                         else "https://$deckLink/$deckId"
                     } else null,
                     deleteDeck = { showActionDialog = DialogType.Delete }
