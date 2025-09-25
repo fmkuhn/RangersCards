@@ -53,6 +53,7 @@ import com.rangerscards.data.objects.CampaignMaps
 import com.rangerscards.ui.AppViewModelProvider
 import com.rangerscards.ui.campaigns.AddDeckToCampaignScreen
 import com.rangerscards.ui.campaigns.AddPlayersToCampaign
+import com.rangerscards.ui.campaigns.CampaignChallengeDeckScreen
 import com.rangerscards.ui.campaigns.CampaignCreationScreen
 import com.rangerscards.ui.campaigns.CampaignDecksViewModel
 import com.rangerscards.ui.campaigns.CampaignJourneyScreen
@@ -93,6 +94,7 @@ import com.rangerscards.ui.settings.SettingsFriendsScreen
 import com.rangerscards.ui.settings.SettingsScreen
 import com.rangerscards.ui.settings.SettingsViewModel
 import com.rangerscards.ui.theme.CustomTheme
+import kotlinx.serialization.json.JsonArray
 
 @Composable
 fun RangersNavHost(
@@ -764,10 +766,13 @@ fun RangersNavHost(
                             ?: error("campaignIdArgument cannot be null")
                         val user by settingsViewModel.userUiState.collectAsState()
                         val campaign = campaignViewModel.getCampaignById(campaignId).collectAsState(null)
+                        val challengeDeck = campaignViewModel.getCampaignChallengeDeckIds(campaignId)
+                            .collectAsState(JsonArray(emptyList()))
                         if (!isCardsLoading) {
                             CampaignScreen(
                                 campaignViewModel = campaignViewModel,
                                 campaign = campaign.value,
+                                challengeDeck = challengeDeck.value,
                                 userUIState = user,
                                 isDarkTheme = isDarkTheme,
                                 navController = navController,
@@ -871,6 +876,23 @@ fun RangersNavHost(
                         onBack = { navController.popBackStack(destinationId = parentEntry.destination.id, inclusive = false) },
                         user = user.currentUser
                     )
+                }
+                composable(route = "${BottomNavScreen.Campaigns.route}/campaign/challengeDeck") { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("${BottomNavScreen.Campaigns.route}/campaign/{$campaignIdArgument}")
+                    }
+                    val campaignViewModel: CampaignViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    CampaignChallengeDeckScreen(
+                        campaignViewModel = campaignViewModel,
+                        isDarkTheme = isDarkTheme,
+                        contentPadding = innerPadding
+                    )
+                    title = stringResource(R.string.challenge_deck_title)
+                    actions = null
+                    switch = null
                 }
                 composable(route = "${BottomNavScreen.Campaigns.route}/campaign/addRanger") { backStackEntry ->
                     val parentEntry = remember(backStackEntry) {

@@ -34,6 +34,7 @@ import com.rangerscards.UpdateCampaignEventsMutation
 import com.rangerscards.UpdateCampaignRemovedMutation
 import com.rangerscards.UpdateCampaignRewardsMutation
 import com.rangerscards.UpdateUploadedMutation
+import com.rangerscards.data.CurrentChallengeDeck
 import com.rangerscards.data.database.campaign.Campaign
 import com.rangerscards.data.database.card.CardListItemProjection
 import com.rangerscards.data.database.card.FullCardProjection
@@ -142,6 +143,9 @@ class CampaignViewModel(
 
     fun getCampaignById(id: String) = campaignRepository.getCampaignFlowById(id)
 
+    fun getCampaignChallengeDeckIds(id: String) =
+        campaignRepository.getCampaignChallengeDeckFlowById(id)
+
     var isSubscriptionStarted = MutableStateFlow(false)
         private set
 
@@ -151,6 +155,14 @@ class CampaignViewModel(
     val uploadedCampaignIdToOpen = MutableStateFlow<String?>(null)
 
     val friendDeckIdToOpen = MutableStateFlow<String?>(null)
+
+    var  currentChallengeDeck: CurrentChallengeDeck? = null
+        private set
+
+    fun setChallengeDeck(ids: JsonElement) {
+        val listOfIds = ids.jsonArray.map { it.jsonPrimitive.content.toInt() }
+        currentChallengeDeck = CurrentChallengeDeck(listOfIds)
+    }
 
     fun startSubscription(campaignId: String) {
         viewModelScope.launch {
@@ -354,6 +366,7 @@ class CampaignViewModel(
                 day = campaign.currentDay + 1,
                 updatedAt = getCurrentDateTime()))
         }
+        reshuffleChallengeDeck()
     }
 
     suspend fun campaignTravel(
@@ -401,6 +414,29 @@ class CampaignViewModel(
                 updatedAt = getCurrentDateTime()
             ))
         }
+        if (isCamping) reshuffleChallengeDeck()
+    }
+
+    suspend fun drawChallengeCard(): Int? {
+        val drawCardId = currentChallengeDeck?.draw()
+        campaignRepository.upsertChallengeDeck(
+            campaign.value!!.id,
+            buildJsonArray { currentChallengeDeck?.getDeckAsList()?.forEach { add(it) } }
+            )
+        return drawCardId
+    }
+
+    fun scoutChallengeCard(): Int? {
+        return currentChallengeDeck?.scout()
+    }
+
+    fun discardScoutedCards() = currentChallengeDeck?.resetScoutPosition()
+
+    suspend fun reshuffleChallengeDeck() {
+        campaignRepository.upsertChallengeDeck(
+            campaign.value!!.id,
+            buildJsonArray { currentChallengeDeck?.reshuffle()?.forEach { add(it) } }
+        )
     }
 
     private val _taboo = MutableStateFlow(false)
@@ -710,6 +746,7 @@ class CampaignViewModel(
                     updatedAt = getCurrentDateTime()
                 ))
             }
+            reshuffleChallengeDeck()
         } else if (lastTravel != null) {
             var previousLocation = CampaignMaps.startingLocations[campaign.cycleId]!!
             var previousPathTerrain: String? = null

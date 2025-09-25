@@ -5,7 +5,7 @@ plugins {
     id("com.google.gms.google-services")
     id("com.apollographql.apollo") version "4.3.3"
     id("com.google.devtools.ksp") version "2.2.20-2.0.3"
-    kotlin("plugin.serialization") version "2.1.10"
+    kotlin("plugin.serialization") version "2.2.20"
 }
 
 android {
@@ -16,8 +16,8 @@ android {
         applicationId = "com.rangerscards"
         minSdk = 24
         targetSdk = 36
-        versionCode = 58
-        versionName = "2.4.3"
+        versionCode = 59
+        versionName = "2.5.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {

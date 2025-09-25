@@ -84,11 +84,15 @@ import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.jsonArray
 
 @Composable
 fun CampaignScreen(
     campaignViewModel: CampaignViewModel,
     campaign: Campaign?,
+    challengeDeck: JsonElement?,
     userUIState: UserUIState,
     isDarkTheme: Boolean,
     navController: NavHostController,
@@ -136,6 +140,11 @@ fun CampaignScreen(
         if (userUIState.currentUser != null && !isSubscriptionStarted && campaign?.uploaded == true)
             campaignViewModel.startSubscription(campaign.id)
         if (campaign != null) campaignViewModel.parseCampaign(campaign)
+    }
+    LaunchedEffect(challengeDeck) {
+        if (campaignViewModel.currentChallengeDeck == null && challengeDeck?.jsonArray?.isNotEmpty() ?: true) {
+            campaignViewModel.setChallengeDeck(challengeDeck ?: JsonArray(emptyList()))
+        }
     }
     LaunchedEffect(userUIState.userInfo, campaignState) {
         val settings = userUIState.settings
@@ -363,7 +372,7 @@ fun CampaignScreen(
                                 iconColor = CustomTheme.colors.m,
                                 textColor = CustomTheme.colors.d30,
                                 buttonColor = ButtonDefaults.buttonColors().copy(
-                                    containerColor = CustomTheme.colors.l20
+                                    containerColor = CustomTheme.colors.l15
                                 ),
                                 onClick = { navController.navigate(
                                     "${BottomNavScreen.Campaigns.route}/campaign/travel"
@@ -393,6 +402,32 @@ fun CampaignScreen(
                                 modifier = Modifier
                                     .weight(1f)
                                     .fillMaxHeight()
+                            )
+                        }
+                    }
+                }
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        key("challengeDeckButton") {
+                            SquareButton(
+                                stringId = R.string.draw_challenge_card_button,
+                                leadingIcon = R.drawable.cards_32dp,
+                                iconColor = CustomTheme.colors.m,
+                                textColor = CustomTheme.colors.d30,
+                                buttonColor = ButtonDefaults.buttonColors().copy(
+                                    containerColor = CustomTheme.colors.l20
+                                ),
+                                onClick = {
+                                    navController.navigate(
+                                        "${BottomNavScreen.Campaigns.route}/campaign/challengeDeck"
+                                    ) {
+                                        launchSingleTop = true
+                                    }
+                                },
+                                modifier = Modifier.weight(1f)
                             )
                         }
                     }
