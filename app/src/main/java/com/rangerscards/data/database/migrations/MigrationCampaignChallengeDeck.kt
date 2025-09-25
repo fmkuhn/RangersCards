@@ -8,7 +8,7 @@ object MigrationCampaignChallengeDeck : Migration(2, 3) {
         db.execSQL("""
           CREATE TABLE IF NOT EXISTS `Challenge_deck` (
             `id` TEXT NOT NULL PRIMARY KEY,
-            `challenge_deck_ids` TEXT NOT NULL DEFAULT '[]'
+            `challenge_deck_ids` TEXT NOT NULL DEFAULT '[]',
             FOREIGN KEY(`id`) REFERENCES `Campaign`(`id`) ON DELETE CASCADE
           )
         """.trimIndent())
