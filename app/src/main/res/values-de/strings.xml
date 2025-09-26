@@ -337,6 +337,7 @@
 
     //Campaign log section
     <string name="campaign_log_header">Kampagnenlogbuch</string>
+    <string name="show_all_rewards_in_collection">Alle Belohnungen aus der Sammlung anzeigen</string>
     <string name="missions_campaign_log_tab">Missionen</string>
     <string name="show_only_active_missions">Nur aktive anzeigen</string>
     <string name="add_mission_button">Mission hinzufügen</string>
@@ -350,6 +351,7 @@
     <string name="event_name_input">Was ist passiert</string>
     <string name="event_header">Besonderes Ereignis</string>
     <string name="event_crossed_out">Durchgestrichen</string>
+    <string name="event_marks">Markierungen</string>
     <string name="removed_campaign_log_tab">Entfernte Karten</string>
     <string name="remove_card_button">Karte entfernen</string>
     <string name="removed_set_header">Set</string>
@@ -366,4 +368,56 @@
     <string name="diagnostics_clear_coil_cache_cleared">Bild-Cache ist geleert.</string>
     <string name="diagnostics_clear_apollo_cache">Netzwerk-Cache leeren</string>
     <string name="diagnostics_clear_apollo_cache_cleared">Netzwerk-Cache ist geleert.</string>
+    //Card Filters
+    <string name="filters_screen_header">Filter</string>
+    <string name="apply_button">Anwenden</string>
+    <string name="check_list_search_query_placeholder">Gib mindestens 2 Buchstaben ein</string>
+    <string name="types_filter_header">Typen</string>
+    <string name="traits_filter_header">Merkmale</string>
+    <string name="sets_filter_header">Karten-Sets</string>
+    <string name="cost_filter_header">Kosten</string>
+    <string name="approaches_filter_header">Herangehensweise-Symbole</string>
+    <string name="packs_filter_header">Erweiterungen</string>
+    <string name="aspects_filter_header">Aspekt-Voraussetzungen</string>
+
+    //Types
+    <string name="types_filter_attachment">Anhang</string>
+    <string name="types_filter_attribute">Eigenart</string>
+    <string name="types_filter_being">Wesen</string>
+    <string name="types_filter_feature">Besonderheit</string>
+    <string name="types_filter_gear">Ausstattung</string>
+    <string name="types_filter_moment">Moment</string>
+
+    //Traits
+    <string name="traits_filter_avian">Vogel</string>
+    <string name="traits_filter_book">Buch</string>
+    <string name="traits_filter_clothing">Kleidung</string>
+    <string name="traits_filter_companion">Begleiter</string>
+    <string name="traits_filter_conduit">Kanalisator</string>
+    <string name="traits_filter_experience">Erfahrung</string>
+    <string name="traits_filter_expert">Experte</string>
+    <string name="traits_filter_food">Nahrung</string>
+    <string name="traits_filter_innate">Angeboren</string>
+    <string name="traits_filter_instrument">Instrument</string>
+    <string name="traits_filter_mammal">Säugetier</string>
+    <string name="traits_filter_manifestation">Manifestation</string>
+    <string name="traits_filter_mod">Mod</string>
+    <string name="traits_filter_nature">Natur</string>
+    <string name="traits_filter_skill">Fähigkeit</string>
+    <string name="traits_filter_tech">High-Tech</string>
+    <string name="traits_filter_tool">Gerät</string>
+    <string name="traits_filter_trail">Wanderweg</string>
+    <string name="traits_filter_weapon">Waffe</string>
+    <string name="traits_filter_wisdom">Weisheit</string>
+
+    //Cost
+    <string name="cost_filter_start_value">Minimale Kosten</string>
+    <string name="cost_filter_end_value">Maximale Kosten</string>
+    <string name="cost_filter_include_x_cost">Karten mit Kosten X einbeziehen</string>
+
+    //Approaches
+    <string name="approaches_filter_conflict">Konflikt</string>
+    <string name="approaches_filter_connection">Verständnis</string>
+    <string name="approaches_filter_exploration">Tatendrang</string>
+    <string name="approaches_filter_reason">Vernunft</string>
 </resources>
