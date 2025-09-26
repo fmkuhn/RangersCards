@@ -11,8 +11,8 @@ import com.apollographql.apollo.cache.normalized.normalizedCache
 import com.apollographql.apollo.cache.normalized.sql.SqlNormalizedCacheFactory
 import com.apollographql.apollo.network.ws.SubscriptionWsProtocol
 import com.apollographql.apollo.network.ws.WebSocketNetworkTransport
-import com.google.firebase.auth.ktx.auth
-import com.google.firebase.ktx.Firebase
+import com.google.firebase.auth.auth
+import com.google.firebase.Firebase
 import com.rangerscards.data.database.RangersDatabase
 import com.rangerscards.data.database.repository.CampaignRepository
 import com.rangerscards.data.database.repository.CampaignsRepository

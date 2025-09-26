@@ -53,6 +53,7 @@ import com.rangerscards.data.objects.CampaignMaps
 import com.rangerscards.ui.AppViewModelProvider
 import com.rangerscards.ui.campaigns.AddDeckToCampaignScreen
 import com.rangerscards.ui.campaigns.AddPlayersToCampaign
+import com.rangerscards.ui.campaigns.CampaignChallengeDeckScreen
 import com.rangerscards.ui.campaigns.CampaignCreationScreen
 import com.rangerscards.ui.campaigns.CampaignDecksViewModel
 import com.rangerscards.ui.campaigns.CampaignJourneyScreen
@@ -74,6 +75,7 @@ import com.rangerscards.ui.cards.CardsScreen
 import com.rangerscards.ui.cards.CardsViewModel
 import com.rangerscards.ui.cards.FullCardScreen
 import com.rangerscards.ui.cards.components.RangersSpoilerSwitch
+import com.rangerscards.ui.components.CardsFilterScreen
 import com.rangerscards.ui.components.RangersTopAppBar
 import com.rangerscards.ui.deck.DeckCardsSearchingListScreen
 import com.rangerscards.ui.deck.DeckCardsViewModel
@@ -92,6 +94,7 @@ import com.rangerscards.ui.settings.SettingsFriendsScreen
 import com.rangerscards.ui.settings.SettingsScreen
 import com.rangerscards.ui.settings.SettingsViewModel
 import com.rangerscards.ui.theme.CustomTheme
+import kotlinx.serialization.json.JsonArray
 
 @Composable
 fun RangersNavHost(
@@ -116,7 +119,7 @@ fun RangersNavHost(
     Scaffold(
         modifier = Modifier.safeDrawingPadding(),
         topBar = {
-            AnimatedVisibility(showBars) {
+            AnimatedVisibility(showBars && currentRoute?.let { !it.contains("filterOptions") } == true) {
                 RangersTopAppBar(
                     title = title,
                     canNavigateBack = bottomNavItems.none { it.startDestination == currentRoute },
@@ -279,7 +282,27 @@ fun RangersNavHost(
                         CardsDownloadingCircularProgressIndicator()
                     }
                     title = stringResource(BottomNavScreen.Cards.label)
-                    actions = {/*TODO: Implement action buttons*/}
+                    actions = {
+                        IconButton(
+                            onClick = {
+                                navController.navigate(
+                                    "${BottomNavScreen.Cards.route}/filterOptions"
+                                ) {
+                                    launchSingleTop = true
+                                }
+                            },
+                            colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
+                            modifier = Modifier.size(32.dp),
+                            enabled = !isCardsLoading
+                        ) {
+                            Icon(
+                                painterResource(id = R.drawable.filter_32dp),
+                                contentDescription = null,
+                                tint = CustomTheme.colors.m,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                    }
                     switch = {
                         val spoiler by cardsViewModel.spoiler.collectAsState()
                         RangersSpoilerSwitch(spoiler, cardsViewModel::onSpoilerChanged)
@@ -308,6 +331,27 @@ fun RangersNavHost(
                     title = ""
                     actions = null
                     switch = null
+                }
+                composable(route = BottomNavScreen.Cards.route + "/filterOptions") { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry(BottomNavScreen.Cards.startDestination)
+                    }
+                    val cardsViewModel: CardsViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val filterOptions by cardsViewModel.filterOptions.collectAsState()
+                    CardsFilterScreen(
+                        navigateUp = { navController.navigateUp() },
+                        clearFilterOptions = { cardsViewModel.clearFilterOptions()
+                            navController.navigateUp() },
+                        filterOptions = filterOptions,
+                        onApply = { newFilterOptions ->
+                            cardsViewModel.applyNewFilterOptions(newFilterOptions)
+                            navController.navigateUp() },
+                        isDarkTheme = isDarkTheme,
+                        contentPadding = innerPadding
+                    )
                 }
             }
             navigation(
@@ -536,6 +580,11 @@ fun RangersNavHost(
                             ) {
                                 launchSingleTop = true
                             }
+                        },
+                        navigateToFilters = {
+                            navController.navigate("deck/cardsList/{$typeIndexArgument}/filterOptions") {
+                                launchSingleTop = true
+                            }
                         }
                     )
                 }
@@ -572,6 +621,27 @@ fun RangersNavHost(
                         cardIndex = cardIndex,
                         isDarkTheme = isDarkTheme,
                         contentPadding = innerPadding,
+                    )
+                }
+                composable(route = "deck/cardsList/{$typeIndexArgument}/filterOptions") { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("deck/cardsList/{$typeIndexArgument}")
+                    }
+                    val deckCardsViewModel: DeckCardsViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val filterOptions by deckCardsViewModel.filterOptions.collectAsState()
+                    CardsFilterScreen(
+                        navigateUp = { navController.navigateUp() },
+                        clearFilterOptions = { deckCardsViewModel.clearFilterOptions()
+                            navController.navigateUp() },
+                        filterOptions = filterOptions,
+                        onApply = { newFilterOptions ->
+                            deckCardsViewModel.applyNewFilterOptions(newFilterOptions)
+                            navController.navigateUp() },
+                        isDarkTheme = isDarkTheme,
+                        contentPadding = innerPadding
                     )
                 }
             }
@@ -696,10 +766,13 @@ fun RangersNavHost(
                             ?: error("campaignIdArgument cannot be null")
                         val user by settingsViewModel.userUiState.collectAsState()
                         val campaign = campaignViewModel.getCampaignById(campaignId).collectAsState(null)
+                        val challengeDeck = campaignViewModel.getCampaignChallengeDeckIds(campaignId)
+                            .collectAsState(JsonArray(emptyList()))
                         if (!isCardsLoading) {
                             CampaignScreen(
                                 campaignViewModel = campaignViewModel,
                                 campaign = campaign.value,
+                                challengeDeck = challengeDeck.value,
                                 userUIState = user,
                                 isDarkTheme = isDarkTheme,
                                 navController = navController,
@@ -803,6 +876,23 @@ fun RangersNavHost(
                         onBack = { navController.popBackStack(destinationId = parentEntry.destination.id, inclusive = false) },
                         user = user.currentUser
                     )
+                }
+                composable(route = "${BottomNavScreen.Campaigns.route}/campaign/challengeDeck") { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("${BottomNavScreen.Campaigns.route}/campaign/{$campaignIdArgument}")
+                    }
+                    val campaignViewModel: CampaignViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    CampaignChallengeDeckScreen(
+                        campaignViewModel = campaignViewModel,
+                        isDarkTheme = isDarkTheme,
+                        contentPadding = innerPadding
+                    )
+                    title = stringResource(R.string.challenge_deck_title)
+                    actions = null
+                    switch = null
                 }
                 composable(route = "${BottomNavScreen.Campaigns.route}/campaign/addRanger") { backStackEntry ->
                     val parentEntry = remember(backStackEntry) {

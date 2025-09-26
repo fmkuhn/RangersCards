@@ -107,6 +107,14 @@ class DeckCardsViewModel(
         _filterOptions.update { it.copy(searchQuery = "") }
     }
 
+    fun applyNewFilterOptions(newFilterOptions: CardFilterOptions) {
+        _filterOptions.update { newFilterOptions.copy(searchQuery = it.searchQuery) }
+    }
+
+    fun clearFilterOptions() {
+        _filterOptions.update { CardFilterOptions(searchQuery = it.searchQuery) }
+    }
+
     fun updateDeckInfo(deck: FullDeckState, extraSlots: List<String>) {
         _deckInfo.update {
             DeckInfo(

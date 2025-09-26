@@ -5,6 +5,7 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.fillMaxWidth
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.size
+import androidx.compose.foundation.text.KeyboardOptions
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.OutlinedTextField
@@ -27,6 +28,7 @@ import androidx.compose.ui.text.SpanStyle
 import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.buildAnnotatedString
 import androidx.compose.ui.text.font.FontWeight
+import androidx.compose.ui.text.input.KeyboardType
 import androidx.compose.ui.text.withStyle
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
@@ -69,7 +71,7 @@ fun AddMissionDialog(
             OutlinedTextField(
                 modifier = Modifier.fillMaxWidth().padding(top = 8.dp),
                 value = day,
-                onValueChange = { day = it },
+                onValueChange = { newDay -> day = newDay.filter { it.isDigit() }.take(2) },
                 label = {
                     Text(text = buildAnnotatedString {
                         append(stringResource(R.string.mission_day_input))
@@ -85,6 +87,7 @@ fun AddMissionDialog(
                     fontSize = 16.sp,
                     lineHeight = 18.sp,
                 ),
+                keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number),
                 singleLine = true,
                 shape = CustomTheme.shapes.small,
                 colors = TextFieldDefaults.colors().copy(

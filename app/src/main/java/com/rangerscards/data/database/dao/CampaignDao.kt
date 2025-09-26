@@ -8,6 +8,7 @@ import androidx.room.Query
 import androidx.room.Transaction
 import androidx.room.Update
 import androidx.room.Upsert
+import com.rangerscards.data.database.campaign.ChallengeDeck
 import com.rangerscards.data.database.campaign.Campaign
 import com.rangerscards.data.database.campaign.CampaignListItemProjection
 import com.rangerscards.data.database.card.CardListItemProjection
@@ -15,6 +16,7 @@ import com.rangerscards.data.database.card.FullCardProjection
 import com.rangerscards.data.database.deck.DeckListItemProjection
 import com.rangerscards.data.database.deck.RoleCardProjection
 import kotlinx.coroutines.flow.Flow
+import kotlinx.serialization.json.JsonElement
 
 @Dao
 interface CampaignDao {
@@ -30,6 +32,9 @@ interface CampaignDao {
 
     @Upsert
     suspend fun upsertAllCampaigns(campaigns: List<Campaign>)
+
+    @Upsert
+    suspend fun upsertChallengeDeck(challengeDeck: ChallengeDeck)
 
     @Query("DELETE FROM campaign WHERE id NOT IN (:ids) AND uploaded = 1")
     suspend fun deleteNotIn(ids: List<String>)
@@ -76,6 +81,9 @@ interface CampaignDao {
     @Query("SELECT * FROM campaign WHERE id = :id")
     fun getCampaignFlowById(id: String): Flow<Campaign?>
 
+    @Query("SELECT challenge_deck_ids FROM challenge_deck WHERE id = :id")
+    fun getCampaignChallengeDeckFlowById(id: String): Flow<JsonElement?>
+
     @Query("SELECT * FROM campaign WHERE id = :id")
     suspend fun getCampaignById(id: String): Campaign
 
@@ -116,22 +124,22 @@ interface CampaignDao {
             SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name,
             type_name, traits, real_traits, level, set_id, set_type_id, set_position, deck_limit,
             approach_connection, approach_reason, approach_conflict, approach_exploration
-            FROM card WHERE pack_id IN (:packId) AND set_id == 'reward' AND (:taboo IS 1 AND taboo_id IS NOT NULL)
+            FROM card WHERE pack_id IN (:packIds) AND set_id == 'reward' AND (:taboo IS 1 AND taboo_id IS NOT NULL)
             UNION ALL
             -- Case 2: When a taboo is set but no override exists, fall back to the default card.
             SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name,
             type_name, traits, real_traits, level, set_id, set_type_id, set_position, deck_limit,
             approach_connection, approach_reason, approach_conflict, approach_exploration
-            FROM card WHERE pack_id IN (:packId) AND set_id == 'reward' AND (:taboo IS 1 AND taboo_id IS NULL) 
+            FROM card WHERE pack_id IN (:packIds) AND set_id == 'reward' AND (:taboo IS 1 AND taboo_id IS NULL) 
             AND NOT EXISTS (SELECT 1 FROM card t WHERE t.code = card.code AND t.taboo_id IS NOT NULL)
             UNION ALL
             -- Case 3: When no taboo is set, simply return the default card.
             SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name,
             type_name, traits, real_traits, level, set_id, set_type_id, set_position, deck_limit,
             approach_connection, approach_reason, approach_conflict, approach_exploration
-            FROM card WHERE pack_id IN (:packId) AND set_id == 'reward' AND (:taboo IS 0 AND taboo_id IS NULL)
+            FROM card WHERE pack_id IN (:packIds) AND set_id == 'reward' AND (:taboo IS 0 AND taboo_id IS NULL)
         ) ORDER BY (set_type_id IS NULL), set_type_id, set_id, set_position""")
-    fun getAllRewards(taboo: Boolean, packId: String): Flow<List<CardListItemProjection>>
+    fun getAllRewards(taboo: Boolean, packIds: List<String>): Flow<List<CardListItemProjection>>
 
     @Query("""SELECT * FROM (
             -- Case 1: Taboo is set – choose the taboo-specific card

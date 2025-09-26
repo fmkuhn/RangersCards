@@ -34,6 +34,7 @@ import com.rangerscards.UpdateCampaignEventsMutation
 import com.rangerscards.UpdateCampaignRemovedMutation
 import com.rangerscards.UpdateCampaignRewardsMutation
 import com.rangerscards.UpdateUploadedMutation
+import com.rangerscards.data.CurrentChallengeDeck
 import com.rangerscards.data.database.campaign.Campaign
 import com.rangerscards.data.database.card.CardListItemProjection
 import com.rangerscards.data.database.card.FullCardProjection
@@ -99,6 +100,7 @@ data class CampaignMission(
 data class CampaignEvent(
     val name: String,
     val crossedOut: Boolean,
+    val marks: Int = 0,
 )
 
 data class CampaignRemoved(
@@ -141,6 +143,9 @@ class CampaignViewModel(
 
     fun getCampaignById(id: String) = campaignRepository.getCampaignFlowById(id)
 
+    fun getCampaignChallengeDeckIds(id: String) =
+        campaignRepository.getCampaignChallengeDeckFlowById(id)
+
     var isSubscriptionStarted = MutableStateFlow(false)
         private set
 
@@ -150,6 +155,14 @@ class CampaignViewModel(
     val uploadedCampaignIdToOpen = MutableStateFlow<String?>(null)
 
     val friendDeckIdToOpen = MutableStateFlow<String?>(null)
+
+    var  currentChallengeDeck: CurrentChallengeDeck? = null
+        private set
+
+    fun setChallengeDeck(ids: JsonElement) {
+        val listOfIds = ids.jsonArray.map { it.jsonPrimitive.content.toInt() }
+        currentChallengeDeck = CurrentChallengeDeck(listOfIds)
+    }
 
     fun startSubscription(campaignId: String) {
         viewModelScope.launch {
@@ -291,7 +304,7 @@ class CampaignViewModel(
      * Computes a list of TravelDay objects based on the campaign history.
      */
     fun buildTravelHistory(history: List<CampaignHistory>): List<CampaignTravelDay> {
-        val campaign = campaign.value!!
+        val campaign = campaign.value ?: return emptyList()
         // Group entries by day
         val daysMap = history.groupBy { it.day }
         val result = mutableListOf<CampaignTravelDay>()
@@ -353,6 +366,7 @@ class CampaignViewModel(
                 day = campaign.currentDay + 1,
                 updatedAt = getCurrentDateTime()))
         }
+        reshuffleChallengeDeck()
     }
 
     suspend fun campaignTravel(
@@ -400,10 +414,37 @@ class CampaignViewModel(
                 updatedAt = getCurrentDateTime()
             ))
         }
+        if (isCamping) reshuffleChallengeDeck()
+    }
+
+    suspend fun drawChallengeCard(): Int? {
+        val drawCardId = currentChallengeDeck?.draw()
+        campaignRepository.upsertChallengeDeck(
+            campaign.value!!.id,
+            buildJsonArray { currentChallengeDeck?.getDeckAsList()?.forEach { add(it) } }
+            )
+        return drawCardId
+    }
+
+    fun scoutChallengeCard(): Int? {
+        return currentChallengeDeck?.scout()
+    }
+
+    fun discardScoutedCards() = currentChallengeDeck?.resetScoutPosition()
+
+    suspend fun reshuffleChallengeDeck() {
+        campaignRepository.upsertChallengeDeck(
+            campaign.value!!.id,
+            buildJsonArray { currentChallengeDeck?.reshuffle()?.forEach { add(it) } }
+        )
     }
 
     private val _taboo = MutableStateFlow(false)
     private val _packId = MutableStateFlow("core")
+
+    val showAllRewards = MutableStateFlow(false)
+
+    private val _collection = MutableStateFlow(listOf("core"))
 
     fun getRole(id: String): Flow<RoleCardProjection?> = campaignRepository.getRole(id, _taboo.value)
 
@@ -414,6 +455,15 @@ class CampaignViewModel(
     fun setPackId(id: String) {
         _packId.update { id }
     }
+
+    fun setShowAllRewards() {
+        showAllRewards.update { !it }
+    }
+
+    fun setCollection(collection: List<String>) {
+        _collection.update { collection + "core" }
+    }
+
 
     suspend fun removeDeckCampaign(deckId: String, user: FirebaseUser?, updateCampaign: Boolean = true) {
         val campaign = campaign.value!!
@@ -439,7 +489,7 @@ class CampaignViewModel(
                     campaignName = null
                 ))
                 while (deck!!.previousId != null) {
-                    deck = deckRepository.getDeck(deck.previousId!!)
+                    deck = deckRepository.getDeck(deck.previousId)
                     decks.add(deck!!.copy(
                         updatedAt = getCurrentDateTime(),
                         campaignId = null,
@@ -555,6 +605,7 @@ class CampaignViewModel(
                     events = buildJsonArray { campaign.events.forEach { add(buildJsonObject {
                         put("event", it.name)
                         put("crossed_out", it.crossedOut)
+                        put("marks", it.marks)
                     }) } },
                     removed = buildJsonArray { campaign.removed.forEach { add(buildJsonObject {
                         put("name", it.name)
@@ -623,7 +674,7 @@ class CampaignViewModel(
                             campaignId = currentCampaign.previousCampaignId,
                         ))
                         while (deckDb!!.previousId != null) {
-                            deckDb = deckRepository.getDeck(deckDb.previousId!!)
+                            deckDb = deckRepository.getDeck(deckDb.previousId)
                             decks.add(deckDb!!.copy(
                                 updatedAt = getCurrentDateTime(),
                                 campaignId = currentCampaign.previousCampaignId,
@@ -695,6 +746,7 @@ class CampaignViewModel(
                     updatedAt = getCurrentDateTime()
                 ))
             }
+            reshuffleChallengeDeck()
         } else if (lastTravel != null) {
             var previousLocation = CampaignMaps.startingLocations[campaign.cycleId]!!
             var previousPathTerrain: String? = null
@@ -739,7 +791,15 @@ class CampaignViewModel(
         }
     }
 
-    fun getRewardsCards(): Flow<List<CardListItemProjection>> = campaignRepository.getRewards(_taboo.value, _packId.value)
+
+
+    fun getRewardsCards(): Flow<List<CardListItemProjection>> {
+        val filteredCollection = _collection.value.toSet().filter { if (_packId.value == "core") it != "loa" else true }
+        val packIds = if (showAllRewards.value) filteredCollection + _packId.value
+            else setOf(_packId.value)
+        campaign.value?.id
+        return campaignRepository.getRewards(_taboo.value, packIds.toList())
+    }
 
     fun getRewardById(cardCode: String): Flow<FullCardProjection> =
         campaignRepository.getCardById(cardCode, _taboo.value)
@@ -882,12 +942,13 @@ class CampaignViewModel(
         }
     }
 
-    suspend fun updateCampaignEvents(oldName: String, newName: String, crossedOut: Boolean, user: FirebaseUser?) {
+    suspend fun updateCampaignEvents(oldName: String, newName: String, crossedOut: Boolean, marks: Int, user: FirebaseUser?) {
         val campaign = campaign.value!!
-        val newEventsList = campaign.events.map { if (it.name == oldName) CampaignEvent(newName, crossedOut) else it }
+        val newEventsList = campaign.events.map { if (it.name == oldName) CampaignEvent(newName, crossedOut, marks) else it }
         val newJsonList = buildJsonArray { newEventsList.forEach { add(buildJsonObject {
             put("event", it.name)
             put("crossed_out", it.crossedOut)
+            put("marks", it.marks)
         }) } }
         if (campaign.uploaded) {
             val token = user!!.getIdToken(true).await().token
@@ -1022,7 +1083,8 @@ fun Campaign.toCampaignState(): CampaignState {
             val value = element.jsonObject
             CampaignEvent(
                 value["event"]!!.jsonPrimitive.content,
-                value["crossed_out"]?.jsonPrimitive?.content.toBoolean()
+                value["crossed_out"]?.jsonPrimitive?.content.toBoolean(),
+                value["marks"]?.jsonPrimitive?.content?.toInt() ?: 0
             )
         },
         rewards = this.rewards.jsonArray.map { it.jsonPrimitive.content },

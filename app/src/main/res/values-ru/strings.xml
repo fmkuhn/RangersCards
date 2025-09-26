@@ -299,6 +299,7 @@
     <string name="undo_available_text">Если вы допустили ошибку во время путешествия или завершения дня, вы можете откатить свои последние изменения здесь. Колоды не будут изменены.</string>
     <string name="undo_unavailable_text">Нету путешествий, которые можно откатить.</string>
     <string name="campaign_log_header">Журнал кампании</string>
+    <string name="show_all_rewards_in_collection">Показывать все награды в коллекции</string>
     <string name="missions_campaign_log_tab">Миссии</string>
     <string name="show_only_active_missions">Показывать только активные</string>
     <string name="add_mission_button">Добавить миссию</string>
@@ -312,6 +313,7 @@
     <string name="event_name_input">Что произошло?</string>
     <string name="event_header">Важное событие</string>
     <string name="event_crossed_out">Зачёркнуто</string>
+    <string name="event_marks">Отметки</string>
     <string name="removed_campaign_log_tab">Удалённые карты</string>
     <string name="remove_card_button">Удалить карту</string>
     <string name="removed_set_header">Набор</string>
@@ -324,4 +326,109 @@
     <string name="diagnostics_clear_coil_cache_cleared">Кэш изображений очищен.</string>
     <string name="diagnostics_clear_apollo_cache">Очистить кэш сетевых запросов</string>
     <string name="diagnostics_clear_apollo_cache_cleared">Сетевой кэш очищен.</string>
+    <string name="loa_expansion">Наследие предков</string>
+    <string name="general_set_the_arcology">Аркология</string>
+    <string name="ancient_ruins">Древние руины</string>
+    <string name="flooded_ruins">Затопленные руины</string>
+    <string name="deep_roots">Глубинные корни</string>
+    <string name="fungal_forest">Грибной лес</string>
+    <string name="cave_system">Пещеры</string>
+    <string name="flooded_passage">Затопленный проход</string>
+    <string name="locked_passage">Закрытый проход</string>
+    <string name="overgrown_passage">Заросший лозами проход</string>
+    <string name="the_chimney">Воздуховод</string>
+    <string name="oasis_of_sunlight">Солнечная прогалина</string>
+    <string name="scuttler_network">Лазы сколопенраков</string>
+    <string name="drenching_chamber">Сливной коллектор</string>
+    <string name="desert_of_endless_night">Вечно полночная пустыня</string>
+    <string name="orlins_vault">Хранилище Орлина</string>
+    <string name="severed_artery">Обрыв Артерии</string>
+    <string name="branching_artery">Ветви Артерии</string>
+    <string name="terminal_artery">Терминал Артерии</string>
+    <string name="silent_dormitories">Тихие спальные корпуса</string>
+    <string name="cerulean_curtain">Лазурная завеса</string>
+    <string name="mycelial_conclave">Грибное вече</string>
+    <string name="carbonforged_maze">Карбоновый лабиринт</string>
+    <string name="the_cistern">Водохранилище</string>
+    <string name="inverted_forest">Опрокинутый лес</string>
+    <string name="the_verdant_sphere">Плодоносная сфера</string>
+    <string name="the_rootway">Корневой путь</string>
+    <string name="arboretum_of_memory">Дендрарий памяти</string>
+    <string name="talpids_squeeze">Кротовый лаз</string>
+    <string name="the_cage">Клетка</string>
+    <string name="connection_restriction_data_type">Заблокированный путь</string>
+    <string name="sotv_expansion">Хранители долины</string>
+    <string name="talespinner_background">Сказитель</string>
+    <string name="spirit_speaker_specialty">Медиум</string>
+    <string name="weather_enveloping_silence">Обволакивающая тишина</string>
+    <string name="weather_glitterain">Светобрызги</string>
+    <string name="weather_shimmering_runoff">Мерцающий поток</string>
+
+    //Card Filters
+    <string name="filters_screen_header">Фильтры</string>
+    <string name="apply_button">Применить</string>
+    <string name="check_list_search_query_placeholder">Введите хотя бы 2 буквы</string>
+    <string name="types_filter_header">Типы</string>
+    <string name="traits_filter_header">Признаки</string>
+    <string name="sets_filter_header">Наборы карт</string>
+    <string name="cost_filter_header">Цена</string>
+    <string name="approaches_filter_header">Символы подхода</string>
+    <string name="packs_filter_header">Дополнения</string>
+    <string name="aspects_filter_header">Требования черт</string>
+
+    //Types
+    <string name="types_filter_attachment">Прикрепление</string>
+    <string name="types_filter_attribute">Качество</string>
+    <string name="types_filter_being">Существо</string>
+    <string name="types_filter_feature">Объект</string>
+    <string name="types_filter_gear">Снаряжение</string>
+    <string name="types_filter_moment">Момент</string>
+
+    //Traits
+    <string name="traits_filter_acquired">Приобретенное</string>
+    <string name="traits_filter_aid">Поддержка</string>
+    <string name="traits_filter_avian">Птица</string>
+    <string name="traits_filter_book">Книга</string>
+    <string name="traits_filter_clothing">Одежда</string>
+    <string name="traits_filter_companion">Спутник</string>
+    <string name="traits_filter_conduit">Проводник</string>
+    <string name="traits_filter_experience">Опыт</string>
+    <string name="traits_filter_expert">Эксперт</string>
+    <string name="traits_filter_food">Еда</string>
+    <string name="traits_filter_innate">Врожденное</string>
+    <string name="traits_filter_instrument">Музыкальный инструмент</string>
+    <string name="traits_filter_knowledge">Знание</string>
+    <string name="traits_filter_major">Старший</string>
+    <string name="traits_filter_mammal">Зверь</string>
+    <string name="traits_filter_manifestation">Явление</string>
+    <string name="traits_filter_map">Карта</string>
+    <string name="traits_filter_mod">Модуль</string>
+    <string name="traits_filter_nature">Природа</string>
+    <string name="traits_filter_skill">Навык</string>
+    <string name="traits_filter_spirit">Дух</string>
+    <string name="traits_filter_spiritual">Духовное</string>
+    <string name="traits_filter_tale">Сказ</string>
+    <string name="traits_filter_tech">Техника</string>
+    <string name="traits_filter_tool">Инструмент</string>
+    <string name="traits_filter_trail">Тропа</string>
+    <string name="traits_filter_weapon">Оружие</string>
+    <string name="traits_filter_wisdom">Мудрость</string>
+
+    //Cost
+    <string name="cost_filter_start_value">Минимальная цена</string>
+    <string name="cost_filter_end_value">Максимальная цена</string>
+    <string name="cost_filter_include_x_cost">Включать цену X</string>
+
+    //Approaches
+    <string name="approaches_filter_conflict">Конфликт</string>
+    <string name="approaches_filter_connection">Контакт</string>
+    <string name="approaches_filter_exploration">Разведка</string>
+    <string name="approaches_filter_reason">Интеллект</string>
+
+    //Challenge deck
+    <string name="challenge_deck_title">Колода вызова</string>
+    <string name="draw_challenge_card_button">Взять карту вызова</string>
+    <string name="scout_challenge_card_button">Разведать карту вызова</string>
+    <string name="draw_challenge_card_placeholder">Возьмите или разведайте карту…</string>
+    <string name="return_scouted_cards_button">Вернуть разведанные карты</string>
 </resources>

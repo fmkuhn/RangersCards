@@ -79,15 +79,20 @@ import com.rangerscards.ui.navigation.BottomNavScreen
 import com.rangerscards.ui.settings.UserUIState
 import com.rangerscards.ui.settings.components.SettingsBaseCard
 import com.rangerscards.ui.settings.components.SettingsInputField
+import com.rangerscards.ui.settings.components.SettingsRadioButtonRow
 import com.rangerscards.ui.theme.CustomTheme
 import com.rangerscards.ui.theme.Jost
 import kotlinx.coroutines.flow.drop
 import kotlinx.coroutines.launch
+import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonElement
+import kotlinx.serialization.json.jsonArray
 
 @Composable
 fun CampaignScreen(
     campaignViewModel: CampaignViewModel,
     campaign: Campaign?,
+    challengeDeck: JsonElement?,
     userUIState: UserUIState,
     isDarkTheme: Boolean,
     navController: NavHostController,
@@ -136,10 +141,16 @@ fun CampaignScreen(
             campaignViewModel.startSubscription(campaign.id)
         if (campaign != null) campaignViewModel.parseCampaign(campaign)
     }
+    LaunchedEffect(challengeDeck) {
+        if (campaignViewModel.currentChallengeDeck == null && challengeDeck?.jsonArray?.isNotEmpty() ?: true) {
+            campaignViewModel.setChallengeDeck(challengeDeck ?: JsonArray(emptyList()))
+        }
+    }
     LaunchedEffect(userUIState.userInfo, campaignState) {
         val settings = userUIState.settings
         campaignViewModel.setTaboo(settings.taboo)
         campaignViewModel.setPackId(campaignState?.cycleId ?: "core")
+        campaignViewModel.setCollection(settings.collection)
     }
     Column(
         modifier = Modifier
@@ -361,7 +372,7 @@ fun CampaignScreen(
                                 iconColor = CustomTheme.colors.m,
                                 textColor = CustomTheme.colors.d30,
                                 buttonColor = ButtonDefaults.buttonColors().copy(
-                                    containerColor = CustomTheme.colors.l20
+                                    containerColor = CustomTheme.colors.l15
                                 ),
                                 onClick = { navController.navigate(
                                     "${BottomNavScreen.Campaigns.route}/campaign/travel"
@@ -391,6 +402,32 @@ fun CampaignScreen(
                                 modifier = Modifier
                                     .weight(1f)
                                     .fillMaxHeight()
+                            )
+                        }
+                    }
+                }
+                item {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        key("challengeDeckButton") {
+                            SquareButton(
+                                stringId = R.string.draw_challenge_card_button,
+                                leadingIcon = R.drawable.cards_32dp,
+                                iconColor = CustomTheme.colors.m,
+                                textColor = CustomTheme.colors.d30,
+                                buttonColor = ButtonDefaults.buttonColors().copy(
+                                    containerColor = CustomTheme.colors.l20
+                                ),
+                                onClick = {
+                                    navController.navigate(
+                                        "${BottomNavScreen.Campaigns.route}/campaign/challengeDeck"
+                                    ) {
+                                        launchSingleTop = true
+                                    }
+                                },
+                                modifier = Modifier.weight(1f)
                             )
                         }
                     }
@@ -470,11 +507,18 @@ fun CampaignScreen(
                                     )
                                     1 -> {
                                         val innerState = innerStates[campaignLogTypeIndex]
+                                        val isShowAllRewards by campaignViewModel.showAllRewards.collectAsState()
                                         RangersSearchOutlinedField(
                                             query = rewardsQuery,
                                             R.string.search_for_card,
                                             onQueryChanged = { newQuery -> rewardsQuery = newQuery },
                                             onClearClicked = { rewardsQuery = "" }
+                                        )
+                                        SettingsRadioButtonRow(
+                                            text = stringResource(R.string.show_all_rewards_in_collection),
+                                            onClick = campaignViewModel::setShowAllRewards,
+                                            modifier = Modifier,
+                                            isSelected = isShowAllRewards
                                         )
                                         val rewards = campaignViewModel.getRewardsCards().collectAsState(emptyList())
                                         LazyColumn(
@@ -536,7 +580,7 @@ fun CampaignScreen(
                                             launchSingleTop = true
                                         } },
                                         state = innerStates[campaignLogTypeIndex],
-                                        nestedConnectionModifier = Modifier.nestedScroll(innerConnections[campaignLogTypeIndex]),
+                                        modifier = Modifier.nestedScroll(innerConnections[campaignLogTypeIndex]),
                                     )
                                     3 -> CampaignRemovedCards(
                                         onAdd = { navController.navigate(
