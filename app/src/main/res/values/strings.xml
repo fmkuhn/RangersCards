@@ -497,5 +497,7 @@
     <string name="scout_challenge_card_button">Scout challenge card</string>
     <string name="draw_challenge_card_placeholder">Draw or scout card…</string>
     <string name="return_scouted_cards_button">Return scouted cards</string>
+    <string name="show_charts">Show charts</string>
+    <string name="hide_charts">Hide charts</string>
 
 </resources>

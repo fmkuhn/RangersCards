@@ -431,4 +431,6 @@
     <string name="scout_challenge_card_button">Разведать карту вызова</string>
     <string name="draw_challenge_card_placeholder">Возьмите или разведайте карту…</string>
     <string name="return_scouted_cards_button">Вернуть разведанные карты</string>
+    <string name="show_charts">Показать диаграммы</string>
+    <string name="hide_charts">Скрыть диаграммы</string>
 </resources>
