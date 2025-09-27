@@ -16,8 +16,8 @@ android {
         applicationId = "com.rangerscards"
         minSdk = 24
         targetSdk = 36
-        versionCode = 60
-        versionName = "2.5.1"
+        versionCode = 62
+        versionName = "2.5.3"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -85,6 +85,9 @@ dependencies {
 
     //Import json serialization
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
+
+    //Import charts
+    implementation ("io.github.ehsannarmani:compose-charts:0.1.11")
 
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.4")

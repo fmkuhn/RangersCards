@@ -7,8 +7,8 @@ import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.fillMaxWidth
+import androidx.compose.foundation.layout.height
 import androidx.compose.foundation.layout.padding
-import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -21,6 +21,9 @@ import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.listSaver
+import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.res.stringResource
@@ -29,6 +32,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import com.rangerscards.R
 import com.rangerscards.data.objects.ChallengeDeck
+import com.rangerscards.ui.campaigns.components.AspectsRowChart
 import com.rangerscards.ui.campaigns.components.ChallengeCard
 import com.rangerscards.ui.components.SquareButton
 import com.rangerscards.ui.theme.CustomTheme
@@ -43,7 +47,11 @@ fun CampaignChallengeDeckScreen(
 ) {
     val challengeDeckSize by campaignViewModel.currentChallengeDeck!!.size.collectAsState()
     val challengeDeckScoutPosition by campaignViewModel.currentChallengeDeck!!.scoutPosition.collectAsState()
-    val revealedCardIds = remember { mutableStateListOf<Int>() }
+    val challengeDeckIds by campaignViewModel.currentChallengeDeck!!.challengeDeckIdsFlow.collectAsState()
+    val revealedCardIds = rememberSaveable(saver = listSaver(
+        save = { stateList -> stateList.toList() },
+        restore = { restored -> restored.toMutableStateList() }
+    )) { mutableStateListOf<Int>() }
     val coroutineScope = rememberCoroutineScope()
     val isScoutAvailable = remember { derivedStateOf { (challengeDeckScoutPosition < challengeDeckSize) &&
             ((revealedCardIds.isNotEmpty() && challengeDeckScoutPosition != 0) ||
@@ -83,7 +91,7 @@ fun CampaignChallengeDeckScreen(
                     verticalArrangement = Arrangement.Center
                 ) {
                     if (revealedCardIds.isEmpty()) Column(
-                        modifier = Modifier.size(220.dp, 288.dp),
+                        modifier = Modifier.fillMaxWidth(0.9f).height(288.dp),
                         horizontalAlignment = Alignment.CenterHorizontally,
                         verticalArrangement = Arrangement.Center
                     ) {
@@ -159,6 +167,9 @@ fun CampaignChallengeDeckScreen(
                     modifier = Modifier.fillMaxWidth(),
                     isEnabled = isScoutAvailable.value
                 )
+            }
+            item("charts") {
+                AspectsRowChart(challengeDeckIds)
             }
         }
     }

@@ -1,5 +1,6 @@
 package com.rangerscards.ui.components
 
+import android.content.Context
 import androidx.annotation.StringRes
 import androidx.compose.animation.animateContentSize
 import androidx.compose.foundation.background
@@ -40,6 +41,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.input.nestedscroll.NestedScrollConnection
 import androidx.compose.ui.input.nestedscroll.NestedScrollSource
 import androidx.compose.ui.input.nestedscroll.nestedScroll
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
 import androidx.compose.ui.text.font.FontWeight
@@ -131,6 +133,7 @@ fun CardsFilterScreen(
                     bottom = innerPadding.calculateBottomPadding()
                 ),
         ) {
+            val context = LocalContext.current
             LazyColumn(modifier = Modifier.weight(1f)) {
                 item {
                     Column(
@@ -151,7 +154,9 @@ fun CardsFilterScreen(
                                 localFilterOptions.types.toSet()
                             }
                             CardsFilterCheckList(
-                                optionsMap = CardFilters.getTypesFilters(),
+                                optionsMap = context.transformMapOfFiltersToSortedExtractedString(
+                                    CardFilters.getTypesFilters()
+                                ),
                                 selectedOptions = selectedTypes,
                                 state = innerStates[0],
                                 modifier = Modifier.nestedScroll(innerConnections[0])
@@ -188,7 +193,9 @@ fun CardsFilterScreen(
                                 localFilterOptions.traits.toSet()
                             }
                             CardsFilterCheckList(
-                                optionsMap = CardFilters.getTraitsFilters(),
+                                optionsMap = context.transformMapOfFiltersToSortedExtractedString(
+                                    CardFilters.getTraitsFilters()
+                                ),
                                 selectedOptions = selectedTraits,
                                 state = innerStates[1],
                                 modifier = Modifier.nestedScroll(innerConnections[1])
@@ -224,7 +231,9 @@ fun CardsFilterScreen(
                                 localFilterOptions.sets.toSet()
                             }
                             CardsFilterCheckList(
-                                optionsMap = CardFilters.getSetsFilters(),
+                                optionsMap = context.transformMapOfFiltersToSortedExtractedString(
+                                    CardFilters.getSetsFilters()
+                                ),
                                 selectedOptions = selectedSets,
                                 state = innerStates[2],
                                 modifier = Modifier.nestedScroll(innerConnections[2])
@@ -462,11 +471,13 @@ fun CardsFilterScreen(
                                 localFilterOptions.packs.toSet()
                             }
                             CardsFilterCheckList(
-                                optionsMap = mapOf(
-                                    "core" to R.string.core_cycle,
-                                    "loa" to R.string.loa_expansion,
-                                    "sotv" to R.string.sotv_expansion
-                                ),
+                                optionsMap = context.transformMapOfFiltersToSortedExtractedString(
+                                    mapOf(
+                                        "core" to R.string.core_cycle,
+                                        "loa" to R.string.loa_expansion,
+                                        "sotv" to R.string.sotv_expansion
+                                    ),
+                                    false),
                                 selectedOptions = selectedPacks,
                                 state = innerStates[3],
                                 modifier = Modifier.nestedScroll(innerConnections[3])
@@ -673,7 +684,7 @@ fun FilterHeader(
 
 @Composable
 fun CardsFilterCheckList(
-    optionsMap: Map<String, Int>,
+    optionsMap: Map<String, String>,
     selectedOptions: Set<String>,
     state: LazyListState,
     modifier: Modifier,
@@ -681,7 +692,7 @@ fun CardsFilterCheckList(
 ) {
     var searchQuery by remember { mutableStateOf("") }
     val filteredOptionsMap = (if (searchQuery.length >= 2)
-        optionsMap.filter { it.key.contains(searchQuery, true) }
+        optionsMap.filter { it.value.contains(searchQuery, true) }
     else optionsMap)
 
     Row(
@@ -701,7 +712,7 @@ fun CardsFilterCheckList(
             .sizeIn(maxHeight = 320.dp),
         state = state,
     ) {
-        filteredOptionsMap.forEach { (key, stringResId) ->
+        filteredOptionsMap.forEach { (key, string) ->
             item(key) {
                 val isSelected = key in selectedOptions
                 Row(
@@ -713,7 +724,7 @@ fun CardsFilterCheckList(
                     verticalAlignment = Alignment.CenterVertically
                 ) {
                     Text(
-                        text = stringResource(stringResId),
+                        text = string,
                         color = CustomTheme.colors.d30,
                         fontFamily = Jost,
                         fontWeight = FontWeight.Normal,
@@ -790,5 +801,27 @@ fun CardsFilterCost(
             )
         }
     }
+}
+
+private fun Context.transformMapOfFiltersToSortedExtractedString(
+    originalMap: Map<String, Int>,
+    needSort: Boolean = true
+): Map<String, String> {
+
+    // Convert resource ids -> actual strings
+    val converted: Map<String, String> = originalMap.mapValues { (_, resId) ->
+        getString(resId)
+    }
+
+    // Sort by value (case-insensitive) and put into a LinkedHashMap to preserve order
+    if (needSort) {
+        val sortedList: List<Pair<String, String>> =
+            converted.entries.map { it.key to it.value }.sortedBy { it.second.lowercase() }
+
+        val result = LinkedHashMap<String, String>(sortedList.size)
+        sortedList.forEach { (k, v) -> result[k] = v }
+        return result
+    }
+    else return converted
 }
 
