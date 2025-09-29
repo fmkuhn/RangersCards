@@ -213,7 +213,7 @@ fun CampaignCreationScreen(
                         usePlatformDefaultWidth = false
                     )
                 ) {
-                    val campaignsForTransfer by campaignsViewModel.getTransferCampaigns(cycle)
+                    val campaignsForTransfer by campaignsViewModel.getTransferCampaigns(cycle, user.currentUser)
                         .collectAsState(emptyList())
                     SettingsBaseCard(
                         isDarkTheme = isDarkTheme,

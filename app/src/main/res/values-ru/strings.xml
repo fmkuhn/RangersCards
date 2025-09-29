@@ -67,7 +67,7 @@
     <string name="discord_button">Дискорд</string>
     <string name="telegram_button">Телеграм</string>
     <string name="support_title">Поддержка</string>
-    <string name="support_text">Поддержите приложение на %s.</string>
+    <string name="support_text">Поддержите приложение на Boosty.</string>
     <string name="about_button">О приложении</string>
     <string name="backup_data_button">Резервное копирование</string>
     <string name="diagnostics_button">Диагностика</string>

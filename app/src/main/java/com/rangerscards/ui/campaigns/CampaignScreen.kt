@@ -413,7 +413,7 @@ fun CampaignScreen(
                     ) {
                         key("challengeDeckButton") {
                             SquareButton(
-                                stringId = R.string.draw_challenge_card_button,
+                                stringId = R.string.challenge_deck_title,
                                 leadingIcon = R.drawable.cards_32dp,
                                 iconColor = CustomTheme.colors.m,
                                 textColor = CustomTheme.colors.d30,

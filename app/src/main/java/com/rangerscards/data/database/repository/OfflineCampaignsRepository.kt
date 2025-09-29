@@ -55,8 +55,8 @@ class OfflineCampaignsRepository(
         ).flow
     }
 
-    override fun getAllCampaignsForTransfer(cycleId: String): Flow<List<CampaignListItemProjection>> =
-        campaignDao.getAllCampaignsForTransfer(cycleId)
+    override fun getAllCampaignsForTransfer(cycleId: String, userId: String): Flow<List<CampaignListItemProjection>> =
+        campaignDao.getAllCampaignsForTransfer(cycleId,  userId)
 
     override fun getRolesImages(ids: List<String>): Flow<List<RoleCardProjection>> = campaignDao.getRolesImages(ids)
 

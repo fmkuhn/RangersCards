@@ -341,6 +341,19 @@ object CardTextParser {
                     tint = color
                 )
             },
+            "aspiration" to InlineTextContent(
+                Placeholder(
+                    width = 16.sp,
+                    height = 16.sp,
+                    placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
+                )
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.aspiration),
+                    contentDescription = "Aspiration Icon",
+                    tint = color
+                )
+            },
         )
     }
 }

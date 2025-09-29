@@ -118,7 +118,8 @@ class CampaignsViewModel(
             }
         }.cachedIn(viewModelScope)
 
-    fun getTransferCampaigns(cycleId: String) = campaignsRepository.getAllCampaignsForTransfer(cycleId)
+    fun getTransferCampaigns(cycleId: String, currentUserId: FirebaseUser?) =
+        campaignsRepository.getAllCampaignsForTransfer(cycleId, currentUserId?.uid ?: "")
 
     fun getRolesImages(ids: List<String>): Flow<List<String>> =
         campaignsRepository.getRolesImages(ids).map { rolesList ->
