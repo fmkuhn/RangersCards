@@ -1,6 +1,7 @@
 package com.rangerscards.ui.campaigns.components
 
 import androidx.compose.foundation.background
+import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
@@ -34,11 +35,12 @@ fun ChallengeCard(
     cardId: Int,
     isDarkTheme: Boolean,
     isSmall: Boolean = false,
+    onClick: ((Int) -> Unit)?
 ) {
     val revealedCard = ChallengeDeck.challengeDeck.getValue(cardId)
     val width = if (isSmall) 110.dp else 220.dp
     Surface(
-        modifier = Modifier.width(width),
+        modifier = Modifier.width(width).clickable(onClick != null) { onClick?.invoke(cardId) },
         shape = if (isSmall) CustomTheme.shapes.small  else CustomTheme.shapes.large,
         color = Color.Transparent,
         shadowElevation = if (isSmall) 2.dp else 4.dp

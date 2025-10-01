@@ -51,7 +51,7 @@ import ir.ehsannarmani.compose_charts.models.PopupProperties
 import ir.ehsannarmani.compose_charts.models.VerticalIndicatorProperties
 
 @Composable
-fun AspectsRowChart(
+fun AspectsRowCharts(
     deckList: List<Int>
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }

@@ -431,6 +431,18 @@ class CampaignViewModel(
         return currentChallengeDeck?.scout()
     }
 
+    suspend fun returnChallengeCardsInAnyOrder(topList: List<Int>, bottomList: List<Int>) {
+        val deck = currentChallengeDeck?.getDeckAsList() ?: emptyList()
+        val exclude = (topList + bottomList).toSet()
+        val middleList = deck.filter { it !in exclude }
+        val newList = topList + middleList + bottomList
+        campaignRepository.upsertChallengeDeck(
+            campaign.value!!.id,
+            buildJsonArray { newList.forEach { add(it) } }
+        )
+        currentChallengeDeck?.updateDeckWithDifferentOrder(newList)
+    }
+
     fun discardScoutedCards() = currentChallengeDeck?.resetScoutPosition()
 
     suspend fun reshuffleChallengeDeck() {

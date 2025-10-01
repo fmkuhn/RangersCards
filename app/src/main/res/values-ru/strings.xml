@@ -431,6 +431,11 @@
     <string name="scout_challenge_card_button">Разведать карту вызова</string>
     <string name="draw_challenge_card_placeholder">Возьмите или разведайте карту…</string>
     <string name="return_scouted_cards_button">Вернуть разведанные карты</string>
+    <string name="return_scouted_cards_ordered_button">Вернуть карты (наверх/вниз)</string>
+    <string name="apply_bottom_button">Применить (вниз)</string>
+    <string name="apply_top_button">Применить (наверх)</string>
+    <string name="return_scouted_cards_ordered_bottom_info">Нажимайте на карты в любом порядке чтобы вернуть их вниз.</string>
+    <string name="return_scouted_cards_ordered_top_info">Нажимайте на карты в любом порядке чтобы вернуть их наверх.</string>
     <string name="show_charts">Показать диаграммы</string>
     <string name="hide_charts">Скрыть диаграммы</string>
 </resources>

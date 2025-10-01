@@ -31,6 +31,11 @@ class CurrentChallengeDeck(startingIds: List<Int>) {
         return scoutCardId
     }
 
+    fun updateDeckWithDifferentOrder(newList: List<Int>) {
+        resetScoutPosition()
+        challengeDeckIds = ArrayDeque(newList)
+    }
+
     fun resetScoutPosition() {
         _scoutPosition.update { 0 }
     }
