@@ -67,7 +67,7 @@
     <string name="discord_button">Дискорд</string>
     <string name="telegram_button">Телеграм</string>
     <string name="support_title">Поддержка</string>
-    <string name="support_text">Поддержите приложение на Boosty.</string>
+    <string name="support_text_ru">Поддержите приложение на Boosty.</string>
     <string name="about_button">О приложении</string>
     <string name="backup_data_button">Резервное копирование</string>
     <string name="diagnostics_button">Диагностика</string>
@@ -435,7 +435,7 @@
     <string name="apply_bottom_button">Применить (вниз)</string>
     <string name="apply_top_button">Применить (наверх)</string>
     <string name="return_scouted_cards_ordered_bottom_info">Нажимайте на карты в любом порядке чтобы вернуть их вниз.</string>
-    <string name="return_scouted_cards_ordered_top_info">Нажимайте на карты в любом порядке чтобы вернуть их наверх.</string>
+    <string name="return_scouted_cards_ordered_top_info">Нажимайте на карты в любом порядке чтобы вернуть их наверх. (Верните все оставшиеся карты, чтобы продолжить)</string>
     <string name="show_charts">Показать диаграммы</string>
     <string name="hide_charts">Скрыть диаграммы</string>
 </resources>

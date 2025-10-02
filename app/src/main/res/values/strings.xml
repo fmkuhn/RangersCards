@@ -81,7 +81,8 @@
     <string name="discord_button">Discord</string>
     <string name="telegram_button">Telegram</string>
     <string name="support_title">Support</string>
-    <string name="support_text">Support Rangers Cards on Boosty.</string>
+    <string name="support_text_ru">Support Rangers Cards on Boosty.</string>
+    <string name="support_text">Support Rangers Cards on Patreon.</string>
     <string name="about_button">About</string>
     <string name="backup_data_button">Backup Data</string>
     <string name="diagnostics_button">Diagnostics</string>
@@ -501,7 +502,7 @@
     <string name="apply_bottom_button">Apply (bottom)</string>
     <string name="apply_top_button">Apply (top)</string>
     <string name="return_scouted_cards_ordered_bottom_info">Tap cards in any order to return them to bottom.</string>
-    <string name="return_scouted_cards_ordered_top_info">Tap cards in any order to return them to top.</string>
+    <string name="return_scouted_cards_ordered_top_info">Tap cards in any order to return them to top. (Return all cards that\'s left to proceed)</string>
     <string name="show_charts">Show charts</string>
     <string name="hide_charts">Hide charts</string>
 

@@ -11,10 +11,12 @@ import com.rangerscards.ui.settings.email
 import com.rangerscards.ui.theme.CustomTheme
 
 const val boostyLink = "https://boosty.to/rangerscards/"
+const val patreonLink = "https://patreon.com/rangerscards"
 
 @Composable
 fun SupportCard(
     isDarkTheme: Boolean,
+    language: String,
     navigateToAbout: () -> Unit,
     navigateToDiagnostics: () -> Unit,
     modifier: Modifier = Modifier,
@@ -27,9 +29,9 @@ fun SupportCard(
         modifier = modifier
     ) {
         SquareButton(
-            stringId = R.string.support_text,
-            leadingIcon = R.drawable.boosty,
-            onClick = { settingsViewModel.openLink(boostyLink, context) }
+            stringId = if (language == "ru") R.string.support_text_ru else R.string.support_text,
+            leadingIcon = if (language == "ru") R.drawable.boosty else R.drawable.patreon_logo,
+            onClick = { settingsViewModel.openLink(if (language == "ru") boostyLink else patreonLink, context) }
         )
         SquareButton(
             stringId = R.string.about_button,

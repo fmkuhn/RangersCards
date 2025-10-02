@@ -68,11 +68,11 @@
   <string name="handle_already_taken_toast">Ce nom est déjà pris.</string>
   <string name="invalid_handle_toast">Nom invalide. Il doit comporter entre 2 et 22 caractères.</string>
   <string name="socials_title">Réseaux sociaux</string>
-  <string name="socials_text">Discute avec d\'autres joueurs d\'Earthborne Rangers :</string>
+  <string name="socials_text">Discute avec d\'autres joueurs d\'Earthborne Rangers:</string>
   <string name="discord_button">Discord</string>
   <string name="telegram_button">Telegram</string>
   <string name="support_title">Assistance</string>
-  <string name="support_text">Soutiens Rangers Cards via Boosty.</string>
+  <string name="support_text">Soutiens Rangers Cards via Patreon.</string>
   <string name="about_button">À propos de Rangers Cards</string>
   <string name="backup_data_button">Sauvegarder les données</string>
   <string name="diagnostics_button">Diagnostic</string>

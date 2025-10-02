@@ -76,6 +76,7 @@ fun SettingsScreen(
         item {
             SupportCard(
                 isDarkTheme = isDarkTheme,
+                language = user.language,
                 settingsViewModel = settingsViewModel,
                 navigateToAbout = { navigateToAbout.invoke() },
                 navigateToDiagnostics = { navigateToDiagnostics.invoke() }

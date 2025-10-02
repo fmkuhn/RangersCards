@@ -39,11 +39,6 @@ fun SocialsCard(
         )
         val context = LocalContext.current
         when(language) {
-            "en" -> SquareButton(
-                stringId = R.string.discord_button,
-                leadingIcon = R.drawable.discord,
-                onClick = { settingsViewModel.openLink("https://discord.gg/pw3Cye8NQR", context) }
-            )
             "ru" -> SquareButton(
                 stringId = R.string.telegram_button,
                 leadingIcon = R.drawable.telegram,
