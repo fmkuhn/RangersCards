@@ -122,9 +122,32 @@ fun CardsScreen(
                 contentType = cardsLazyItems.itemContentType { it }
             ) { index ->
                 val item = cardsLazyItems[index] ?: return@items
-                val showHeader = if (index == 0) true
-                else cardsLazyItems[index - 1]?.setName != item.setName
-                if (showHeader) RowTypeDivider(text = item.setName.toString())
+                val headerOptions = getHeaderOptions(
+                    filterOptions.sortOrder,
+                    index,
+                    if (index != 0) cardsLazyItems[index - 1] else null,
+                    item
+                )
+                if (headerOptions.first) RowTypeDivider(text = when(headerOptions.second) {
+                    "set_id" -> item.setName.toString()
+                    "equip" -> "${stringResource(R.string.equip_sort_header)}: ${
+                        if (item.equip == null) stringResource(R.string.current_path_terrain_none)
+                        else item.equip.toString()
+                    }"
+                    "type_name" -> item.typeName.toString()
+                    "cost" -> "${stringResource(R.string.cost_filter_header)}: ${
+                        when (item.cost) {
+                            null -> stringResource(R.string.current_path_terrain_none)
+                            -2 -> "X"
+                            else -> item.cost.toString()
+                        }
+                    }"
+                    "aspect_id" -> "${stringResource(R.string.aspect_card_divider_header)}: ${
+                        if (item.aspectId == null) stringResource(R.string.current_path_terrain_none)
+                        else item.aspectShortName
+                    }"
+                    else -> ""
+                })
                 CardListItem(
                     tabooId = item.tabooId,
                     aspectId = item.aspectId,
@@ -177,5 +200,42 @@ fun CardsScreen(
                 }
             }
         }
+    }
+}
+
+private fun getHeaderOptions(
+    sortOrder: List<String>,
+    index: Int,
+    previousItem: CardListItemProjection?,
+    currentItem: CardListItemProjection
+): Pair<Boolean, String?> {
+    return when(sortOrder.first()) {
+        "equip" -> {
+            (if (index == 0) true
+            else previousItem?.equip != currentItem.equip) to "equip"
+        }
+        "set_id" -> {
+            (if (index == 0) true
+            else previousItem?.setName != currentItem.setName) to "set_id"
+        }
+        "set_type_id" -> {
+            (if (sortOrder.indexOf("set_id") == 1) {
+                if (index == 0) true
+                else previousItem?.setName != currentItem.setName
+            } else false) to "set_id"
+        }
+        "type_name" -> {
+            (if (index == 0) true
+            else previousItem?.typeName != currentItem.typeName) to "type_name"
+        }
+        "cost" -> {
+            (if (index == 0) true
+            else previousItem?.cost != currentItem.cost) to "cost"
+        }
+        "aspect_id" -> {
+            (if (index == 0) true
+            else previousItem?.aspectId != currentItem.aspectId) to "aspect_id"
+        }
+        else -> false to null
     }
 }

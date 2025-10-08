@@ -76,6 +76,7 @@ import com.rangerscards.ui.cards.CardsViewModel
 import com.rangerscards.ui.cards.FullCardScreen
 import com.rangerscards.ui.cards.components.RangersSpoilerSwitch
 import com.rangerscards.ui.components.CardsFilterScreen
+import com.rangerscards.ui.components.CardsSortScreen
 import com.rangerscards.ui.components.RangersTopAppBar
 import com.rangerscards.ui.deck.DeckCardsSearchingListScreen
 import com.rangerscards.ui.deck.DeckCardsViewModel
@@ -119,7 +120,7 @@ fun RangersNavHost(
     Scaffold(
         modifier = Modifier.safeDrawingPadding(),
         topBar = {
-            AnimatedVisibility(showBars && currentRoute?.let { !it.contains("filterOptions") } == true) {
+            AnimatedVisibility(showBars && currentRoute?.let { !it.contains("Options") } == true) {
                 RangersTopAppBar(
                     title = title,
                     canNavigateBack = bottomNavItems.none { it.startDestination == currentRoute },
@@ -286,6 +287,25 @@ fun RangersNavHost(
                         IconButton(
                             onClick = {
                                 navController.navigate(
+                                    "${BottomNavScreen.Cards.route}/sortOptions"
+                                ) {
+                                    launchSingleTop = true
+                                }
+                            },
+                            colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
+                            modifier = Modifier.size(32.dp),
+                            enabled = !isCardsLoading
+                        ) {
+                            Icon(
+                                painterResource(id = R.drawable.sort_32dp),
+                                contentDescription = null,
+                                tint = CustomTheme.colors.m,
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                        IconButton(
+                            onClick = {
+                                navController.navigate(
                                     "${BottomNavScreen.Cards.route}/filterOptions"
                                 ) {
                                     launchSingleTop = true
@@ -331,6 +351,27 @@ fun RangersNavHost(
                     title = ""
                     actions = null
                     switch = null
+                }
+                composable(route = BottomNavScreen.Cards.route + "/sortOptions") { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry(BottomNavScreen.Cards.startDestination)
+                    }
+                    val cardsViewModel: CardsViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val filterOptions by cardsViewModel.filterOptions.collectAsState()
+                    CardsSortScreen(
+                        navigateUp = { navController.navigateUp() },
+                        clearSortOptions = { cardsViewModel.clearSortOptions()
+                            navController.navigateUp() },
+                        sortOptions = filterOptions.sortOrder,
+                        onApply = { newSortOptions ->
+                            cardsViewModel.applyNewSortOptions(newSortOptions)
+                            navController.navigateUp() },
+                        isDarkTheme = isDarkTheme,
+                        contentPadding = innerPadding
+                    )
                 }
                 composable(route = BottomNavScreen.Cards.route + "/filterOptions") { backStackEntry ->
                     val parentEntry = remember(backStackEntry) {
@@ -581,6 +622,11 @@ fun RangersNavHost(
                                 launchSingleTop = true
                             }
                         },
+                        navigateToSort = {
+                            navController.navigate("deck/cardsList/{$typeIndexArgument}/sortOptions") {
+                                launchSingleTop = true
+                            }
+                        },
                         navigateToFilters = {
                             navController.navigate("deck/cardsList/{$typeIndexArgument}/filterOptions") {
                                 launchSingleTop = true
@@ -621,6 +667,27 @@ fun RangersNavHost(
                         cardIndex = cardIndex,
                         isDarkTheme = isDarkTheme,
                         contentPadding = innerPadding,
+                    )
+                }
+                composable(route = "deck/cardsList/{$typeIndexArgument}/sortOptions") { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("deck/cardsList/{$typeIndexArgument}")
+                    }
+                    val deckCardsViewModel: DeckCardsViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val filterOptions by deckCardsViewModel.filterOptions.collectAsState()
+                    CardsSortScreen(
+                        navigateUp = { navController.navigateUp() },
+                        clearSortOptions = { deckCardsViewModel.clearSortOptions()
+                            navController.navigateUp() },
+                        sortOptions = filterOptions.sortOrder,
+                        onApply = { newSortOptions ->
+                            deckCardsViewModel.applyNewSortOptions(newSortOptions)
+                            navController.navigateUp() },
+                        isDarkTheme = isDarkTheme,
+                        contentPadding = innerPadding
                     )
                 }
                 composable(route = "deck/cardsList/{$typeIndexArgument}/filterOptions") { backStackEntry ->

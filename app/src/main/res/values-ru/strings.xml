@@ -438,4 +438,17 @@
     <string name="return_scouted_cards_ordered_top_info">Нажимайте на карты в любом порядке чтобы вернуть их наверх. (Верните все оставшиеся карты, чтобы продолжить)</string>
     <string name="show_charts">Показать диаграммы</string>
     <string name="hide_charts">Скрыть диаграммы</string>
+
+    //Card sort options
+    <string name="sort_screen_header">Сортировка</string>
+    <string name="equip_sort_header">По экипировке</string>
+    <string name="set_type_sort_header">По типу набора карты</string>
+    <string name="set_position_sort_header">По номеру в наборе</string>
+    <string name="aspects_sort_header">По черте</string>
+    <string name="types_sort_header">По типу</string>
+    <string name="traits_sort_header">По признаку</string>
+    <string name="sets_sort_header">По набору карты</string>
+    <string name="packs_sort_header">По дополнению</string>
+    <string name="aspect_card_divider_header">Черта</string>
+    <string name="equip_card_divider_header">Экипировка</string>
 </resources>

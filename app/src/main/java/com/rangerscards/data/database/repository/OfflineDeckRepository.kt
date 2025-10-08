@@ -283,17 +283,19 @@ class OfflineDeckRepository(private val deckDao: DeckDao) : DeckRepository {
             else packIds.joinToString { "?" }
         } else ""
         val filtersClause = CardFilters.buildFiltersClause(filterOptions)
+        val sortClause = CardFilters.buildSortClause(filterOptions)
+        val defaultSortClause = "(set_type_id IS NULL), set_type_id, set_id, set_position"
         val sql = StringBuilder().apply {
             append("""
             SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, 
-            name, type_name, traits, real_traits, level, set_id, set_type_id, deck_limit,
+            name, type_name, traits, real_traits, level, set_id, set_type_id, deck_limit, equip,
             approach_connection, approach_reason, approach_conflict, approach_exploration
             FROM (
         """.trimIndent())
 
             // Case 1: taboo override cards
             append("""
-            SELECT card.id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, 
+            SELECT card.id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, equip, pack_id,
                 real_image_src, name, type_name, traits, real_traits, level, set_id, set_type_id, 
                 set_position, deck_limit, approach_connection, approach_reason, approach_conflict, approach_exploration
             FROM card
@@ -308,7 +310,7 @@ class OfflineDeckRepository(private val deckDao: DeckDao) : DeckRepository {
 
             // Case 2: default card when taboo override absent
             append("""
-            SELECT card.id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, 
+            SELECT card.id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, equip, pack_id,
                 real_image_src, name, type_name, traits, real_traits, level, set_id, set_type_id, 
                 set_position, deck_limit, approach_connection, approach_reason, approach_conflict, approach_exploration
             FROM card
@@ -328,7 +330,7 @@ class OfflineDeckRepository(private val deckDao: DeckDao) : DeckRepository {
 
             // Case 3: no taboo
             append("""
-            SELECT card.id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, 
+            SELECT card.id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, equip, pack_id,
                 real_image_src, name, type_name, traits, real_traits, level, set_id, set_type_id, 
                 set_position, deck_limit, approach_connection, approach_reason, approach_conflict, approach_exploration
             FROM card
@@ -342,7 +344,7 @@ class OfflineDeckRepository(private val deckDao: DeckDao) : DeckRepository {
 
             append("""
             ) 
-            ORDER BY $orderByClause
+            ORDER BY ${if (sortClause != defaultSortClause) sortClause else orderByClause}
         """.trimIndent())
         }
 

@@ -16,8 +16,8 @@ android {
         applicationId = "com.rangerscards"
         minSdk = 24
         targetSdk = 36
-        versionCode = 64
-        versionName = "2.5.5"
+        versionCode = 65
+        versionName = "2.6.0"
 
         testInstrumentationRunner = "androidx.test.runner.AndroidJUnitRunner"
         vectorDrawables {
@@ -87,7 +87,10 @@ dependencies {
     implementation("org.jetbrains.kotlinx:kotlinx-serialization-json:1.9.0")
 
     //Import charts
-    implementation ("io.github.ehsannarmani:compose-charts:0.1.11")
+    implementation ("io.github.ehsannarmani:compose-charts:0.2.0")
+
+    //Import reorderable lists
+    implementation("sh.calvin.reorderable:reorderable:3.0.0")
 
     implementation("androidx.core:core-ktx:1.17.0")
     implementation("androidx.lifecycle:lifecycle-runtime-ktx:2.9.4")

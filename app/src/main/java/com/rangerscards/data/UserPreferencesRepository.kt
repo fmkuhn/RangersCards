@@ -80,6 +80,18 @@ class UserPreferencesRepository(
         preferences[CARDS_UPDATED_AT] ?: ""
     }
 
+    val sortOrder: Flow<List<String>> = dataStore.data
+        .catch {
+            if (it is IOException) {
+                Log.e(TAG, "Error reading preferences.", it)
+                emit(emptyPreferences())
+            } else {
+                throw it
+            }
+        }.map { preferences ->
+            preferences[CARDS_SORT_ORDER]?.split(",")?.filter { it.isNotBlank() } ?: emptyList()
+        }
+
     private companion object {
         val THEME = intPreferencesKey("theme")
         const val TAG = "UserPreferencesRepo"
@@ -87,9 +99,10 @@ class UserPreferencesRepository(
         val INCLUDE_ENGLISH_SEARCH_RESULTS = booleanPreferencesKey("english_results")
         val TABOO = booleanPreferencesKey("taboo")
         val COLLECTION = stringPreferencesKey("collection")
+        val CARDS_SORT_ORDER = stringPreferencesKey("cards_sort_order")
     }
 
-    suspend fun saveTabooPreference(theme: Int) {
+    suspend fun saveThemePreference(theme: Int) {
         dataStore.edit { preferences ->
             preferences[THEME] = theme
         }
@@ -116,6 +129,12 @@ class UserPreferencesRepository(
     suspend fun saveCollectionPreference(collection: List<String>) {
         dataStore.edit { preferences ->
             preferences[COLLECTION] = collection.joinToString(",")
+        }
+    }
+
+    suspend fun saveSortOrderPreference(sortOrder: List<String>) {
+        dataStore.edit { preferences ->
+            preferences[CARDS_SORT_ORDER] = sortOrder.joinToString(",")
         }
     }
 

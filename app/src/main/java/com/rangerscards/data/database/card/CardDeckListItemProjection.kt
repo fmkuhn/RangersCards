@@ -17,6 +17,7 @@ data class CardDeckListItemProjection(
     @ColumnInfo(name = "approach_connection")
     val approachConnection: Int?,
     val traits: String?,
+    val equip:  Int?,
     @ColumnInfo(name = "real_traits")
     val realTraits: String?,
     @ColumnInfo(name = "set_name")

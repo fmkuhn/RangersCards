@@ -197,33 +197,6 @@ fun CardListItemImageContainer(
                         modifier = Modifier.align(Alignment.BottomCenter)
                     )
                 }
-//                Column(
-//                    verticalArrangement = Arrangement.Center,
-//                    horizontalAlignment = Alignment.CenterHorizontally,
-//                    modifier = Modifier.fillMaxSize()
-//                ) {
-//                    if (cost != null) Text(
-//                        text = when(cost) {
-//                            -2 -> "X"
-//                            else -> cost.toString()
-//                        },
-//                        color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
-//                        fontFamily = Jost,
-//                        fontWeight = FontWeight.Bold,
-//                        fontSize = 16.sp,
-//                        lineHeight = 18.sp,
-//                        modifier = Modifier.sizeIn(maxHeight = 18.dp)
-//                    )
-//                    Text(
-//                        text = aspectShortName.toString(),
-//                        color = if (isDarkTheme) CustomTheme.colors.d30 else CustomTheme.colors.l30,
-//                        fontFamily = Jost,
-//                        fontWeight = FontWeight.Bold,
-//                        fontSize = 12.sp,
-//                        lineHeight = 14.sp,
-//                        modifier = Modifier.sizeIn(maxHeight = 14.dp)
-//                    )
-//                }
             }
         } else {
             AsyncImage(
@@ -246,10 +219,10 @@ fun CardListItemTextContainer(
     typeName: String?,
     traits: String?,
     tabooId: String?,
-    weight: Modifier
+    modifier: Modifier
 ) {
     Column(
-        modifier = weight,
+        modifier = modifier,
     ) {
         Text(
             text = name,
@@ -312,7 +285,7 @@ fun CardListItemApproachContainer(
         horizontalArrangement = Arrangement.spacedBy(2.dp),
     ) {
         approachMap.forEach { approach ->
-            for (i in 1..approach.value) {
+            repeat(approach.value) {
                 Surface(
                     color = Color.Black,
                     shape = CustomTheme.shapes.small

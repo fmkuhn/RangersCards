@@ -17,9 +17,11 @@ import kotlinx.coroutines.flow.StateFlow
 import kotlinx.coroutines.flow.asStateFlow
 import kotlinx.coroutines.flow.catch
 import kotlinx.coroutines.flow.combine
+import kotlinx.coroutines.flow.first
 import kotlinx.coroutines.flow.flatMapLatest
 import kotlinx.coroutines.flow.stateIn
 import kotlinx.coroutines.flow.update
+import kotlinx.coroutines.launch
 import java.util.Locale
 
 data class Quintuple<A, B, C, D, E>(
@@ -32,7 +34,7 @@ data class Quintuple<A, B, C, D, E>(
 
 class CardsViewModel(
     private val cardsRepository: CardsRepository,
-    userPreferencesRepository: UserPreferencesRepository,
+    private val userPreferencesRepository: UserPreferencesRepository,
 ) : ViewModel() {
 
     // Holds the current state of whether to include English search results.
@@ -52,6 +54,14 @@ class CardsViewModel(
 
     private val _filterOptions = MutableStateFlow(CardFilterOptions())
     val filterOptions: StateFlow<CardFilterOptions> = _filterOptions.asStateFlow()
+
+    init {
+        // launch a single, one-shot read
+        viewModelScope.launch {
+            val sortOrder = userPreferencesRepository.sortOrder.first()
+            if (sortOrder.isNotEmpty()) _filterOptions.update { it.copy(sortOrder = sortOrder) }
+        }
+    }
 
     // Exposes the paginated search results as PagingData.
     @OptIn(ExperimentalCoroutinesApi::class)
@@ -98,11 +108,49 @@ class CardsViewModel(
     }
 
     fun applyNewFilterOptions(newFilterOptions: CardFilterOptions) {
-        _filterOptions.update { newFilterOptions.copy(searchQuery = it.searchQuery) }
+        _filterOptions.update { it.copy(
+            types = newFilterOptions.types,
+            traits = newFilterOptions.traits,
+            sets = newFilterOptions.sets,
+            costRange = newFilterOptions.costRange,
+            approaches = newFilterOptions.approaches,
+            packs = newFilterOptions.packs,
+            aspectRequirements = newFilterOptions.aspectRequirements
+        ) }
     }
 
     fun clearFilterOptions() {
-        _filterOptions.update { CardFilterOptions(searchQuery = it.searchQuery) }
+        _filterOptions.update { CardFilterOptions(
+            searchQuery = it.searchQuery,
+            sortOrder = it.sortOrder
+        ) }
+    }
+
+    fun applyNewSortOptions(newSortOptions: List<String>) {
+        _filterOptions.update { it.copy(sortOrder = newSortOptions.ifEmpty {
+                listOf("set_type_id", "set_id", "set_position")
+            })
+        }
+        viewModelScope.launch {
+            userPreferencesRepository.saveSortOrderPreference(newSortOptions)
+        }
+    }
+
+    fun clearSortOptions() {
+        _filterOptions.update { CardFilterOptions(
+            searchQuery = it.searchQuery,
+            types = it.types,
+            traits = it.traits,
+            sets = it.sets,
+            costRange = it.costRange,
+            approaches = it.approaches,
+            packs = it.packs,
+            aspectRequirements = it.aspectRequirements
+        ) }
+
+        viewModelScope.launch {
+            userPreferencesRepository.saveSortOrderPreference(emptyList())
+        }
     }
 
     /**

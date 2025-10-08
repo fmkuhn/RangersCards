@@ -506,4 +506,17 @@
     <string name="show_charts">Show charts</string>
     <string name="hide_charts">Hide charts</string>
 
+    //Card sort options
+    <string name="sort_screen_header">Sort</string>
+    <string name="equip_sort_header">By equip</string>
+    <string name="set_type_sort_header">By card set type</string>
+    <string name="set_position_sort_header">By position in set</string>
+    <string name="aspects_sort_header">By aspect</string>
+    <string name="types_sort_header">By type</string>
+    <string name="traits_sort_header">By trait</string>
+    <string name="sets_sort_header">By card set</string>
+    <string name="packs_sort_header">By pack</string>
+    <string name="aspect_card_divider_header">Aspect</string>
+    <string name="equip_card_divider_header">Equip</string>
+
 </resources>

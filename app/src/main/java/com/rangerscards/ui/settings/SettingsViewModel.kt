@@ -272,7 +272,7 @@ class SettingsViewModel(
 
     fun selectTheme(theme: Int) {
         viewModelScope.launch {
-            userPreferencesRepository.saveTabooPreference(theme)
+            userPreferencesRepository.saveThemePreference(theme)
         }
     }
 
