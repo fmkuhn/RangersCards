@@ -67,7 +67,7 @@ fun CampaignRewardFullScreen(
             ),
     ) { page ->
         val cardCode = rewards.value[page].code
-        var isAdded by remember { mutableStateOf(campaignState!!.rewards.contains(cardCode)) }
+        var isAdded by remember { mutableStateOf(campaignState?.rewards?.contains(cardCode) ?: false) }
         var currentIsAdded by remember { mutableIntStateOf(if (isAdded) 2 else 0) }
         val fullCard by campaignViewModel.getRewardById(cardCode).collectAsState(null)
         Box(modifier = Modifier.fillMaxSize()) {
@@ -166,7 +166,7 @@ fun CampaignRewardFullScreen(
                                 contentAlignment = Alignment.Center
                             ) {
                                 Text(
-                                    text = currentIsAdded.toString(),
+                                    text = "×$currentIsAdded",
                                     color = CustomTheme.colors.d10,
                                     fontFamily = Jost,
                                     fontWeight = FontWeight.Normal,
