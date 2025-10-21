@@ -1,11 +1,10 @@
 package com.rangerscards.ui.cards.components
 
 import androidx.compose.foundation.clickable
+import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Column
 import androidx.compose.foundation.layout.Row
-import androidx.compose.foundation.layout.Spacer
 import androidx.compose.foundation.layout.size
-import androidx.compose.foundation.layout.width
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
@@ -34,9 +33,12 @@ import com.rangerscards.ui.theme.Jost
 @Composable
 fun FullCardImageContainer(imageSrc: String?) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
-    Column {
+    Column(
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
+            horizontalArrangement = Arrangement.spacedBy(8.dp),
             modifier = Modifier.clickable { isExpanded = !isExpanded }
         ) {
             Text(
@@ -48,14 +50,14 @@ fun FullCardImageContainer(imageSrc: String?) {
                 fontStyle = FontStyle.Italic,
                 fontSize = 16.sp,
                 lineHeight = 18.sp,
+                modifier = Modifier.weight(1f, false)
             )
-            Spacer(Modifier.width(8.dp))
             Icon(
                 painterResource(if (isExpanded) R.drawable.arrow_drop_up_32dp
                 else R.drawable.arrow_drop_down_32dp),
                 contentDescription = null,
                 tint = CustomTheme.colors.m,
-                modifier = Modifier.size(32.dp)
+                modifier = Modifier.size(32.dp).align(Alignment.Top)
             )
         }
         if (isExpanded) Surface(
