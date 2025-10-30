@@ -954,6 +954,7 @@ fun RangersNavHost(
                     )
                     CampaignChallengeDeckScreen(
                         campaignViewModel = campaignViewModel,
+                        navigateBack = { navController.navigateUp() },
                         isDarkTheme = isDarkTheme,
                         contentPadding = innerPadding
                     )

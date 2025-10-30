@@ -19,6 +19,7 @@ import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Icon
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -57,9 +58,13 @@ enum class ReturnChallengeCard {
 @Composable
 fun CampaignChallengeDeckScreen(
     campaignViewModel: CampaignViewModel,
+    navigateBack: () -> Unit,
     isDarkTheme: Boolean,
     contentPadding: PaddingValues = PaddingValues(0.dp)
 ) {
+    LaunchedEffect(campaignViewModel.currentChallengeDeck) {
+        if (campaignViewModel.currentChallengeDeck == null) navigateBack()
+    }
     val challengeDeckSize by campaignViewModel.currentChallengeDeck!!.size.collectAsState()
     val challengeDeckScoutPosition by campaignViewModel.currentChallengeDeck!!.scoutPosition.collectAsState()
     val challengeDeckIds by campaignViewModel.currentChallengeDeck!!.challengeDeckIdsFlow.collectAsState()

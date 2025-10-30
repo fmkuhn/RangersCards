@@ -136,12 +136,12 @@ fun CampaignScreen(
                 innerStates[1].animateScrollToItem(0)
             }
     }
-    LaunchedEffect(campaign) {
+    LaunchedEffect(campaign, campaign?.id != campaignState?.id) {
         if (userUIState.currentUser != null && !isSubscriptionStarted && campaign?.uploaded == true)
             campaignViewModel.startSubscription(campaign.id)
         if (campaign != null) campaignViewModel.parseCampaign(campaign)
     }
-    LaunchedEffect(challengeDeck) {
+    LaunchedEffect(challengeDeck, campaignViewModel.currentChallengeDeck) {
         if (campaignViewModel.currentChallengeDeck == null && challengeDeck?.jsonArray?.isNotEmpty() ?: true) {
             campaignViewModel.setChallengeDeck(challengeDeck ?: JsonArray(emptyList()))
         }
