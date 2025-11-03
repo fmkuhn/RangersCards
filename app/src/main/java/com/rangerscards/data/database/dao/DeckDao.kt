@@ -60,26 +60,26 @@ interface DeckDao {
     fun searchDecks(query: String, userId: String): PagingSource<Int, DeckListItemProjection>
 
     @Query("Select id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, " +
-            "type_name, traits, level, approach_conflict, approach_reason, approach_exploration, " +
+            "type_name, traits, level, equip, approach_conflict, approach_reason, approach_exploration, " +
             "approach_connection FROM card WHERE id = :id")
     fun getCard(id: String): Flow<CardListItemProjection?>
 
     @Query("""SELECT * FROM (
             -- Case 1: Taboo is set – select the override card
-            SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name,
+            SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, equip,
             type_name, traits, level, approach_connection, approach_reason, approach_conflict, approach_exploration 
             FROM card WHERE type_id = 'role' AND set_id = :specialty AND (:taboo IS 1 AND taboo_id IS NOT NULL)
             AND pack_id IN (:packIds)
             UNION ALL
             -- Case 2: When taboo is set but no override exists, fall back to the default card
-            SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name,
+            SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, equip,
             type_name, traits, level, approach_connection, approach_reason, approach_conflict, approach_exploration
             FROM card AS c WHERE c.type_id = 'role' AND c.set_id = :specialty AND (:taboo IS 1 AND taboo_id IS NULL)
             AND pack_id IN (:packIds)
             AND NOT EXISTS ( SELECT 1 FROM card c2 WHERE c2.code = c.code AND c2.taboo_id IS NOT NULL)
             UNION ALL
             -- Case 3: Taboo not set – select only default cards
-            SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name,
+            SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, equip,
             type_name, traits, level, approach_connection, approach_reason, approach_conflict, approach_exploration 
             FROM card WHERE type_id = 'role' AND set_id = :specialty AND (:taboo IS 0 AND taboo_id IS NULL)
             AND pack_id IN (:packIds)
