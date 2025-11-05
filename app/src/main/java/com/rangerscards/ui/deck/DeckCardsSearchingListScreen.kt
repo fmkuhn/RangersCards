@@ -248,7 +248,7 @@ fun DeckCardsSearchingListScreen(
                     if (headerOptions.first && (deck?.previousId == null || typeIndex in 0..2))
                         RowTypeDivider(text = when(headerOptions.second) {
                             "set_id" -> item.setName.toString()
-                            "equip" -> "${stringResource(R.string.equip_sort_header)}: ${
+                            "equip" -> "${stringResource(R.string.equip_card_divider_header)}: ${
                                 if (item.equip == null) stringResource(R.string.current_path_terrain_none)
                                 else item.equip.toString()
                             }"
