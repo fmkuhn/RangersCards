@@ -14,12 +14,13 @@ import com.rangerscards.data.database.dao.CardDao
 import com.rangerscards.data.database.dao.DeckDao
 import com.rangerscards.data.database.deck.Deck
 import com.rangerscards.data.database.migrations.MigrationCampaignChallengeDeck
+import com.rangerscards.data.database.migrations.MigrationCampaignExpansions
 import com.rangerscards.data.database.migrations.MigrationCampaignTransfer
 import com.rangerscards.data.database.migrations.MigrationRemoveFlavorFromFTS
 import com.rangerscards.data.objects.JsonElementConverter
 
 @Database(entities = [Card::class, CardFts::class, Deck::class, Campaign::class, ChallengeDeck::class],
-    version = 4,
+    version = 5,
     exportSchema = false)
 @TypeConverters(JsonElementConverter::class)
 abstract class RangersDatabase : RoomDatabase() {
@@ -37,6 +38,7 @@ abstract class RangersDatabase : RoomDatabase() {
                     .addMigrations(MigrationCampaignTransfer,
                         MigrationCampaignChallengeDeck,
                         MigrationRemoveFlavorFromFTS,
+                        MigrationCampaignExpansions,
                     )
                     .build()
                     .also { Instance = it }

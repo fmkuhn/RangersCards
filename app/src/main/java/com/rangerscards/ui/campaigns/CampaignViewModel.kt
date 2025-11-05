@@ -32,6 +32,7 @@ import com.rangerscards.SetCampaignMissionsMutation
 import com.rangerscards.SetCampaignTitleMutation
 import com.rangerscards.SetDeckCampaignMutation
 import com.rangerscards.UpdateCampaignEventsMutation
+import com.rangerscards.UpdateCampaignExpansionsMutation
 import com.rangerscards.UpdateCampaignRemovedMutation
 import com.rangerscards.UpdateCampaignRewardsMutation
 import com.rangerscards.UpdateUploadedMutation
@@ -85,6 +86,7 @@ data class CampaignState(
     val removed: List<CampaignRemoved>,
     val history: List<CampaignHistory>,
     val calendar: Map<Int, List<String>>,
+    val expansions: List<String>,
     val decks: List<CampaignDeck>,
     val access: Map<String, String>,
     val previousCampaignId: String?,
@@ -221,24 +223,40 @@ class CampaignViewModel(
     }
 
     // This function creates an extended weather list when needed.
-    // It returns the original list for a normal 30-day calendar, or a list of 60 days weather entries for extended mode.
-    private fun getExtendedWeatherList(): List<Weather> {
-        val weathers = CampaignMaps.weather(campaign.value!!.cycleId)
-        return if (campaign.value!!.extendedCalendar) {
-            // For extended calendars, create a second block with start and end values increased by 30.
-            weathers + weathers.map { original ->
+    private fun getExtendedWeatherList(expansions: List<String>): List<Weather> {
+        val campaignValue = campaign.value ?: return emptyList()
+        val weathers = CampaignMaps.weather(campaignValue.cycleId)
+
+        if (!campaignValue.extendedCalendar) return weathers
+
+        val weatherList = weathers.toMutableList()
+
+        if (expansions.isEmpty()) {
+            // no expansions -> add shifted copy of the base weathers
+            weatherList += weathers.map { original ->
                 original.copy(start = original.start + 30, end = original.end + 30)
             }
-        } else {
-            weathers
+            return weatherList.toList()
         }
+
+        // Find the first expansion that yields a non-empty list and append it (only one)
+        val firstNonEmpty = expansions
+            .asSequence()
+            .map { CampaignMaps.expansionsWeather(it) }
+            .firstOrNull { it.isNotEmpty() }
+
+        if (firstNonEmpty != null) {
+            weatherList += firstNonEmpty
+        }
+
+        return weatherList.toList()
     }
 
     // This function groups days by the corresponding Weather.
     // For extendedCalendar, days 31-60 mirror days 1-30.
     fun groupDaysByWeather(): Map<Weather, Map<Int, DayInfo>> {
         val campaign = campaign.value!!
-        val weathers = getExtendedWeatherList()
+        val weathers = getExtendedWeatherList(campaign.expansions)
         val guidesMap = campaign.calendar.toMutableMap()
         val starterGuides = CampaignMaps.fixedGuideEntries[campaign.cycleId]!!
         for ((key, value) in starterGuides) {
@@ -598,6 +616,13 @@ class CampaignViewModel(
                 name = campaign.name,
                 cycleId = campaign.cycleId,
                 currentLocation = campaign.currentLocation,
+                expansions = buildJsonArray { campaign.expansions.forEach { add(it) } },
+                calendar = buildJsonArray { campaign.calendar.forEach { entry ->
+                    add(buildJsonObject {
+                        put("day", entry.key)
+                        put("guides", buildJsonArray { entry.value.forEach { add(it) } })
+                    })
+                } }
             )
         ).addHttpHeader("Authorization", "Bearer $token").execute()
         if (uploadedCampaign.data != null) {
@@ -1067,6 +1092,27 @@ class CampaignViewModel(
             ))
         }
     }
+
+    suspend fun updateCampaignExpansions(expansions: List<String>, user: FirebaseUser?) {
+        val campaign = campaign.value!!
+        if (expansions.toSet() == campaign.expansions.toSet()) return
+        val newJsonExpansions = buildJsonArray { expansions.forEach { add(it) } }
+        if (campaign.uploaded) {
+            val token = user!!.getIdToken(true).await().token
+            apolloClient.mutation(
+                UpdateCampaignExpansionsMutation(
+                    campaignId = campaign.id.toInt(),
+                    expansions = newJsonExpansions
+                )
+            ).addHttpHeader("Authorization", "Bearer $token").execute()
+        } else {
+            val campaignEntry = campaignRepository.getCampaignById(campaign.id)
+            campaignRepository.updateCampaign(campaignEntry.copy(
+                expansions = newJsonExpansions,
+                updatedAt = getCurrentDateTime()
+            ))
+        }
+    }
 }
 
 fun Campaign.toCampaignState(): CampaignState {
@@ -1121,6 +1167,7 @@ fun Campaign.toCampaignState(): CampaignState {
             val value = element.jsonObject
             value["day"]!!.jsonPrimitive.content.toInt() to value["guides"]!!.jsonArray.map { it.jsonPrimitive.content }
         },
+        expansions = this.expansions.jsonArray.map { it.jsonPrimitive.content },
         decks = this.latestDecks.jsonObject.map {
             val value = it.value.jsonArray
             val meta = value[1].jsonObject

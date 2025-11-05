@@ -99,7 +99,7 @@ fun CampaignListItem(
                         horizontalArrangement = Arrangement.spacedBy(8.dp),
                         verticalAlignment = Alignment.CenterVertically
                     ) {
-                        val location = CampaignMaps.getMapLocations(false, cycleId)[currentLocation]
+                        val location = CampaignMaps.getMapLocations(false, cycleId, ignoreExpansions = true)[currentLocation]
                         if (location != null) {
                             Icon(
                                 painterResource(location.iconResId),

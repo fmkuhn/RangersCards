@@ -23,11 +23,14 @@ import androidx.compose.runtime.Composable
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
+import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.runtime.rememberCoroutineScope
+import androidx.compose.runtime.saveable.listSaver
 import androidx.compose.runtime.saveable.rememberSaveable
 import androidx.compose.runtime.setValue
+import androidx.compose.runtime.toMutableStateList
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
@@ -43,9 +46,7 @@ import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
 import androidx.compose.ui.window.Dialog
 import androidx.compose.ui.window.DialogProperties
-import androidx.paging.compose.collectAsLazyPagingItems
 import com.rangerscards.R
-import com.rangerscards.data.database.campaign.CampaignListItemProjection
 import com.rangerscards.data.objects.CampaignMaps
 import com.rangerscards.ui.components.DataPicker
 import com.rangerscards.ui.components.RangersRadioButton
@@ -78,6 +79,10 @@ fun CampaignCreationScreen(
             name.isNotEmpty() && cycle.isNotEmpty()
         }
     }
+    val expansions = rememberSaveable(saver = listSaver(
+        save = { stateList -> stateList.toList() },
+        restore = { restored -> restored.toMutableStateList() }
+    )) { mutableStateListOf<String>() }
     Column(
         modifier = modifier
             .background(CustomTheme.colors.l30)
@@ -165,6 +170,47 @@ fun CampaignCreationScreen(
                         maxLines = 1,
                         overflow = TextOverflow.Ellipsis
                     )
+                }
+                if (cycle.isNotEmpty()) Column(modifier = Modifier.fillMaxWidth()) {
+                    Text(
+                        text = stringResource(R.string.campaign_expansions),
+                        color = CustomTheme.colors.d30,
+                        fontFamily = Jost,
+                        fontWeight = FontWeight.Medium,
+                        fontSize = 20.sp,
+                    )
+                    val availableExpansions = CampaignMaps.campaignExpansionsMap[cycle]
+                    availableExpansions?.forEach { expansion ->
+                        val isAdded = expansions.contains(expansion.id)
+                        Row(
+                            modifier = Modifier
+                                .padding(horizontal = 16.dp, vertical = 4.dp)
+                                .clickable {
+                                    if (isAdded) expansions.remove(expansion.id)
+                                    else expansions.add(expansion.id)
+                                },
+                            horizontalArrangement = Arrangement.spacedBy(8.dp),
+                            verticalAlignment = Alignment.CenterVertically
+                        ) {
+                            Text(
+                                text = stringResource(expansion.name),
+                                color = CustomTheme.colors.d30,
+                                fontFamily = Jost,
+                                fontWeight = FontWeight.Normal,
+                                fontSize = 18.sp,
+                                lineHeight = 20.sp,
+                                modifier = Modifier.weight(1f)
+                            )
+                            RangersRadioButton(
+                                selected = isAdded,
+                                onClick = {
+                                    if (isAdded) expansions.remove(expansion.id)
+                                    else expansions.add(expansion.id)
+                                },
+                                modifier = Modifier.size(32.dp)
+                            )
+                        }
+                    }
                 }
                 if (showDialogPicker) Dialog(
                     onDismissRequest = { showDialogPicker = false },
@@ -298,7 +344,8 @@ fun CampaignCreationScreen(
                                 isUploading = isUploading,
                                 currentLocation = CampaignMaps.startingLocations[cycle]!!,
                                 user = user,
-                                transferCampaignId = transferCampaignInfo.first
+                                transferCampaignId = transferCampaignInfo.first,
+                                expansions = expansions
                             )
                         }.invokeOnCompletion {
                             onCreate.invoke(campaignsViewModel.campaignIdToOpen.value)

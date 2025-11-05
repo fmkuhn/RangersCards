@@ -22,6 +22,7 @@ fun CampaignSettingsSection(
     onAddOrRemovePlayers: () -> Unit,
     onUploadCampaign: (() -> Unit)?,
     onDeleteOrLeaveCampaign: () -> Unit,
+    onCampaignExpansions: (() -> Unit)?,
     isOwner: Boolean,
     isUploaded: Boolean,
 ) {
@@ -58,6 +59,16 @@ fun CampaignSettingsSection(
                 containerColor = CustomTheme.colors.l20
             ),
             onClick = onUploadCampaign,
+        )
+        if (onCampaignExpansions != null) SquareButton(
+            stringId = R.string.campaign_expansions,
+            leadingIcon = R.drawable.settings_32dp,
+            iconColor = CustomTheme.colors.m,
+            textColor = CustomTheme.colors.d30,
+            buttonColor = ButtonDefaults.buttonColors().copy(
+                containerColor = CustomTheme.colors.l20
+            ),
+            onClick = onCampaignExpansions,
         )
         SquareButton(
             stringId = if (isOwner) R.string.delete_campaign_button else R.string.leave_campaign_button,

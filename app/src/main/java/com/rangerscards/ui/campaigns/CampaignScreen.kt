@@ -62,6 +62,7 @@ import androidx.compose.ui.window.DialogProperties
 import androidx.navigation.NavHostController
 import com.rangerscards.R
 import com.rangerscards.data.database.campaign.Campaign
+import com.rangerscards.data.objects.CampaignMaps
 import com.rangerscards.ui.campaigns.components.CampaignCurrentPositionCard
 import com.rangerscards.ui.campaigns.components.CampaignDialog
 import com.rangerscards.ui.campaigns.components.CampaignEvents
@@ -339,7 +340,7 @@ fun CampaignScreen(
                         launchSingleTop = true
                     } }
                 }
-                if (campaignState!!.currentDay == 30 && !campaignState!!.extendedCalendar) item {
+                if (campaignState!!.currentDay >= 30 && !campaignState!!.extendedCalendar) item {
                     SquareButton(
                         stringId = R.string.extend_campaign_button,
                         leadingIcon = R.drawable.add_32dp,
@@ -351,7 +352,8 @@ fun CampaignScreen(
                     CampaignCurrentPositionCard(
                         campaignState!!.cycleId,
                         campaignState!!.currentLocation,
-                        campaignState!!.currentPathTerrain
+                        campaignState!!.currentPathTerrain,
+                        campaignState!!.expansions
                     ) { navController.navigate(
                         "${BottomNavScreen.Campaigns.route}/campaign/journey"
                     ) {
@@ -693,6 +695,11 @@ fun CampaignScreen(
                             } else navController.navigateUp()
                         } } } else null,
                         onDeleteOrLeaveCampaign = { showConfirmationDialog = true },
+                        onCampaignExpansions = if (CampaignMaps.campaignExpansionsMap[campaignState!!.cycleId]?.isNotEmpty() == true) {
+                            { navController.navigate(
+                                "${BottomNavScreen.Campaigns.route}/campaign/expansions"
+                            ) { launchSingleTop = true } }
+                        } else null,
                         isOwner = isOwner,
                         isUploaded = campaignState!!.uploaded
                     )

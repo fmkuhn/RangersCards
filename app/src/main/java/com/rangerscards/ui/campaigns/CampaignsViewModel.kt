@@ -36,6 +36,7 @@ import kotlinx.coroutines.flow.update
 import kotlinx.coroutines.launch
 import kotlinx.coroutines.tasks.await
 import kotlinx.serialization.json.JsonArray
+import kotlinx.serialization.json.JsonNull
 import kotlinx.serialization.json.JsonObject
 import kotlinx.serialization.json.add
 import kotlinx.serialization.json.buildJsonArray
@@ -149,7 +150,8 @@ class CampaignsViewModel(
         currentLocation: String,
         isUploading: Boolean,
         user: UserUIState,
-        transferCampaignId: String
+        transferCampaignId: String,
+        expansions: List<String>
     ) {
         if (transferCampaignId.isEmpty()) {
             if (isUploading) {
@@ -159,6 +161,8 @@ class CampaignsViewModel(
                         name = name,
                         cycleId = cycleId,
                         currentLocation = currentLocation,
+                        expansions = buildJsonArray { expansions.forEach { add(it) } },
+                        calendar = JsonArray(emptyList()),
                     )
                 ).addHttpHeader("Authorization", "Bearer $token").execute()
                 if (newCampaign.data != null) {
@@ -172,6 +176,7 @@ class CampaignsViewModel(
                     name = name,
                     cycleId = cycleId,
                     currentLocation = currentLocation,
+                    expansions = expansions
                 ))
                 _campaignIdToOpen.update { uuid }
             }
@@ -218,6 +223,7 @@ class CampaignsViewModel(
                         currentPathTerrain = null,
                         history = JsonArray(emptyList()),
                         calendar = JsonArray(emptyList()),
+                        expansions = JsonArray(emptyList()),
                         createdAt = getCurrentDateTime(),
                         updatedAt = getCurrentDateTime(),
                         previousCampaignId = previousCampaign.id
@@ -232,7 +238,7 @@ class CampaignsViewModel(
                             campaignId = uuid,
                         ))
                         while (deckDb!!.previousId != null) {
-                            deckDb = deckRepository.getDeck(deckDb.previousId!!)
+                            deckDb = deckRepository.getDeck(deckDb.previousId)
                             decks.add(deckDb!!.copy(
                                 updatedAt = getCurrentDateTime(),
                                 campaignId = uuid,
@@ -251,6 +257,7 @@ class CampaignsViewModel(
         name: String,
         cycleId: String,
         currentLocation: String,
+        expansions: List<String>
     ): Campaign {
         return Campaign(
             id = id,
@@ -271,6 +278,7 @@ class CampaignsViewModel(
             calendar = JsonArray(emptyList()),
             createdAt = getCurrentDateTime(),
             updatedAt = getCurrentDateTime(),
+            expansions = buildJsonArray { expansions.forEach { add(it) } },
             latestDecks = JsonObject(emptyMap()),
             access = JsonObject(emptyMap()),
             nextCampaignId = null,
@@ -303,6 +311,7 @@ fun com.rangerscards.fragment.Campaign.toCampaign(uploaded: Boolean): Campaign {
         calendar = this.calendar,
         createdAt = TimestampNormilizer.fixFraction(this.created_at),
         updatedAt = TimestampNormilizer.fixFraction(this.updated_at),
+        expansions = this.expansions ?: JsonArray(emptyList()),
         latestDecks = buildJsonObject { campaign.latest_decks.forEach {
             put(it.deck!!.deck.id.toString(), buildJsonArray {
                 add(it.deck.deck.name)

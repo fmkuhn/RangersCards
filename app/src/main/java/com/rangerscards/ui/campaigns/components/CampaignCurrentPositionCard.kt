@@ -32,6 +32,7 @@ fun CampaignCurrentPositionCard(
     cycleId: String,
     location: String,
     pathTerrain: String?,
+    expansions: List<String>,
     onRecordedJourney: () -> Unit)
 {
     Surface(
@@ -60,20 +61,20 @@ fun CampaignCurrentPositionCard(
                             fontSize = 18.sp,
                             lineHeight = 20.sp,
                         )
-                        val currentLocation = CampaignMaps.getMapLocations(false, cycleId)[location]!!
+                        val currentLocation = CampaignMaps.getMapLocations(false, cycleId, expansions)[location]
                         Row(
                             modifier = Modifier.fillMaxWidth(),
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
                             Icon(
-                                painterResource(currentLocation.iconResId),
+                                painterResource(currentLocation?.iconResId ?: R.drawable.broken_image_32dp),
                                 contentDescription = null,
                                 tint = Color.Unspecified,
                                 modifier = Modifier.size(32.dp)
                             )
                             Text(
-                                text = stringResource(currentLocation.nameResId),
+                                text = stringResource(currentLocation?.nameResId ?: R.string.current_path_terrain_none),
                                 color = CustomTheme.colors.d30,
                                 fontFamily = Jost,
                                 fontWeight = FontWeight.Normal,
@@ -98,8 +99,8 @@ fun CampaignCurrentPositionCard(
                             horizontalArrangement = Arrangement.spacedBy(8.dp),
                             verticalAlignment = Alignment.CenterVertically
                         ) {
-                            if (currentPathTerrain?.iconResId != null) Icon(
-                                painterResource(currentPathTerrain.iconResId),
+                            Icon(
+                                painterResource(currentPathTerrain?.iconResId ?: R.drawable.broken_image_32dp),
                                 contentDescription = null,
                                 tint = Color.Unspecified,
                                 modifier = Modifier.size(32.dp)

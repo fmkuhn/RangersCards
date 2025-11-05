@@ -519,4 +519,13 @@
     <string name="aspect_card_divider_header">Aspect</string>
     <string name="equip_card_divider_header">Equip</string>
 
+    <string name="campaign_expansions">Campaign expansions</string>
+
+    //Spire in bloom
+    <string name="spire_in_bloom">Spire In Bloom</string>
+    <string name="thoroughfare">Thoroughfare</string>
+    <string name="spires_crossing">Spire\'s Crossing</string>
+    <string name="brookside">Brookside</string>
+    <string name="silverfin_docks">Silverfin Docks</string>
+
 </resources>

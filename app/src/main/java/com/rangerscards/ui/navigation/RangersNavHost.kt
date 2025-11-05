@@ -65,6 +65,7 @@ import com.rangerscards.ui.campaigns.CampaignsViewModel
 import com.rangerscards.ui.campaigns.dialogs.AddMissionDialog
 import com.rangerscards.ui.campaigns.dialogs.AddRemovedDialog
 import com.rangerscards.ui.campaigns.dialogs.CampaignEventDialog
+import com.rangerscards.ui.campaigns.dialogs.CampaignExpansionsDialog
 import com.rangerscards.ui.campaigns.dialogs.CampaignMissionDialog
 import com.rangerscards.ui.campaigns.dialogs.DayInfoDialog
 import com.rangerscards.ui.campaigns.dialogs.EndTheDayDialog
@@ -874,6 +875,22 @@ fun RangersNavHost(
                             //TODO:Add navigation to campaign guide screen
                         }
                         switch = null
+                }
+                dialog("${BottomNavScreen.Campaigns.route}/campaign/expansions") { backStackEntry ->
+                    val parentEntry = remember(backStackEntry) {
+                        navController.getBackStackEntry("${BottomNavScreen.Campaigns.route}/campaign/{$campaignIdArgument}")
+                    }
+                    val campaignViewModel: CampaignViewModel = viewModel(
+                        factory = AppViewModelProvider.Factory,
+                        viewModelStoreOwner = parentEntry
+                    )
+                    val user by settingsViewModel.userUiState.collectAsState()
+                    CampaignExpansionsDialog(
+                        campaignViewModel = campaignViewModel,
+                        isDarkTheme = isDarkTheme,
+                        onBack = { navController.popBackStack(destinationId = parentEntry.destination.id, inclusive = false) },
+                        user = user.currentUser
+                    )
                 }
                 val dayInfoIdArgument = "dayInfoId"
                 dialog("${BottomNavScreen.Campaigns.route}/campaign/dayInfo/{$dayInfoIdArgument}",

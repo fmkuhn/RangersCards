@@ -21,6 +21,7 @@ fragment Campaign on rangers_campaign {
   calendar
   created_at
   updated_at
+  expansions
   latest_decks {
     deck {
       ...Deck
