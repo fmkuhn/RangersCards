@@ -81,7 +81,8 @@
     <string name="discord_button">Discord</string>
     <string name="telegram_button">Telegram</string>
     <string name="support_title">Support</string>
-    <string name="support_text">Support Rangers Cards on %s.</string>
+    <string name="support_text_ru">Support Rangers Cards on Boosty.</string>
+    <string name="support_text">Support Rangers Cards on Patreon.</string>
     <string name="about_button">About</string>
     <string name="backup_data_button">Backup Data</string>
     <string name="diagnostics_button">Diagnostics</string>
@@ -497,7 +498,25 @@
     <string name="scout_challenge_card_button">Scout challenge card</string>
     <string name="draw_challenge_card_placeholder">Draw or scout card…</string>
     <string name="return_scouted_cards_button">Return scouted cards</string>
+    <string name="return_scouted_cards_ordered_button">Return cards (top/bottom)</string>
+    <string name="apply_bottom_button">Apply (bottom)</string>
+    <string name="apply_top_button">Apply (top)</string>
+    <string name="return_scouted_cards_ordered_bottom_info">Tap cards in any order to return them to bottom.</string>
+    <string name="return_scouted_cards_ordered_top_info">Tap cards in any order to return them to top. (Return all cards that\'s left to proceed)</string>
     <string name="show_charts">Show charts</string>
     <string name="hide_charts">Hide charts</string>
+
+    //Card sort options
+    <string name="sort_screen_header">Sort</string>
+    <string name="equip_sort_header">By equip</string>
+    <string name="set_type_sort_header">By card set type</string>
+    <string name="set_position_sort_header">By position in set</string>
+    <string name="aspects_sort_header">By aspect</string>
+    <string name="types_sort_header">By type</string>
+    <string name="traits_sort_header">By trait</string>
+    <string name="sets_sort_header">By card set</string>
+    <string name="packs_sort_header">By pack</string>
+    <string name="aspect_card_divider_header">Aspect</string>
+    <string name="equip_card_divider_header">Equip</string>
 
 </resources>

@@ -67,7 +67,7 @@
     <string name="discord_button">Дискорд</string>
     <string name="telegram_button">Телеграм</string>
     <string name="support_title">Поддержка</string>
-    <string name="support_text">Поддержите приложение на %s.</string>
+    <string name="support_text_ru">Поддержите приложение на Boosty.</string>
     <string name="about_button">О приложении</string>
     <string name="backup_data_button">Резервное копирование</string>
     <string name="diagnostics_button">Диагностика</string>
@@ -431,6 +431,24 @@
     <string name="scout_challenge_card_button">Разведать карту вызова</string>
     <string name="draw_challenge_card_placeholder">Возьмите или разведайте карту…</string>
     <string name="return_scouted_cards_button">Вернуть разведанные карты</string>
+    <string name="return_scouted_cards_ordered_button">Вернуть карты (наверх/вниз)</string>
+    <string name="apply_bottom_button">Применить (вниз)</string>
+    <string name="apply_top_button">Применить (наверх)</string>
+    <string name="return_scouted_cards_ordered_bottom_info">Нажимайте на карты в любом порядке чтобы вернуть их вниз.</string>
+    <string name="return_scouted_cards_ordered_top_info">Нажимайте на карты в любом порядке чтобы вернуть их наверх. (Верните все оставшиеся карты, чтобы продолжить)</string>
     <string name="show_charts">Показать диаграммы</string>
     <string name="hide_charts">Скрыть диаграммы</string>
+
+    //Card sort options
+    <string name="sort_screen_header">Сортировка</string>
+    <string name="equip_sort_header">По экипировке</string>
+    <string name="set_type_sort_header">По типу набора карты</string>
+    <string name="set_position_sort_header">По номеру в наборе</string>
+    <string name="aspects_sort_header">По черте</string>
+    <string name="types_sort_header">По типу</string>
+    <string name="traits_sort_header">По признаку</string>
+    <string name="sets_sort_header">По набору карты</string>
+    <string name="packs_sort_header">По дополнению</string>
+    <string name="aspect_card_divider_header">Черта</string>
+    <string name="equip_card_divider_header">Экипировка</string>
 </resources>

@@ -96,18 +96,19 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
         val packsString = if (isFilteredPacks) filterOptions.packs.joinToString { "?" }
             else packIds.joinToString { "?" }
         val filtersClause = CardFilters.buildFiltersClause(filterOptions)
+        val sortClause = CardFilters.buildSortClause(filterOptions)
         val sql = StringBuilder().apply {
             append("""
-            SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name,
+            SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, equip,
                    type_name, traits, level, approach_connection, approach_reason, approach_conflict, approach_exploration
             FROM (
         """.trimIndent())
 
             // Case 1: taboo override cards
             append("""
-            SELECT card.id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, 
+            SELECT card.id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, equip,
                 real_image_src, name, type_name, traits, level, approach_connection, approach_reason, 
-                approach_conflict, approach_exploration, set_type_id, set_id, set_position
+                approach_conflict, approach_exploration, set_type_id, set_id, set_position, pack_id
             FROM card
             ${if (isNotEmpty) "JOIN card_fts ON card.id = card_fts.id" else ""}
             WHERE (spoiler = ? OR (spoiler IS NULL AND NOT EXISTS (SELECT 1 FROM card WHERE spoiler = ?)))
@@ -120,9 +121,9 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
 
             // Case 2: default card when taboo override absent
             append("""
-            SELECT card.id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, 
+            SELECT card.id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, equip,
                 real_image_src, name, type_name, traits, level, approach_connection, approach_reason, 
-                approach_conflict, approach_exploration, set_type_id, set_id, set_position
+                approach_conflict, approach_exploration, set_type_id, set_id, set_position, pack_id
             FROM card
             ${if (isNotEmpty) "JOIN card_fts ON card.id = card_fts.id" else ""}
             WHERE (spoiler = ? OR (spoiler IS NULL AND NOT EXISTS (SELECT 1 FROM card WHERE spoiler = ?)))
@@ -140,9 +141,9 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
 
             // Case 3: no taboo
             append("""
-            SELECT card.id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, 
+            SELECT card.id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, equip,
                 real_image_src, name, type_name, traits, level, approach_connection, approach_reason, 
-                approach_conflict, approach_exploration, set_type_id, set_id, set_position
+                approach_conflict, approach_exploration, set_type_id, set_id, set_position, pack_id
             FROM card
             ${if (isNotEmpty) "JOIN card_fts ON card.id = card_fts.id" else ""}
             WHERE (spoiler = ? OR (spoiler IS NULL AND NOT EXISTS (SELECT 1 FROM card WHERE spoiler = ?)))
@@ -154,7 +155,7 @@ class OfflineCardsRepository(private val cardDao: CardDao) : CardsRepository {
 
             append("""
             ) 
-            ORDER BY (set_type_id IS NULL), set_type_id, set_id, set_position
+            ORDER BY $sortClause
         """.trimIndent())
         }
 

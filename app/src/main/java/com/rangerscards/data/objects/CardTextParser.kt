@@ -1,9 +1,11 @@
 package com.rangerscards.data.objects
 
+import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.text.InlineTextContent
 import androidx.compose.foundation.text.appendInlineContent
 import androidx.compose.material3.Icon
 import androidx.compose.runtime.Composable
+import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.Shadow
 import androidx.compose.ui.res.painterResource
@@ -339,6 +341,33 @@ object CardTextParser {
                     painter = painterResource(R.drawable.crest),
                     contentDescription = "Crest Icon",
                     tint = color
+                )
+            },
+            "aspiration" to InlineTextContent(
+                Placeholder(
+                    width = 16.sp,
+                    height = 16.sp,
+                    placeholderVerticalAlign = PlaceholderVerticalAlign.TextCenter
+                )
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.aspiration),
+                    contentDescription = "Aspiration Icon",
+                    tint = color
+                )
+            },
+            "guide" to InlineTextContent(
+                Placeholder(
+                    width = 22.sp,
+                    height = 18.sp,
+                    placeholderVerticalAlign = PlaceholderVerticalAlign.Center
+                )
+            ) {
+                Icon(
+                    painter = painterResource(R.drawable.guide),
+                    contentDescription = "Guide Icon",
+                    tint = color,
+                    modifier = Modifier.fillMaxSize()
                 )
             },
         )

@@ -20,6 +20,7 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.sizeIn
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.LazyListState
+import androidx.compose.foundation.lazy.itemsIndexed
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.HorizontalDivider
@@ -712,34 +713,34 @@ fun CardsFilterCheckList(
             .sizeIn(maxHeight = 320.dp),
         state = state,
     ) {
-        filteredOptionsMap.forEach { (key, string) ->
-            item(key) {
-                val isSelected = key in selectedOptions
-                Row(
-                    modifier = Modifier
-                        .fillMaxWidth()
-                        .padding(vertical = 8.dp)
-                        .clickable { onClick(isSelected, key) },
-                    horizontalArrangement = Arrangement.spacedBy(8.dp),
-                    verticalAlignment = Alignment.CenterVertically
-                ) {
-                    Text(
-                        text = string,
-                        color = CustomTheme.colors.d30,
-                        fontFamily = Jost,
-                        fontWeight = FontWeight.Normal,
-                        fontSize = 18.sp,
-                        lineHeight = 22.sp,
-                        modifier = Modifier.weight(1f)
-                    )
-                    RangersRadioButton(
-                        selected = isSelected,
-                        onClick = { onClick(isSelected, key) },
-                        modifier = Modifier.size(32.dp)
-                    )
-                }
-                HorizontalDivider(color = CustomTheme.colors.l10)
+        val entries = filteredOptionsMap.toList()
+        itemsIndexed(entries, {_, it -> it.first}) { index, (key, value) ->
+            val isSelected = key in selectedOptions
+            val isLast = index == entries.lastIndex
+            Row(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(vertical = 8.dp)
+                    .clickable { onClick(isSelected, key) },
+                horizontalArrangement = Arrangement.spacedBy(8.dp),
+                verticalAlignment = Alignment.CenterVertically
+            ) {
+                Text(
+                    text = value,
+                    color = CustomTheme.colors.d30,
+                    fontFamily = Jost,
+                    fontWeight = FontWeight.Normal,
+                    fontSize = 18.sp,
+                    lineHeight = 22.sp,
+                    modifier = Modifier.weight(1f)
+                )
+                RangersRadioButton(
+                    selected = isSelected,
+                    onClick = { onClick(isSelected, key) },
+                    modifier = Modifier.size(32.dp)
+                )
             }
+            if (!isLast) HorizontalDivider(color = CustomTheme.colors.l10)
         }
     }
 }

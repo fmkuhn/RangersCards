@@ -21,7 +21,7 @@ interface CampaignsRepository {
 
     fun searchCampaigns(query: String): Flow<PagingData<CampaignListItemProjection>>
 
-    fun getAllCampaignsForTransfer(cycleId: String): Flow<List<CampaignListItemProjection>>
+    fun getAllCampaignsForTransfer(cycleId: String, userId: String): Flow<List<CampaignListItemProjection>>
 
     fun getRolesImages(ids: List<String>): Flow<List<RoleCardProjection>>
 

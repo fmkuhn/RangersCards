@@ -115,6 +115,26 @@ class DeckCardsViewModel(
         _filterOptions.update { CardFilterOptions(searchQuery = it.searchQuery) }
     }
 
+    fun applyNewSortOptions(newSortOptions: List<String>) {
+        _filterOptions.update { it.copy(sortOrder = newSortOptions.ifEmpty {
+            listOf("set_type_id", "set_id", "set_position")
+        })
+        }
+    }
+
+    fun clearSortOptions() {
+        _filterOptions.update { CardFilterOptions(
+            searchQuery = it.searchQuery,
+            types = it.types,
+            traits = it.traits,
+            sets = it.sets,
+            costRange = it.costRange,
+            approaches = it.approaches,
+            packs = it.packs,
+            aspectRequirements = it.aspectRequirements
+        ) }
+    }
+
     fun updateDeckInfo(deck: FullDeckState, extraSlots: List<String>) {
         _deckInfo.update {
             DeckInfo(

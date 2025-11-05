@@ -71,7 +71,7 @@
     <string name="discord_button">Discord</string>
     <string name="telegram_button">Telegram</string>
     <string name="support_title">Soporte</string>
-    <string name="support_text">Soporte de cartas de Guardián en %s.</string>
+    <string name="support_text">Soporte de cartas de Guardián en Patreon.</string>
     <string name="about_button">About</string>
     <string name="backup_data_button">Copia de seguridad</string>
     <string name="diagnostics_button">Diagnóstico</string>

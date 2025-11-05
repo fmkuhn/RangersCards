@@ -51,7 +51,7 @@ import ir.ehsannarmani.compose_charts.models.PopupProperties
 import ir.ehsannarmani.compose_charts.models.VerticalIndicatorProperties
 
 @Composable
-fun AspectsRowChart(
+fun AspectsRowCharts(
     deckList: List<Int>
 ) {
     var isExpanded by rememberSaveable { mutableStateOf(false) }
@@ -104,7 +104,7 @@ fun AspectsRowChart(
     ) {
         Row(
             verticalAlignment = Alignment.CenterVertically,
-            modifier = Modifier.clickable { isExpanded = !isExpanded }
+            modifier = Modifier.padding(horizontal = 8.dp).clickable { isExpanded = !isExpanded }
         ) {
             Text(
                 text = stringResource(if (isExpanded) R.string.hide_charts
@@ -126,7 +126,8 @@ fun AspectsRowChart(
         }
         if (isExpanded) {
             RowChart(
-                modifier = Modifier.fillMaxWidth().heightIn(max = 600.dp).padding(horizontal = 8.dp),
+                modifier = Modifier.fillMaxWidth(0.9f).align(Alignment.CenterHorizontally)
+                    .heightIn(max = 600.dp).padding(horizontal = 8.dp),
                 labelProperties = LabelProperties(
                     enabled = true,
                     textStyle = TextStyle(
@@ -233,7 +234,8 @@ fun AspectsRowChart(
             )
             HorizontalDivider(color = CustomTheme.colors.l10)
             RowChart(
-                modifier = Modifier.fillMaxWidth().heightIn(max = 200.dp).padding(horizontal = 8.dp),
+                modifier = Modifier.fillMaxWidth(0.9f).align(Alignment.CenterHorizontally)
+                    .heightIn(max = 200.dp).padding(horizontal = 8.dp),
                 labelProperties = LabelProperties(
                     enabled = true,
                     padding = 4.dp,
@@ -243,6 +245,7 @@ fun AspectsRowChart(
                             Icon(
                                 painter = painterResource(id = icons.getOrNull(index) ?: R.drawable.broken_image_32dp),
                                 contentDescription = null,
+                                tint = CustomTheme.colors.d30,
                                 modifier = Modifier.size(24.dp)        // scale icon if needed
                                     .then(if (shouldRotate) Modifier.rotate(-45f) else Modifier)
                             )

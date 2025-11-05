@@ -1,5 +1,6 @@
 package com.rangerscards.data
 
+import androidx.annotation.StringRes
 import com.rangerscards.R
 import com.rangerscards.data.objects.DeckMetaMaps
 
@@ -11,7 +12,8 @@ data class CardFilterOptions(
     val costRange: IntRange? = null,
     val approaches: Approaches = Approaches(),
     val packs: List<String> = emptyList(),
-    val aspectRequirements: AspectRequirements = AspectRequirements()
+    val aspectRequirements: AspectRequirements = AspectRequirements(),
+    val sortOrder: List<String> = listOf("set_type_id", "set_id", "set_position")
 )
 
 data class Approaches(
@@ -26,6 +28,12 @@ data class AspectRequirements(
     val spi: Int? = null,
     val foc: Int? = null,
     val fit: Int? = null
+)
+
+data class SortOption(
+    val id: String,
+    @StringRes val resId: Int,
+    val isActive: Boolean = false
 )
 
 object CardFilters {
@@ -108,6 +116,20 @@ object CardFilters {
         return clauses.joinToString(separator = " AND ")
     }
 
+    fun buildSortClause(filterOptions: CardFilterOptions): String {
+        val sortOptions = filterOptions.sortOrder
+        if (sortOptions.isEmpty()) return "(set_type_id IS NULL), set_type_id, set_id, set_position"
+        return sortOptions.joinToString(", ") {
+            val col = when(it) {
+                "set_type_id" -> "(set_type_id IS NULL), $it"
+                "cost" -> "(cost IS NOT NULL), $it"
+                "aspect_id" -> "(aspect_id IS NOT NULL), $it"
+                else -> it
+            }
+            col
+        }
+    }
+
     fun getTypesFilters(): Map<String, Int> {
         return mapOf(
             "attachment" to R.string.types_filter_attachment,
@@ -156,5 +178,20 @@ object CardFilters {
     fun getSetsFilters(): Map<String, Int> {
         return (DeckMetaMaps.background + DeckMetaMaps.specialty +
                 mapOf("personality" to R.string.personality))
+    }
+
+    fun getSortOptions(): Map<String, Int> {
+        return mapOf(
+            "name" to R.string.deck_creation_name_label,
+            "traits" to R.string.traits_sort_header,
+            "equip" to R.string.equip_sort_header,
+            "set_id" to R.string.sets_sort_header,
+            "set_type_id" to R.string.set_type_sort_header,
+            "set_position" to R.string.set_position_sort_header,
+            "type_name" to R.string.types_sort_header,
+            "cost" to R.string.cost_filter_header,
+            "aspect_id" to R.string.aspects_sort_header,
+            "pack_id" to R.string.packs_sort_header,
+        )
     }
 }

@@ -136,12 +136,12 @@ fun CampaignScreen(
                 innerStates[1].animateScrollToItem(0)
             }
     }
-    LaunchedEffect(campaign) {
+    LaunchedEffect(campaign, campaign?.id != campaignState?.id) {
         if (userUIState.currentUser != null && !isSubscriptionStarted && campaign?.uploaded == true)
             campaignViewModel.startSubscription(campaign.id)
         if (campaign != null) campaignViewModel.parseCampaign(campaign)
     }
-    LaunchedEffect(challengeDeck) {
+    LaunchedEffect(challengeDeck, campaignViewModel.currentChallengeDeck) {
         if (campaignViewModel.currentChallengeDeck == null && challengeDeck?.jsonArray?.isNotEmpty() ?: true) {
             campaignViewModel.setChallengeDeck(challengeDeck ?: JsonArray(emptyList()))
         }
@@ -413,7 +413,7 @@ fun CampaignScreen(
                     ) {
                         key("challengeDeckButton") {
                             SquareButton(
-                                stringId = R.string.draw_challenge_card_button,
+                                stringId = R.string.challenge_deck_title,
                                 leadingIcon = R.drawable.cards_32dp,
                                 iconColor = CustomTheme.colors.m,
                                 textColor = CustomTheme.colors.d30,

@@ -15,10 +15,11 @@ import com.rangerscards.data.database.dao.DeckDao
 import com.rangerscards.data.database.deck.Deck
 import com.rangerscards.data.database.migrations.MigrationCampaignChallengeDeck
 import com.rangerscards.data.database.migrations.MigrationCampaignTransfer
+import com.rangerscards.data.database.migrations.MigrationRemoveFlavorFromFTS
 import com.rangerscards.data.objects.JsonElementConverter
 
 @Database(entities = [Card::class, CardFts::class, Deck::class, Campaign::class, ChallengeDeck::class],
-    version = 3,
+    version = 4,
     exportSchema = false)
 @TypeConverters(JsonElementConverter::class)
 abstract class RangersDatabase : RoomDatabase() {
@@ -33,7 +34,10 @@ abstract class RangersDatabase : RoomDatabase() {
         fun getDatabase(context: Context): RangersDatabase {
             return Instance ?: synchronized(this) {
                 Room.databaseBuilder(context, RangersDatabase::class.java, "rangers_database")
-                    .addMigrations(MigrationCampaignTransfer, MigrationCampaignChallengeDeck)
+                    .addMigrations(MigrationCampaignTransfer,
+                        MigrationCampaignChallengeDeck,
+                        MigrationRemoveFlavorFromFTS,
+                    )
                     .build()
                     .also { Instance = it }
             }

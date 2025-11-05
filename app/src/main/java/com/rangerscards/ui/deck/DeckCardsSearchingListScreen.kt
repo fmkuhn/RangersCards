@@ -58,6 +58,7 @@ fun DeckCardsSearchingListScreen(
     startingTypeIndex: Int,
     isDarkTheme: Boolean,
     navigateToCard: (Int) -> Unit,
+    navigateToSort: () -> Unit,
     navigateToFilters: () -> Unit,
     modifier: Modifier = Modifier,
     contentPadding: PaddingValues = PaddingValues(0.dp),
@@ -104,6 +105,18 @@ fun DeckCardsSearchingListScreen(
                 canNavigateBack = true,
                 navigateUp = navigateUp,
                 actions = {
+                    IconButton(
+                        onClick = navigateToSort,
+                        colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
+                        modifier = Modifier.size(32.dp),
+                    ) {
+                        Icon(
+                            painterResource(id = R.drawable.sort_32dp),
+                            contentDescription = null,
+                            tint = CustomTheme.colors.m,
+                            modifier = Modifier.size(32.dp)
+                        )
+                    }
                     IconButton(
                         onClick = navigateToFilters,
                         colors = IconButtonDefaults.iconButtonColors().copy(containerColor = Color.Transparent),
@@ -226,10 +239,33 @@ fun DeckCardsSearchingListScreen(
                     contentType = cardsLazyItems.itemContentType { it }
                 ) { index ->
                     val item = cardsLazyItems[index] ?: return@items
-                    val showHeader = if (index == 0) true
-                    else cardsLazyItems[index - 1]?.setName != item.setName
-                    if (showHeader && (deck?.previousId == null || typeIndex in 0..2))
-                        RowTypeDivider(text = item.setName.toString())
+                    val headerOptions = getHeaderOptions(
+                        filterOptions.sortOrder,
+                        index,
+                        if (index != 0) cardsLazyItems[index - 1] else null,
+                        item
+                    )
+                    if (headerOptions.first && (deck?.previousId == null || typeIndex in 0..2))
+                        RowTypeDivider(text = when(headerOptions.second) {
+                            "set_id" -> item.setName.toString()
+                            "equip" -> "${stringResource(R.string.equip_sort_header)}: ${
+                                if (item.equip == null) stringResource(R.string.current_path_terrain_none)
+                                else item.equip.toString()
+                            }"
+                            "type_name" -> item.typeName.toString()
+                            "cost" -> "${stringResource(R.string.cost_filter_header)}: ${
+                                when (item.cost) {
+                                    null -> stringResource(R.string.current_path_terrain_none)
+                                    -2 -> "X"
+                                    else -> item.cost.toString()
+                                }
+                            }"
+                            "aspect_id" -> "${stringResource(R.string.aspect_card_divider_header)}: ${
+                                if (item.aspectId == null) stringResource(R.string.current_path_terrain_none)
+                                else item.aspectShortName
+                            }"
+                            else -> ""
+                        })
                     val amount = values?.slots?.get(item.code) ?: 0
                     CardListItem(
                         tabooId = item.tabooId,
@@ -295,5 +331,42 @@ fun DeckCardsSearchingListScreen(
                 }
             }
         }
+    }
+}
+
+private fun getHeaderOptions(
+    sortOrder: List<String>,
+    index: Int,
+    previousItem: CardDeckListItemProjection?,
+    currentItem: CardDeckListItemProjection
+): Pair<Boolean, String?> {
+    return when(sortOrder.first()) {
+        "equip" -> {
+            (if (index == 0) true
+            else previousItem?.equip != currentItem.equip) to "equip"
+        }
+        "set_id" -> {
+            (if (index == 0) true
+            else previousItem?.setName != currentItem.setName) to "set_id"
+        }
+        "set_type_id" -> {
+            (if (sortOrder.indexOf("set_id") == 1) {
+                if (index == 0) true
+                else previousItem?.setName != currentItem.setName
+            } else false) to "set_id"
+        }
+        "type_name" -> {
+            (if (index == 0) true
+            else previousItem?.typeName != currentItem.typeName) to "type_name"
+        }
+        "cost" -> {
+            (if (index == 0) true
+            else previousItem?.cost != currentItem.cost) to "cost"
+        }
+        "aspect_id" -> {
+            (if (index == 0) true
+            else previousItem?.aspectId != currentItem.aspectId) to "aspect_id"
+        }
+        else -> false to null
     }
 }

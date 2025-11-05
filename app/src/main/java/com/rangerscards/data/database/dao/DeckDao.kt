@@ -60,26 +60,26 @@ interface DeckDao {
     fun searchDecks(query: String, userId: String): PagingSource<Int, DeckListItemProjection>
 
     @Query("Select id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, " +
-            "type_name, traits, level, approach_conflict, approach_reason, approach_exploration, " +
+            "type_name, traits, level, equip, approach_conflict, approach_reason, approach_exploration, " +
             "approach_connection FROM card WHERE id = :id")
     fun getCard(id: String): Flow<CardListItemProjection?>
 
     @Query("""SELECT * FROM (
             -- Case 1: Taboo is set – select the override card
-            SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name,
+            SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, equip,
             type_name, traits, level, approach_connection, approach_reason, approach_conflict, approach_exploration 
             FROM card WHERE type_id = 'role' AND set_id = :specialty AND (:taboo IS 1 AND taboo_id IS NOT NULL)
             AND pack_id IN (:packIds)
             UNION ALL
             -- Case 2: When taboo is set but no override exists, fall back to the default card
-            SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name,
+            SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, equip,
             type_name, traits, level, approach_connection, approach_reason, approach_conflict, approach_exploration
             FROM card AS c WHERE c.type_id = 'role' AND c.set_id = :specialty AND (:taboo IS 1 AND taboo_id IS NULL)
             AND pack_id IN (:packIds)
             AND NOT EXISTS ( SELECT 1 FROM card c2 WHERE c2.code = c.code AND c2.taboo_id IS NOT NULL)
             UNION ALL
             -- Case 3: Taboo not set – select only default cards
-            SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name,
+            SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, equip,
             type_name, traits, level, approach_connection, approach_reason, approach_conflict, approach_exploration 
             FROM card WHERE type_id = 'role' AND set_id = :specialty AND (:taboo IS 0 AND taboo_id IS NULL)
             AND pack_id IN (:packIds)
@@ -123,49 +123,49 @@ interface DeckDao {
     suspend fun getRole(code: String, taboo: Boolean): RoleCardProjection?
 
     @Query("""SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, 
-                   type_name, traits, real_traits, level, set_id, set_type_id, deck_limit, 
+                   type_name, traits, real_traits, level, set_id, set_type_id, deck_limit, equip,
                    approach_connection, approach_reason, approach_conflict, approach_exploration FROM (
             -- Case 1: When a taboo is set, get the taboo-specific card for each code that exists.
             SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, 
                    type_name, traits, real_traits, level, set_id, set_type_id, set_position, deck_limit, 
-                   approach_connection, approach_reason, approach_conflict, approach_exploration
+                   approach_connection, approach_reason, approach_conflict, approach_exploration, equip
             FROM card WHERE code IN (:ids) AND (:tabooId IS NOT NULL) AND taboo_id = :tabooId
             UNION ALL
             -- Case 2: When a taboo is set but no override exists, fall back to the default card.
             SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, 
                    type_name, traits, real_traits, level, set_id, set_type_id, set_position, deck_limit, 
-                   approach_connection, approach_reason, approach_conflict, approach_exploration
+                   approach_connection, approach_reason, approach_conflict, approach_exploration, equip
             FROM card WHERE code IN (:ids) AND taboo_id IS NULL AND (:tabooId IS NOT NULL) 
             AND NOT EXISTS (SELECT 1 FROM card t WHERE t.code = card.code AND t.taboo_id = :tabooId)
             UNION ALL
             -- Case 3: When no taboo is set, simply return the default card.
             SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, 
                    type_name, traits, real_traits, level, set_id, set_type_id, set_position, deck_limit, 
-                   approach_connection, approach_reason, approach_conflict, approach_exploration
+                   approach_connection, approach_reason, approach_conflict, approach_exploration, equip
             FROM card WHERE code IN (:ids) AND (:tabooId IS NULL) AND taboo_id IS NULL
         ) ORDER BY set_type_id, set_id, set_position""")
     fun getCardsByIds(ids: List<String>, tabooId: String?): Flow<List<CardDeckListItemProjection>>
 
     @Query("""SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, 
-                   type_name, traits, real_traits, level, set_id, set_type_id, deck_limit, 
+                   type_name, traits, real_traits, level, set_id, set_type_id, deck_limit, equip,
                    approach_connection, approach_reason, approach_conflict, approach_exploration FROM (
             -- Case 1: When a taboo is set, get the taboo-specific card for each code that exists.
             SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, 
                    type_name, traits, real_traits, level, set_id, set_type_id, set_position, deck_limit, 
-                   approach_connection, approach_reason, approach_conflict, approach_exploration
+                   approach_connection, approach_reason, approach_conflict, approach_exploration, equip
             FROM card WHERE code IN (:ids) AND (:tabooId IS NOT NULL) AND taboo_id = :tabooId
             UNION ALL
             -- Case 2: When a taboo is set but no override exists, fall back to the default card.
             SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, 
                    type_name, traits, real_traits, level, set_id, set_type_id, set_position, deck_limit, 
-                   approach_connection, approach_reason, approach_conflict, approach_exploration
+                   approach_connection, approach_reason, approach_conflict, approach_exploration, equip
             FROM card WHERE code IN (:ids) AND taboo_id IS NULL AND (:tabooId IS NOT NULL) 
             AND NOT EXISTS (SELECT 1 FROM card t WHERE t.code = card.code AND t.taboo_id = :tabooId)
             UNION ALL
             -- Case 3: When no taboo is set, simply return the default card.
             SELECT id, code, taboo_id, set_name, aspect_id, aspect_short_name, cost, real_image_src, name, 
                    type_name, traits, real_traits, level, set_id, set_type_id, set_position, deck_limit, 
-                   approach_connection, approach_reason, approach_conflict, approach_exploration
+                   approach_connection, approach_reason, approach_conflict, approach_exploration, equip
             FROM card WHERE code IN (:ids) AND (:tabooId IS NULL) AND taboo_id IS NULL
         ) ORDER BY set_type_id, set_id, set_position""")
     suspend fun getChangedCardsByIds(ids: List<String>, tabooId: String?): List<CardDeckListItemProjection>
