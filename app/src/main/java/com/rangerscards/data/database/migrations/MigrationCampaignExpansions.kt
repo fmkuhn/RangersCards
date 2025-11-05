@@ -7,7 +7,7 @@ object MigrationCampaignExpansions : Migration(4, 5) {
     override fun migrate(db: SupportSQLiteDatabase) {
         db.execSQL("""
             ALTER TABLE Campaign
-            ADD COLUMN expansions TEXT DEFAULT '[]'
+            ADD COLUMN expansions TEXT NOT NULL DEFAULT '[]'
         """.trimIndent())
     }
 }
