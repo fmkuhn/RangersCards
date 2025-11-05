@@ -134,7 +134,8 @@ fun RangersNavHost(
             AnimatedVisibility(showBars) {
                 RangersNavigationBar(navController, bottomNavItems, currentRoute)
             }
-        }
+        },
+        containerColor = CustomTheme.colors.l30
     ) { innerPadding ->
         NavHost(
             navController = navController,
