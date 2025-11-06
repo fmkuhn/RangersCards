@@ -43,12 +43,13 @@ class MainActivity : AppCompatActivity() {
             if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
                 && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
             ) {
-                val priority = appUpdateInfo.updatePriority()
+                //val priority = appUpdateInfo.updatePriority()
                 val stalenessDays = appUpdateInfo.clientVersionStalenessDays() ?: -1
                 val isImmediateUpdateNeeded = when {
-                    priority >= 4 -> true
-                    priority == 3 && stalenessDays >= 7 -> true
-                    priority <= 2 && stalenessDays >= 30 -> true
+//                    priority >= 4 -> true
+//                    priority == 3 && stalenessDays >= 7 -> true
+//                    priority <= 2 && stalenessDays >= 30 -> true
+                    stalenessDays >= 14 -> true
                     else -> false
                 }
                 if (isImmediateUpdateNeeded) appUpdateManager.startUpdateFlow(
