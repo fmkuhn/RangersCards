@@ -11,6 +11,11 @@ import androidx.compose.runtime.collectAsState
 import androidx.compose.ui.Modifier
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.google.android.play.core.appupdate.AppUpdateManager
+import com.google.android.play.core.appupdate.AppUpdateManagerFactory
+import com.google.android.play.core.appupdate.AppUpdateOptions
+import com.google.android.play.core.install.model.AppUpdateType
+import com.google.android.play.core.install.model.UpdateAvailability
 import com.google.firebase.Firebase
 import com.google.firebase.auth.FirebaseAuth
 import com.google.firebase.auth.auth
@@ -22,12 +27,37 @@ import com.rangerscards.ui.theme.RangersCardsTheme
 class MainActivity : AppCompatActivity() {
     private lateinit var auth: FirebaseAuth
     private lateinit var viewModel: SettingsViewModel
+    private lateinit var appUpdateManager: AppUpdateManager
+
     override fun onCreate(savedInstanceState: Bundle?) {
         val splashScreen = installSplashScreen()
         var isDataLoaded = false
         splashScreen.setKeepOnScreenCondition { !isDataLoaded }
         super.onCreate(savedInstanceState)
         auth = Firebase.auth
+        appUpdateManager = AppUpdateManagerFactory.create(this)
+        // Returns an intent object that you use to check for an update.
+        val appUpdateInfoTask = appUpdateManager.appUpdateInfo
+        // Checks that the platform will allow the specified type of update.
+        appUpdateInfoTask.addOnSuccessListener { appUpdateInfo ->
+            if (appUpdateInfo.updateAvailability() == UpdateAvailability.UPDATE_AVAILABLE
+                && appUpdateInfo.isUpdateTypeAllowed(AppUpdateType.IMMEDIATE)
+            ) {
+                val priority = appUpdateInfo.updatePriority()
+                val stalenessDays = appUpdateInfo.clientVersionStalenessDays() ?: -1
+                val isImmediateUpdateNeeded = when {
+                    priority >= 4 -> true
+                    priority == 3 && stalenessDays >= 7 -> true
+                    priority <= 2 && stalenessDays >= 30 -> true
+                    else -> false
+                }
+                if (isImmediateUpdateNeeded) appUpdateManager.startUpdateFlow(
+                    appUpdateInfo,
+                    this,
+                    AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
+                )
+            }
+        }
         setContent {
             viewModel = viewModel(factory = AppViewModelProvider.Factory)
             // Collecting user's theme from shared preferences via viewmodel - false = light, true = dark
@@ -40,7 +70,6 @@ class MainActivity : AppCompatActivity() {
             if (currentTheme != null) {
                 isDataLoaded = true
                 RangersCardsTheme(currentTheme) {
-                    // A surface container using the 'background' color from the theme
                     Surface(
                         modifier = Modifier.fillMaxSize(),
                         color = CustomTheme.colors.l30
@@ -50,6 +79,26 @@ class MainActivity : AppCompatActivity() {
                 }
             }
         }
+    }
+
+    // Checks that the update is not stalled during 'onResume()'.
+    override fun onResume() {
+        super.onResume()
+
+        appUpdateManager
+            .appUpdateInfo
+            .addOnSuccessListener { appUpdateInfo ->
+                if (appUpdateInfo.updateAvailability()
+                    == UpdateAvailability.DEVELOPER_TRIGGERED_UPDATE_IN_PROGRESS
+                ) {
+                    // If an in-app update is already running, resume the update.
+                    appUpdateManager.startUpdateFlow(
+                        appUpdateInfo,
+                        this,
+                        AppUpdateOptions.newBuilder(AppUpdateType.IMMEDIATE).build()
+                    )
+                }
+            }
     }
 
     fun createAccount(email: String, password: String) {
