@@ -3,10 +3,10 @@ package com.rangerscards.ui.settings
 import android.content.Context
 import android.content.Intent
 import android.net.ConnectivityManager
-import android.net.Uri
 import android.util.Log
 import android.widget.Toast
 import androidx.appcompat.app.AppCompatDelegate
+import androidx.core.net.toUri
 import androidx.core.os.LocaleListCompat
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
@@ -131,6 +131,9 @@ class SettingsViewModel(
 
     private val _isCardsLoading = MutableStateFlow(false)
     var isCardsLoading = _isCardsLoading.asStateFlow()
+
+    private val _isCardsUpdateAvailable = MutableStateFlow(false)
+    var isCardsUpdateAvailable = _isCardsUpdateAvailable.asStateFlow()
 
     // Holds the current search query entered by the user.
     private val _searchQuery = MutableStateFlow("")
@@ -327,6 +330,7 @@ class SettingsViewModel(
                 _cardsUpdatedAt.update { timestamp }
             }
         }.invokeOnCompletion {
+            _isCardsUpdateAvailable.update { false }
             _isCardsLoading.update { false }
         }
     }
@@ -344,18 +348,34 @@ class SettingsViewModel(
                )) {
                    downloadCards(context)
                } else {
+                   _isCardsUpdateAvailable.update { false }
                    _isCardsLoading.update { false }
                }
             }
         }
     }
 
-    fun downloadCardsIfDatabaseNotExists(context: Context) {
-        viewModelScope.launch {
-            val exists = cardsRepository.isExists()
-            if (!exists) {
-                downloadCards(context)
-            }
+    fun cancelUpdateDialog() {
+        _isCardsUpdateAvailable.update { false }
+    }
+
+    suspend fun checkCardsUpdateAvailable(context: Context) {
+        if (!isConnected(context)) return
+        val response = apolloClient.query(GetCardsUpdatedAtQuery(_userUiState.value.language))
+            .fetchPolicy(FetchPolicy.NetworkOnly).execute()
+        if (response.data != null) {
+            val updateAvailable = userPreferencesRepository.compareTimestamps(
+                _cardsUpdatedAt.value,
+                response.data!!.card_updated_at.getOrNull(0)?.updated_at.toString()
+            )
+            _isCardsUpdateAvailable.update { updateAvailable }
+        }
+    }
+
+    suspend fun downloadCardsIfDatabaseNotExists(context: Context) {
+        val exists = cardsRepository.isExists()
+        if (!exists) {
+            downloadCards(context)
         }
     }
 
@@ -363,13 +383,13 @@ class SettingsViewModel(
         context.startActivity(
             Intent(
                 Intent.ACTION_VIEW,
-                Uri.parse(link)
+                link.toUri()
             )
         )
     }
 
     fun openEmail(email: String, context: Context) {
-        val uri = Uri.parse("mailto:$email")
+        val uri = "mailto:$email".toUri()
         val intent = Intent(Intent.ACTION_SENDTO, uri)
         context.startActivity(intent)
     }

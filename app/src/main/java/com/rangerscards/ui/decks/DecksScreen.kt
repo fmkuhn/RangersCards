@@ -64,9 +64,6 @@ fun DecksScreen(
     var userId by rememberSaveable { mutableStateOf("") }
     val decksLazyItems = decksViewModel.searchResults.collectAsLazyPagingItems()
     val context = LocalContext.current.applicationContext
-    LaunchedEffect(Unit) {
-        settingsViewModel.downloadCardsIfDatabaseNotExists(context)
-    }
     LaunchedEffect(user.currentUser) {
         if (userId != user.currentUser?.uid.toString()) {
             decksViewModel.getAllNetworkDecks(user.currentUser, context)

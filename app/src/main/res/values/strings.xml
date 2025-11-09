@@ -528,4 +528,7 @@
     <string name="brookside">Brookside</string>
     <string name="silverfin_docks">Silverfin Docks</string>
 
+    <string name="cards_update_available_header">Cards update</string>
+    <string name="cards_update_available_text">Cards update available.</string>
+
 </resources>

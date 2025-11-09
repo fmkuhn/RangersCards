@@ -17,6 +17,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.layout.safeDrawingPadding
 import androidx.compose.foundation.layout.size
+import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.CircularProgressIndicator
 import androidx.compose.material3.Icon
 import androidx.compose.material3.IconButton
@@ -25,6 +26,7 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
@@ -37,7 +39,9 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.res.painterResource
 import androidx.compose.ui.res.stringResource
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
@@ -62,6 +66,7 @@ import com.rangerscards.ui.campaigns.CampaignScreen
 import com.rangerscards.ui.campaigns.CampaignViewModel
 import com.rangerscards.ui.campaigns.CampaignsScreen
 import com.rangerscards.ui.campaigns.CampaignsViewModel
+import com.rangerscards.ui.campaigns.components.CampaignDialog
 import com.rangerscards.ui.campaigns.dialogs.AddMissionDialog
 import com.rangerscards.ui.campaigns.dialogs.AddRemovedDialog
 import com.rangerscards.ui.campaigns.dialogs.CampaignEventDialog
@@ -79,6 +84,7 @@ import com.rangerscards.ui.cards.components.RangersSpoilerSwitch
 import com.rangerscards.ui.components.CardsFilterScreen
 import com.rangerscards.ui.components.CardsSortScreen
 import com.rangerscards.ui.components.RangersTopAppBar
+import com.rangerscards.ui.components.SquareButton
 import com.rangerscards.ui.deck.DeckCardsSearchingListScreen
 import com.rangerscards.ui.deck.DeckCardsViewModel
 import com.rangerscards.ui.deck.DeckChangingRole
@@ -96,6 +102,7 @@ import com.rangerscards.ui.settings.SettingsFriendsScreen
 import com.rangerscards.ui.settings.SettingsScreen
 import com.rangerscards.ui.settings.SettingsViewModel
 import com.rangerscards.ui.theme.CustomTheme
+import com.rangerscards.ui.theme.Jost
 import kotlinx.serialization.json.JsonArray
 
 @Composable
@@ -118,6 +125,7 @@ fun RangersNavHost(
     var actions: @Composable (RowScope.() -> Unit)? by remember { mutableStateOf(null) }
     var switch: @Composable (RowScope.() -> Unit)? = null
     val isCardsLoading by settingsViewModel.isCardsLoading.collectAsState()
+    val isCardsUpdateAvailable by settingsViewModel.isCardsUpdateAvailable.collectAsState()
     Scaffold(
         modifier = Modifier.safeDrawingPadding(),
         topBar = {
@@ -138,6 +146,47 @@ fun RangersNavHost(
         },
         containerColor = CustomTheme.colors.l30
     ) { innerPadding ->
+        LaunchedEffect(Unit) {
+            settingsViewModel.downloadCardsIfDatabaseNotExists(context)
+            settingsViewModel.checkCardsUpdateAvailable(context)
+        }
+        if (isCardsUpdateAvailable) CampaignDialog(
+            header = stringResource(id = R.string.cards_update_available_header),
+            isDarkTheme = isDarkTheme,
+            onBack = settingsViewModel::cancelUpdateDialog
+        ) {
+            Column(
+                modifier = Modifier.padding(8.dp),
+                verticalArrangement = Arrangement.spacedBy(8.dp)
+            ) {
+                Text(
+                    text = stringResource(id = R.string.cards_update_available_text),
+                    color = CustomTheme.colors.d30,
+                    fontFamily = Jost,
+                    fontWeight = FontWeight.Medium,
+                    fontSize = 18.sp,
+                    lineHeight = 24.sp,
+                    modifier = Modifier.padding(horizontal = 4.dp)
+                )
+                SquareButton(
+                    stringId = R.string.cancel_button,
+                    leadingIcon = R.drawable.close_32dp,
+                    onClick = settingsViewModel::cancelUpdateDialog,
+                    buttonColor = ButtonDefaults.buttonColors()
+                        .copy(CustomTheme.colors.d30),
+                    iconColor = CustomTheme.colors.warn,
+                    textColor = CustomTheme.colors.l30
+                )
+                SquareButton(
+                    stringId = R.string.update_cards_button,
+                    leadingIcon = R.drawable.done_32dp,
+                    onClick = {
+                        settingsViewModel.cancelUpdateDialog()
+                        settingsViewModel.updateCardsIfNotUpdated(context)
+                    }
+                )
+            }
+        }
         NavHost(
             navController = navController,
             startDestination = BottomNavScreen.Decks.route,
