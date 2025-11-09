@@ -268,7 +268,7 @@ object CampaignMaps {
                 MapLocation("arboretum_of_memory",      R.string.arboretum_of_memory,       R.drawable.arboretum_of_memory,       cycles = listOf("loa")),
                 MapLocation("talpids_squeeze",          R.string.talpids_squeeze,           R.drawable.talpids_squeeze,          cycles = listOf("loa")),
                 MapLocation("the_cage",                 R.string.the_cage,                  R.drawable.the_cage,                  cycles = listOf("loa")),
-                MapLocation("spires_crossing",          R.string.spires_crossing,            R.drawable.spire_crossing,
+                MapLocation("spire_crossing",          R.string.spires_crossing,            R.drawable.spire_crossing,
                     expansionConditions = mapOf("sib" to ExpansionMapCondition.ADD)
                 ),
                 MapLocation("brookside",R.string.brookside,R.drawable.brookside,
