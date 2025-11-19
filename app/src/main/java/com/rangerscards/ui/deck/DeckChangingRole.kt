@@ -22,6 +22,7 @@ import androidx.compose.material3.HorizontalDivider
 import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -76,13 +77,16 @@ fun DeckChangingRole(
     val packIds = remember { user.settings.collection.toMutableStateList() }
     var background by rememberSaveable { mutableStateOf(deck!!.background) }
     var specialty by rememberSaveable { mutableStateOf(deck!!.specialty) }
-    var role by remember { mutableStateOf((if (deck!!.roleId == "null") "" else deck!!.roleId)
+    var role by remember { mutableStateOf((if (deck?.roleId.toString() == "null") "" else deck!!.roleId)
             to (deckRole?.name ?: "")) }
     var showDialogPicker by rememberSaveable { mutableStateOf<ActiveField?>(null) }
     val isLegit by remember {
         derivedStateOf {
             (background.isNotEmpty() && specialty.isNotEmpty() && role.first.isNotEmpty())
         }
+    }
+    LaunchedEffect(deck?.id) {
+        if (deck == null) onCancel.invoke()
     }
     Scaffold(
         containerColor = CustomTheme.colors.l30,
