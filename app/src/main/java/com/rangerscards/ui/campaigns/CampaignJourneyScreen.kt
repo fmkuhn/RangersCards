@@ -126,7 +126,7 @@ fun TravelDayRow(
     val finalLocation = lastEntry?.location ?: travelDay.startingLocation
     // Whether the last travel entry was camped
     val camped = lastEntry?.camped ?: false
-    val locationsMap = CampaignMaps.getMapLocations(false, cycleId)
+    val locationsMap = CampaignMaps.getMapLocations(false, cycleId, ignoreExpansions = true)
     if (isExpanded) FlowRow(
         modifier = Modifier
             .fillMaxWidth()

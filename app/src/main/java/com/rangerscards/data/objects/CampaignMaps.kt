@@ -13,6 +13,15 @@ object CampaignMaps {
         )
     }
 
+    val campaignExpansionsMap by lazy {
+        mapOf(
+            "core" to listOf(CampaignExpansion(
+                id = "sib",
+                name = R.string.spire_in_bloom
+            )),
+        )
+    }
+
     val startingLocations by lazy {
         mapOf(
             "core" to "lone_tree_station",
@@ -48,7 +57,11 @@ object CampaignMaps {
         }
     }
 
-    private fun connections(cycleId: String): List<Connection> {
+    private fun connections(
+        cycleId: String,
+        expansions: List<String> = emptyList(),
+        ignoreExpansions: Boolean = false
+    ): List<Connection> {
         return when(cycleId) {
             "core" -> listOf(
                 Connection("atrox_mountain", "northern_outpost", Path.WOODS),
@@ -80,9 +93,9 @@ object CampaignMaps {
                 Connection("archeological_outpost", "the_alluvial_ruins", Path.MOUNTAIN_PASS),
                 Connection("archeological_outpost", "watchers_rock", Path.RAVINE),
                 Connection("the_tumbledown", "watchers_rock", Path.MOUNTAIN_PASS),
-                Connection("kobos_market", "spire", Path.LAKESHORE),
-                Connection("white_sky", "spire", Path.RIVER),
-                Connection("the_philosophers_garden", "spire", Path.OLD_GROWTH),
+                Connection("kobos_market", "spire", Path.LAKESHORE,  expansionConditions = mapOf("sib" to ExpansionMapCondition.REMOVE)),
+                Connection("white_sky", "spire", Path.RIVER, expansionConditions = mapOf("sib" to ExpansionMapCondition.REMOVE)),
+                Connection("the_philosophers_garden", "spire", Path.OLD_GROWTH, expansionConditions = mapOf("sib" to ExpansionMapCondition.REMOVE)),
                 Connection("the_philosophers_garden", "the_fractured_wall", Path.WOODS),
                 Connection("mount_nim", "the_fractured_wall", Path.MOUNTAIN_PASS),
                 Connection("the_high_basin", "the_fractured_wall", Path.LAKESHORE),
@@ -91,14 +104,14 @@ object CampaignMaps {
                 Connection("the_high_basin", "branch", Path.OLD_GROWTH),
                 Connection("the_philosophers_garden", "branch", Path.OLD_GROWTH),
                 Connection("crossroads_station", "branch", Path.OLD_GROWTH),
-                Connection("crossroads_station", "spire", Path.GRASSLAND),
+                Connection("crossroads_station", "spire", Path.GRASSLAND, expansionConditions = mapOf("sib" to ExpansionMapCondition.REMOVE)),
                 Connection("terravore", "the_furrow", Path.RAVINE),
                 Connection("crossroads_station", "biologists_outpost", Path.OLD_GROWTH),
                 Connection("the_high_basin", "biologists_outpost", Path.RIVER),
                 Connection("stoneweaver_bridge", "biologists_outpost", Path.RIVER),
-                Connection("stoneweaver_bridge", "spire", Path.RIVER),
+                Connection("stoneweaver_bridge", "spire", Path.RIVER, expansionConditions = mapOf("sib" to ExpansionMapCondition.REMOVE)),
                 Connection("stoneweaver_bridge", "greenbriar_knoll", Path.RAVINE),
-                Connection("spire", "greenbriar_knoll", Path.WOODS),
+                Connection("spire", "greenbriar_knoll", Path.WOODS, expansionConditions = mapOf("sib" to ExpansionMapCondition.REMOVE)),
                 Connection("biologists_outpost", "mound_of_the_navigator", Path.WOODS),
                 Connection("terravore", "mound_of_the_navigator", Path.OLD_GROWTH),
                 Connection("stoneweaver_bridge", "mound_of_the_navigator", Path.RAVINE),
@@ -114,6 +127,18 @@ object CampaignMaps {
                 Connection("the_alluvial_ruins", "bowl_of_the_sun", Path.RAVINE),
                 Connection("the_tumbledown", "bowl_of_the_sun", Path.MOUNTAIN_PASS),
                 Connection("the_tumbledown", "the_alluvial_ruins", Path.RIVER),
+                Connection("kobos_market", "spire_crossing", Path.LAKESHORE, expansionConditions = mapOf("sib" to ExpansionMapCondition.ADD)),
+                Connection("white_sky", "spire_crossing", Path.RIVER, expansionConditions = mapOf("sib" to ExpansionMapCondition.ADD)),
+                Connection("the_philosophers_garden", "brookside", Path.OLD_GROWTH, expansionConditions = mapOf("sib" to ExpansionMapCondition.ADD)),
+                Connection("crossroads_station", "brookside", Path.GRASSLAND, expansionConditions = mapOf("sib" to ExpansionMapCondition.ADD)),
+                Connection("greenbriar_knoll", "silverfin_docks", Path.WOODS, expansionConditions = mapOf("sib" to ExpansionMapCondition.ADD)),
+                Connection("stoneweaver_bridge", "silverfin_docks", Path.RIVER, expansionConditions = mapOf("sib" to ExpansionMapCondition.ADD)),
+                Connection("spire_crossing", "spire", Path.THOROUGHFARE, expansionConditions = mapOf("sib" to ExpansionMapCondition.ADD)),
+                Connection("spire_crossing", "silverfin_docks", Path.RIVER, expansionConditions = mapOf("sib" to ExpansionMapCondition.ADD)),
+                Connection("spire_crossing", "brookside", Path.THOROUGHFARE, expansionConditions = mapOf("sib" to ExpansionMapCondition.ADD)),
+                Connection("spire", "brookside", Path.THOROUGHFARE, expansionConditions = mapOf("sib" to ExpansionMapCondition.ADD)),
+                Connection("silverfin_docks", "brookside", Path.THOROUGHFARE, expansionConditions = mapOf("sib" to ExpansionMapCondition.ADD)),
+                Connection("spire", "silverfin_docks", Path.THOROUGHFARE, expansionConditions = mapOf("sib" to ExpansionMapCondition.ADD)),
             )
             "loa" -> listOf(
                 Connection("greenbriar_knoll", "the_concordant_ziggurats", Path.GRASSLAND),
@@ -161,10 +186,29 @@ object CampaignMaps {
                 Connection("spire", "greenbriar_knoll", Path.WOODS),
             )
             else -> emptyList()
+        }.let { list ->
+            if (ignoreExpansions) list
+            else list.filter { it.shouldIncludeForExpansions(expansions) }
         }
     }
 
-    private fun paths(cycleId: String): List<MapLocation> {
+    private fun Connection.shouldIncludeForExpansions(activeExpansions: List<String>): Boolean {
+
+        // Only consider conditions whose key is present in activeExpansions
+        val matched = expansionConditions.filterKeys { it in activeExpansions }.values
+
+        if (expansionConditions.isEmpty()) return true
+        if (matched.any { it == ExpansionMapCondition.REMOVE }) return false
+        if (matched.any { it == ExpansionMapCondition.ADD }) return true
+
+        return false // fallback
+    }
+
+    private fun paths(
+        cycleId: String,
+        expansions: List<String> = emptyList(),
+        ignoreExpansions: Boolean = false
+    ): List<MapLocation> {
         val locationsList by lazy {
             listOf(
                 MapLocation("atrox_mountain",           R.string.atrox_mountain,            R.drawable.atrox_mountain),
@@ -173,7 +217,7 @@ object CampaignMaps {
                 MapLocation("golden_shore",             R.string.golden_shore,              R.drawable.golden_shore),
                 MapLocation("mount_nim",                R.string.mount_nim,                 R.drawable.mount_nim),
                 MapLocation("the_fractured_wall",       R.string.the_fractured_wall,        R.drawable.the_fractured_wall),
-                MapLocation("the_philosophers_garden",  R.string.the_philosophers_garden,   R.drawable.the_philosophers_garden),
+                MapLocation("the_philosophers_garden",  R.string.the_philosophers_garden,  R.drawable.the_philosophers_garden),
                 MapLocation("the_high_basin",           R.string.the_high_basin,            R.drawable.the_high_basin),
                 MapLocation("branch",                   R.string.branch,                    R.drawable.branch),
                 MapLocation("crossroads_station",       R.string.crossroads_station,        R.drawable.crossroads_station),
@@ -182,7 +226,7 @@ object CampaignMaps {
                 MapLocation("terravore",                R.string.terravore,                 R.drawable.terravore),
                 MapLocation("mound_of_the_navigator",   R.string.mound_of_the_navigator,    R.drawable.mound_of_the_navigator),
                 MapLocation("the_greenbridge",          R.string.the_greenbridge,           R.drawable.the_greenbridge),
-                MapLocation("michaels_bog",             R.string.michaels_bog,              R.drawable.michaels_bog),
+                MapLocation("michaels_bog",             R.string.michaels_bog,             R.drawable.michaels_bog),
                 MapLocation("the_cypress_citadel",      R.string.the_cypress_citadel,       R.drawable.the_cypress_citadel),
                 MapLocation("marsh_of_rebirth",         R.string.marsh_of_rebirth,          R.drawable.marsh_of_rebirth),
                 MapLocation("sunken_outpost",           R.string.sunken_outpost,            R.drawable.sunken_outpost),
@@ -190,14 +234,14 @@ object CampaignMaps {
                 MapLocation("bowl_of_the_sun",          R.string.bowl_of_the_sun,           R.drawable.bowl_of_the_sun),
                 MapLocation("the_alluvial_ruins",       R.string.the_alluvial_ruins,        R.drawable.the_alluvial_ruins),
                 MapLocation("the_tumbledown",           R.string.the_tumbledown,            R.drawable.the_tumbledown),
-                MapLocation("watchers_rock",            R.string.watchers_rock,             R.drawable.watchers_rock),
+                MapLocation("watchers_rock",            R.string.watchers_rock,            R.drawable.watchers_rock),
                 MapLocation("archeological_outpost",    R.string.archeological_outpost,     R.drawable.archeological_outpost),
                 MapLocation("rings_of_the_moon",        R.string.rings_of_the_moon,         R.drawable.rings_of_the_moon),
                 MapLocation("meadow",                   R.string.meadow,                    R.drawable.meadow),
                 MapLocation("stoneweaver_bridge",       R.string.stoneweaver_bridge,        R.drawable.stoneweaver_bridge),
                 MapLocation("lone_tree_station",        R.string.lone_tree_station,         R.drawable.lone_tree_station,         cycles = listOf("core","loa")),
-                MapLocation("ancestors_grove",          R.string.ancestors_grove,           R.drawable.ancestors_grove,           cycles = listOf("core","loa")),
-                MapLocation("kobos_market",             R.string.kobos_market,              R.drawable.kobos_market,              cycles = listOf("core","loa")),
+                MapLocation("ancestors_grove",          R.string.ancestors_grove,          R.drawable.ancestors_grove,          cycles = listOf("core","loa")),
+                MapLocation("kobos_market",             R.string.kobos_market,             R.drawable.kobos_market,             cycles = listOf("core","loa")),
                 MapLocation("boulder_field",            R.string.boulder_field,             R.drawable.boulder_field,             cycles = listOf("core","loa")),
                 MapLocation("spire",                    R.string.spire,                     R.drawable.spire,                     cycles = listOf("core","loa")),
                 MapLocation("the_concordant_ziggurats", R.string.the_concordant_ziggurats,  R.drawable.the_concordant_ziggurats,  cycles = listOf("core","loa")),
@@ -209,7 +253,7 @@ object CampaignMaps {
                 MapLocation("scuttler_network",         R.string.scuttler_network,          R.drawable.scuttler_network,          cycles = listOf("loa")),
                 MapLocation("drenching_chamber",        R.string.drenching_chamber,         R.drawable.drenching_chamber,         cycles = listOf("loa")),
                 MapLocation("desert_of_endless_night",  R.string.desert_of_endless_night,   R.drawable.desert_of_endless_night,   cycles = listOf("loa")),
-                MapLocation("orlins_vault",             R.string.orlins_vault,              R.drawable.orlins_vault,              cycles = listOf("loa")),
+                MapLocation("orlins_vault",             R.string.orlins_vault,             R.drawable.orlins_vault,             cycles = listOf("loa")),
                 MapLocation("severed_artery",           R.string.severed_artery,            R.drawable.artery,                    cycles = listOf("loa")),
                 MapLocation("branching_artery",         R.string.branching_artery,          R.drawable.artery,                    cycles = listOf("loa")),
                 MapLocation("terminal_artery",          R.string.terminal_artery,           R.drawable.artery,                    cycles = listOf("loa")),
@@ -222,18 +266,48 @@ object CampaignMaps {
                 MapLocation("the_verdant_sphere",       R.string.the_verdant_sphere,        R.drawable.the_verdant_sphere,        cycles = listOf("loa")),
                 MapLocation("the_rootway",              R.string.the_rootway,               R.drawable.the_rootway,               cycles = listOf("loa")),
                 MapLocation("arboretum_of_memory",      R.string.arboretum_of_memory,       R.drawable.arboretum_of_memory,       cycles = listOf("loa")),
-                MapLocation("talpids_squeeze",          R.string.talpids_squeeze,           R.drawable.talpids_squeeze,           cycles = listOf("loa")),
+                MapLocation("talpids_squeeze",          R.string.talpids_squeeze,           R.drawable.talpids_squeeze,          cycles = listOf("loa")),
                 MapLocation("the_cage",                 R.string.the_cage,                  R.drawable.the_cage,                  cycles = listOf("loa")),
+                MapLocation("spire_crossing",          R.string.spires_crossing,            R.drawable.spire_crossing,
+                    expansionConditions = mapOf("sib" to ExpansionMapCondition.ADD)
+                ),
+                MapLocation("brookside",R.string.brookside,R.drawable.brookside,
+                    expansionConditions = mapOf("sib" to ExpansionMapCondition.ADD)
+                ),
+                MapLocation("silverfin_docks",R.string.silverfin_docks,R.drawable.silverfin_docks,
+                    expansionConditions = mapOf("sib" to ExpansionMapCondition.ADD)
+                )
             )
         }
-        return if (cycleId.isEmpty()) locationsList else locationsList.filter {
-            mapLocation -> mapLocation.cycles.contains(cycleId)
+        return when {
+            cycleId.isEmpty() -> locationsList
+            ignoreExpansions -> locationsList.filter { it.cycles.contains(cycleId) }
+            else -> locationsList.filter {
+                it.cycles.contains(cycleId) && it.shouldIncludeForExpansions(expansions)
+            }
         }
     }
 
-    fun getMapLocations(needConnections: Boolean, cycleId: String = ""): Map<String, MapLocation> {
-        val results = paths(cycleId).associateBy { it.id }
-        if (needConnections) connections(cycleId).forEach { connection ->
+    private fun MapLocation.shouldIncludeForExpansions(activeExpansions: List<String>): Boolean {
+
+        // Only consider conditions whose key is present in activeExpansions
+        val matched = expansionConditions.filterKeys { it in activeExpansions }.values
+
+        if (expansionConditions.isEmpty()) return true
+        if (matched.any { it == ExpansionMapCondition.REMOVE }) return false
+        if (matched.any { it == ExpansionMapCondition.ADD }) return true
+
+        return false // fallback
+    }
+
+    fun getMapLocations(
+        needConnections: Boolean,
+        cycleId: String = "",
+        expansions: List<String> = emptyList(),
+        ignoreExpansions: Boolean = false
+    ): Map<String, MapLocation> {
+        val results = paths(cycleId, expansions, ignoreExpansions).associateBy { it.id }
+        if (needConnections) connections(cycleId, expansions, ignoreExpansions).forEach { connection ->
             val locA = results[connection.locA]
             val locB = results[connection.locB]
             if (locA != null && locB != null) {
@@ -291,6 +365,19 @@ object CampaignMaps {
         }
     }
 
+    fun expansionsWeather(expansionId: String): List<Weather> {
+        return when(expansionId) {
+            "sib" -> listOf(
+                Weather(31, 33, R.string.weather_downpour),
+                Weather(34, 35, R.string.weather_perfect_day),
+                Weather(36, 39, R.string.weather_howling_winds),
+                Weather(40, 42, R.string.weather_downpour),
+                Weather(43, 45, R.string.weather_perfect_day)
+            )
+            else -> emptyList()
+        }
+    }
+
     fun moonIconsMap(): Map<Int, Int> {
         return mapOf(
             1 to R.drawable.day_1,
@@ -332,6 +419,7 @@ enum class Path(
     @StringRes val nameResId: Int,
     @DrawableRes val iconResId: Int?,
     val cycles: List<String>,
+    val expansions: List<String> = emptyList()
 ) {
     NONE("none", R.string.current_path_terrain_none, null, listOf("loa")),
     WOODS("woods", R.string.woods, R.drawable.woods, listOf("core", "loa")),
@@ -342,6 +430,7 @@ enum class Path(
     RAVINE("ravine", R.string.ravine, R.drawable.ravine, listOf("core", "loa")),
     SWAMP("swamp", R.string.swamp, R.drawable.swamp, listOf("core")),
     RIVER("river", R.string.river, R.drawable.river, listOf("core", "loa")),
+    THOROUGHFARE("thoroughfare", R.string.thoroughfare, R.drawable.thoroughfare, listOf("core"), listOf("sib")),
     ANCIENT_RUINS("ancient_ruins", R.string.ancient_ruins, R.drawable.ancient_ruins, listOf("loa")),
     FLOODED_RUINS("flooded_ruins", R.string.flooded_ruins, R.drawable.flooded_ruins, listOf("loa")),
     DEEP_ROOTS("deep_roots", R.string.deep_roots, R.drawable.deep_roots, listOf("loa")),
@@ -376,7 +465,8 @@ data class Connection(
     val locA: String,
     val locB: String,
     val path: Path,
-    val restriction: ConnectionRestriction? = null
+    val restriction: ConnectionRestriction? = null,
+    val expansionConditions: Map<String, ExpansionMapCondition> = emptyMap()
 )
 
 data class MapConnection(
@@ -390,7 +480,8 @@ data class MapLocation(
     @StringRes val nameResId: Int,
     @DrawableRes val iconResId: Int,
     val connections: MutableList<MapConnection> = mutableListOf(),
-    val cycles: List<String> = listOf("core")
+    val cycles: List<String> = listOf("core"),
+    val expansionConditions: Map<String, ExpansionMapCondition> = emptyMap()
 )
 
 data class Weather(
@@ -398,4 +489,13 @@ data class Weather(
     val end: Int,
     @StringRes val nameResId: Int,
     @StringRes val secondNameResId: Int? = null,
+)
+
+enum class ExpansionMapCondition {
+    ADD,  REMOVE
+}
+
+data class CampaignExpansion (
+    val id: String,
+    @StringRes val name: Int,
 )

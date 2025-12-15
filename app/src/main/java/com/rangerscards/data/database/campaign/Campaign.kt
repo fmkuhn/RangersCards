@@ -33,6 +33,7 @@ data class Campaign(
     val createdAt: String?,
     @ColumnInfo(name = "updated_at")
     val updatedAt: String?,
+    val expansions: JsonElement,
     @ColumnInfo(name = "latest_decks")
     val latestDecks: JsonElement,
     val access: JsonElement,

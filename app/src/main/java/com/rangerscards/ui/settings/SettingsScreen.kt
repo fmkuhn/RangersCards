@@ -1,5 +1,7 @@
 package com.rangerscards.ui.settings
 
+import androidx.activity.compose.BackHandler
+import androidx.activity.compose.LocalActivity
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.fillMaxSize
@@ -32,6 +34,10 @@ fun SettingsScreen(
     contentPadding: PaddingValues = PaddingValues(0.dp),
     modifier: Modifier = Modifier,
 ) {
+    val activity = LocalActivity.current
+    BackHandler {
+        activity?.finish()
+    }
     val user by settingsViewModel.userUiState.collectAsState()
     LazyColumn(
         modifier = modifier

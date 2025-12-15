@@ -451,4 +451,7 @@
     <string name="packs_sort_header">По дополнению</string>
     <string name="aspect_card_divider_header">Черта</string>
     <string name="equip_card_divider_header">Экипировка</string>
+
+    <string name="cards_update_available_header">Обновление карт</string>
+    <string name="cards_update_available_text">Доступно обновление карт.</string>
 </resources>

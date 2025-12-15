@@ -19,6 +19,7 @@ import androidx.compose.material3.IconButton
 import androidx.compose.material3.IconButtonDefaults
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.LaunchedEffect
 import androidx.compose.runtime.collectAsState
 import androidx.compose.runtime.derivedStateOf
 import androidx.compose.runtime.getValue
@@ -72,13 +73,25 @@ fun TravelDialog(
     var selectedPathTerrain by rememberSaveable { mutableStateOf("") }
     var selectedConnectionRestriction by rememberSaveable { mutableStateOf("") }
     val coroutine = rememberCoroutineScope()
-    val locationsMap by remember(campaign) { mutableStateOf(CampaignMaps.getMapLocations(true, campaign!!.cycleId)) }
-    val currentLocation by remember { derivedStateOf { locationsMap[campaign!!.currentLocation]!! } }
+    val locationsMap by remember(campaign) {
+        mutableStateOf(CampaignMaps.getMapLocations(
+            true,
+            campaign!!.cycleId,
+            campaign!!.expansions
+        ))
+    }
+    val currentLocation by remember { derivedStateOf { locationsMap[campaign!!.currentLocation] } }
     val isLegitTravel by remember { derivedStateOf {
         selectedLocation.isNotEmpty() && selectedPathTerrain.isNotEmpty()
     } }
+    LaunchedEffect(currentLocation) {
+        if (currentLocation == null) showAllLocations = true
+    }
     CampaignDialog(
-        header = stringResource(id = R.string.travel_header, stringResource(currentLocation.nameResId)),
+        header = stringResource(
+            id = R.string.travel_header,
+            stringResource(currentLocation?.nameResId ?: R.string.current_path_terrain_none)
+        ),
         isDarkTheme = isDarkTheme,
         onBack = onBack
     ) {
@@ -105,7 +118,8 @@ fun TravelDialog(
                 RangersRadioButton(
                     selected = showAllLocations,
                     onClick = { showAllLocations = !showAllLocations },
-                    modifier = Modifier.size(32.dp)
+                    modifier = Modifier.size(32.dp),
+                    enabled = currentLocation != null
                 )
             }
             Column(modifier = Modifier.fillMaxWidth().padding(horizontal = 8.dp)) {
@@ -347,100 +361,101 @@ fun TravelDialog(
         ) {
             LazyColumn(verticalArrangement = Arrangement.spacedBy(8.dp)) {
                 when(showDialogPicker) {
-                    TravelDataDialog.Location -> if (showAllLocations) locationsMap.forEach { (key, value) ->
-                        if (key != currentLocation.id) item(key) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth().clickable {
-                                    selectedLocation = key
-                                    selectedConnectionRestriction = currentLocation.connections
-                                        .firstOrNull { it.id == key }?.restriction?.value ?: ""
-                                    showDialogPicker = null
-                                },
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                Icon(
-                                    painterResource(value.iconResId),
-                                    contentDescription = null,
-                                    tint = Color.Unspecified,
-                                    modifier = Modifier.size(40.dp)
-                                )
-                                Text(
-                                    text = stringResource(value.nameResId),
-                                    color = CustomTheme.colors.d30,
-                                    fontFamily = Jost,
-                                    fontWeight = FontWeight.Normal,
-                                    fontSize = 16.sp,
-                                    lineHeight = 18.sp,
-                                    modifier = Modifier.weight(1f)
-                                )
+                    TravelDataDialog.Location ->
+                        if (showAllLocations || currentLocation == null) locationsMap.forEach { (key, value) ->
+                            if (key != currentLocation?.id) item(key) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth().clickable {
+                                        selectedLocation = key
+                                        selectedConnectionRestriction = currentLocation?.connections
+                                            ?.firstOrNull { it.id == key }?.restriction?.value ?: ""
+                                        showDialogPicker = null
+                                    },
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    Icon(
+                                        painterResource(value.iconResId),
+                                        contentDescription = null,
+                                        tint = Color.Unspecified,
+                                        modifier = Modifier.size(40.dp)
+                                    )
+                                    Text(
+                                        text = stringResource(value.nameResId),
+                                        color = CustomTheme.colors.d30,
+                                        fontFamily = Jost,
+                                        fontWeight = FontWeight.Normal,
+                                        fontSize = 16.sp,
+                                        lineHeight = 18.sp,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(4.dp))
+                                HorizontalDivider(color = CustomTheme.colors.l10)
                             }
-                            Spacer(modifier = Modifier.height(4.dp))
-                            HorizontalDivider(color = CustomTheme.colors.l10)
-                        }
-                    } else currentLocation.connections.forEach { location ->
-                        item(location.id) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth().clickable {
-                                    selectedLocation = location.id
-                                    selectedPathTerrain = location.path.value
-                                    selectedConnectionRestriction = location.restriction?.value ?: ""
-                                    showDialogPicker = null
-                                },
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                val displayedLocation = locationsMap[location.id]!!
-                                Icon(
-                                    painterResource(displayedLocation.iconResId),
-                                    contentDescription = null,
-                                    tint = Color.Unspecified,
-                                    modifier = Modifier.size(40.dp)
-                                )
-                                Text(
-                                    text = stringResource(displayedLocation.nameResId),
-                                    color = CustomTheme.colors.d30,
-                                    fontFamily = Jost,
-                                    fontWeight = FontWeight.Normal,
-                                    fontSize = 16.sp,
-                                    lineHeight = 18.sp,
-                                    modifier = Modifier.weight(1f)
-                                )
+                        } else currentLocation?.connections?.forEach { location ->
+                            item(location.id) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth().clickable {
+                                        selectedLocation = location.id
+                                        selectedPathTerrain = location.path.value
+                                        selectedConnectionRestriction = location.restriction?.value ?: ""
+                                        showDialogPicker = null
+                                    },
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    val displayedLocation = locationsMap[location.id]!!
+                                    Icon(
+                                        painterResource(displayedLocation.iconResId),
+                                        contentDescription = null,
+                                        tint = Color.Unspecified,
+                                        modifier = Modifier.size(40.dp)
+                                    )
+                                    Text(
+                                        text = stringResource(displayedLocation.nameResId),
+                                        color = CustomTheme.colors.d30,
+                                        fontFamily = Jost,
+                                        fontWeight = FontWeight.Normal,
+                                        fontSize = 16.sp,
+                                        lineHeight = 18.sp,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(4.dp))
+                                HorizontalDivider(color = CustomTheme.colors.l10)
                             }
-                            Spacer(modifier = Modifier.height(4.dp))
-                            HorizontalDivider(color = CustomTheme.colors.l10)
                         }
-                    }
-                    else -> Path.entries.filter { it.cycles.contains(campaign!!.cycleId) }.forEach { path ->
-                        item(path.value) {
-                            Row(
-                                modifier = Modifier.fillMaxWidth().clickable {
-                                    selectedPathTerrain = path.value
-                                    showDialogPicker = null
-                                },
-                                horizontalArrangement = Arrangement.spacedBy(8.dp),
-                                verticalAlignment = Alignment.CenterVertically
-                            ) {
-                                if (path.iconResId != null) Icon(
-                                    painterResource(path.iconResId),
-                                    contentDescription = null,
-                                    tint = Color.Unspecified,
-                                    modifier = Modifier.size(40.dp)
-                                )
-                                Text(
-                                    text = stringResource(path.nameResId),
-                                    color = CustomTheme.colors.d30,
-                                    fontFamily = Jost,
-                                    fontWeight = FontWeight.Normal,
-                                    fontSize = 16.sp,
-                                    lineHeight = 18.sp,
-                                    modifier = Modifier.weight(1f)
-                                )
+                        else -> Path.entries.filter { it.cycles.contains(campaign!!.cycleId) }.forEach { path ->
+                            item(path.value) {
+                                Row(
+                                    modifier = Modifier.fillMaxWidth().clickable {
+                                        selectedPathTerrain = path.value
+                                        showDialogPicker = null
+                                    },
+                                    horizontalArrangement = Arrangement.spacedBy(8.dp),
+                                    verticalAlignment = Alignment.CenterVertically
+                                ) {
+                                    if (path.iconResId != null) Icon(
+                                        painterResource(path.iconResId),
+                                        contentDescription = null,
+                                        tint = Color.Unspecified,
+                                        modifier = Modifier.size(40.dp)
+                                    )
+                                    Text(
+                                        text = stringResource(path.nameResId),
+                                        color = CustomTheme.colors.d30,
+                                        fontFamily = Jost,
+                                        fontWeight = FontWeight.Normal,
+                                        fontSize = 16.sp,
+                                        lineHeight = 18.sp,
+                                        modifier = Modifier.weight(1f)
+                                    )
+                                }
+                                Spacer(modifier = Modifier.height(4.dp))
+                                HorizontalDivider(color = CustomTheme.colors.l10)
                             }
-                            Spacer(modifier = Modifier.height(4.dp))
-                            HorizontalDivider(color = CustomTheme.colors.l10)
                         }
-                    }
                 }
             }
         }

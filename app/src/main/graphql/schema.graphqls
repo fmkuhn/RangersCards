@@ -38170,6 +38170,7 @@ type rangers_campaign {
     path: String
   ): jsonb!
   id: Int!
+  expansions: jsonb
 
   """An array relationship"""
   latest_decks(
@@ -38604,6 +38605,7 @@ input rangers_campaign_insert_input {
   extended_calendar: Boolean
   history: jsonb
   id: Int
+  expansions: jsonb
   latest_decks: rangers_latest_deck_arr_rel_insert_input
   missions: jsonb
   name: String
@@ -38789,6 +38791,7 @@ input rangers_campaign_set_input {
   extended_calendar: Boolean
   history: jsonb
   id: Int
+  expansions: jsonb
   missions: jsonb
   name: String
   next_campaign_id: Int

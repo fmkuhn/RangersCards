@@ -476,7 +476,8 @@ fun CardsFilterScreen(
                                     mapOf(
                                         "core" to R.string.core_cycle,
                                         "loa" to R.string.loa_expansion,
-                                        "sotv" to R.string.sotv_expansion
+                                        "sotv" to R.string.sotv_expansion,
+                                        "sib" to R.string.spire_in_bloom,
                                     ),
                                     false),
                                 selectedOptions = selectedPacks,
